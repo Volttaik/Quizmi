@@ -3,5 +3,7 @@
   "/sign-in/[[...sign-in]]/page": "app/sign-in/[[...sign-in]]/page.js",
   "/dashboard/page": "app/dashboard/page.js",
   "/demo/page": "app/demo/page.js",
-  "/summary/page": "app/summary/page.js"
+  "/buy-credits/page": "app/buy-credits/page.js",
+  "/summary/page": "app/summary/page.js",
+  "/create-quiz/page": "app/create-quiz/page.js"
 }
