@@ -141,7 +141,7 @@ function HomeRedirect() {
         <Redirect to="/dashboard" />
       </Show>
       <Show when="signed-out">
-        <HomePage />
+        <Redirect to="/sign-in" />
       </Show>
     </>
   );
