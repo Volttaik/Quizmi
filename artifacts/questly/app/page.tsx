@@ -1,11 +1,7 @@
-import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
-export default async function RootPage() {
-  const { userId } = await auth();
-  if (userId) {
-    redirect("/dashboard");
-  } else {
-    redirect("/sign-in");
-  }
+// Middleware handles the real redirect logic (auth → /dashboard, guest → /sign-in).
+// This is a safety fallback only.
+export default function RootPage() {
+  redirect("/sign-in");
 }
