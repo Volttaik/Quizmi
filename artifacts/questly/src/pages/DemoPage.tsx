@@ -4,6 +4,7 @@ import RecentTransactions from "@/components/dashboard/RecentTransactions";
 import ActionCards from "@/components/dashboard/ActionCards";
 import PromoBanner from "@/components/dashboard/PromoBanner";
 import BottomNav from "@/components/dashboard/BottomNav";
+import StudySlideshow from "@/components/dashboard/StudySlideshow";
 
 const demoTransactions = [
   { id: 1, description: "Starter Pack Purchase", amount: 500, type: "purchase", createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString() },
@@ -37,6 +38,7 @@ export default function DemoPage() {
         <div className="mb-3 px-0.5">
           <h3 className="text-sm font-extrabold text-foreground">Quick Actions</h3>
         </div>
+        <StudySlideshow />
         <ActionCards />
         <RecentTransactions transactions={demoTransactions} />
         <PromoBanner />

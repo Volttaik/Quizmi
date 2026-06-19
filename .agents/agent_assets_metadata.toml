@@ -24,3 +24,27 @@ id = "a7MhEbrjyz0QqGsneaHoc"
 uri = "file://artifacts/questly/public/feature-progress.png"
 type = "image"
 title = "progress tracking illustration"
+
+[[generated]]
+id = "K9olWUbpztSwbIbB-RMpf"
+uri = "file://artifacts/questly/public/logo.png"
+type = "image"
+title = "quizmi logo icon"
+
+[[generated]]
+id = "gspgvkcqZhUWJCs30iVE-"
+uri = "file://artifacts/questly/public/study-1.png"
+type = "image"
+title = "student studying cafe"
+
+[[generated]]
+id = "UGKRzZsn3vE6hTIbyKFM5"
+uri = "file://artifacts/questly/public/study-2.png"
+type = "image"
+title = "student library studying"
+
+[[generated]]
+id = "ZgQ6Cg7yVe1T03TbFhz4L"
+uri = "file://artifacts/questly/public/study-3.png"
+type = "image"
+title = "group study session"

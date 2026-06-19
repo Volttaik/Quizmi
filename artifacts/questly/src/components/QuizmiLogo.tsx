@@ -11,7 +11,7 @@ export default function QuizmiLogo({
       style={{ width: size, height: size }}
     >
       <img
-        src="/logo.svg"
+        src="/logo.png"
         alt="Quizmi"
         width={size}
         height={size}

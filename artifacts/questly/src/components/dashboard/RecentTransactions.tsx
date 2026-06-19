@@ -1,4 +1,5 @@
 import { ArrowDownLeft, ArrowUpRight, Zap } from "lucide-react";
+import { Link } from "wouter";
 
 interface Transaction {
   id: number;
@@ -41,7 +42,7 @@ export default function RecentTransactions({ transactions }: Props) {
     <div className="mb-6">
       <div className="flex items-center justify-between mb-3 px-0.5">
         <h3 className="text-sm font-extrabold text-foreground">Recent Activity</h3>
-        <button className="text-xs text-primary font-semibold">See all →</button>
+        <Link to="/history" className="text-xs text-primary font-semibold">See all →</Link>
       </div>
       <div className="rounded-2xl bg-card border border-border/60 overflow-hidden shadow-[0_2px_16px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_16px_rgba(0,0,0,0.25)]">
         {transactions.slice(0, 4).map((t, i) => {

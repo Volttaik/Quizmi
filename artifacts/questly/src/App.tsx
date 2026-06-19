@@ -14,6 +14,8 @@ import QuizPage from "@/pages/QuizPage";
 import FlashcardsPage from "@/pages/FlashcardsPage";
 import SummaryPage from "@/pages/SummaryPage";
 import BuyCreditsPage from "@/pages/BuyCreditsPage";
+import ProfilePage from "@/pages/ProfilePage";
+import HistoryPage from "@/pages/HistoryPage";
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, staleTime: 30_000 } },
@@ -132,7 +134,7 @@ function HomeRedirect() {
   return (
     <>
       <Show when="signed-in">
-        <Redirect to="/demo" />
+        <Redirect to="/dashboard" />
       </Show>
       <Show when="signed-out">
         <HomePage />
@@ -222,6 +224,12 @@ function AppRoutes() {
           </Route>
           <Route path="/buy-credits">
             {() => <ProtectedRoute component={BuyCreditsPage} />}
+          </Route>
+          <Route path="/profile">
+            {() => <ProtectedRoute component={ProfilePage} />}
+          </Route>
+          <Route path="/history">
+            {() => <ProtectedRoute component={HistoryPage} />}
           </Route>
           <Route>{() => <Redirect to="/" />}</Route>
         </Switch>

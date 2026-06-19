@@ -5,6 +5,7 @@ import RecentTransactions from "@/components/dashboard/RecentTransactions";
 import ActionCards from "@/components/dashboard/ActionCards";
 import PromoBanner from "@/components/dashboard/PromoBanner";
 import BottomNav from "@/components/dashboard/BottomNav";
+import StudySlideshow from "@/components/dashboard/StudySlideshow";
 
 interface UserData {
   credits: number;
@@ -59,6 +60,7 @@ export default function DashboardPage() {
         <div className="mb-3 px-0.5">
           <h3 className="text-sm font-extrabold text-foreground">Quick Actions</h3>
         </div>
+        <StudySlideshow />
         <ActionCards />
         <RecentTransactions transactions={transactions} />
         <PromoBanner />

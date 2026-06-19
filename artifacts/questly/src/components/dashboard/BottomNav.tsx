@@ -6,7 +6,7 @@ const tabs = [
   { icon: GraduationCap, label: "Quizzes", path: "/create-quiz" },
   { icon: Sparkles, label: "AI", path: "/summary", center: true },
   { icon: BookMarked, label: "Cards", path: "/flashcards" },
-  { icon: User, label: "Profile", path: "/buy-credits" },
+  { icon: User, label: "Profile", path: "/profile" },
 ];
 
 export default function BottomNav() {
