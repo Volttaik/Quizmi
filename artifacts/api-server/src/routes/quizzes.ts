@@ -2,7 +2,7 @@ import { Router } from "express";
 import { getAuth } from "@clerk/express";
 import { db, usersTable, quizzesTable, quizAttemptsTable, creditTransactionsTable } from "../lib/db.js";
 import { eq, and, desc } from "drizzle-orm";
-import { generateQuiz } from "../lib/gemini.js";
+import { generateQuiz } from "../lib/ai.js";
 import { z } from "zod";
 
 const router = Router();
