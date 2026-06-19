@@ -51,9 +51,12 @@ router.post("/generate-flashcards", async (req, res) => {
     });
 
     return res.json(set);
-  } catch (err) {
+  } catch (err: any) {
     console.error(err);
-    return res.status(500).json({ error: "Failed to generate flashcards" });
+    if (err?.status === 429 || err?.message?.includes("429") || err?.message?.includes("quota") || err?.message?.includes("Too Many Requests")) {
+      return res.status(429).json({ error: "Gemini API quota exceeded. Please enable billing at aistudio.google.com or wait until your quota resets." });
+    }
+    return res.status(500).json({ error: err?.message ?? "Failed to generate flashcards" });
   }
 });
 

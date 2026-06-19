@@ -14,7 +14,7 @@ export async function generateQuiz(
   difficulty: string
 ): Promise<Array<{ question: string; options: string[]; correct: number }>> {
   const ai = getClient();
-  const model = ai.getGenerativeModel({ model: "gemini-2.0-flash" });
+  const model = ai.getGenerativeModel({ model: "gemini-1.5-flash" });
 
   const prompt = `Generate ${questionCount} multiple choice questions about "${topic}" at ${difficulty} difficulty.
 Return ONLY a valid JSON array with this exact format:
@@ -39,7 +39,7 @@ export async function generateFlashcards(
   cardCount: number
 ): Promise<Array<{ front: string; back: string }>> {
   const ai = getClient();
-  const model = ai.getGenerativeModel({ model: "gemini-2.0-flash" });
+  const model = ai.getGenerativeModel({ model: "gemini-1.5-flash" });
 
   const prompt = `Generate ${cardCount} flashcards about "${topic}".
 Return ONLY a valid JSON array with this exact format:
@@ -60,7 +60,7 @@ No extra text, just the JSON array.`;
 
 export async function generateSummary(topic: string): Promise<string> {
   const ai = getClient();
-  const model = ai.getGenerativeModel({ model: "gemini-2.0-flash" });
+  const model = ai.getGenerativeModel({ model: "gemini-1.5-flash" });
 
   const prompt = `Create a comprehensive study summary about "${topic}".
 Format it with:

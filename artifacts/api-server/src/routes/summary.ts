@@ -47,9 +47,12 @@ router.post("/generate-summary", async (req, res) => {
     });
 
     return res.json(summary);
-  } catch (err) {
+  } catch (err: any) {
     console.error(err);
-    return res.status(500).json({ error: "Failed to generate summary" });
+    if (err?.status === 429 || err?.message?.includes("429") || err?.message?.includes("quota") || err?.message?.includes("Too Many Requests")) {
+      return res.status(429).json({ error: "Gemini API quota exceeded. Please enable billing at aistudio.google.com or wait until your quota resets." });
+    }
+    return res.status(500).json({ error: err?.message ?? "Failed to generate summary" });
   }
 });
 
