@@ -1,1 +1,1 @@
-- [Quizmi API server setup](quizmi-api-server.md) — all 12 routes inlined in api-server/src/routes/; no separate packages/db workspace package.
+- [Quizmi API server](quizmi-api-server.md) — all DB/AI code inlined in api-server; no separate workspace packages; payment verify must stay idempotent.

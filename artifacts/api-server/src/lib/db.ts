@@ -140,7 +140,8 @@ export async function ensureTablesExist() {
         type VARCHAR(50) NOT NULL DEFAULT 'usage',
         description TEXT NOT NULL DEFAULT '',
         reference TEXT,
-        created_at TIMESTAMP NOT NULL DEFAULT NOW()
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        CONSTRAINT credit_transactions_reference_unique UNIQUE (reference)
       );
     `);
   } finally {

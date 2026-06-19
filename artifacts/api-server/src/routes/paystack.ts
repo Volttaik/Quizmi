@@ -89,6 +89,16 @@ router.get("/paystack/verify", async (req, res) => {
     const creditAmount = typeof credits === "number" ? credits : 500;
 
     await db.transaction(async (tx) => {
+      const existing = await tx
+        .select({ id: creditTransactionsTable.id })
+        .from(creditTransactionsTable)
+        .where(eq(creditTransactionsTable.reference, reference))
+        .limit(1);
+
+      if (existing.length > 0) {
+        return;
+      }
+
       await tx.update(usersTable)
         .set({ credits: sql`${usersTable.credits} + ${creditAmount}` })
         .where(eq(usersTable.clerkId, userId));
