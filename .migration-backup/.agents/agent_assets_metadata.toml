@@ -2,31 +2,55 @@ uploads = []
 outputs = []
 
 [[generated]]
-id = "Jqyk3cD6WF_F6Nla1bErV"
+id = "QO97fvnk8VmGDBD8JQFjd"
+uri = "file://artifacts/questly/public/feature-quiz.png"
+type = "image"
+title = "quiz feature illustration"
+
+[[generated]]
+id = "fhgnrQ3nESo_n_qDdNs9f"
+uri = "file://artifacts/questly/public/feature-summary.png"
+type = "image"
+title = "summary feature illustration"
+
+[[generated]]
+id = "uaL0K74fIwt-_A91pncrJ"
+uri = "file://artifacts/questly/public/feature-flashcards.png"
+type = "image"
+title = "flashcards feature illustration"
+
+[[generated]]
+id = "a7MhEbrjyz0QqGsneaHoc"
+uri = "file://artifacts/questly/public/feature-progress.png"
+type = "image"
+title = "progress tracking illustration"
+
+[[generated]]
+id = "K9olWUbpztSwbIbB-RMpf"
 uri = "file://artifacts/questly/public/logo.png"
 type = "image"
-title = "quizmi app logo purple"
+title = "quizmi logo icon"
 
 [[generated]]
-id = "h8Av7J_gL2RZ5IbjxSDAt"
-uri = "file://artifacts/questly/public/dashboard-preview.png"
+id = "gspgvkcqZhUWJCs30iVE-"
+uri = "file://artifacts/questly/public/study-1.png"
 type = "image"
-title = "quizmi dashboard app screenshot"
+title = "generated_image"
 
 [[generated]]
-id = "diw-zEzgTjCDYjhooyURn"
-uri = "file://artifacts/questly/public/hero-visual.png"
+id = "UGKRzZsn3vE6hTIbyKFM5"
+uri = "file://artifacts/questly/public/study-2.png"
 type = "image"
-title = "student AI quiz study visual"
+title = "generated_image"
 
 [[generated]]
-id = "BKE2AT4-nbwlTqRaBJm46"
-uri = "file://artifacts/questly/public/quiz-cards-visual.png"
+id = "ZgQ6Cg7yVe1T03TbFhz4L"
+uri = "file://artifacts/questly/public/study-3.png"
 type = "image"
-title = "quiz cards UI floating 3D"
+title = "generated_image"
 
 [[generated]]
-id = "aBNs-Ii0C0GD4LcKI4Wgx"
-uri = "file://artifacts/questly/public/flashcard-preview.png"
+id = "aKi8rre66iEo76Fbw5CBr"
+uri = "file://artifacts/questly/public/promo-banner.png"
 type = "image"
-title = "flashcard mobile phone mockup"
+title = "generated_image"
