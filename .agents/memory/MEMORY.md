@@ -1,0 +1,1 @@
+- [Vite config env vars](vite-env-fallbacks.md) — react-vite scaffold throws on missing PORT/BASE_PATH; add defaults so it starts without platform injection

@@ -1,0 +1,32 @@
+kind = "web"
+  previewPath = "/"
+  title = "Quizmi — Study Reimagined"
+  version = "1.0.0"
+  id = "artifacts/questly"
+  router = "path"
+
+  [[integratedSkills]]
+  name = "react-vite"
+  version = "1.0.0"
+
+  [[services]]
+  name = "web"
+  paths = [ "/" ]
+  localPort = 20698
+
+  [services.development]
+  run = "pnpm --filter @workspace/questly run dev"
+
+  [services.development.env]
+  PORT = "20698"
+  BASE_PATH = "/"
+
+  [services.production]
+  build = [ "pnpm", "--filter", "@workspace/questly", "run", "build" ]
+  publicDir = "artifacts/questly/dist/public"
+  serve = "static"
+
+  [[services.production.rewrites]]
+  from = "/*"
+  to = "/index.html"
+  
