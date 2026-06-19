@@ -2,31 +2,40 @@
 
 import { Zap, Brain, Layers, Target } from "lucide-react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 const features = [
   {
     icon: Zap,
     title: "AI-Generated Quizzes",
     desc: "Paste your notes. Get a full quiz in seconds. Our AI understands context, creates targeted questions, and adapts to your level.",
-    gradient: "from-[hsl(262,72%,55%)]/20 to-transparent",
+    img: "/quiz-cards-visual.png",
+    color: "text-primary",
+    bg: "bg-primary/10",
   },
   {
     icon: Brain,
     title: "Smart Summaries",
     desc: "Extract the essence of any material. Key concepts, definitions, and relationships — distilled into crystal clear summaries.",
-    gradient: "from-[hsl(262,83%,58%)]/15 to-transparent",
+    img: "/hero-visual.png",
+    color: "text-[hsl(280,72%,60%)]",
+    bg: "bg-[hsl(280,72%,60%)]/10",
   },
   {
     icon: Layers,
     title: "Adaptive Flashcards",
     desc: "Spaced repetition that actually works. Cards reappear at the perfect moment — right before you forget.",
-    gradient: "from-[hsl(199,89%,48%)]/15 to-transparent",
+    img: "/flashcard-preview.png",
+    color: "text-[hsl(199,89%,48%)]",
+    bg: "bg-[hsl(199,89%,48%)]/10",
   },
   {
     icon: Target,
-    title: "Pinpoint Concepts",
+    title: "Pinpoint Weak Spots",
     desc: "Identify exactly which topics you struggle with. Focus your time where it matters, skip what you already know.",
-    gradient: "from-[hsl(142,70%,45%)]/12 to-transparent",
+    img: null,
+    color: "text-[hsl(142,70%,45%)]",
+    bg: "bg-[hsl(142,70%,45%)]/10",
   },
 ];
 
@@ -48,7 +57,7 @@ export default function FeaturesSection() {
           </h2>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-4 max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-5 max-w-5xl mx-auto">
           {features.map((f, i) => (
             <motion.div
               key={f.title}
@@ -56,14 +65,33 @@ export default function FeaturesSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="group relative rounded-3xl border border-white/[0.06] p-8 md:p-10 overflow-hidden hover:border-white/[0.12] transition-colors"
+              className="group relative rounded-3xl border border-white/[0.06] overflow-hidden hover:border-white/[0.14] transition-all duration-500"
             >
-              <div className={`absolute inset-0 bg-gradient-to-br ${f.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
-              <div className="relative">
-                <div className="w-12 h-12 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center mb-6">
-                  <f.icon className="w-5 h-5 text-primary" />
+              {/* Image preview area */}
+              {f.img && (
+                <div className="relative h-48 overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[hsl(222,47%,6%)] z-10" />
+                  <Image
+                    src={f.img}
+                    alt={f.title}
+                    fill
+                    className="object-cover object-top opacity-60 group-hover:opacity-75 group-hover:scale-105 transition-all duration-700"
+                  />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-3">{f.title}</h3>
+              )}
+              {!f.img && (
+                <div className="h-48 bg-gradient-to-br from-white/[0.02] to-white/[0.05] flex items-center justify-center">
+                  <div className={`w-16 h-16 rounded-3xl ${f.bg} border border-white/[0.08] flex items-center justify-center`}>
+                    <f.icon className={`w-7 h-7 ${f.color}`} />
+                  </div>
+                </div>
+              )}
+
+              <div className="p-7">
+                <div className={`w-10 h-10 rounded-2xl ${f.bg} border border-white/[0.06] flex items-center justify-center mb-4`}>
+                  <f.icon className={`w-4.5 h-4.5 ${f.color}`} />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2">{f.title}</h3>
                 <p className="text-sm text-white/40 leading-relaxed">{f.desc}</p>
               </div>
             </motion.div>

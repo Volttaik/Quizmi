@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { QuestlyWordmark } from "@/components/QuestlyLogo";
+import { QuizmiWordmark } from "@/components/QuizmiLogo";
 
 const links = {
-  Product: ["AI Quizzes", "Flashcards", "Summaries", "Concepts"],
+  Product: ["AI Quizzes", "Flashcards", "Summaries", "Analytics"],
   Resources: ["Documentation", "API", "Community", "Tutorials"],
   Company: ["About", "Careers", "Blog", "Press"],
   Legal: ["Privacy", "Terms", "Cookies"],
@@ -15,7 +15,7 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
           <div className="col-span-2 md:col-span-1">
             <Link href="/">
-              <QuestlyWordmark variant="dark" className="mb-4" />
+              <QuizmiWordmark variant="dark" className="mb-4" />
             </Link>
             <p className="text-white/25 text-xs leading-relaxed">
               Study smarter, not harder. AI-powered study tools for every learner.
@@ -40,8 +40,13 @@ export default function Footer() {
           ))}
         </div>
 
-        <div className="mt-16 pt-8 border-t border-white/[0.04] text-center text-white/20 text-xs">
-          &copy; {new Date().getFullYear()} Questly. All rights reserved.
+        <div className="mt-16 pt-8 border-t border-white/[0.04] flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-white/20 text-xs">
+            &copy; {new Date().getFullYear()} Quizmi. All rights reserved.
+          </p>
+          <p className="text-white/15 text-xs">
+            Made with ❤️ for students everywhere
+          </p>
         </div>
       </div>
     </footer>

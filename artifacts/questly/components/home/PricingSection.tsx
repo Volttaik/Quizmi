@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
+import { Check, Zap } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
@@ -13,6 +13,7 @@ const plans = [
     desc: "Get started",
     features: ["5 quizzes per month", "10 flashcard sets", "Basic AI summaries", "Mobile access"],
     popular: false,
+    cta: "Start Free",
   },
   {
     name: "Pro",
@@ -21,6 +22,7 @@ const plans = [
     desc: "For serious students",
     features: ["Unlimited quizzes", "Unlimited flashcards", "Advanced AI summaries", "Spaced repetition", "Study analytics", "Priority support"],
     popular: true,
+    cta: "Get Pro",
   },
   {
     name: "Team",
@@ -29,6 +31,7 @@ const plans = [
     desc: "Study groups",
     features: ["Everything in Pro", "Up to 10 members", "Shared study sets", "Collaboration tools", "Admin dashboard", "API access"],
     popular: false,
+    cta: "Get Team",
   },
 ];
 
@@ -50,7 +53,7 @@ export default function PricingSection() {
           </h2>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-4 max-w-5xl mx-auto items-start">
+        <div className="grid md:grid-cols-3 gap-5 max-w-5xl mx-auto items-start">
           {plans.map((plan, i) => (
             <motion.div
               key={plan.name}
@@ -60,18 +63,18 @@ export default function PricingSection() {
               transition={{ delay: i * 0.1 }}
               className={`rounded-3xl p-8 flex flex-col ${
                 plan.popular
-                  ? "bg-gradient-to-b from-[hsl(262,72%,55%)] to-[hsl(262,72%,42%)] text-white ring-1 ring-white/20 scale-[1.03]"
+                  ? "bg-gradient-to-b from-[hsl(262,72%,55%)] to-[hsl(262,72%,42%)] text-white ring-1 ring-white/20 scale-[1.03] shadow-2xl shadow-primary/30"
                   : "border border-white/[0.06] text-white"
               }`}
             >
               {plan.popular && (
-                <span className="inline-flex self-start px-3 py-1 rounded-full bg-white/20 text-[10px] font-bold uppercase tracking-wider mb-4">
-                  Most Popular
-                </span>
+                <div className="flex items-center gap-1.5 self-start px-3 py-1 rounded-full bg-white/20 text-[10px] font-bold uppercase tracking-wider mb-5">
+                  <Zap className="w-3 h-3" /> Most Popular
+                </div>
               )}
               <h3 className="text-lg font-bold">{plan.name}</h3>
               <div className="mt-3 flex items-baseline gap-1">
-                <span className="text-4xl font-bold">{plan.price}</span>
+                <span className="text-4xl font-black">{plan.price}</span>
                 <span className={`text-sm ${plan.popular ? "text-white/60" : "text-white/30"}`}>{plan.period}</span>
               </div>
               <p className={`mt-1 text-xs ${plan.popular ? "text-white/60" : "text-white/30"}`}>{plan.desc}</p>
@@ -79,7 +82,9 @@ export default function PricingSection() {
               <ul className="mt-8 space-y-3 flex-1">
                 {plan.features.map((f) => (
                   <li key={f} className="flex items-center gap-2.5 text-sm">
-                    <Check className={`w-4 h-4 flex-shrink-0 ${plan.popular ? "text-white/80" : "text-primary"}`} />
+                    <div className={`w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 ${plan.popular ? "bg-white/20" : "bg-primary/20"}`}>
+                      <Check className={`w-2.5 h-2.5 ${plan.popular ? "text-white" : "text-primary"}`} />
+                    </div>
                     <span className={plan.popular ? "text-white/90" : "text-white/50"}>{f}</span>
                   </li>
                 ))}
@@ -87,13 +92,13 @@ export default function PricingSection() {
 
               <Link href="/sign-up" className="mt-8">
                 <Button
-                  className={`w-full rounded-full ${
+                  className={`w-full rounded-full font-semibold ${
                     plan.popular
-                      ? "bg-white text-[hsl(262,72%,45%)] hover:bg-white/90 font-semibold"
+                      ? "bg-white text-[hsl(262,72%,45%)] hover:bg-white/90"
                       : "bg-white/[0.04] border border-white/10 text-white hover:bg-white/[0.08]"
                   }`}
                 >
-                  Get Started
+                  {plan.cta}
                 </Button>
               </Link>
             </motion.div>

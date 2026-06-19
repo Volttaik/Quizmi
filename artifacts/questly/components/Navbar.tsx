@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
-import { QuestlyWordmark } from "@/components/QuestlyLogo";
+import { QuizmiWordmark } from "@/components/QuizmiLogo";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 export default function Navbar({
@@ -23,21 +23,25 @@ export default function Navbar({
     >
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/">
-          <QuestlyWordmark variant={isDark ? "dark" : "light"} />
+          <QuizmiWordmark variant={isDark ? "dark" : "light"} />
         </Link>
 
         <div className="hidden md:flex items-center gap-8">
-          {["Features", "How it Works", "Pricing"].map((item) => (
+          {[
+            { label: "Features", href: "#features" },
+            { label: "How it Works", href: "#how-it-works" },
+            { label: "Pricing", href: "#pricing" },
+          ].map((item) => (
             <a
-              key={item}
-              href={`#${item.toLowerCase().replace(/ /g, "-")}`}
-              className={`text-sm font-medium ${
+              key={item.label}
+              href={item.href}
+              className={`text-sm font-medium transition-colors ${
                 isDark
                   ? "text-white/50 hover:text-white"
                   : "text-muted-foreground hover:text-foreground"
-              } transition-colors`}
+              }`}
             >
-              {item}
+              {item.label}
             </a>
           ))}
         </div>
@@ -48,20 +52,24 @@ export default function Navbar({
               <Button
                 variant="ghost"
                 size="sm"
-                className={`rounded-xl ${isDark ? "text-white/70 hover:text-white hover:bg-white/5" : ""}`}
+                className={`rounded-xl font-semibold ${
+                  isDark
+                    ? "text-white border border-white/20 hover:bg-white/10 hover:text-white hover:border-white/30"
+                    : "text-foreground hover:bg-muted"
+                }`}
               >
                 Log in
               </Button>
             </Link>
             <Link href="/sign-up">
-              <Button size="sm" className="rounded-xl px-5">
+              <Button size="sm" className="rounded-xl px-5 font-semibold shadow-lg shadow-primary/25">
                 Get Started
               </Button>
             </Link>
           </SignedOut>
           <SignedIn>
             <Link href="/dashboard">
-              <Button size="sm" className="rounded-xl px-5">
+              <Button size="sm" className="rounded-xl px-5 font-semibold">
                 Dashboard
               </Button>
             </Link>
@@ -84,26 +92,34 @@ export default function Navbar({
             isDark ? "bg-[hsl(222,47%,6%)]" : "bg-background"
           } border-t border-white/[0.06] p-4 space-y-3`}
         >
-          {["Features", "How it Works", "Pricing"].map((item) => (
+          {[
+            { label: "Features", href: "#features" },
+            { label: "How it Works", href: "#how-it-works" },
+            { label: "Pricing", href: "#pricing" },
+          ].map((item) => (
             <a
-              key={item}
-              href={`#${item.toLowerCase().replace(/ /g, "-")}`}
+              key={item.label}
+              href={item.href}
               className={`block text-sm font-medium py-2 ${
                 isDark ? "text-white/60" : "text-muted-foreground"
               }`}
             >
-              {item}
+              {item.label}
             </a>
           ))}
           <SignedOut>
             <div className="flex gap-2 pt-2">
               <Link href="/sign-in" className="flex-1">
-                <Button variant="outline" className="w-full rounded-xl" size="sm">
+                <Button
+                  variant="outline"
+                  className={`w-full rounded-xl text-sm font-semibold ${isDark ? "border-white/20 text-white bg-transparent hover:bg-white/10" : ""}`}
+                  size="sm"
+                >
                   Log in
                 </Button>
               </Link>
               <Link href="/sign-up" className="flex-1">
-                <Button className="w-full rounded-xl" size="sm">
+                <Button className="w-full rounded-xl text-sm font-semibold" size="sm">
                   Get Started
                 </Button>
               </Link>

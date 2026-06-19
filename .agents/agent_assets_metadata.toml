@@ -1,0 +1,32 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "Jqyk3cD6WF_F6Nla1bErV"
+uri = "file://artifacts/questly/public/logo.png"
+type = "image"
+title = "quizmi app logo purple"
+
+[[generated]]
+id = "h8Av7J_gL2RZ5IbjxSDAt"
+uri = "file://artifacts/questly/public/dashboard-preview.png"
+type = "image"
+title = "quizmi dashboard app screenshot"
+
+[[generated]]
+id = "diw-zEzgTjCDYjhooyURn"
+uri = "file://artifacts/questly/public/hero-visual.png"
+type = "image"
+title = "student AI quiz study visual"
+
+[[generated]]
+id = "BKE2AT4-nbwlTqRaBJm46"
+uri = "file://artifacts/questly/public/quiz-cards-visual.png"
+type = "image"
+title = "quiz cards UI floating 3D"
+
+[[generated]]
+id = "aBNs-Ii0C0GD4LcKI4Wgx"
+uri = "file://artifacts/questly/public/flashcard-preview.png"
+type = "image"
+title = "flashcard mobile phone mockup"

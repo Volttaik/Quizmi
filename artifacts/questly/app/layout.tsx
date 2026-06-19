@@ -4,9 +4,9 @@ import { Toaster } from "sonner";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Questly — Study Reimagined",
+  title: "Quizmi — Study Reimagined",
   description:
-    "Turn any material into quizzes, flashcards, and AI summaries. Master concepts faster than ever.",
+    "Turn any material into quizzes, flashcards, and AI summaries. Master concepts faster than ever with Quizmi.",
 };
 
 export default function RootLayout({

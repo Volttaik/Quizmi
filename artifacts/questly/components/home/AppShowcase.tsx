@@ -1,7 +1,36 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Sparkles, GraduationCap, BookMarked, ScrollText } from "lucide-react";
+import { GraduationCap, BookMarked, ScrollText, ArrowRight } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+
+const showcaseItems = [
+  {
+    icon: GraduationCap,
+    title: "Quiz Mode",
+    desc: "Test yourself with AI-generated multiple choice questions. Instant feedback on every answer.",
+    color: "text-[hsl(142,70%,45%)]",
+    bg: "bg-[hsl(142,70%,45%)]/10",
+    img: "/quiz-cards-visual.png",
+  },
+  {
+    icon: BookMarked,
+    title: "Flashcard Decks",
+    desc: "Flip cards, mark confidence, and let spaced repetition do the rest.",
+    color: "text-primary",
+    bg: "bg-primary/10",
+    img: "/flashcard-preview.png",
+  },
+  {
+    icon: ScrollText,
+    title: "AI Summaries",
+    desc: "Paste a chapter, get a structured summary with key points and definitions.",
+    color: "text-[hsl(200,90%,50%)]",
+    bg: "bg-[hsl(200,90%,50%)]/10",
+    img: "/hero-visual.png",
+  },
+];
 
 export default function AppShowcase() {
   return (
@@ -19,45 +48,42 @@ export default function AppShowcase() {
             <br />
             <span className="text-white/40">students actually study</span>
           </h2>
+          <p className="mt-4 text-sm text-white/35 max-w-md mx-auto">
+            Every feature was designed around real student workflows. No fluff, just tools that work.
+          </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-4 max-w-5xl mx-auto">
-          {[
-            {
-              icon: GraduationCap,
-              title: "Quiz Mode",
-              desc: "Test yourself with AI-generated multiple choice questions. Instant feedback on every answer.",
-              color: "text-[hsl(142,70%,45%)]",
-              bg: "bg-[hsl(142,70%,45%)]/10",
-            },
-            {
-              icon: BookMarked,
-              title: "Flashcard Decks",
-              desc: "Flip cards, mark confidence, and let spaced repetition do the rest.",
-              color: "text-primary",
-              bg: "bg-primary/10",
-            },
-            {
-              icon: ScrollText,
-              title: "AI Summaries",
-              desc: "Paste a chapter, get a structured summary with key points and definitions.",
-              color: "text-[hsl(200,90%,50%)]",
-              bg: "bg-[hsl(200,90%,50%)]/10",
-            },
-          ].map((item, i) => (
+        <div className="grid md:grid-cols-3 gap-5 max-w-5xl mx-auto">
+          {showcaseItems.map((item, i) => (
             <motion.div
               key={item.title}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="rounded-3xl border border-white/[0.06] p-8 hover:border-white/[0.1] transition-colors"
+              className="group rounded-3xl border border-white/[0.06] overflow-hidden hover:border-white/[0.14] transition-all duration-500"
             >
-              <div className={`w-12 h-12 rounded-2xl ${item.bg} border border-white/[0.05] flex items-center justify-center mb-6`}>
-                <item.icon className={`w-5 h-5 ${item.color}`} />
+              {/* Image */}
+              <div className="relative h-44 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[hsl(222,47%,6%)] z-10" />
+                <Image
+                  src={item.img}
+                  alt={item.title}
+                  fill
+                  className="object-cover opacity-50 group-hover:opacity-65 group-hover:scale-105 transition-all duration-700"
+                />
+                <div className={`absolute top-4 left-4 z-20 w-10 h-10 rounded-2xl ${item.bg} border border-white/[0.08] flex items-center justify-center`}>
+                  <item.icon className={`w-4.5 h-4.5 ${item.color}`} />
+                </div>
               </div>
-              <h3 className="text-lg font-bold text-white mb-3">{item.title}</h3>
-              <p className="text-sm text-white/40 leading-relaxed">{item.desc}</p>
+
+              <div className="p-6">
+                <h3 className="text-base font-bold text-white mb-2">{item.title}</h3>
+                <p className="text-sm text-white/40 leading-relaxed mb-4">{item.desc}</p>
+                <Link href="/sign-up" className={`inline-flex items-center gap-1.5 text-xs font-bold ${item.color} hover:opacity-80 transition-opacity`}>
+                  Try it free <ArrowRight className="w-3 h-3" />
+                </Link>
+              </div>
             </motion.div>
           ))}
         </div>
