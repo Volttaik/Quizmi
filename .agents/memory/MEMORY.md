@@ -1,2 +1,1 @@
-- [Vite config env vars](vite-env-fallbacks.md) — react-vite scaffold throws on missing PORT/BASE_PATH; add defaults so it starts without platform injection
-- [Clerk Quizmi Setup](clerk-quizmi-setup.md) — Clerk fully wired into questly app; key pitfalls about CSS layers, optimize:false, and /*? routes
+- [Quizmi API server setup](quizmi-api-server.md) — all 12 routes inlined in api-server/src/routes/; no separate packages/db workspace package.

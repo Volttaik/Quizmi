@@ -10,6 +10,11 @@ import {
 } from "./middlewares/clerkProxyMiddleware";
 import router from "./routes";
 import { logger } from "./lib/logger";
+import { ensureTablesExist } from "./lib/db";
+
+ensureTablesExist().catch((err) => {
+  console.error("Failed to initialize database tables:", err);
+});
 
 const app: Express = express();
 

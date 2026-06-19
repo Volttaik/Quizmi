@@ -28,13 +28,8 @@ export default function PromoBanner() {
           </Link>
         </div>
 
-        <div className="relative w-28 h-28 flex-shrink-0 rounded-2xl overflow-hidden">
-          <img
-            src="/hero-visual.png"
-            alt="Study smarter"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+        <div className="relative w-28 h-28 flex-shrink-0 rounded-2xl overflow-hidden bg-primary/20 flex items-center justify-center">
+          <Sparkles className="w-12 h-12 text-primary/60" />
         </div>
       </div>
     </div>
