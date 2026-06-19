@@ -1,7 +1,6 @@
 "use client";
 
 import { Zap, Brain, Layers, Target } from "lucide-react";
-import { motion } from "framer-motion";
 import Image from "next/image";
 
 const features = [
@@ -33,7 +32,7 @@ const features = [
     icon: Target,
     title: "Pinpoint Weak Spots",
     desc: "Identify exactly which topics you struggle with. Focus your time where it matters, skip what you already know.",
-    img: null,
+    img: "/dashboard-preview.png",
     color: "text-[hsl(142,70%,45%)]",
     bg: "bg-[hsl(142,70%,45%)]/10",
   },
@@ -43,49 +42,31 @@ export default function FeaturesSection() {
   return (
     <section id="features" className="py-28 relative">
       <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-20"
-        >
+        <div className="text-center mb-20">
           <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Features</span>
           <h2 className="text-3xl md:text-5xl font-bold text-white mt-4 tracking-tight">
             Everything you need to
             <br />
             <span className="text-white/40">ace every exam</span>
           </h2>
-        </motion.div>
+        </div>
 
         <div className="grid md:grid-cols-2 gap-5 max-w-5xl mx-auto">
-          {features.map((f, i) => (
-            <motion.div
+          {features.map((f) => (
+            <div
               key={f.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
               className="group relative rounded-3xl border border-white/[0.06] overflow-hidden hover:border-white/[0.14] transition-all duration-500"
             >
               {/* Image preview area */}
-              {f.img && (
-                <div className="relative h-48 overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[hsl(222,47%,6%)] z-10" />
-                  <Image
-                    src={f.img}
-                    alt={f.title}
-                    fill
-                    className="object-cover object-top opacity-60 group-hover:opacity-75 group-hover:scale-105 transition-all duration-700"
-                  />
-                </div>
-              )}
-              {!f.img && (
-                <div className="h-48 bg-gradient-to-br from-white/[0.02] to-white/[0.05] flex items-center justify-center">
-                  <div className={`w-16 h-16 rounded-3xl ${f.bg} border border-white/[0.08] flex items-center justify-center`}>
-                    <f.icon className={`w-7 h-7 ${f.color}`} />
-                  </div>
-                </div>
-              )}
+              <div className="relative h-48 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[hsl(222,47%,6%)] z-10" />
+                <Image
+                  src={f.img}
+                  alt={f.title}
+                  fill
+                  className="object-cover object-top opacity-60 group-hover:opacity-75 group-hover:scale-105 transition-all duration-700"
+                />
+              </div>
 
               <div className="p-7">
                 <div className={`w-10 h-10 rounded-2xl ${f.bg} border border-white/[0.06] flex items-center justify-center mb-4`}>
@@ -94,7 +75,7 @@ export default function FeaturesSection() {
                 <h3 className="text-xl font-bold text-white mb-2">{f.title}</h3>
                 <p className="text-sm text-white/40 leading-relaxed">{f.desc}</p>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

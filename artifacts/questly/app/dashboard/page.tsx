@@ -31,28 +31,45 @@ export default function DashboardPage() {
       .then((r) => r.json())
       .then((d) => setUserData(d))
       .catch(() => {});
-
     fetch("/api/credits/transactions")
       .then((r) => r.json())
-      .then((d) => setTransactions(d))
+      .then((d) => setTransactions(Array.isArray(d) ? d : []))
       .catch(() => {});
   }, []);
 
   return (
-    <div className="min-h-screen bg-background pb-24">
-      <div className="absolute top-0 left-0 right-0 h-[340px] overflow-hidden">
-        <div className="w-full h-full bg-gradient-to-br from-[hsl(262,72%,40%)] via-[hsl(262,72%,35%)] to-[hsl(270,72%,28%)]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />
+    <div className="min-h-screen bg-background dark:bg-background pb-28 relative">
+      {/* CSS mesh gradient header — no photo */}
+      <div className="absolute top-0 left-0 right-0 h-[300px] pointer-events-none overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(262,72%,35%)] via-[hsl(265,65%,30%)] to-[hsl(275,60%,24%)]" />
+        {/* Mesh blobs */}
+        <div className="absolute top-0 left-0 w-72 h-72 bg-primary/30 rounded-full blur-[80px] -translate-x-1/3 -translate-y-1/3" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-[hsl(280,72%,50%)]/25 rounded-full blur-[70px] translate-x-1/4 -translate-y-1/3" />
+        <div className="absolute top-1/2 left-1/2 w-56 h-56 bg-[hsl(200,90%,50%)]/10 rounded-full blur-[60px] -translate-x-1/2 -translate-y-1/2" />
+        {/* Dot grid */}
+        <svg className="absolute inset-0 w-full h-full opacity-[0.06]" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="dash-dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+              <circle cx="1" cy="1" r="1" fill="white" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#dash-dots)" />
+        </svg>
+        {/* Fade to bg */}
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
       </div>
 
       <div className="relative max-w-lg mx-auto px-4 pt-6">
         <DashboardHeader name={userData?.name} />
         <CreditCard credits={userData?.credits ?? 0} plan={userData?.plan ?? "free"} />
-        <RecentTransactions transactions={transactions} />
+        <div className="mb-3 px-0.5">
+          <h3 className="text-sm font-extrabold text-foreground">Quick Actions</h3>
+        </div>
         <ActionCards />
+        <RecentTransactions transactions={transactions} />
         <PromoBanner />
       </div>
+
       <BottomNav />
     </div>
   );

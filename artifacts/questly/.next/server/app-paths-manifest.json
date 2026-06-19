@@ -1,6 +1,8 @@
 {
-  "/create-quiz/page": "app/create-quiz/page.js",
+  "/page": "app/page.js",
   "/dashboard/page": "app/dashboard/page.js",
-  "/sign-up/[[...sign-up]]/page": "app/sign-up/[[...sign-up]]/page.js",
-  "/page": "app/page.js"
+  "/buy-credits/page": "app/buy-credits/page.js",
+  "/create-quiz/page": "app/create-quiz/page.js",
+  "/demo/page": "app/demo/page.js",
+  "/sign-in/[[...sign-in]]/page": "app/sign-in/[[...sign-in]]/page.js"
 }
