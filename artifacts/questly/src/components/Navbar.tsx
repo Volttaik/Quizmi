@@ -1,8 +1,9 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogOut } from "lucide-react";
 import { useState } from "react";
 import { QuizmiWordmark } from "@/components/QuizmiLogo";
+import { useClerk, useUser, Show } from "@clerk/react";
 
 export default function Navbar({
   variant = "light",
@@ -11,6 +12,10 @@ export default function Navbar({
 }) {
   const [open, setOpen] = useState(false);
   const isDark = variant === "dark";
+  const { signOut } = useClerk();
+  const { user } = useUser();
+
+  const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 
   return (
     <nav
@@ -44,24 +49,46 @@ export default function Navbar({
         </div>
 
         <div className="hidden md:flex items-center gap-3">
-          <Link to="/sign-in">
+          <Show when="signed-out">
+            <Link to="/sign-in">
+              <Button
+                variant="ghost"
+                size="sm"
+                className={`rounded-xl font-semibold ${
+                  isDark
+                    ? "text-white border border-white/20 hover:bg-white/10 hover:text-white hover:border-white/30"
+                    : "text-foreground hover:bg-muted"
+                }`}
+              >
+                Log in
+              </Button>
+            </Link>
+            <Link to="/sign-up">
+              <Button size="sm" className="rounded-xl px-5 font-semibold shadow-lg shadow-primary/25">
+                Get Started
+              </Button>
+            </Link>
+          </Show>
+          <Show when="signed-in">
+            <Link to="/demo">
+              <Button size="sm" className="rounded-xl px-5 font-semibold shadow-lg shadow-primary/25">
+                Dashboard
+              </Button>
+            </Link>
             <Button
               variant="ghost"
               size="sm"
-              className={`rounded-xl font-semibold ${
+              onClick={() => signOut({ redirectUrl: basePath || "/" })}
+              className={`rounded-xl font-semibold gap-1.5 ${
                 isDark
-                  ? "text-white border border-white/20 hover:bg-white/10 hover:text-white hover:border-white/30"
-                  : "text-foreground hover:bg-muted"
+                  ? "text-white/60 hover:text-white hover:bg-white/10"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              Log in
+              <LogOut className="w-3.5 h-3.5" />
+              Sign out
             </Button>
-          </Link>
-          <Link to="/sign-up">
-            <Button size="sm" className="rounded-xl px-5 font-semibold shadow-lg shadow-primary/25">
-              Get Started
-            </Button>
-          </Link>
+          </Show>
         </div>
 
         <button className="md:hidden" onClick={() => setOpen(!open)}>
@@ -87,6 +114,7 @@ export default function Navbar({
             <a
               key={item.label}
               href={item.href}
+              onClick={() => setOpen(false)}
               className={`block text-sm font-medium py-2 ${
                 isDark ? "text-white/60" : "text-muted-foreground"
               }`}
@@ -95,20 +123,37 @@ export default function Navbar({
             </a>
           ))}
           <div className="flex gap-2 pt-2">
-            <Link to="/sign-in" className="flex-1">
+            <Show when="signed-out">
+              <Link to="/sign-in" className="flex-1" onClick={() => setOpen(false)}>
+                <Button
+                  variant="outline"
+                  className={`w-full rounded-xl text-sm font-semibold ${isDark ? "border-white/20 text-white bg-transparent hover:bg-white/10" : ""}`}
+                  size="sm"
+                >
+                  Log in
+                </Button>
+              </Link>
+              <Link to="/sign-up" className="flex-1" onClick={() => setOpen(false)}>
+                <Button className="w-full rounded-xl text-sm font-semibold" size="sm">
+                  Get Started
+                </Button>
+              </Link>
+            </Show>
+            <Show when="signed-in">
+              <Link to="/demo" className="flex-1" onClick={() => setOpen(false)}>
+                <Button className="w-full rounded-xl text-sm font-semibold" size="sm">
+                  Dashboard
+                </Button>
+              </Link>
               <Button
                 variant="outline"
-                className={`w-full rounded-xl text-sm font-semibold ${isDark ? "border-white/20 text-white bg-transparent hover:bg-white/10" : ""}`}
                 size="sm"
+                onClick={() => signOut({ redirectUrl: basePath || "/" })}
+                className={`flex-1 rounded-xl text-sm font-semibold ${isDark ? "border-white/20 text-white bg-transparent hover:bg-white/10" : ""}`}
               >
-                Log in
+                Sign out
               </Button>
-            </Link>
-            <Link to="/sign-up" className="flex-1">
-              <Button className="w-full rounded-xl text-sm font-semibold" size="sm">
-                Get Started
-              </Button>
-            </Link>
+            </Show>
           </div>
         </div>
       )}

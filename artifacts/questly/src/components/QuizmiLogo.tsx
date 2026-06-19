@@ -11,27 +11,12 @@ export default function QuizmiLogo({
       style={{ width: size, height: size }}
     >
       <img
-        src="/logo.png"
+        src="/logo.svg"
         alt="Quizmi"
         width={size}
         height={size}
-        className="rounded-xl object-cover w-full h-full"
-        onError={(e) => {
-          (e.currentTarget as HTMLImageElement).style.display = "none";
-          const fallback = e.currentTarget.nextElementSibling as HTMLElement;
-          if (fallback) fallback.style.display = "flex";
-        }}
+        className="rounded-xl w-full h-full"
       />
-      <div
-        className="absolute inset-0 rounded-xl items-center justify-center text-white font-black text-center"
-        style={{
-          background: "linear-gradient(135deg, hsl(262,72%,55%) 0%, hsl(270,72%,40%) 100%)",
-          fontSize: size * 0.45,
-          display: "none",
-        }}
-      >
-        Q
-      </div>
     </div>
   );
 }

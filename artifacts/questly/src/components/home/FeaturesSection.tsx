@@ -5,7 +5,7 @@ const features = [
     icon: Zap,
     title: "AI-Generated Quizzes",
     desc: "Paste your notes. Get a full quiz in seconds. Our AI understands context, creates targeted questions, and adapts to your level.",
-    img: "/quiz-cards-visual.png",
+    img: "/feature-quiz.png",
     color: "text-primary",
     bg: "bg-primary/10",
   },
@@ -13,7 +13,7 @@ const features = [
     icon: Brain,
     title: "Smart Summaries",
     desc: "Extract the essence of any material. Key concepts, definitions, and relationships — distilled into crystal clear summaries.",
-    img: "/hero-visual.png",
+    img: "/feature-summary.png",
     color: "text-[hsl(280,72%,60%)]",
     bg: "bg-[hsl(280,72%,60%)]/10",
   },
@@ -21,7 +21,7 @@ const features = [
     icon: Layers,
     title: "Adaptive Flashcards",
     desc: "Spaced repetition that actually works. Cards reappear at the perfect moment — right before you forget.",
-    img: "/flashcard-preview.png",
+    img: "/feature-flashcards.png",
     color: "text-[hsl(199,89%,48%)]",
     bg: "bg-[hsl(199,89%,48%)]/10",
   },
@@ -29,7 +29,7 @@ const features = [
     icon: Target,
     title: "Pinpoint Weak Spots",
     desc: "Identify exactly which topics you struggle with. Focus your time where it matters, skip what you already know.",
-    img: "/dashboard-preview.png",
+    img: "/feature-progress.png",
     color: "text-[hsl(142,70%,45%)]",
     bg: "bg-[hsl(142,70%,45%)]/10",
   },
@@ -54,12 +54,12 @@ export default function FeaturesSection() {
               key={f.title}
               className="group relative rounded-3xl border border-white/[0.06] overflow-hidden hover:border-white/[0.14] transition-all duration-500"
             >
-              <div className="relative h-48 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[hsl(222,47%,6%)] z-10" />
+              <div className="relative h-52 overflow-hidden bg-white/[0.03]">
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[hsl(222,47%,6%)] z-10" />
                 <img
                   src={f.img}
                   alt={f.title}
-                  className="w-full h-full object-cover object-top opacity-60 group-hover:opacity-75 group-hover:scale-105 transition-all duration-700"
+                  className="w-full h-full object-cover object-center opacity-90 group-hover:scale-105 transition-all duration-700"
                 />
               </div>
 

@@ -1,0 +1,26 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "QO97fvnk8VmGDBD8JQFjd"
+uri = "file://artifacts/questly/public/feature-quiz.png"
+type = "image"
+title = "quiz feature illustration"
+
+[[generated]]
+id = "fhgnrQ3nESo_n_qDdNs9f"
+uri = "file://artifacts/questly/public/feature-summary.png"
+type = "image"
+title = "summary feature illustration"
+
+[[generated]]
+id = "uaL0K74fIwt-_A91pncrJ"
+uri = "file://artifacts/questly/public/feature-flashcards.png"
+type = "image"
+title = "flashcards feature illustration"
+
+[[generated]]
+id = "a7MhEbrjyz0QqGsneaHoc"
+uri = "file://artifacts/questly/public/feature-progress.png"
+type = "image"
+title = "progress tracking illustration"

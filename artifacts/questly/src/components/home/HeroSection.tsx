@@ -77,7 +77,7 @@ export default function HeroSection() {
                 <div className="absolute top-3 left-1/2 -translate-x-1/2 w-24 h-5 bg-black rounded-full z-20" />
                 <div className="rounded-[36px] overflow-hidden bg-[hsl(220,20%,97%)] aspect-[9/19.5]">
                   <img
-                    src="/dashboard-screenshot.jpg"
+                    src="/dashboard-screenshot.png"
                     alt="Quizmi Dashboard"
                     width={280}
                     height={607}
