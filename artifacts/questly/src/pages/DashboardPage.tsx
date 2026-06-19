@@ -57,10 +57,10 @@ export default function DashboardPage() {
       <div className="relative max-w-lg mx-auto px-4 pt-6">
         <DashboardHeader name={userData?.name} />
         <CreditCard credits={userData?.credits ?? 0} plan={userData?.plan ?? "free"} />
+        <StudySlideshow />
         <div className="mb-3 px-0.5">
           <h3 className="text-sm font-extrabold text-foreground">Quick Actions</h3>
         </div>
-        <StudySlideshow />
         <ActionCards />
         <RecentTransactions transactions={transactions} />
         <PromoBanner />

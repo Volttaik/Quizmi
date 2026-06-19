@@ -1,4 +1,5 @@
 import { Sparkles, ArrowRight } from "lucide-react";
+
 import { Link } from "wouter";
 
 export default function PromoBanner() {
@@ -28,8 +29,8 @@ export default function PromoBanner() {
           </Link>
         </div>
 
-        <div className="relative w-28 h-28 flex-shrink-0 rounded-2xl overflow-hidden bg-primary/20 flex items-center justify-center">
-          <Sparkles className="w-12 h-12 text-primary/60" />
+        <div className="relative w-28 h-28 flex-shrink-0 rounded-2xl overflow-hidden bg-primary/20">
+          <img src="/promo-banner.png" alt="AI Study" className="w-full h-full object-cover" />
         </div>
       </div>
     </div>

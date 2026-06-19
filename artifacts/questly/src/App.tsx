@@ -8,7 +8,6 @@ import { Toaster } from "sonner";
 
 import HomePage from "@/pages/HomePage";
 import DashboardPage from "@/pages/DashboardPage";
-import DemoPage from "@/pages/DemoPage";
 import CreateQuizPage from "@/pages/CreateQuizPage";
 import QuizPage from "@/pages/QuizPage";
 import FlashcardsPage from "@/pages/FlashcardsPage";
@@ -16,6 +15,11 @@ import SummaryPage from "@/pages/SummaryPage";
 import BuyCreditsPage from "@/pages/BuyCreditsPage";
 import ProfilePage from "@/pages/ProfilePage";
 import HistoryPage from "@/pages/HistoryPage";
+import AccountDetailsPage from "@/pages/settings/AccountDetailsPage";
+import NotificationsPage from "@/pages/settings/NotificationsPage";
+import PrivacySecurityPage from "@/pages/settings/PrivacySecurityPage";
+import HelpSupportPage from "@/pages/settings/HelpSupportPage";
+import TermsPrivacyPage from "@/pages/settings/TermsPrivacyPage";
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, staleTime: 30_000 } },
@@ -42,7 +46,7 @@ const clerkAppearance = {
   options: {
     logoPlacement: "inside" as const,
     logoLinkUrl: basePath || "/",
-    logoImageUrl: `${window.location.origin}${basePath}/logo.svg`,
+    logoImageUrl: `${window.location.origin}${basePath}/logo.png`,
   },
   variables: {
     colorPrimary: "hsl(262, 72%, 55%)",
@@ -98,11 +102,11 @@ function ClerkSignInPage() {
           routing="path"
           path={`${basePath}/sign-in`}
           signUpUrl={`${basePath}/sign-up`}
-          fallbackRedirectUrl={`${basePath}/demo`}
+          fallbackRedirectUrl={`${basePath}/dashboard`}
         />
         <p className="text-center text-xs text-white/20 mt-4">
-          <a href={`${basePath}/demo`} className="hover:text-white/40 transition-colors">
-            Try demo without account →
+          <a href={`${basePath}/sign-up`} className="hover:text-white/40 transition-colors">
+            Create free account →
           </a>
         </p>
       </div>
@@ -123,7 +127,7 @@ function ClerkSignUpPage() {
           routing="path"
           path={`${basePath}/sign-up`}
           signInUrl={`${basePath}/sign-in`}
-          fallbackRedirectUrl={`${basePath}/demo`}
+          fallbackRedirectUrl={`${basePath}/dashboard`}
         />
       </div>
     </div>
@@ -208,7 +212,7 @@ function AppRoutes() {
           <Route path="/" component={HomeRedirect} />
           <Route path="/sign-in/*?" component={ClerkSignInPage} />
           <Route path="/sign-up/*?" component={ClerkSignUpPage} />
-          <Route path="/demo" component={DemoPage} />
+          <Route path="/demo">{() => <Redirect to="/sign-in" />}</Route>
           <Route path="/dashboard">
             {() => <ProtectedRoute component={DashboardPage} />}
           </Route>
@@ -230,6 +234,21 @@ function AppRoutes() {
           </Route>
           <Route path="/history">
             {() => <ProtectedRoute component={HistoryPage} />}
+          </Route>
+          <Route path="/settings/account">
+            {() => <ProtectedRoute component={AccountDetailsPage} />}
+          </Route>
+          <Route path="/settings/notifications">
+            {() => <ProtectedRoute component={NotificationsPage} />}
+          </Route>
+          <Route path="/settings/privacy">
+            {() => <ProtectedRoute component={PrivacySecurityPage} />}
+          </Route>
+          <Route path="/settings/help">
+            {() => <ProtectedRoute component={HelpSupportPage} />}
+          </Route>
+          <Route path="/settings/terms">
+            {() => <ProtectedRoute component={TermsPrivacyPage} />}
           </Route>
           <Route>{() => <Redirect to="/" />}</Route>
         </Switch>

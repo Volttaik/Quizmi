@@ -1,6 +1,7 @@
 import { Bell, Sun, Moon } from "lucide-react";
 import { useTheme } from "@/components/ThemeProvider";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 interface Props {
   name?: string;
@@ -54,7 +55,10 @@ export default function DashboardHeader({ name, isDemo, demoAvatar }: Props) {
             {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </button>
         )}
-        <button className="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-colors">
+        <button
+          onClick={() => toast.info("No new notifications", { description: "You're all caught up!" })}
+          className="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-colors"
+        >
           <Bell className="w-4 h-4" />
         </button>
       </div>

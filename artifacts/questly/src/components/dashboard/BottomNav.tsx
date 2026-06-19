@@ -20,9 +20,9 @@ export default function BottomNav() {
 
           if (center) {
             return (
-              <Link key={label} to={path} className="flex flex-col items-center -mt-6">
-                <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/35 mb-0.5">
-                  <Icon className="w-6 h-6 text-white" />
+              <Link key={label} to={path} className="flex flex-col items-center -mt-4">
+                <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/35 mb-0.5">
+                  <Icon className="w-5 h-5 text-white" />
                 </div>
                 <span className="text-[10px] font-semibold text-primary">{label}</span>
               </Link>

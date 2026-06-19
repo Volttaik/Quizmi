@@ -35,16 +35,22 @@ title = "quizmi logo icon"
 id = "gspgvkcqZhUWJCs30iVE-"
 uri = "file://artifacts/questly/public/study-1.png"
 type = "image"
-title = "student studying cafe"
+title = "generated_image"
 
 [[generated]]
 id = "UGKRzZsn3vE6hTIbyKFM5"
 uri = "file://artifacts/questly/public/study-2.png"
 type = "image"
-title = "student library studying"
+title = "generated_image"
 
 [[generated]]
 id = "ZgQ6Cg7yVe1T03TbFhz4L"
 uri = "file://artifacts/questly/public/study-3.png"
 type = "image"
-title = "group study session"
+title = "generated_image"
+
+[[generated]]
+id = "aKi8rre66iEo76Fbw5CBr"
+uri = "file://artifacts/questly/public/promo-banner.png"
+type = "image"
+title = "generated_image"

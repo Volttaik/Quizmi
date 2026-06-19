@@ -65,14 +65,14 @@ export default function ProfilePage() {
         </div>
 
         <div className="bg-card rounded-2xl overflow-hidden border border-border/40 shadow-sm mb-4">
-          <SettingRow icon={User} label="Account Details" />
-          <SettingRow icon={Bell} label="Notifications" />
-          <SettingRow icon={Shield} label="Privacy & Security" />
+          <SettingRow icon={User} label="Account Details" to="/settings/account" />
+          <SettingRow icon={Bell} label="Notifications" to="/settings/notifications" />
+          <SettingRow icon={Shield} label="Privacy & Security" to="/settings/privacy" />
         </div>
 
         <div className="bg-card rounded-2xl overflow-hidden border border-border/40 shadow-sm mb-4">
-          <SettingRow icon={HelpCircle} label="Help & Support" />
-          <SettingRow icon={FileText} label="Terms & Privacy" />
+          <SettingRow icon={HelpCircle} label="Help & Support" to="/settings/help" />
+          <SettingRow icon={FileText} label="Terms & Privacy" to="/settings/terms" />
         </div>
 
         <button
@@ -89,14 +89,14 @@ export default function ProfilePage() {
   );
 }
 
-function SettingRow({ icon: Icon, label }: { icon: React.ElementType; label: string }) {
+function SettingRow({ icon: Icon, label, to }: { icon: React.ElementType; label: string; to: string }) {
   return (
-    <button className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-muted/50 transition-colors border-b border-border/30 last:border-0">
+    <Link to={to} className="flex items-center gap-3 px-4 py-3.5 hover:bg-muted/50 transition-colors border-b border-border/30 last:border-0">
       <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
         <Icon className="w-4 h-4 text-primary" />
       </div>
       <span className="flex-1 text-sm font-semibold text-foreground text-left">{label}</span>
       <ChevronRight className="w-4 h-4 text-muted-foreground" />
-    </button>
+    </Link>
   );
 }
