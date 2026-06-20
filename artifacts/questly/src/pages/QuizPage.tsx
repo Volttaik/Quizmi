@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, RotateCcw, ArrowRight, Loader2, BookOpen, Trophy, Frown, Smile } from "lucide-react";
+import { ArrowLeft, RotateCcw, ArrowRight, Loader2, BookOpen, Trophy, Frown, Smile, Share2 } from "lucide-react";
+import { shareContent } from "@/lib/share";
+import { toast } from "sonner";
 import { useLocation, useParams, Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -235,6 +237,20 @@ function ResultsScreen({ score, total, quiz, onRestart, onDash }: {
         </Button>
         <Button onClick={onDash} className="flex-1 rounded-full gap-2">
           Dashboard <ArrowRight className="w-4 h-4" />
+        </Button>
+      </motion.div>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.65 }}>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="rounded-full gap-2 text-muted-foreground text-xs"
+          onClick={async () => {
+            const result = await shareContent({ title: `Quiz Result — ${pct}%`, text: `I just scored ${pct}% (${score}/${total}) on a quiz! Study smarter with Quizmi AI 🧠` });
+            if (result === "copied") toast.success("Score copied to clipboard!");
+            else if (result === "shared") toast.success("Shared!");
+          }}
+        >
+          <Share2 className="w-3.5 h-3.5" /> Share Result
         </Button>
       </motion.div>
     </motion.div>

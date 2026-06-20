@@ -1,71 +1,86 @@
 import {
-  pgTable,
-  serial,
-  text,
+  sqliteTable,
   integer,
-  jsonb,
-  timestamp,
-  varchar,
-} from "drizzle-orm/pg-core";
+  text,
+} from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
+import { sql } from "drizzle-orm";
 import { z } from "zod/v4";
 
-export const usersTable = pgTable("users", {
-  id: serial("id").primaryKey(),
-  clerkId: varchar("clerk_id", { length: 255 }).notNull().unique(),
+export const usersTable = sqliteTable("users", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  clerkId: text("clerk_id").notNull().unique(),
   name: text("name").notNull().default("Learner"),
   email: text("email").notNull().default(""),
   credits: integer("credits").notNull().default(100),
-  plan: varchar("plan", { length: 50 }).notNull().default("free"),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
+  plan: text("plan").notNull().default("free"),
+  avatarUrl: text("avatar_url"),
+  createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
 });
 
-export const quizzesTable = pgTable("quizzes", {
-  id: serial("id").primaryKey(),
-  userId: varchar("user_id", { length: 255 }).notNull(),
+export const quizzesTable = sqliteTable("quizzes", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: text("user_id").notNull(),
   title: text("title").notNull(),
   topic: text("topic").notNull(),
-  difficulty: varchar("difficulty", { length: 20 }).notNull().default("medium"),
-  questions: jsonb("questions").notNull().default([]),
+  difficulty: text("difficulty").notNull().default("medium"),
+  questions: text("questions", { mode: "json" }).notNull().default("[]"),
   questionCount: integer("question_count").notNull().default(0),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
+  createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
 });
 
-export const quizAttemptsTable = pgTable("quiz_attempts", {
-  id: serial("id").primaryKey(),
-  userId: varchar("user_id", { length: 255 }).notNull(),
+export const quizAttemptsTable = sqliteTable("quiz_attempts", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: text("user_id").notNull(),
   quizId: integer("quiz_id").notNull(),
   score: integer("score").notNull(),
   total: integer("total").notNull(),
-  completedAt: timestamp("completed_at").notNull().defaultNow(),
+  completedAt: text("completed_at").notNull().default(sql`(datetime('now'))`),
 });
 
-export const flashcardSetsTable = pgTable("flashcard_sets", {
-  id: serial("id").primaryKey(),
-  userId: varchar("user_id", { length: 255 }).notNull(),
+export const flashcardSetsTable = sqliteTable("flashcard_sets", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: text("user_id").notNull(),
   title: text("title").notNull(),
   topic: text("topic").notNull(),
-  cards: jsonb("cards").notNull().default([]),
+  cards: text("cards", { mode: "json" }).notNull().default("[]"),
   count: integer("count").notNull().default(0),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
+  createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
 });
 
-export const summariesTable = pgTable("summaries", {
-  id: serial("id").primaryKey(),
-  userId: varchar("user_id", { length: 255 }).notNull(),
+export const summariesTable = sqliteTable("summaries", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: text("user_id").notNull(),
   topic: text("topic").notNull(),
   content: text("content").notNull(),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
+  createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
 });
 
-export const creditTransactionsTable = pgTable("credit_transactions", {
-  id: serial("id").primaryKey(),
-  userId: varchar("user_id", { length: 255 }).notNull(),
+export const creditTransactionsTable = sqliteTable("credit_transactions", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: text("user_id").notNull(),
   amount: integer("amount").notNull(),
-  type: varchar("type", { length: 50 }).notNull().default("usage"),
+  type: text("type").notNull().default("usage"),
   description: text("description").notNull().default(""),
   reference: text("reference").unique(),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
+  createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
+});
+
+export const chatSessionsTable = sqliteTable("chat_sessions", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: text("user_id").notNull(),
+  title: text("title").notNull().default("New Chat"),
+  createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
+  updatedAt: text("updated_at").notNull().default(sql`(datetime('now'))`),
+});
+
+export const chatMessagesTable = sqliteTable("chat_messages", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  sessionId: integer("session_id").notNull(),
+  userId: text("user_id").notNull(),
+  role: text("role").notNull(),
+  content: text("content").notNull(),
+  createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
 });
 
 export const insertUserSchema = createInsertSchema(usersTable).omit({ id: true, createdAt: true });
@@ -81,3 +96,5 @@ export type QuizAttempt = typeof quizAttemptsTable.$inferSelect;
 export type FlashcardSet = typeof flashcardSetsTable.$inferSelect;
 export type Summary = typeof summariesTable.$inferSelect;
 export type CreditTransaction = typeof creditTransactionsTable.$inferSelect;
+export type ChatSession = typeof chatSessionsTable.$inferSelect;
+export type ChatMessage = typeof chatMessagesTable.$inferSelect;

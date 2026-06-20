@@ -5,11 +5,12 @@ import { Label } from "@/components/ui/label";
 import { useState, useRef, useEffect } from "react";
 import {
   RotateCcw, ChevronLeft, ChevronRight, Layers, ArrowLeft,
-  Upload, FileText, X, Sparkles, Loader2, Plus,
+  Upload, FileText, X, Sparkles, Loader2, Plus, Share2,
 } from "lucide-react";
+import { shareContent } from "@/lib/share";
+import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "wouter";
-import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface FlashCard { front: string; back: string; }

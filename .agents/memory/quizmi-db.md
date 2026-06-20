@@ -1,22 +1,39 @@
 ---
 name: Quizmi DB Pattern
-description: How the API server connects to PostgreSQL — must use @workspace/db, never import pg directly.
+description: How the API server connects to the database — now Turso/libsql, native binary quirks, and dev fallback.
 ---
 
 # Quizmi DB Pattern
 
-The API server (`artifacts/api-server`) must import `db` and `pool` from `@workspace/db`, never import `pg` directly.
+The project migrated from PostgreSQL to Turso (libsql + drizzle-orm/libsql).
 
-**Why:** esbuild bundles the api-server and cannot resolve `pg` when imported directly in api-server code — `pg` is only a dependency of `lib/db`, not of `api-server`. Importing it directly causes: `Could not resolve "pg"` build error.
+## Native Binary Fix (libsql on Replit)
 
-**How to apply:**
-```typescript
-// CORRECT
-import { db, pool } from "@workspace/db";
-
-// WRONG — causes build error
-import pg from "pg";
-const pool = new pg.Pool(...);
+`@libsql/linux-x64-gnu` is in the pnpm store but not auto-linked to workspace `node_modules`. Must be manually symlinked:
+```bash
+mkdir -p node_modules/@libsql
+ln -sf node_modules/.pnpm/@libsql+linux-x64-gnu@0.4.7/node_modules/@libsql/linux-x64-gnu node_modules/@libsql/linux-x64-gnu
+ln -sf node_modules/.pnpm/libsql@0.4.7/node_modules/libsql node_modules/libsql
 ```
 
-The `@workspace/db` package exports: `db` (drizzle instance), `pool` (pg Pool), and all schema tables.
+These symlinks are NOT committed and must be recreated after `pnpm install`. The `onlyBuiltDependencies` in `pnpm-workspace.yaml` includes `libsql`.
+
+**Why:** pnpm virtual store doesn't expose optional native packages to workspace root automatically; the dist bundle resolves from `artifacts/api-server/dist/` so it needs the binary in workspace root `node_modules`.
+
+## build.mjs External List
+
+`@libsql/linux-x64-gnu`, `@libsql/linux-x64-musl`, `@libsql/linux-arm64-gnu`, `@libsql/linux-arm64-musl` are added to esbuild externals in `artifacts/api-server/build.mjs` so the native binary is resolved at runtime, not bundled.
+
+**Do NOT add `libsql` itself to externals** — esbuild must bundle it, otherwise Node.js can't find it from the `dist/` directory.
+
+## TURSO_DATABASE_URL
+
+`lib/db/src/index.ts` uses `TURSO_DATABASE_URL` (cloud Turso) and falls back to `file:./dev.db` for local development. It must **never** fall back to `DATABASE_URL` (PostgreSQL) — that URL has `?sslmode=require` which libsql rejects with `URL_PARAM_NOT_SUPPORTED`.
+
+## Import Pattern
+
+API server imports from `@workspace/db`:
+```typescript
+import { db, client } from "@workspace/db";
+import { users, quizzes } from "@workspace/db";
+```

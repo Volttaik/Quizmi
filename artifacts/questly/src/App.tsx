@@ -21,6 +21,7 @@ import NotificationsPage from "@/pages/settings/NotificationsPage";
 import PrivacySecurityPage from "@/pages/settings/PrivacySecurityPage";
 import HelpSupportPage from "@/pages/settings/HelpSupportPage";
 import TermsPrivacyPage from "@/pages/settings/TermsPrivacyPage";
+import PaymentCallbackPage from "@/pages/PaymentCallbackPage";
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, staleTime: 30_000 } },
@@ -216,6 +217,7 @@ function AppRoutes() {
           <Route path="/settings/privacy">{() => <ProtectedRoute component={PrivacySecurityPage} />}</Route>
           <Route path="/settings/help">{() => <ProtectedRoute component={HelpSupportPage} />}</Route>
           <Route path="/settings/terms">{() => <ProtectedRoute component={TermsPrivacyPage} />}</Route>
+          <Route path="/payment/callback">{() => <ProtectedRoute component={PaymentCallbackPage} />}</Route>
           <Route>{() => <Redirect to="/" />}</Route>
         </Switch>
         <Toaster position="bottom-center" richColors />

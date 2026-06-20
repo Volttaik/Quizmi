@@ -18,7 +18,7 @@ router.get("/user", async (req, res) => {
       let name = "Learner";
       let email = "";
       try {
-        const clerkUser = await clerkClient().users.getUser(userId);
+        const clerkUser = await clerkClient.users.getUser(userId);
         name = clerkUser.firstName
           ? `${clerkUser.firstName} ${clerkUser.lastName ?? ""}`.trim()
           : clerkUser.username ?? "Learner";

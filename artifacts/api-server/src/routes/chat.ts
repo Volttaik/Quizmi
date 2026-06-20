@@ -1,37 +1,37 @@
 import { Router } from "express";
 import { getAuth } from "@clerk/express";
-import { db, usersTable } from "../lib/db.js";
-import { eq } from "drizzle-orm";
+import { db, client, usersTable, chatSessionsTable, chatMessagesTable } from "../lib/db.js";
+import { eq, desc, and } from "drizzle-orm";
 import { chatWithAI } from "../lib/ai.js";
 import { z } from "zod";
-import { pool } from "@workspace/db";
 
 const router = Router();
-
-async function getOrCreateSession(userId: string, sessionId?: number): Promise<number> {
-  if (sessionId) return sessionId;
-  const result = await pool.query(
-    `INSERT INTO chat_sessions (user_id, title) VALUES ($1, $2) RETURNING id`,
-    [userId, "New Chat"]
-  );
-  return result.rows[0].id;
-}
 
 router.get("/chat/sessions", async (req, res) => {
   const { userId } = getAuth(req);
   if (!userId) return res.status(401).json({ error: "Unauthorized" });
 
   try {
-    const sessions = await pool.query(
-      `SELECT cs.id, cs.title, cs.created_at, cs.updated_at,
-              (SELECT content FROM chat_messages WHERE session_id = cs.id ORDER BY created_at DESC LIMIT 1) as last_message
-       FROM chat_sessions cs
-       WHERE cs.user_id = $1
-       ORDER BY cs.updated_at DESC
-       LIMIT 30`,
-      [userId]
+    const sessions = await db
+      .select()
+      .from(chatSessionsTable)
+      .where(eq(chatSessionsTable.userId, userId))
+      .orderBy(desc(chatSessionsTable.updatedAt))
+      .limit(30);
+
+    const sessionsWithLastMsg = await Promise.all(
+      sessions.map(async (s) => {
+        const lastMsg = await db
+          .select({ content: chatMessagesTable.content })
+          .from(chatMessagesTable)
+          .where(eq(chatMessagesTable.sessionId, s.id))
+          .orderBy(desc(chatMessagesTable.createdAt))
+          .limit(1);
+        return { ...s, last_message: lastMsg[0]?.content ?? null };
+      })
     );
-    return res.json(sessions.rows);
+
+    return res.json(sessionsWithLastMsg);
   } catch (err) {
     req.log.error({ err }, "GET /chat/sessions error");
     return res.status(500).json({ error: "Internal server error" });
@@ -46,17 +46,21 @@ router.get("/chat/:sessionId", async (req, res) => {
   if (isNaN(sessionId)) return res.status(400).json({ error: "Invalid session ID" });
 
   try {
-    const session = await pool.query(
-      `SELECT * FROM chat_sessions WHERE id = $1 AND user_id = $2`,
-      [sessionId, userId]
-    );
-    if (!session.rows[0]) return res.status(404).json({ error: "Session not found" });
+    const [session] = await db
+      .select()
+      .from(chatSessionsTable)
+      .where(and(eq(chatSessionsTable.id, sessionId), eq(chatSessionsTable.userId, userId)))
+      .limit(1);
 
-    const messages = await pool.query(
-      `SELECT * FROM chat_messages WHERE session_id = $1 ORDER BY created_at ASC`,
-      [sessionId]
-    );
-    return res.json({ session: session.rows[0], messages: messages.rows });
+    if (!session) return res.status(404).json({ error: "Session not found" });
+
+    const messages = await db
+      .select()
+      .from(chatMessagesTable)
+      .where(eq(chatMessagesTable.sessionId, sessionId))
+      .orderBy(chatMessagesTable.createdAt);
+
+    return res.json({ session, messages });
   } catch (err) {
     req.log.error({ err }, "GET /chat/:sessionId error");
     return res.status(500).json({ error: "Internal server error" });
@@ -87,13 +91,22 @@ router.post("/chat/message", async (req, res) => {
   }
 
   try {
-    const sessionId = await getOrCreateSession(userId, existingSessionId);
+    let sessionId = existingSessionId;
 
-    const historyResult = await pool.query(
-      `SELECT role, content FROM chat_messages WHERE session_id = $1 ORDER BY created_at ASC LIMIT 20`,
-      [sessionId]
-    );
-    const history = historyResult.rows as Array<{ role: string; content: string }>;
+    if (!sessionId) {
+      const [newSession] = await db
+        .insert(chatSessionsTable)
+        .values({ userId, title: "New Chat" })
+        .returning();
+      sessionId = newSession.id;
+    }
+
+    const history = await db
+      .select({ role: chatMessagesTable.role, content: chatMessagesTable.content })
+      .from(chatMessagesTable)
+      .where(eq(chatMessagesTable.sessionId, sessionId))
+      .orderBy(chatMessagesTable.createdAt)
+      .limit(20);
 
     const userDisplayMessage = fileContent
       ? (message.trim() ? `📎 ${fileName ?? "document"}\n\n${message.trim()}` : `📎 ${fileName ?? "document"}`)
@@ -103,27 +116,34 @@ router.post("/chat/message", async (req, res) => {
       ? `The user has shared a document. Answer based on its content.\n\n--- DOCUMENT: ${fileName ?? "document"} ---\n${fileContent.slice(0, 80000)}\n--- END OF DOCUMENT ---\n\n${message.trim() || "Please summarize the key points from this document."}`
       : message.trim();
 
-    await pool.query(
-      `INSERT INTO chat_messages (session_id, user_id, role, content) VALUES ($1, $2, 'user', $3)`,
-      [sessionId, userId, userDisplayMessage]
-    );
+    await db.insert(chatMessagesTable).values({
+      sessionId: sessionId!,
+      userId,
+      role: "user",
+      content: userDisplayMessage,
+    });
 
     const aiResponse = await chatWithAI(aiInputMessage, history);
 
-    await pool.query(
-      `INSERT INTO chat_messages (session_id, user_id, role, content) VALUES ($1, $2, 'assistant', $3)`,
-      [sessionId, userId, aiResponse]
-    );
+    await db.insert(chatMessagesTable).values({
+      sessionId: sessionId!,
+      userId,
+      role: "assistant",
+      content: aiResponse,
+    });
 
     const titleSource = message.trim() || (fileName ?? "Document chat");
     if (history.length === 0) {
       const title = titleSource.length > 60 ? titleSource.slice(0, 57) + "..." : titleSource;
-      await pool.query(
-        `UPDATE chat_sessions SET title = $1, updated_at = NOW() WHERE id = $2`,
-        [title, sessionId]
-      );
+      await db
+        .update(chatSessionsTable)
+        .set({ title, updatedAt: new Date().toISOString() })
+        .where(eq(chatSessionsTable.id, sessionId!));
     } else {
-      await pool.query(`UPDATE chat_sessions SET updated_at = NOW() WHERE id = $1`, [sessionId]);
+      await db
+        .update(chatSessionsTable)
+        .set({ updatedAt: new Date().toISOString() })
+        .where(eq(chatSessionsTable.id, sessionId!));
     }
 
     return res.json({ sessionId, response: aiResponse });
@@ -144,8 +164,12 @@ router.delete("/chat/:sessionId", async (req, res) => {
   if (isNaN(sessionId)) return res.status(400).json({ error: "Invalid session ID" });
 
   try {
-    await pool.query(`DELETE FROM chat_messages WHERE session_id = $1 AND user_id = $2`, [sessionId, userId]);
-    await pool.query(`DELETE FROM chat_sessions WHERE id = $1 AND user_id = $2`, [sessionId, userId]);
+    await db
+      .delete(chatMessagesTable)
+      .where(and(eq(chatMessagesTable.sessionId, sessionId), eq(chatMessagesTable.userId, userId)));
+    await db
+      .delete(chatSessionsTable)
+      .where(and(eq(chatSessionsTable.id, sessionId), eq(chatSessionsTable.userId, userId)));
     return res.json({ success: true });
   } catch (err) {
     req.log.error({ err }, "DELETE /chat/:sessionId error");

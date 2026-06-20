@@ -70,10 +70,10 @@ router.post("/paystack/initialize", async (req, res) => {
 
 router.get("/paystack/verify", async (req, res) => {
   const reference = (req.query.reference ?? req.query.trxref) as string | undefined;
-  if (!reference) return res.redirect("/dashboard?payment=failed");
+  if (!reference) return res.redirect("/payment/callback?status=failed&reason=no_reference");
 
   const secretKey = process.env.PAYSTACK_SECRET_KEY;
-  if (!secretKey) return res.redirect("/dashboard?payment=failed");
+  if (!secretKey) return res.redirect("/payment/callback?status=failed&reason=not_configured");
 
   try {
     const paystackRes = await fetch(
@@ -87,14 +87,15 @@ router.get("/paystack/verify", async (req, res) => {
     };
 
     if (!data.status || data.data?.status !== "success") {
-      return res.redirect("/dashboard?payment=failed");
+      return res.redirect("/payment/callback?status=failed&reason=payment_not_successful");
     }
 
-    const { userId, credits } = data.data.metadata ?? {};
-    if (!userId || !credits) return res.redirect("/dashboard?payment=failed");
+    const { userId, credits, package: pkg } = data.data.metadata ?? {};
+    if (!userId || !credits) return res.redirect("/payment/callback?status=failed&reason=missing_metadata");
 
     const creditAmount = typeof credits === "number" ? credits : 500;
 
+    let alreadyProcessed = false;
     await db.transaction(async (tx) => {
       const existing = await tx
         .select({ id: creditTransactionsTable.id })
@@ -102,7 +103,10 @@ router.get("/paystack/verify", async (req, res) => {
         .where(eq(creditTransactionsTable.reference, reference))
         .limit(1);
 
-      if (existing.length > 0) return;
+      if (existing.length > 0) {
+        alreadyProcessed = true;
+        return;
+      }
 
       await tx
         .update(usersTable)
@@ -113,15 +117,15 @@ router.get("/paystack/verify", async (req, res) => {
         userId,
         amount: creditAmount,
         type: "purchase",
-        description: `Purchased ${creditAmount.toLocaleString()} credits`,
+        description: `Purchased ${creditAmount.toLocaleString()} credits (${pkg ?? "package"})`,
         reference,
       });
     });
 
-    return res.redirect("/dashboard?payment=success");
+    return res.redirect(`/payment/callback?status=success&credits=${creditAmount}&ref=${reference}`);
   } catch (err) {
     req.log.error({ err }, "GET /paystack/verify error");
-    return res.redirect("/dashboard?payment=failed");
+    return res.redirect("/payment/callback?status=failed&reason=server_error");
   }
 });
 
