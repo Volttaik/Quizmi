@@ -25,11 +25,11 @@ export async function generateQuizFromContent(
   questionCount: number,
   difficulty: string,
   direction?: string
-): Promise<Array<{ question: string; options: string[]; correct: number }>> {
+): Promise<Array<{ question: string; options: string[]; correct: number; explanation: string; reference: string }>> {
   const client = getClient();
 
   const directionNote = direction
-    ? `\nFOCUS DIRECTION: The user wants the quiz to focus specifically on: "${direction}". Prioritize questions related to this focus area within the material.\n`
+    ? `\nFOCUS DIRECTION: Focus specifically on: "${direction}". Prioritize questions from that section.\n`
     : "";
 
   const completion = await client.chat.completions.create({
@@ -37,24 +37,26 @@ export async function generateQuizFromContent(
     messages: [
       {
         role: "user",
-        content: `Based ONLY on the following study material, generate ${questionCount} multiple choice questions at ${difficulty} difficulty. All questions must be derived strictly from the provided content — do NOT use outside knowledge.
+        content: `Based ONLY on the following study material, generate ${questionCount} multiple choice questions at ${difficulty} difficulty. Every question MUST come directly from the text — do NOT use outside knowledge.
 ${directionNote}
 STUDY MATERIAL:
 ${content.slice(0, 12000)}
 
-Generate ONLY a valid JSON array with this exact format — no extra text, no markdown, just the JSON:
+Return ONLY a valid JSON array — no markdown, no extra text:
 [
   {
     "question": "Question text here?",
     "options": ["Option A", "Option B", "Option C", "Option D"],
-    "correct": 0
+    "correct": 0,
+    "explanation": "Brief explanation of why the correct answer is right, referencing the material.",
+    "reference": "Short quote or section label from the material this question is based on (e.g. 'Section 1.2 — Types of Research')"
   }
 ]
-Where "correct" is the index (0-3) of the correct answer.`,
+"correct" is the 0-based index of the correct option.`,
       },
     ],
     temperature: 0.6,
-    max_tokens: 4096,
+    max_tokens: 6000,
   });
 
   const text = completion.choices[0]?.message?.content?.trim() ?? "";
@@ -65,7 +67,7 @@ export async function generateQuiz(
   topic: string,
   questionCount: number,
   difficulty: string
-): Promise<Array<{ question: string; options: string[]; correct: number }>> {
+): Promise<Array<{ question: string; options: string[]; correct: number; explanation: string; reference: string }>> {
   const client = getClient();
 
   const completion = await client.chat.completions.create({
@@ -74,19 +76,21 @@ export async function generateQuiz(
       {
         role: "user",
         content: `Generate ${questionCount} multiple choice questions about "${topic}" at ${difficulty} difficulty.
-Return ONLY a valid JSON array with this exact format:
+Return ONLY a valid JSON array — no markdown, no extra text:
 [
   {
     "question": "Question text here?",
     "options": ["Option A", "Option B", "Option C", "Option D"],
-    "correct": 0
+    "correct": 0,
+    "explanation": "Brief explanation of why this answer is correct.",
+    "reference": "The concept or topic area this question tests (e.g. 'Photosynthesis — Light Reactions')"
   }
 ]
-Where "correct" is the index (0-3) of the correct answer. No extra text, just the JSON array.`,
+"correct" is the 0-based index of the correct option.`,
       },
     ],
     temperature: 0.7,
-    max_tokens: 4096,
+    max_tokens: 6000,
   });
 
   const text = completion.choices[0]?.message?.content?.trim() ?? "";
