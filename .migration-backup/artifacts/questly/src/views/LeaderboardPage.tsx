@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type JSX } from "react";
 import { ArrowLeft, Trophy, Medal, Crown, TrendingUp, Loader2 } from "lucide-react";
 import Link from "next/link";
 import BottomNav from "@/components/dashboard/BottomNav";
