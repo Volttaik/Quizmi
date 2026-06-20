@@ -1,14 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useUser, useClerk } from "@clerk/react";
-import { User, Mail, Star, LogOut, ChevronRight, Shield, Bell, HelpCircle, FileText } from "lucide-react";
+import { User, Mail, Star, LogOut, ChevronRight, Shield, Bell, HelpCircle, FileText, Camera, Loader2 } from "lucide-react";
 import BottomNav from "@/components/dashboard/BottomNav";
 import { Link } from "wouter";
+import { toast } from "sonner";
 
 export default function ProfilePage() {
   const { user } = useUser();
   const { signOut } = useClerk();
   const [credits, setCredits] = useState<number | null>(null);
   const [plan, setPlan] = useState("free");
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const photoRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetch("/api/user")
@@ -19,6 +22,21 @@ export default function ProfilePage() {
       })
       .catch(() => {});
   }, []);
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    setUploadingPhoto(true);
+    try {
+      await user.setProfileImage({ file });
+      toast.success("Profile photo updated!");
+    } catch {
+      toast.error("Failed to upload photo. Try a smaller image.");
+    } finally {
+      setUploadingPhoto(false);
+      e.target.value = "";
+    }
+  };
 
   const initials = (user?.fullName ?? user?.firstName ?? "U")
     .split(" ")
@@ -40,13 +58,23 @@ export default function ProfilePage() {
         <h1 className="text-lg font-extrabold text-white mb-6">Profile</h1>
 
         <div className="flex flex-col items-center mb-6">
-          {user?.imageUrl ? (
-            <img src={user.imageUrl} alt="Avatar" className="w-20 h-20 rounded-full border-4 border-white/20 shadow-xl mb-3" />
-          ) : (
-            <div className="w-20 h-20 rounded-full bg-primary/80 border-4 border-white/20 shadow-xl flex items-center justify-center mb-3">
-              <span className="text-2xl font-bold text-white">{initials}</span>
+          <input ref={photoRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} />
+          <button
+            onClick={() => photoRef.current?.click()}
+            disabled={uploadingPhoto}
+            className="relative group mb-3"
+          >
+            {user?.imageUrl ? (
+              <img src={user.imageUrl} alt="Avatar" className="w-20 h-20 rounded-full border-4 border-white/20 shadow-xl" />
+            ) : (
+              <div className="w-20 h-20 rounded-full bg-primary/80 border-4 border-white/20 shadow-xl flex items-center justify-center">
+                <span className="text-2xl font-bold text-white">{initials}</span>
+              </div>
+            )}
+            <div className="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              {uploadingPhoto ? <Loader2 className="w-5 h-5 text-white animate-spin" /> : <Camera className="w-5 h-5 text-white" />}
             </div>
-          )}
+          </button>
           <h2 className="text-xl font-bold text-white">{user?.fullName ?? user?.firstName ?? "Learner"}</h2>
           <p className="text-white/60 text-sm">{user?.emailAddresses?.[0]?.emailAddress ?? ""}</p>
           <span className={`mt-2 px-3 py-0.5 rounded-full text-xs font-bold ${plan === "pro" ? "bg-yellow-400/20 text-yellow-300" : "bg-white/10 text-white/60"}`}>

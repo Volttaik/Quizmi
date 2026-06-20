@@ -151,6 +151,35 @@ No extra text, just the JSON array.`,
   return parseJsonArray(text);
 }
 
+export async function chatWithAI(
+  message: string,
+  history: Array<{ role: string; content: string }>
+): Promise<string> {
+  const client = getClient();
+
+  const messages: Array<{ role: "system" | "user" | "assistant"; content: string }> = [
+    {
+      role: "system",
+      content:
+        "You are a helpful AI study assistant called Quizmi AI. Help students understand topics, explain concepts clearly, create study plans, summarize content, and answer questions. Keep responses concise but thorough. Use markdown formatting (bold, bullet points, headers) to make answers easy to read.",
+    },
+    ...history.map((m) => ({
+      role: m.role as "user" | "assistant",
+      content: m.content,
+    })),
+    { role: "user", content: message },
+  ];
+
+  const completion = await client.chat.completions.create({
+    model: MODEL,
+    messages,
+    temperature: 0.7,
+    max_tokens: 2048,
+  });
+
+  return completion.choices[0]?.message?.content?.trim() ?? "I couldn't generate a response. Please try again.";
+}
+
 export async function generateSummary(topic: string): Promise<string> {
   const client = getClient();
 

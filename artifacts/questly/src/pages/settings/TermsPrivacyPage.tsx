@@ -21,7 +21,7 @@ export default function TermsPrivacyPage() {
 
           <Section title="Privacy Policy">
             <p>Quizmi collects your email address and name for authentication purposes only via Clerk. We do not sell or share your personal data with any third parties.</p>
-            <p>Study content you paste into the AI generator is processed by Google Gemini AI and is subject to Google's privacy policy. We do not store your raw input content beyond your session.</p>
+            <p>Study content you paste into the AI generator is processed by Groq AI. We do not store your raw input content beyond your session.</p>
           </Section>
 
           <Section title="Data & Cookies">
@@ -30,7 +30,7 @@ export default function TermsPrivacyPage() {
           </Section>
 
           <Section title="AI-Generated Content">
-            <p>Quizmi uses Google Gemini AI to generate quizzes, flashcards, and summaries. AI-generated content may contain errors. Always verify important information independently.</p>
+            <p>Quizmi uses Groq AI to generate quizzes, flashcards, and summaries. AI-generated content may contain errors. Always verify important information independently.</p>
           </Section>
 
           <div className="text-center text-xs text-muted-foreground pt-2">

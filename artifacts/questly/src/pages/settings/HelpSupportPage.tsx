@@ -10,7 +10,7 @@ const faqs = [
   },
   {
     q: "How long does it take to generate a quiz?",
-    a: "Quiz generation with Gemini AI typically takes 5–15 seconds depending on the length of your input material.",
+    a: "Quiz generation with Groq AI typically takes 5–15 seconds depending on the length of your input material.",
   },
   {
     q: "Can I retake a quiz?",

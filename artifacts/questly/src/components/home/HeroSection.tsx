@@ -19,7 +19,7 @@ export default function HeroSection() {
         <div className="flex justify-center mb-8">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold">
             <Sparkles className="w-3 h-3" />
-            Powered by Gemini AI
+            Powered by Groq AI
             <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
           </div>
         </div>

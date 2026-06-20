@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getAuth } from "@clerk/express";
+import { getAuth, clerkClient } from "@clerk/express";
 import { db, usersTable } from "../lib/db.js";
 import { eq } from "drizzle-orm";
 
@@ -15,14 +15,22 @@ router.get("/user", async (req, res) => {
     });
 
     if (!user) {
-      const clerkUser = (req as any).auth?.user ?? null;
-      const name = clerkUser?.firstName
-        ? `${clerkUser.firstName} ${clerkUser.lastName ?? ""}`.trim()
-        : "Learner";
-      const email =
-        clerkUser?.primaryEmailAddress?.emailAddress ??
-        clerkUser?.emailAddresses?.[0]?.emailAddress ??
-        "";
+      let name = "Learner";
+      let email = "";
+      try {
+        const clerkUser = await clerkClient().users.getUser(userId);
+        name = clerkUser.firstName
+          ? `${clerkUser.firstName} ${clerkUser.lastName ?? ""}`.trim()
+          : clerkUser.username ?? "Learner";
+        email =
+          clerkUser.primaryEmailAddressId
+            ? (clerkUser.emailAddresses.find(
+                (e: any) => e.id === clerkUser.primaryEmailAddressId
+              )?.emailAddress ?? "")
+            : (clerkUser.emailAddresses[0]?.emailAddress ?? "");
+      } catch {
+        /* fallback to defaults if Clerk API unavailable */
+      }
 
       const [created] = await db
         .insert(usersTable)
