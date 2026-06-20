@@ -1,5 +1,15 @@
 import Groq from "groq-sdk";
 
+function parseJsonArray(text: string): any[] {
+  const stripped = text
+    .replace(/^```(?:json)?\s*/i, "")
+    .replace(/\s*```$/, "")
+    .trim();
+  const match = stripped.match(/\[[\s\S]*\]/);
+  if (!match) throw new Error("Invalid AI response format — no JSON array found");
+  return JSON.parse(match[0]);
+}
+
 function getClient(): Groq {
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
@@ -43,9 +53,7 @@ Where "correct" is the index (0-3) of the correct answer.`,
   });
 
   const text = completion.choices[0]?.message?.content?.trim() ?? "";
-  const jsonMatch = text.match(/\[[\s\S]*\]/);
-  if (!jsonMatch) throw new Error("Invalid AI response format");
-  return JSON.parse(jsonMatch[0]);
+  return parseJsonArray(text);
 }
 
 export async function generateQuiz(
@@ -77,9 +85,7 @@ Where "correct" is the index (0-3) of the correct answer. No extra text, just th
   });
 
   const text = completion.choices[0]?.message?.content?.trim() ?? "";
-  const jsonMatch = text.match(/\[[\s\S]*\]/);
-  if (!jsonMatch) throw new Error("Invalid AI response format");
-  return JSON.parse(jsonMatch[0]);
+  return parseJsonArray(text);
 }
 
 export async function generateFlashcardsFromContent(
@@ -112,9 +118,7 @@ Return ONLY a valid JSON array with this exact format — no extra text:
   });
 
   const text = completion.choices[0]?.message?.content?.trim() ?? "";
-  const jsonMatch = text.match(/\[[\s\S]*\]/);
-  if (!jsonMatch) throw new Error("Invalid AI response format");
-  return JSON.parse(jsonMatch[0]);
+  return parseJsonArray(text);
 }
 
 export async function generateFlashcards(
@@ -144,9 +148,7 @@ No extra text, just the JSON array.`,
   });
 
   const text = completion.choices[0]?.message?.content?.trim() ?? "";
-  const jsonMatch = text.match(/\[[\s\S]*\]/);
-  if (!jsonMatch) throw new Error("Invalid AI response format");
-  return JSON.parse(jsonMatch[0]);
+  return parseJsonArray(text);
 }
 
 export async function generateSummary(topic: string): Promise<string> {

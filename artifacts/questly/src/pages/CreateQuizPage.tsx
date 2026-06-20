@@ -9,6 +9,24 @@ import { Sparkles, ArrowLeft, Upload, FileText, X, ArrowRight, Loader2, Coins } 
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Link } from "wouter";
+import * as pdfjsLib from "pdfjs-dist";
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+  "pdfjs-dist/build/pdf.worker.mjs",
+  import.meta.url
+).toString();
+
+async function extractTextFromPDF(file: File): Promise<string> {
+  const arrayBuffer = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  const pages: string[] = [];
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    pages.push(content.items.map((item: any) => item.str).join(" "));
+  }
+  return pages.join("\n");
+}
 
 export default function CreateQuizPage() {
   const [, setLocation] = useLocation();
@@ -26,10 +44,22 @@ export default function CreateQuizPage() {
     if (!f) return;
     setFile(f);
     try {
-      const text = await f.text();
+      let text: string;
+      if (f.name.toLowerCase().endsWith(".pdf")) {
+        toast.info("Reading PDF…");
+        text = await extractTextFromPDF(f);
+        if (!text.trim()) {
+          toast.error("Could not extract text from this PDF. It may be a scanned image.");
+          setFile(null);
+          setFileContent("");
+          return;
+        }
+      } else {
+        text = await f.text();
+      }
       setFileContent(text);
     } catch {
-      toast.error("Could not read file. Please try a .txt or .md file.");
+      toast.error("Could not read file. Please try a .txt, .md, or text-based PDF.");
       setFile(null);
       setFileContent("");
     }
@@ -124,7 +154,7 @@ export default function CreateQuizPage() {
                   <Upload className="w-6 h-6 text-primary" />
                 </div>
                 <p className="text-sm font-bold text-foreground mb-1">Upload your study material</p>
-                <p className="text-xs text-muted-foreground">TXT, MD, DOC — AI reads it and generates questions</p>
+                <p className="text-xs text-muted-foreground">PDF, TXT, MD, DOC — AI reads it and generates questions</p>
               </>
             )}
           </motion.div>
