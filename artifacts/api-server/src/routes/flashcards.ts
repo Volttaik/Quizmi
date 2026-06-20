@@ -1,13 +1,11 @@
 import { Router } from "express";
 import { getAuth } from "@clerk/express";
-import { db, usersTable, flashcardSetsTable, creditTransactionsTable } from "../lib/db.js";
+import { db, usersTable, flashcardSetsTable } from "../lib/db.js";
 import { eq, desc, and } from "drizzle-orm";
 import { generateFlashcards, generateFlashcardsFromContent } from "../lib/ai.js";
 import { z } from "zod";
 
 const router = Router();
-
-const FLASHCARD_CREDITS = 1;
 
 router.post("/generate-flashcards", async (req, res) => {
   const { userId } = getAuth(req);
@@ -28,18 +26,11 @@ router.post("/generate-flashcards", async (req, res) => {
     return res.status(400).json({ error: "Please provide a topic or upload a file." });
   }
 
+  if (!process.env.GROQ_API_KEY) {
+    return res.status(503).json({ error: "AI API key not configured. Please add GROQ_API_KEY in Secrets." });
+  }
+
   try {
-    const user = await db.query.usersTable.findFirst({ where: eq(usersTable.clerkId, userId) });
-    if (!user || user.credits < FLASHCARD_CREDITS) {
-      return res.status(402).json({
-        error: `Not enough credits. You need ${FLASHCARD_CREDITS} credit to generate flashcards.`,
-      });
-    }
-
-    if (!process.env.GROQ_API_KEY) {
-      return res.status(503).json({ error: "AI API key not configured. Please add GROQ_API_KEY in Secrets." });
-    }
-
     let cards: Array<{ front: string; back: string }>;
     let title: string;
 
@@ -56,37 +47,13 @@ router.post("/generate-flashcards", async (req, res) => {
 
     const [set] = await db
       .insert(flashcardSetsTable)
-      .values({
-        userId,
-        title,
-        topic: topic ?? (fileName ?? "Uploaded Material"),
-        cards,
-        count: cards.length,
-      })
+      .values({ userId, title, topic: topic ?? (fileName ?? "Uploaded Material"), cards, count: cards.length })
       .returning();
-
-    await db.transaction(async (tx) => {
-      await tx
-        .update(usersTable)
-        .set({ credits: user.credits - FLASHCARD_CREDITS })
-        .where(eq(usersTable.clerkId, userId));
-      await tx.insert(creditTransactionsTable).values({
-        userId,
-        amount: -FLASHCARD_CREDITS,
-        type: "usage",
-        description: `Generated flashcards: ${title}`,
-      });
-    });
 
     return res.json(set);
   } catch (err: any) {
     req.log.error({ err }, "POST /generate-flashcards error");
-    if (
-      err?.status === 429 ||
-      err?.message?.includes("429") ||
-      err?.message?.includes("quota") ||
-      err?.message?.includes("Too Many Requests")
-    ) {
+    if (err?.status === 429 || err?.message?.includes("429") || err?.message?.includes("quota")) {
       return res.status(429).json({ error: "AI API quota exceeded. Please try again later." });
     }
     return res.status(500).json({ error: err?.message ?? "Failed to generate flashcards" });
@@ -124,10 +91,7 @@ router.delete("/flashcard-sets/:id", async (req, res) => {
       columns: { id: true },
     });
     if (!existing) return res.status(404).json({ error: "Flashcard set not found" });
-
-    await db
-      .delete(flashcardSetsTable)
-      .where(and(eq(flashcardSetsTable.id, setId), eq(flashcardSetsTable.userId, userId)));
+    await db.delete(flashcardSetsTable).where(and(eq(flashcardSetsTable.id, setId), eq(flashcardSetsTable.userId, userId)));
     return res.json({ success: true });
   } catch (err) {
     req.log.error({ err }, "DELETE /flashcard-sets/:id error");

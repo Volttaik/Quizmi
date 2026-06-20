@@ -54,8 +54,10 @@ export default function CreateQuizPage() {
           setFileContent("");
           return;
         }
+        toast.success(`PDF loaded — ${text.length.toLocaleString()} characters extracted`);
       } else {
         text = await f.text();
+        toast.success(`File loaded — ${text.length.toLocaleString()} characters`);
       }
       setFileContent(text);
     } catch {
@@ -75,8 +77,8 @@ export default function CreateQuizPage() {
 
   const handleGenerate = async () => {
     const count = getQuestionCount();
-    if (!topic.trim() && !fileContent) {
-      toast.error("Please enter a topic or upload a study material");
+    if (!fileContent && !topic.trim()) {
+      toast.error("Please upload a study material or enter a topic");
       return;
     }
     if (questionCount === "custom" && (!customCount || isNaN(parseInt(customCount)))) {
@@ -86,11 +88,15 @@ export default function CreateQuizPage() {
     setGenerating(true);
     try {
       const body: Record<string, unknown> = { questionCount: count, difficulty };
-      if (topic.trim()) body.topic = topic.trim();
+
       if (fileContent) {
         body.fileContent = fileContent;
         body.fileName = file?.name ?? "Uploaded File";
+        if (topic.trim()) body.topic = topic.trim();
+      } else {
+        body.topic = topic.trim();
       }
+
       const res = await fetch("/api/generate-quiz", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -109,6 +115,8 @@ export default function CreateQuizPage() {
       setGenerating(false);
     }
   };
+
+  const hasFile = !!file && !!fileContent;
 
   return (
     <div className="min-h-screen bg-background pb-28">
@@ -141,10 +149,15 @@ export default function CreateQuizPage() {
                 <div className="text-left">
                   <p className="text-sm font-bold text-foreground">{file.name}</p>
                   <p className="text-xs text-muted-foreground">
-                    {fileContent ? `${fileContent.length.toLocaleString()} chars · AI will read your material` : `${(file.size / 1024).toFixed(1)} KB`}
+                    {fileContent
+                      ? `${fileContent.length.toLocaleString()} chars · Quiz will be based on this material`
+                      : `${(file.size / 1024).toFixed(1)} KB`}
                   </p>
                 </div>
-                <button onClick={(e) => { e.stopPropagation(); setFile(null); setFileContent(""); }} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors">
+                <button
+                  onClick={(e) => { e.stopPropagation(); setFile(null); setFileContent(""); }}
+                  className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors"
+                >
                   <X className="w-4 h-4" />
                 </button>
               </div>
@@ -154,21 +167,38 @@ export default function CreateQuizPage() {
                   <Upload className="w-6 h-6 text-primary" />
                 </div>
                 <p className="text-sm font-bold text-foreground mb-1">Upload your study material</p>
-                <p className="text-xs text-muted-foreground">PDF, TXT, MD, DOC — AI reads it and generates questions</p>
+                <p className="text-xs text-muted-foreground">PDF, TXT, MD, DOC — AI reads it and generates questions from your content</p>
               </>
             )}
           </motion.div>
 
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }} className="flex items-center gap-3">
             <div className="flex-1 h-px bg-border" />
-            <span className="text-xs font-bold text-muted-foreground">OR</span>
+            <span className="text-xs font-bold text-muted-foreground">{hasFile ? "OPTIONAL DIRECTION" : "OR TYPE A TOPIC"}</span>
             <div className="flex-1 h-px bg-border" />
           </motion.div>
 
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }} className="rounded-2xl bg-card border border-border p-5 space-y-4 shadow-card dark:shadow-elevated">
             <div>
-              <Label className="text-xs font-bold">Topic or Subject</Label>
-              <Input className="mt-1.5" placeholder="e.g. Photosynthesis, World War II, Calculus" value={topic} onChange={(e) => setTopic(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleGenerate()} />
+              <Label className="text-xs font-bold">
+                {hasFile ? "Focus / Direction (optional)" : "Topic or Subject"}
+              </Label>
+              <Input
+                className="mt-1.5"
+                placeholder={
+                  hasFile
+                    ? "e.g. Focus on Chapter 3, or test only cardiovascular system"
+                    : "e.g. Photosynthesis, World War II, Calculus"
+                }
+                value={topic}
+                onChange={(e) => setTopic(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleGenerate()}
+              />
+              {hasFile && (
+                <p className="text-[10px] text-muted-foreground mt-1.5">
+                  Quiz questions will be generated from your uploaded file. Use this field to narrow the focus.
+                </p>
+              )}
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
@@ -214,7 +244,7 @@ export default function CreateQuizPage() {
               )}
             </Button>
             <p className="text-center text-[11px] text-muted-foreground mt-2">
-              Uses 1 credit · {file ? "AI reads your uploaded material" : "AI generates from topic"}
+              Uses 1 credit · {hasFile ? "AI reads your uploaded material" : "AI generates from topic"}
             </p>
           </motion.div>
         </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Sparkles, ArrowLeft, Send, Plus, Trash2, MessageSquare, Loader2, Coins, ChevronRight } from "lucide-react";
+import { Sparkles, ArrowLeft, Plus, Trash2, MessageSquare, Loader2, ArrowUp, FileText, Image, Mic, X } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "wouter";
 import BottomNav from "@/components/dashboard/BottomNav";
@@ -42,14 +42,15 @@ export default function SummaryPage() {
   const [sending, setSending] = useState(false);
   const [loadingSessions, setLoadingSessions] = useState(true);
   const [loadingMessages, setLoadingMessages] = useState(false);
-  const [credits, setCredits] = useState<number | null>(null);
   const [view, setView] = useState<"sessions" | "chat">("sessions");
+  const [attachMenuOpen, setAttachMenuOpen] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     loadSessions();
-    fetch("/api/user").then(r => r.json()).then(d => setCredits(d.credits ?? 0)).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -94,11 +95,6 @@ export default function SummaryPage() {
     const text = input.trim();
     if (!text || sending) return;
 
-    if (credits !== null && credits < 1) {
-      toast.error("Not enough credits. Add more to continue chatting.");
-      return;
-    }
-
     setInput("");
     setSending(true);
     const userMsg: ChatMessage = { role: "user", content: text };
@@ -122,7 +118,6 @@ export default function SummaryPage() {
         } else {
           loadSessions();
         }
-        if (data.creditsLeft !== undefined) setCredits(data.creditsLeft);
       }
     } catch {
       toast.error("Something went wrong");
@@ -163,8 +158,32 @@ export default function SummaryPage() {
     return d.toLocaleDateString();
   };
 
+  const handleFileAttach = async (e: React.ChangeEvent<HTMLInputElement>, type: "file" | "image") => {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    setAttachMenuOpen(false);
+    toast.info(`Attached: ${f.name}`);
+    const fileLabel = type === "image" ? `[Image: ${f.name}]` : `[File: ${f.name}]`;
+    setInput(prev => prev ? `${prev}\n${fileLabel}` : fileLabel);
+    e.target.value = "";
+  };
+
+  const handleAudioRecord = () => {
+    setAttachMenuOpen(false);
+    toast.info("Audio recording coming soon!");
+  };
+
+  const attachOptions = [
+    { icon: FileText, label: "Upload File", action: () => { setAttachMenuOpen(false); fileInputRef.current?.click(); } },
+    { icon: Image, label: "Upload Image", action: () => { setAttachMenuOpen(false); imageInputRef.current?.click(); } },
+    { icon: Mic, label: "Record Audio", action: handleAudioRecord },
+  ];
+
   return (
     <div className="min-h-screen bg-background pb-28 flex flex-col">
+      <input ref={fileInputRef} type="file" accept=".pdf,.txt,.doc,.docx,.md" className="hidden" onChange={(e) => handleFileAttach(e, "file")} />
+      <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleFileAttach(e, "image")} />
+
       <div className="max-w-lg mx-auto w-full px-4 pt-6 flex-1 flex flex-col">
         <div className="flex items-center gap-3 mb-4">
           {view === "chat" ? (
@@ -178,12 +197,7 @@ export default function SummaryPage() {
           )}
           <div className="flex-1">
             <h1 className="text-lg font-extrabold text-foreground">AI Chat</h1>
-            <div className="flex items-center gap-1 mt-0.5">
-              <Coins className="w-3 h-3 text-primary" />
-              <span className="text-[10px] text-muted-foreground font-medium">
-                {credits !== null ? `${credits} credits` : "—"} · 1 per message
-              </span>
-            </div>
+            <p className="text-[10px] text-muted-foreground font-medium">Free · Powered by Quizmi AI</p>
           </div>
           {view === "sessions" && (
             <Button onClick={startNewChat} size="sm" className="rounded-full gap-1.5 text-xs px-4">
@@ -302,27 +316,59 @@ export default function SummaryPage() {
                 <div ref={bottomRef} />
               </div>
 
-              <div className="bg-card border border-border/40 rounded-2xl shadow-sm overflow-hidden mt-2">
-                <textarea
-                  ref={inputRef}
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={handleKey}
-                  placeholder="Ask anything… (Enter to send)"
-                  rows={2}
-                  className="w-full px-4 pt-3 pb-1 text-sm bg-transparent resize-none outline-none placeholder:text-muted-foreground/60"
-                />
-                <div className="flex items-center justify-between px-3 pb-3">
-                  <span className="text-[10px] text-muted-foreground font-medium flex items-center gap-1">
-                    <Coins className="w-3 h-3 text-primary" /> 1 credit per reply
-                  </span>
-                  <button
-                    onClick={sendMessage}
-                    disabled={!input.trim() || sending}
-                    className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center text-primary-foreground disabled:opacity-40 transition-opacity hover:opacity-90"
-                  >
-                    <Send className="w-3.5 h-3.5" />
-                  </button>
+              <div className="relative">
+                <AnimatePresence>
+                  {attachMenuOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute bottom-full left-0 mb-2 bg-card border border-border/60 rounded-2xl shadow-elevated overflow-hidden z-10 min-w-[160px]"
+                    >
+                      {attachOptions.map((opt) => (
+                        <button
+                          key={opt.label}
+                          onClick={opt.action}
+                          className="w-full flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors"
+                        >
+                          <opt.icon className="w-4 h-4 text-primary flex-shrink-0" />
+                          {opt.label}
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {attachMenuOpen && (
+                  <div className="fixed inset-0 z-0" onClick={() => setAttachMenuOpen(false)} />
+                )}
+
+                <div className="bg-card border border-border/40 rounded-2xl shadow-sm overflow-hidden mt-2 relative z-1">
+                  <textarea
+                    ref={inputRef}
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={handleKey}
+                    placeholder="Ask anything… (Enter to send)"
+                    rows={2}
+                    className="w-full px-4 pt-3 pb-1 text-sm bg-transparent resize-none outline-none placeholder:text-muted-foreground/60"
+                  />
+                  <div className="flex items-center justify-between px-3 pb-3 gap-2">
+                    <button
+                      onClick={() => setAttachMenuOpen(prev => !prev)}
+                      className="w-8 h-8 rounded-xl border border-border/60 flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors flex-shrink-0"
+                    >
+                      {attachMenuOpen ? <X className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
+                    </button>
+                    <button
+                      onClick={sendMessage}
+                      disabled={!input.trim() || sending}
+                      className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center text-primary-foreground disabled:opacity-40 transition-opacity hover:opacity-90 flex-shrink-0"
+                    >
+                      <ArrowUp className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               </div>
             </motion.div>

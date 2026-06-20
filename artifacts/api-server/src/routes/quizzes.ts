@@ -49,7 +49,7 @@ router.post("/generate-quiz", async (req, res) => {
     if (fileContent && fileContent.trim().length > 50) {
       const displayName = fileName ? fileName.replace(/\.[^/.]+$/, "") : "Uploaded Material";
       title = topic ? `${topic} Quiz` : `${displayName} Quiz`;
-      questions = await generateQuizFromContent(fileContent, questionCount, difficulty);
+      questions = await generateQuizFromContent(fileContent, questionCount, difficulty, topic);
     } else if (topic) {
       title = `${topic} Quiz`;
       questions = await generateQuiz(topic, questionCount, difficulty);

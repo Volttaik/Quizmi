@@ -1,14 +1,12 @@
 import { Router } from "express";
 import { getAuth } from "@clerk/express";
-import { db, usersTable, creditTransactionsTable } from "../lib/db.js";
-import { eq, desc, sql } from "drizzle-orm";
+import { db, usersTable } from "../lib/db.js";
+import { eq } from "drizzle-orm";
 import { chatWithAI } from "../lib/ai.js";
 import { z } from "zod";
 import { pool } from "@workspace/db";
 
 const router = Router();
-
-const CREDITS_PER_EXCHANGE = 1;
 
 async function getOrCreateSession(userId: string, sessionId?: number): Promise<number> {
   if (sessionId) return sessionId;
@@ -78,16 +76,11 @@ router.post("/chat/message", async (req, res) => {
 
   const { message, sessionId: existingSessionId } = parsed.data;
 
+  if (!process.env.GROQ_API_KEY) {
+    return res.status(503).json({ error: "AI API key not configured. Please add GROQ_API_KEY in Secrets." });
+  }
+
   try {
-    const user = await db.query.usersTable.findFirst({ where: eq(usersTable.clerkId, userId) });
-    if (!user || user.credits < CREDITS_PER_EXCHANGE) {
-      return res.status(402).json({ error: "Not enough credits. You need 1 credit per message." });
-    }
-
-    if (!process.env.GROQ_API_KEY) {
-      return res.status(503).json({ error: "AI API key not configured. Please add GROQ_API_KEY in Secrets." });
-    }
-
     const sessionId = await getOrCreateSession(userId, existingSessionId);
 
     const historyResult = await pool.query(
@@ -115,26 +108,10 @@ router.post("/chat/message", async (req, res) => {
         [title, sessionId]
       );
     } else {
-      await pool.query(
-        `UPDATE chat_sessions SET updated_at = NOW() WHERE id = $1`,
-        [sessionId]
-      );
+      await pool.query(`UPDATE chat_sessions SET updated_at = NOW() WHERE id = $1`, [sessionId]);
     }
 
-    await db.transaction(async (tx) => {
-      await tx
-        .update(usersTable)
-        .set({ credits: user.credits - CREDITS_PER_EXCHANGE })
-        .where(eq(usersTable.clerkId, userId));
-      await tx.insert(creditTransactionsTable).values({
-        userId,
-        amount: -CREDITS_PER_EXCHANGE,
-        type: "usage",
-        description: `AI Chat message`,
-      });
-    });
-
-    return res.json({ sessionId, response: aiResponse, creditsLeft: user.credits - CREDITS_PER_EXCHANGE });
+    return res.json({ sessionId, response: aiResponse });
   } catch (err: any) {
     req.log.error({ err }, "POST /chat/message error");
     if (err?.status === 429 || err?.message?.includes("429")) {

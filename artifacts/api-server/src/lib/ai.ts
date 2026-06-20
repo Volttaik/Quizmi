@@ -23,21 +23,26 @@ const MODEL = "llama-3.3-70b-versatile";
 export async function generateQuizFromContent(
   content: string,
   questionCount: number,
-  difficulty: string
+  difficulty: string,
+  direction?: string
 ): Promise<Array<{ question: string; options: string[]; correct: number }>> {
   const client = getClient();
+
+  const directionNote = direction
+    ? `\nFOCUS DIRECTION: The user wants the quiz to focus specifically on: "${direction}". Prioritize questions related to this focus area within the material.\n`
+    : "";
 
   const completion = await client.chat.completions.create({
     model: MODEL,
     messages: [
       {
         role: "user",
-        content: `Based on the following study material, generate ${questionCount} multiple choice questions at ${difficulty} difficulty.
-
+        content: `Based ONLY on the following study material, generate ${questionCount} multiple choice questions at ${difficulty} difficulty. All questions must be derived strictly from the provided content — do NOT use outside knowledge.
+${directionNote}
 STUDY MATERIAL:
-${content.slice(0, 8000)}
+${content.slice(0, 12000)}
 
-Generate ONLY a valid JSON array with this exact format — no extra text, just the JSON:
+Generate ONLY a valid JSON array with this exact format — no extra text, no markdown, just the JSON:
 [
   {
     "question": "Question text here?",
@@ -48,7 +53,7 @@ Generate ONLY a valid JSON array with this exact format — no extra text, just 
 Where "correct" is the index (0-3) of the correct answer.`,
       },
     ],
-    temperature: 0.7,
+    temperature: 0.6,
     max_tokens: 4096,
   });
 
@@ -90,19 +95,24 @@ Where "correct" is the index (0-3) of the correct answer. No extra text, just th
 
 export async function generateFlashcardsFromContent(
   content: string,
-  cardCount: number
+  cardCount: number,
+  direction?: string
 ): Promise<Array<{ front: string; back: string }>> {
   const client = getClient();
+
+  const directionNote = direction
+    ? `\nFOCUS DIRECTION: Focus the flashcards specifically on: "${direction}".\n`
+    : "";
 
   const completion = await client.chat.completions.create({
     model: MODEL,
     messages: [
       {
         role: "user",
-        content: `Based on the following study material, generate ${cardCount} flashcards.
-
+        content: `Based ONLY on the following study material, generate ${cardCount} flashcards. Derive all content strictly from the provided material.
+${directionNote}
 STUDY MATERIAL:
-${content.slice(0, 8000)}
+${content.slice(0, 12000)}
 
 Return ONLY a valid JSON array with this exact format — no extra text:
 [
