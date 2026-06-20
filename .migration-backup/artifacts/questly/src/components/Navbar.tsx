@@ -1,9 +1,10 @@
-import { Link } from "wouter";
+"use client";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Menu, X, LogOut } from "lucide-react";
 import { useState } from "react";
 import { QuizmiWordmark } from "@/components/QuizmiLogo";
-import { useClerk, useUser, Show } from "@clerk/react";
+import { useClerk, useUser, Show } from "@clerk/nextjs";
 
 export default function Navbar({
   variant = "light",
@@ -15,7 +16,7 @@ export default function Navbar({
   const { signOut } = useClerk();
   const { user } = useUser();
 
-  const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+  const basePath = "";
 
   return (
     <nav
@@ -24,7 +25,7 @@ export default function Navbar({
       } backdrop-blur-xl border-b border-white/[0.06]`}
     >
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link to="/">
+        <Link href="/">
           <QuizmiWordmark variant={isDark ? "dark" : "light"} />
         </Link>
 
@@ -50,7 +51,7 @@ export default function Navbar({
 
         <div className="hidden md:flex items-center gap-3">
           <Show when="signed-out">
-            <Link to="/sign-in">
+            <Link href="/sign-in">
               <Button
                 variant="ghost"
                 size="sm"
@@ -63,14 +64,14 @@ export default function Navbar({
                 Log in
               </Button>
             </Link>
-            <Link to="/sign-up">
+            <Link href="/sign-up">
               <Button size="sm" className="rounded-xl px-5 font-semibold shadow-lg shadow-primary/25">
                 Get Started
               </Button>
             </Link>
           </Show>
           <Show when="signed-in">
-            <Link to="/demo">
+            <Link href="/demo">
               <Button size="sm" className="rounded-xl px-5 font-semibold shadow-lg shadow-primary/25">
                 Dashboard
               </Button>
@@ -124,7 +125,7 @@ export default function Navbar({
           ))}
           <div className="flex gap-2 pt-2">
             <Show when="signed-out">
-              <Link to="/sign-in" className="flex-1" onClick={() => setOpen(false)}>
+              <Link href="/sign-in" className="flex-1" onClick={() => setOpen(false)}>
                 <Button
                   variant="outline"
                   className={`w-full rounded-xl text-sm font-semibold ${isDark ? "border-white/20 text-white bg-transparent hover:bg-white/10" : ""}`}
@@ -133,14 +134,14 @@ export default function Navbar({
                   Log in
                 </Button>
               </Link>
-              <Link to="/sign-up" className="flex-1" onClick={() => setOpen(false)}>
+              <Link href="/sign-up" className="flex-1" onClick={() => setOpen(false)}>
                 <Button className="w-full rounded-xl text-sm font-semibold" size="sm">
                   Get Started
                 </Button>
               </Link>
             </Show>
             <Show when="signed-in">
-              <Link to="/demo" className="flex-1" onClick={() => setOpen(false)}>
+              <Link href="/demo" className="flex-1" onClick={() => setOpen(false)}>
                 <Button className="w-full rounded-xl text-sm font-semibold" size="sm">
                   Dashboard
                 </Button>

@@ -6,6 +6,8 @@ import quizzesRouter from "./quizzes.js";
 import flashcardsRouter from "./flashcards.js";
 import summaryRouter from "./summary.js";
 import paystackRouter from "./paystack.js";
+import chatRouter from "./chat.js";
+import uploadRouter from "./upload.js";
 
 const router: IRouter = Router();
 
@@ -16,5 +18,7 @@ router.use(quizzesRouter);
 router.use(flashcardsRouter);
 router.use(summaryRouter);
 router.use(paystackRouter);
+router.use(chatRouter);
+router.use(uploadRouter);
 
 export default router;

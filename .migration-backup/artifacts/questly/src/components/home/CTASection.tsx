@@ -1,4 +1,5 @@
-import { Link } from "wouter";
+"use client";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
@@ -31,12 +32,12 @@ export default function CTASection() {
               Join 250,000+ students already using Quizmi to ace their exams. No credit card required.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link to="/sign-up">
+              <Link href="/sign-up">
                 <Button size="lg" className="rounded-full px-10 text-sm font-bold shadow-xl shadow-primary/30 w-full sm:w-auto">
                   Get Started Free <ArrowRight className="w-4 h-4 ml-1.5" />
                 </Button>
               </Link>
-              <Link to="/sign-in">
+              <Link href="/sign-in">
                 <Button
                   variant="ghost"
                   size="lg"

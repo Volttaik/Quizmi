@@ -1,6 +1,7 @@
+"use client";
 import { Sparkles, ArrowRight } from "lucide-react";
 
-import { Link } from "wouter";
+import Link from "next/link";
 
 export default function PromoBanner() {
   return (
@@ -22,7 +23,7 @@ export default function PromoBanner() {
             AI tools that adapt to how you learn.
           </p>
           <Link
-            to="/buy-credits"
+            href="/buy-credits"
             className="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-primary/80 hover:bg-primary px-3.5 py-2 rounded-full transition-colors"
           >
             Upgrade now <ArrowRight className="w-3 h-3" />

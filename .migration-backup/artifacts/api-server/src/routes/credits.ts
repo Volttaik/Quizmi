@@ -16,7 +16,7 @@ router.get("/credits", async (req, res) => {
     });
     return res.json({ credits: user?.credits ?? 0 });
   } catch (err) {
-    console.error(err);
+    req.log.error({ err }, "GET /credits error");
     return res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -34,7 +34,7 @@ router.get("/credits/transactions", async (req, res) => {
       .limit(20);
     return res.json(transactions);
   } catch (err) {
-    console.error(err);
+    req.log.error({ err }, "GET /credits/transactions error");
     return res.status(500).json({ error: "Internal server error" });
   }
 });

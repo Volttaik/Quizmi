@@ -1,3 +1,4 @@
+"use client";
 import { Zap, Brain, Layers, Target } from "lucide-react";
 
 const features = [

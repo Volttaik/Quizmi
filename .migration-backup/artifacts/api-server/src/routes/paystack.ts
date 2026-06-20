@@ -34,7 +34,9 @@ router.post("/paystack/initialize", async (req, res) => {
 
     const pkg = CREDIT_PACKAGES[parsed.data.package];
     const email = parsed.data.email ?? user.email;
-    const baseUrl = process.env.APP_URL ?? `https://${(process.env.REPLIT_DOMAINS ?? "localhost:3000").split(",")[0]}`;
+    const baseUrl =
+      process.env.APP_URL ??
+      `https://${(process.env.REPLIT_DOMAINS ?? "localhost:3000").split(",")[0]}`;
 
     const paystackRes = await fetch("https://api.paystack.co/transaction/initialize", {
       method: "POST",
@@ -50,44 +52,50 @@ router.post("/paystack/initialize", async (req, res) => {
       }),
     });
 
-    const data = await paystackRes.json() as { status: boolean; message?: string; data?: { authorization_url: string; reference: string } };
+    const data = (await paystackRes.json()) as {
+      status: boolean;
+      message?: string;
+      data?: { authorization_url: string; reference: string };
+    };
     if (!data.status) {
       return res.status(502).json({ error: data.message ?? "Failed to initialize payment" });
     }
 
     return res.json({ url: data.data!.authorization_url, reference: data.data!.reference });
   } catch (err) {
-    console.error(err);
+    req.log.error({ err }, "POST /paystack/initialize error");
     return res.status(500).json({ error: "Internal server error" });
   }
 });
 
 router.get("/paystack/verify", async (req, res) => {
   const reference = (req.query.reference ?? req.query.trxref) as string | undefined;
-  if (!reference) return res.redirect("/dashboard?payment=failed");
+  if (!reference) return res.redirect("/payment/callback?status=failed&reason=no_reference");
 
   const secretKey = process.env.PAYSTACK_SECRET_KEY;
-  if (!secretKey) return res.redirect("/dashboard?payment=failed");
+  if (!secretKey) return res.redirect("/payment/callback?status=failed&reason=not_configured");
 
   try {
-    const paystackRes = await fetch(`https://api.paystack.co/transaction/verify/${reference}`, {
-      headers: { Authorization: `Bearer ${secretKey}` },
-    });
+    const paystackRes = await fetch(
+      `https://api.paystack.co/transaction/verify/${reference}`,
+      { headers: { Authorization: `Bearer ${secretKey}` } },
+    );
 
-    const data = await paystackRes.json() as {
+    const data = (await paystackRes.json()) as {
       status: boolean;
       data?: { status: string; metadata?: { userId?: string; package?: string; credits?: number } };
     };
 
     if (!data.status || data.data?.status !== "success") {
-      return res.redirect("/dashboard?payment=failed");
+      return res.redirect("/payment/callback?status=failed&reason=payment_not_successful");
     }
 
-    const { userId, credits } = data.data.metadata ?? {};
-    if (!userId || !credits) return res.redirect("/dashboard?payment=failed");
+    const { userId, credits, package: pkg } = data.data.metadata ?? {};
+    if (!userId || !credits) return res.redirect("/payment/callback?status=failed&reason=missing_metadata");
 
     const creditAmount = typeof credits === "number" ? credits : 500;
 
+    let alreadyProcessed = false;
     await db.transaction(async (tx) => {
       const existing = await tx
         .select({ id: creditTransactionsTable.id })
@@ -96,10 +104,12 @@ router.get("/paystack/verify", async (req, res) => {
         .limit(1);
 
       if (existing.length > 0) {
+        alreadyProcessed = true;
         return;
       }
 
-      await tx.update(usersTable)
+      await tx
+        .update(usersTable)
         .set({ credits: sql`${usersTable.credits} + ${creditAmount}` })
         .where(eq(usersTable.clerkId, userId));
 
@@ -107,15 +117,15 @@ router.get("/paystack/verify", async (req, res) => {
         userId,
         amount: creditAmount,
         type: "purchase",
-        description: `Purchased ${creditAmount.toLocaleString()} credits`,
+        description: `Purchased ${creditAmount.toLocaleString()} credits (${pkg ?? "package"})`,
         reference,
       });
     });
 
-    return res.redirect("/dashboard?payment=success");
+    return res.redirect(`/payment/callback?status=success&credits=${creditAmount}&ref=${reference}`);
   } catch (err) {
-    console.error(err);
-    return res.redirect("/dashboard?payment=failed");
+    req.log.error({ err }, "GET /paystack/verify error");
+    return res.redirect("/payment/callback?status=failed&reason=server_error");
   }
 });
 

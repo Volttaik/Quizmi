@@ -1,16 +1,14 @@
 import { defineConfig } from "drizzle-kit";
 import path from "path";
 
-const url = process.env.TURSO_DATABASE_URL ?? process.env.DATABASE_URL;
-if (!url) {
-  throw new Error("TURSO_DATABASE_URL must be set. Configure your Turso database.");
+if (!process.env.DATABASE_URL) {
+  throw new Error("DATABASE_URL, ensure the database is provisioned");
 }
 
 export default defineConfig({
   schema: path.join(__dirname, "./src/schema/index.ts"),
-  dialect: "turso",
+  dialect: "postgresql",
   dbCredentials: {
-    url,
-    authToken: process.env.TURSO_AUTH_TOKEN,
+    url: process.env.DATABASE_URL,
   },
 });

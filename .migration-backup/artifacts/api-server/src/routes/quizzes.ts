@@ -2,18 +2,20 @@ import { Router } from "express";
 import { getAuth } from "@clerk/express";
 import { db, usersTable, quizzesTable, quizAttemptsTable, creditTransactionsTable } from "../lib/db.js";
 import { eq, and, desc } from "drizzle-orm";
-import { generateQuiz } from "../lib/ai.js";
+import { generateQuiz, generateQuizFromContent } from "../lib/ai.js";
 import { z } from "zod";
 
 const router = Router();
 
 const generateSchema = z.object({
-  topic: z.string().min(1).max(200),
-  questionCount: z.number().min(1).max(50).default(10),
+  topic: z.string().min(1).max(500).optional(),
+  fileContent: z.string().optional(),
+  fileName: z.string().optional(),
+  questionCount: z.number().min(1).max(200).default(10),
   difficulty: z.enum(["easy", "medium", "hard"]).default("medium"),
 });
 
-const QUIZ_CREDITS = 5;
+const QUIZ_CREDIT_PER_QUIZ = 1;
 
 router.post("/generate-quiz", async (req, res) => {
   const { userId } = getAuth(req);
@@ -22,31 +24,59 @@ router.post("/generate-quiz", async (req, res) => {
   const parsed = generateSchema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error: "Invalid input" });
 
-  const { topic, questionCount, difficulty } = parsed.data;
+  const { topic, fileContent, fileName, questionCount, difficulty } = parsed.data;
+
+  if (!topic && !fileContent) {
+    return res.status(400).json({ error: "Please provide a topic or upload a file." });
+  }
 
   try {
     const user = await db.query.usersTable.findFirst({ where: eq(usersTable.clerkId, userId) });
-    if (!user || user.credits < QUIZ_CREDITS) {
-      return res.status(402).json({ error: `Not enough credits. You need ${QUIZ_CREDITS} credits to generate a quiz.` });
+    const creditsNeeded = QUIZ_CREDIT_PER_QUIZ;
+    if (!user || user.credits < creditsNeeded) {
+      return res.status(402).json({
+        error: `Not enough credits. You need ${creditsNeeded} credit${creditsNeeded > 1 ? "s" : ""} to generate a quiz.`,
+      });
     }
 
-    if (!process.env.GEMINI_API_KEY) {
-      return res.status(503).json({ error: "Gemini API key not configured. Please add GEMINI_API_KEY in Secrets." });
+    if (!process.env.GROQ_API_KEY) {
+      return res.status(503).json({ error: "AI API key not configured. Please add GROQ_API_KEY in Secrets." });
     }
 
-    const questions = await generateQuiz(topic, questionCount, difficulty);
-    const title = `${topic} Quiz`;
+    let questions: Array<{ question: string; options: string[]; correct: number }>;
+    let title: string;
+
+    if (fileContent && fileContent.trim().length > 50) {
+      const displayName = fileName ? fileName.replace(/\.[^/.]+$/, "") : "Uploaded Material";
+      title = topic ? `${topic} Quiz` : `${displayName} Quiz`;
+      questions = await generateQuizFromContent(fileContent, questionCount, difficulty, topic);
+    } else if (topic) {
+      title = `${topic} Quiz`;
+      questions = await generateQuiz(topic, questionCount, difficulty);
+    } else {
+      return res.status(400).json({ error: "No valid source material provided." });
+    }
 
     const [quiz] = await db
       .insert(quizzesTable)
-      .values({ userId, title, topic, difficulty, questions, questionCount: questions.length })
+      .values({
+        userId,
+        title,
+        topic: topic ?? (fileName ?? "Uploaded Material"),
+        difficulty,
+        questions,
+        questionCount: questions.length,
+      })
       .returning();
 
     await db.transaction(async (tx) => {
-      await tx.update(usersTable).set({ credits: user.credits - QUIZ_CREDITS }).where(eq(usersTable.clerkId, userId));
+      await tx
+        .update(usersTable)
+        .set({ credits: user.credits - creditsNeeded })
+        .where(eq(usersTable.clerkId, userId));
       await tx.insert(creditTransactionsTable).values({
         userId,
-        amount: -QUIZ_CREDITS,
+        amount: -creditsNeeded,
         type: "usage",
         description: `Generated quiz: ${title}`,
       });
@@ -54,9 +84,14 @@ router.post("/generate-quiz", async (req, res) => {
 
     return res.json(quiz);
   } catch (err: any) {
-    console.error(err);
-    if (err?.status === 429 || err?.message?.includes("429") || err?.message?.includes("quota") || err?.message?.includes("Too Many Requests")) {
-      return res.status(429).json({ error: "Gemini API quota exceeded. Please enable billing at aistudio.google.com or wait until your quota resets." });
+    req.log.error({ err }, "POST /generate-quiz error");
+    if (
+      err?.status === 429 ||
+      err?.message?.includes("429") ||
+      err?.message?.includes("quota") ||
+      err?.message?.includes("Too Many Requests")
+    ) {
+      return res.status(429).json({ error: "AI API quota exceeded. Please try again later." });
     }
     return res.status(500).json({ error: err?.message ?? "Failed to generate quiz" });
   }
@@ -72,10 +107,10 @@ router.get("/quizzes", async (req, res) => {
       .from(quizzesTable)
       .where(eq(quizzesTable.userId, userId))
       .orderBy(desc(quizzesTable.createdAt))
-      .limit(50);
+      .limit(200);
     return res.json(quizzes);
   } catch (err) {
-    console.error(err);
+    req.log.error({ err }, "GET /quizzes error");
     return res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -94,7 +129,25 @@ router.get("/quizzes/:id", async (req, res) => {
     if (!quiz) return res.status(404).json({ error: "Quiz not found" });
     return res.json(quiz);
   } catch (err) {
-    console.error(err);
+    req.log.error({ err }, "GET /quizzes/:id error");
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.delete("/quizzes/:id", async (req, res) => {
+  const { userId } = getAuth(req);
+  if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
+  const quizId = parseInt(req.params.id);
+  if (isNaN(quizId)) return res.status(400).json({ error: "Invalid quiz ID" });
+
+  try {
+    await db
+      .delete(quizzesTable)
+      .where(and(eq(quizzesTable.id, quizId), eq(quizzesTable.userId, userId)));
+    return res.json({ success: true });
+  } catch (err) {
+    req.log.error({ err }, "DELETE /quizzes/:id error");
     return res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -112,7 +165,7 @@ router.get("/quiz-attempts", async (req, res) => {
       .limit(50);
     return res.json(attempts);
   } catch (err) {
-    console.error(err);
+    req.log.error({ err }, "GET /quiz-attempts error");
     return res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -132,7 +185,7 @@ router.post("/quiz-attempts", async (req, res) => {
       .returning();
     return res.json(attempt);
   } catch (err) {
-    console.error(err);
+    req.log.error({ err }, "POST /quiz-attempts error");
     return res.status(500).json({ error: "Internal server error" });
   }
 });

@@ -1,6 +1,7 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { Check, Zap } from "lucide-react";
-import { Link } from "wouter";
+import Link from "next/link";
 import { motion } from "framer-motion";
 
 const plans = [
@@ -88,7 +89,7 @@ export default function PricingSection() {
                 ))}
               </ul>
 
-              <Link to="/sign-up" className="mt-8">
+              <Link href="/sign-up" className="mt-8">
                 <Button
                   className={`w-full rounded-full font-semibold ${
                     plan.popular

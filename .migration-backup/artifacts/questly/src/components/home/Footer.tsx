@@ -1,4 +1,5 @@
-import { Link } from "wouter";
+"use client";
+import Link from "next/link";
 import { QuizmiWordmark } from "@/components/QuizmiLogo";
 
 const links = {
@@ -14,7 +15,7 @@ export default function Footer() {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
           <div className="col-span-2 md:col-span-1">
-            <Link to="/">
+            <Link href="/">
               <QuizmiWordmark variant="dark" className="mb-4" />
             </Link>
             <p className="text-white/25 text-xs leading-relaxed">
