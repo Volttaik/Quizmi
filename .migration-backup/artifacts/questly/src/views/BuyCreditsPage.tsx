@@ -17,7 +17,7 @@ const CREDIT_COSTS = [
   { action: "Generate a quiz", cost: 1, icon: "🧠" },
   { action: "Create flashcard set", cost: 1, icon: "🃏" },
   { action: "Generate AI summary", cost: 1, icon: "📄" },
-  { action: "AI chat messages", cost: 0, icon: "💬", note: "Free!" },
+  { action: "AI chat messages", cost: 0, icon: "💬", note: "Included" },
 ];
 
 const container = {
@@ -25,8 +25,8 @@ const container = {
   show: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.05 } },
 };
 const item = {
-  hidden: { opacity: 0, y: 16 },
-  show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 300, damping: 28 } },
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { type: "spring" as const, stiffness: 300, damping: 28 } },
 };
 
 export default function BuyCreditsPage() {
@@ -126,7 +126,7 @@ export default function BuyCreditsPage() {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35 }}
           className="rounded-2xl bg-card border border-border p-5 mb-4"

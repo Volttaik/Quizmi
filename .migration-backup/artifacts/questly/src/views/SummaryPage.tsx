@@ -245,7 +245,7 @@ export default function SummaryPage() {
           )}
           <div className="flex-1">
             <h1 className="text-lg font-extrabold text-foreground">AI Chat</h1>
-            <p className="text-[10px] text-muted-foreground font-medium">Free · Powered by Quizmi AI</p>
+            <p className="text-[10px] text-muted-foreground font-medium">Powered by Quizmi AI</p>
           </div>
           {view === "sessions" && (
             <Button onClick={startNewChat} size="sm" className="rounded-full gap-1.5 text-xs px-4">

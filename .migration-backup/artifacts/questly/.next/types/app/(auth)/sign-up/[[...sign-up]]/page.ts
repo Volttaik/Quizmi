@@ -1,4 +1,4 @@
-// File: /home/runner/workspace/artifacts/questly/src/app/(auth)/sign-up/[[...sign-up]]/page.tsx
+// File: /home/runner/workspace/.migration-backup/artifacts/questly/src/app/(auth)/sign-up/[[...sign-up]]/page.tsx
 import * as entry from '../../../../../../src/app/(auth)/sign-up/[[...sign-up]]/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

@@ -130,7 +130,7 @@ export default function CreateQuizPage() {
   return (
     <div className="min-h-screen bg-background pb-28">
       <div className="max-w-lg mx-auto px-4 pt-6">
-        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-3 mb-6">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-3 mb-6">
           <Link href="/quizzes" className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:bg-muted/80 transition-colors shadow-card dark:shadow-elevated">
             <ArrowLeft className="w-4 h-4" />
           </Link>
@@ -145,7 +145,7 @@ export default function CreateQuizPage() {
 
         <div className="space-y-4">
           <motion.div
-            initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
+            initial={{ opacity: 0 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
             onClick={() => !extracting && fileRef.current?.click()}
             className="rounded-2xl bg-card border-2 border-dashed border-border hover:border-primary/40 p-8 text-center cursor-pointer transition-all shadow-card dark:shadow-elevated"
           >
@@ -192,7 +192,7 @@ export default function CreateQuizPage() {
             <div className="flex-1 h-px bg-border" />
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }} className="rounded-2xl bg-card border border-border p-5 space-y-4 shadow-card dark:shadow-elevated">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }} className="rounded-2xl bg-card border border-border p-5 space-y-4 shadow-card dark:shadow-elevated">
             <div>
               <Label className="text-xs font-bold">
                 {fileReady ? "Focus / Direction (optional)" : "Topic or Subject"}
@@ -249,7 +249,7 @@ export default function CreateQuizPage() {
             </div>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }}>
             <Button
               onClick={handleGenerate}
               className="w-full rounded-full gap-2 shadow-elevated"

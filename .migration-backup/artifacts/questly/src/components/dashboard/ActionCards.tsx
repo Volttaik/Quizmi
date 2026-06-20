@@ -13,8 +13,8 @@ const actions = [
 
 const container = { hidden: {}, show: { transition: { staggerChildren: 0.06 } } };
 const card = {
-  hidden: { opacity: 0, y: 14, scale: 0.97 },
-  show:   { opacity: 1, y: 0,  scale: 1, transition: { type: "spring" as const, stiffness: 300, damping: 24 } },
+  hidden: { opacity: 0, scale: 0.97 },
+  show:   { opacity: 1, scale: 1, transition: { type: "spring" as const, stiffness: 300, damping: 24 } },
 };
 
 export default function ActionCards() {

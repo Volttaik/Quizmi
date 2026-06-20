@@ -268,7 +268,7 @@ export default function FlashcardsPage() {
             ) : sets.map((set, i) => {
               const due = dueCount(set);
               return (
-                <motion.div key={set.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
+                <motion.div key={set.id} initial={{ opacity: 0 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
                   <div className="rounded-2xl bg-card border border-border/60 p-4 shadow-card">
                     <div className="flex items-center gap-3 mb-3" onClick={() => startStudy(set)} style={{ cursor: "pointer" }}>
                       <div className={`w-11 h-11 rounded-2xl ${SET_COLORS[i % SET_COLORS.length]} flex items-center justify-center flex-shrink-0`}><Layers className="w-5 h-5" strokeWidth={1.8} /></div>

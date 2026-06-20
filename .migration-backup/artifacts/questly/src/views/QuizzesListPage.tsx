@@ -101,7 +101,7 @@ export default function QuizzesListPage() {
           </div>
         ) : quizzes.length === 0 ? (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0 }}
             animate={{ opacity: 1, y: 0 }}
             className="rounded-2xl bg-card border border-border p-10 text-center shadow-card dark:shadow-elevated"
           >
@@ -120,7 +120,7 @@ export default function QuizzesListPage() {
               {quizzes.map((quiz, i) => (
                 <motion.div
                   key={quiz.id}
-                  initial={{ opacity: 0, y: 16 }}
+                  initial={{ opacity: 0 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ delay: i * 0.04 }}

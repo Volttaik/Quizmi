@@ -64,8 +64,8 @@ export default function LeaderboardPage() {
         {/* My rank */}
         {me && (
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             className="relative overflow-hidden rounded-2xl bg-primary/90 p-4 mb-5 shadow-glow-primary"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-primary to-[hsl(275,72%,48%)]" />
@@ -100,8 +100,8 @@ export default function LeaderboardPage() {
             {entries.map((entry, i) => (
               <motion.div
                 key={entry.userId}
-                initial={{ opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
                 transition={{ delay: i * 0.04 }}
                 className={`rounded-2xl border p-4 flex items-center gap-3 ${
                   entry.isMe

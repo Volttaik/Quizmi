@@ -37,7 +37,7 @@ function PaymentCallbackContent() {
 
       <motion.div
         className="relative z-10 flex flex-col items-center max-w-sm w-full"
-        initial={{ opacity: 0, y: 40 }}
+        initial={{ opacity: 0 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
       >
@@ -54,7 +54,7 @@ function PaymentCallbackContent() {
 
             <motion.div
               className="text-center mb-8"
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25 }}
             >
@@ -76,7 +76,7 @@ function PaymentCallbackContent() {
 
             <motion.div
               className="w-full space-y-3"
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.45 }}
             >
@@ -113,7 +113,7 @@ function PaymentCallbackContent() {
 
             <motion.div
               className="text-center mb-8"
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25 }}
             >
@@ -124,7 +124,7 @@ function PaymentCallbackContent() {
 
             <motion.div
               className="w-full space-y-3"
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.35 }}
             >

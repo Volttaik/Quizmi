@@ -29,8 +29,8 @@ const container = {
   show: { opacity: 1, transition: { staggerChildren: 0.06, delayChildren: 0.05 } },
 };
 const item = {
-  hidden: { opacity: 0, y: 10 },
-  show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 320, damping: 30 } },
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { type: "spring" as const, stiffness: 320, damping: 30 } },
 };
 
 export default function DashboardPage() {

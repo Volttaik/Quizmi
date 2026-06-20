@@ -1,5 +1,5 @@
 "use client";
-import { ArrowRight, Coins } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
@@ -35,23 +35,12 @@ export default function PromoBanner() {
           </Link>
         </div>
 
-        <div className="flex-shrink-0 w-24 h-24 rounded-2xl overflow-hidden border border-primary/20 bg-primary/10 flex items-center justify-center">
+        <div className="flex-shrink-0 w-24 h-24 rounded-2xl overflow-hidden border border-primary/20">
           <img
-            src="/study-banner.png"
+            src="/promo-banner.png"
             alt="Study"
             className="w-full h-full object-cover"
-            onError={(e) => {
-              const target = e.currentTarget;
-              target.style.display = "none";
-              const parent = target.parentElement;
-              if (parent) {
-                const icon = document.createElement("div");
-                icon.className = "flex items-center justify-center w-full h-full";
-                parent.appendChild(icon);
-              }
-            }}
           />
-          <Coins className="w-10 h-10 text-primary/60 absolute" style={{ display: "none" }} />
         </div>
       </div>
     </motion.div>

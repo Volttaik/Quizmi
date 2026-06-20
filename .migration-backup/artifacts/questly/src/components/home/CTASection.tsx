@@ -21,7 +21,7 @@ export default function CTASection() {
           <div className="relative">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold mb-6">
               <Sparkles className="w-3 h-3" />
-              Start free today
+              Start studying today
             </div>
             <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tight mb-4">
               Ready to study
@@ -29,12 +29,12 @@ export default function CTASection() {
               <span className="text-white/40">smarter?</span>
             </h2>
             <p className="text-sm text-white/40 max-w-md mx-auto mb-10">
-              Join 250,000+ students already using Quizmi to ace their exams. No credit card required.
+              Join thousands of students already using Quizmi to ace their exams with AI.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link href="/sign-up">
                 <Button size="lg" className="rounded-full px-10 text-sm font-bold shadow-xl shadow-primary/30 w-full sm:w-auto">
-                  Get Started Free <ArrowRight className="w-4 h-4 ml-1.5" />
+                  Get Started <ArrowRight className="w-4 h-4 ml-1.5" />
                 </Button>
               </Link>
               <Link href="/sign-in">

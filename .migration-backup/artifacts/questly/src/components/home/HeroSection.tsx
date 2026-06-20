@@ -35,7 +35,7 @@ export default function HeroSection() {
         <div className="flex flex-col sm:flex-row justify-center gap-3 mt-10">
           <Link href="/sign-up">
             <Button size="lg" className="rounded-full px-8 text-sm font-bold shadow-xl shadow-primary/30 w-full sm:w-auto">
-              Start for Free <ArrowRight className="w-4 h-4 ml-1.5" />
+              Get Started <ArrowRight className="w-4 h-4 ml-1.5" />
             </Button>
           </Link>
           <a href="#how-it-works">

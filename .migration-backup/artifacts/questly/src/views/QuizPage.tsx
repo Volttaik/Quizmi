@@ -62,7 +62,7 @@ function CorrectModal({ question, onNext, isLast, bonus }: { question: Question;
         </motion.div>
       </div>
       <motion.h2 className="text-3xl font-extrabold text-white mb-1 text-center"
-        initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
+        initial={{ opacity: 0 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
         Correct! 🎉
       </motion.h2>
       {bonus > 0 && (
@@ -74,7 +74,7 @@ function CorrectModal({ question, onNext, isLast, bonus }: { question: Question;
       )}
       {question.reference && (
         <motion.div className="bg-white/20 rounded-2xl px-4 py-2.5 mb-4 max-w-sm w-full"
-          initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+          initial={{ opacity: 0 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <div className="flex items-start gap-2">
             <BookOpen className="w-3.5 h-3.5 text-white/80 mt-0.5 flex-shrink-0" />
             <p className="text-xs text-white/90 leading-snug">{question.reference}</p>
@@ -87,7 +87,7 @@ function CorrectModal({ question, onNext, isLast, bonus }: { question: Question;
           {question.explanation}
         </motion.p>
       )}
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
         <Button onClick={onNext} className="rounded-full px-10 py-3 text-base font-bold bg-white text-emerald-600 hover:bg-white/90 shadow-xl" size="lg">
           {isLast ? "See Results 🏆" : "Next Question →"}
         </Button>
@@ -105,19 +105,19 @@ function WrongModal({ question, selected, onNext, isLast }: { question: Question
         <span style={{ fontSize: 56 }}>❌</span>
       </motion.div>
       <motion.h2 className="text-3xl font-extrabold text-white mb-1 text-center"
-        initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>Not quite!</motion.h2>
+        initial={{ opacity: 0 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>Not quite!</motion.h2>
       <motion.p className="text-sm text-white/70 mb-5 text-center"
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}>
         You chose: <span className="font-bold text-white/90">{question.options[selected]}</span>
       </motion.p>
       <motion.div className="bg-white/15 rounded-2xl p-4 max-w-sm w-full mb-4"
-        initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+        initial={{ opacity: 0 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
         <p className="text-xs font-bold text-white/60 uppercase tracking-wide mb-1.5">Correct Answer</p>
         <p className="text-sm font-bold text-white">{LABELS[question.correct]}. {question.options[question.correct]}</p>
       </motion.div>
       {question.explanation && (
         <motion.div className="bg-white/15 rounded-2xl p-4 max-w-sm w-full mb-5"
-          initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
+          initial={{ opacity: 0 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
           <p className="text-xs font-bold text-white/60 uppercase tracking-wide mb-1.5">Explanation</p>
           <p className="text-sm text-white/90 leading-relaxed">{question.explanation}</p>
           {question.reference && (
@@ -128,7 +128,7 @@ function WrongModal({ question, selected, onNext, isLast }: { question: Question
           )}
         </motion.div>
       )}
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
         <Button onClick={onNext} className="rounded-full px-10 py-3 text-base font-bold bg-white text-red-600 hover:bg-white/90 shadow-xl" size="lg">
           {isLast ? "See Results" : "Next Question →"}
         </Button>
@@ -153,11 +153,11 @@ function ResultsScreen({ score, total, quiz, onRestart, onDash, bonusPoints, tim
         <span style={{ fontSize: 60 }}>{emoji}</span>
       </motion.div>
       <motion.h1 className="text-2xl font-extrabold text-foreground mb-1 text-center"
-        initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>{msg}</motion.h1>
+        initial={{ opacity: 0 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>{msg}</motion.h1>
       <motion.p className="text-muted-foreground text-sm mb-6 text-center"
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}>{quiz.title}</motion.p>
       <motion.div className="bg-card border border-border rounded-3xl p-6 w-full max-w-sm mb-6 shadow-card"
-        initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+        initial={{ opacity: 0 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
         <div className="text-center mb-4">
           <span className="text-6xl font-extrabold text-primary">{pct}%</span>
           <p className="text-sm text-muted-foreground mt-1">{score} of {total} correct</p>
@@ -185,7 +185,7 @@ function ResultsScreen({ score, total, quiz, onRestart, onDash, bonusPoints, tim
         </div>
       </motion.div>
       <motion.div className="flex gap-3 w-full max-w-sm"
-        initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
+        initial={{ opacity: 0 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
         <Button variant="outline" onClick={onRestart} className="flex-1 rounded-full gap-2"><RotateCcw className="w-4 h-4" /> Retry</Button>
         <Button onClick={onDash} className="flex-1 rounded-full gap-2">Dashboard <ArrowRight className="w-4 h-4" /></Button>
       </motion.div>
@@ -298,7 +298,7 @@ export default function QuizPage() {
 
   if (showModeSelect) return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6 pb-24 gap-5">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-2">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-2">
         <div className="w-20 h-20 rounded-3xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
           <Trophy className="w-10 h-10 text-primary" strokeWidth={1.5} />
         </div>
@@ -307,7 +307,7 @@ export default function QuizPage() {
       </motion.div>
       <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}
         className="text-sm font-bold text-foreground">Choose your mode</motion.p>
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
         className="w-full max-w-sm space-y-3">
         <button onClick={() => { setTimedMode(false); setShowModeSelect(false); }}
           className="w-full rounded-2xl border-2 border-border hover:border-primary/40 bg-card p-5 text-left hover:-translate-y-0.5 transition-all shadow-card">
@@ -399,7 +399,7 @@ export default function QuizPage() {
                   return (
                     <motion.button key={i} onClick={() => handleSelect(i)} disabled={feedback !== null}
                       className={`w-full text-left flex items-center gap-3.5 p-4 rounded-2xl border-2 transition-all ${bgClass}`}
-                      whileTap={feedback ? {} : { scale: 0.98 }} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}>
+                      whileTap={feedback ? {} : { scale: 0.98 }} initial={{ opacity: 0 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}>
                       <span className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-extrabold flex-shrink-0 transition-colors ${labelBg}`}>{LABELS[i]}</span>
                       <span className="text-sm font-semibold text-foreground leading-snug flex-1">{opt}</span>
                       {icon}
