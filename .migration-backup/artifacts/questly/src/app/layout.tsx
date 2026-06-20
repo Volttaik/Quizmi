@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
-import { shadcn } from "@clerk/themes";
 import { Toaster } from "sonner";
 import { Providers } from "./providers";
 import "./globals.css";
@@ -16,13 +15,7 @@ export const metadata: Metadata = {
 };
 
 const clerkAppearance = {
-  theme: shadcn,
   cssLayerName: "clerk",
-  options: {
-    logoPlacement: "inside" as const,
-    logoLinkUrl: "/",
-    logoImageUrl: "/logo.png",
-  },
   variables: {
     colorPrimary: "hsl(262, 72%, 55%)",
     colorForeground: "hsl(222, 47%, 11%)",
