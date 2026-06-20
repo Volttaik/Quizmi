@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { getAuth } from "@clerk/express";
 import { db, usersTable, flashcardSetsTable, creditTransactionsTable } from "../lib/db.js";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and } from "drizzle-orm";
 import { generateFlashcards, generateFlashcardsFromContent } from "../lib/ai.js";
 import { z } from "zod";
 
@@ -119,9 +119,15 @@ router.delete("/flashcard-sets/:id", async (req, res) => {
   if (isNaN(setId)) return res.status(400).json({ error: "Invalid set ID" });
 
   try {
+    const existing = await db.query.flashcardSetsTable.findFirst({
+      where: and(eq(flashcardSetsTable.id, setId), eq(flashcardSetsTable.userId, userId)),
+      columns: { id: true },
+    });
+    if (!existing) return res.status(404).json({ error: "Flashcard set not found" });
+
     await db
       .delete(flashcardSetsTable)
-      .where(eq(flashcardSetsTable.id, setId));
+      .where(and(eq(flashcardSetsTable.id, setId), eq(flashcardSetsTable.userId, userId)));
     return res.json({ success: true });
   } catch (err) {
     req.log.error({ err }, "DELETE /flashcard-sets/:id error");
