@@ -146,6 +146,7 @@ export default function ProfilePage() {
 
         {/* Settings sections */}
         <motion.div variants={item} className="bg-card rounded-2xl overflow-hidden border border-border/40 shadow-card dark:shadow-card mb-4">
+          <SettingRow icon={Award} label="Achievements" to="/achievements" accent />
           <SettingRow icon={User} label="Account Details" to="/settings/account" />
           <SettingRow icon={Bell} label="Notifications" to="/settings/notifications" />
           <SettingRow icon={Shield} label="Privacy & Security" to="/settings/privacy" />
@@ -172,11 +173,11 @@ export default function ProfilePage() {
   );
 }
 
-function SettingRow({ icon: Icon, label, to }: { icon: React.ElementType; label: string; to: string }) {
+function SettingRow({ icon: Icon, label, to, accent }: { icon: React.ElementType; label: string; to: string; accent?: boolean }) {
   return (
     <Link href={to} className="flex items-center gap-3 px-4 py-3.5 hover:bg-muted/50 active:bg-muted/70 transition-colors border-b border-border/30 last:border-0 group">
-      <div className="w-9 h-9 rounded-xl bg-primary/10 group-hover:bg-primary/15 flex items-center justify-center flex-shrink-0 transition-colors">
-        <Icon className="w-4 h-4 text-primary" />
+      <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors ${accent ? "bg-yellow-400/15 group-hover:bg-yellow-400/25" : "bg-primary/10 group-hover:bg-primary/15"}`}>
+        <Icon className={`w-4 h-4 ${accent ? "text-yellow-500" : "text-primary"}`} />
       </div>
       <span className="flex-1 text-sm font-semibold text-foreground text-left">{label}</span>
       <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-0.5 transition-transform" />
