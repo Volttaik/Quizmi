@@ -5,6 +5,27 @@ import { Link } from "wouter";
 import BottomNav from "@/components/dashboard/BottomNav";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
+import * as pdfjsLib from "pdfjs-dist";
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+  "pdfjs-dist/build/pdf.worker.mjs",
+  import.meta.url
+).toString();
+
+async function extractTextFromFile(file: File): Promise<string> {
+  if (file.name.toLowerCase().endsWith(".pdf")) {
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    const pages: string[] = [];
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      pages.push(content.items.map((item: any) => item.str).join(" "));
+    }
+    return pages.join("\n").trim();
+  }
+  return await file.text();
+}
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -44,14 +65,13 @@ export default function SummaryPage() {
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [view, setView] = useState<"sessions" | "chat">("sessions");
   const [attachMenuOpen, setAttachMenuOpen] = useState(false);
+  const [attachedFile, setAttachedFile] = useState<{ name: string; content: string } | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    loadSessions();
-  }, []);
+  useEffect(() => { loadSessions(); }, []);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -61,10 +81,7 @@ export default function SummaryPage() {
     setLoadingSessions(true);
     try {
       const res = await fetch("/api/chat/sessions");
-      if (res.ok) {
-        const data = await res.json();
-        setSessions(data);
-      }
+      if (res.ok) setSessions(await res.json());
     } catch { }
     finally { setLoadingSessions(false); }
   };
@@ -87,24 +104,35 @@ export default function SummaryPage() {
     setActiveSession(null);
     setMessages([]);
     setInput("");
+    setAttachedFile(null);
     setView("chat");
     setTimeout(() => inputRef.current?.focus(), 100);
   };
 
   const sendMessage = async () => {
     const text = input.trim();
-    if (!text || sending) return;
+    if ((!text && !attachedFile) || sending) return;
+
+    let messageToSend = text;
+
+    if (attachedFile) {
+      messageToSend = `I'm sharing a document with you. Please use its content to answer my questions.\n\n--- DOCUMENT: ${attachedFile.name} ---\n${attachedFile.content.slice(0, 10000)}\n--- END OF DOCUMENT ---\n\n${text || "Please summarize the key points from this document."}`;
+    }
+
+    const displayText = attachedFile
+      ? `📎 ${attachedFile.name}${text ? `\n\n${text}` : ""}`
+      : text;
 
     setInput("");
+    setAttachedFile(null);
     setSending(true);
-    const userMsg: ChatMessage = { role: "user", content: text };
-    setMessages(prev => [...prev, userMsg]);
+    setMessages(prev => [...prev, { role: "user", content: displayText }]);
 
     try {
       const res = await fetch("/api/chat/message", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text, sessionId: activeSession ?? undefined }),
+        body: JSON.stringify({ message: messageToSend, sessionId: activeSession ?? undefined }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -158,13 +186,26 @@ export default function SummaryPage() {
     return d.toLocaleDateString();
   };
 
-  const handleFileAttach = async (e: React.ChangeEvent<HTMLInputElement>, type: "file" | "image") => {
+  const handleFileAttach = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
     if (!f) return;
     setAttachMenuOpen(false);
-    toast.info(`Attached: ${f.name}`);
-    const fileLabel = type === "image" ? `[Image: ${f.name}]` : `[File: ${f.name}]`;
-    setInput(prev => prev ? `${prev}\n${fileLabel}` : fileLabel);
+    const loadingToast = toast.loading(`Reading ${f.name}…`);
+    try {
+      const content = await extractTextFromFile(f);
+      if (!content.trim()) {
+        toast.dismiss(loadingToast);
+        toast.error("Could not extract text from this file. It may be a scanned image.");
+        e.target.value = "";
+        return;
+      }
+      setAttachedFile({ name: f.name, content });
+      toast.dismiss(loadingToast);
+      toast.success(`${f.name} ready — type your question and send`);
+    } catch {
+      toast.dismiss(loadingToast);
+      toast.error("Failed to read file. Try a text-based PDF, TXT, or MD file.");
+    }
     e.target.value = "";
   };
 
@@ -174,15 +215,21 @@ export default function SummaryPage() {
   };
 
   const attachOptions = [
-    { icon: FileText, label: "Upload File", action: () => { setAttachMenuOpen(false); fileInputRef.current?.click(); } },
-    { icon: Image, label: "Upload Image", action: () => { setAttachMenuOpen(false); imageInputRef.current?.click(); } },
+    {
+      icon: FileText, label: "Upload File (PDF, TXT…)",
+      action: () => { setAttachMenuOpen(false); fileInputRef.current?.click(); }
+    },
+    {
+      icon: Image, label: "Upload Image",
+      action: () => { setAttachMenuOpen(false); imageInputRef.current?.click(); }
+    },
     { icon: Mic, label: "Record Audio", action: handleAudioRecord },
   ];
 
   return (
     <div className="min-h-screen bg-background pb-28 flex flex-col">
-      <input ref={fileInputRef} type="file" accept=".pdf,.txt,.doc,.docx,.md" className="hidden" onChange={(e) => handleFileAttach(e, "file")} />
-      <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleFileAttach(e, "image")} />
+      <input ref={fileInputRef} type="file" accept=".pdf,.txt,.doc,.docx,.md" className="hidden" onChange={handleFileAttach} />
+      <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileAttach} />
 
       <div className="max-w-lg mx-auto w-full px-4 pt-6 flex-1 flex flex-col">
         <div className="flex items-center gap-3 mb-4">
@@ -237,9 +284,7 @@ export default function SummaryPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-bold text-foreground truncate">{s.title}</p>
-                        {s.last_message && (
-                          <p className="text-xs text-muted-foreground truncate mt-0.5">{s.last_message}</p>
-                        )}
+                        {s.last_message && <p className="text-xs text-muted-foreground truncate mt-0.5">{s.last_message}</p>}
                       </div>
                       <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
                         <span className="text-[10px] text-muted-foreground">{formatTime(s.updated_at)}</span>
@@ -268,7 +313,7 @@ export default function SummaryPage() {
                       <Sparkles className="w-7 h-7 text-primary" />
                     </div>
                     <p className="text-sm font-bold text-foreground mb-1">Ask me anything</p>
-                    <p className="text-xs text-muted-foreground max-w-[220px]">Explain a concept, summarize a topic, create a study plan — I'm here to help</p>
+                    <p className="text-xs text-muted-foreground max-w-[240px]">Attach a PDF or document, then ask questions about it — or just type any study question</p>
                     <div className="mt-5 flex flex-col gap-2 w-full max-w-xs">
                       {["Summarize the water cycle", "Explain Newton's 3 laws", "Create a study plan for calculus"].map(s => (
                         <button key={s} onClick={() => { setInput(s); inputRef.current?.focus(); }}
@@ -291,7 +336,7 @@ export default function SummaryPage() {
                         : "bg-card border border-border/40 text-foreground rounded-tl-sm"
                       }`}>
                         {msg.role === "user" ? (
-                          <p className="text-sm leading-relaxed">{msg.content}</p>
+                          <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
                         ) : (
                           <div className="prose-sm">{renderMarkdown(msg.content)}</div>
                         )}
@@ -319,38 +364,50 @@ export default function SummaryPage() {
               <div className="relative">
                 <AnimatePresence>
                   {attachMenuOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 8, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 8, scale: 0.95 }}
-                      transition={{ duration: 0.15 }}
-                      className="absolute bottom-full left-0 mb-2 bg-card border border-border/60 rounded-2xl shadow-elevated overflow-hidden z-10 min-w-[160px]"
-                    >
-                      {attachOptions.map((opt) => (
-                        <button
-                          key={opt.label}
-                          onClick={opt.action}
-                          className="w-full flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors"
-                        >
-                          <opt.icon className="w-4 h-4 text-primary flex-shrink-0" />
-                          {opt.label}
-                        </button>
-                      ))}
-                    </motion.div>
+                    <>
+                      <div className="fixed inset-0 z-10" onClick={() => setAttachMenuOpen(false)} />
+                      <motion.div
+                        initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute bottom-full left-0 mb-2 bg-card border border-border/60 rounded-2xl shadow-elevated overflow-hidden z-20 min-w-[200px]"
+                      >
+                        {attachOptions.map((opt) => (
+                          <button
+                            key={opt.label}
+                            onClick={opt.action}
+                            className="w-full flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors"
+                          >
+                            <opt.icon className="w-4 h-4 text-primary flex-shrink-0" />
+                            {opt.label}
+                          </button>
+                        ))}
+                      </motion.div>
+                    </>
                   )}
                 </AnimatePresence>
 
-                {attachMenuOpen && (
-                  <div className="fixed inset-0 z-0" onClick={() => setAttachMenuOpen(false)} />
+                {attachedFile && (
+                  <div className="flex items-center gap-2 mb-2 px-1">
+                    <div className="flex items-center gap-2 bg-primary/10 rounded-xl px-3 py-1.5 flex-1 min-w-0">
+                      <FileText className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                      <span className="text-xs font-medium text-primary truncate">{attachedFile.name}</span>
+                      <span className="text-[10px] text-primary/60 flex-shrink-0">({(attachedFile.content.length / 1000).toFixed(0)}k chars)</span>
+                    </div>
+                    <button onClick={() => setAttachedFile(null)} className="w-6 h-6 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors flex-shrink-0">
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
                 )}
 
-                <div className="bg-card border border-border/40 rounded-2xl shadow-sm overflow-hidden mt-2 relative z-1">
+                <div className="bg-card border border-border/40 rounded-2xl shadow-sm overflow-hidden">
                   <textarea
                     ref={inputRef}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKey}
-                    placeholder="Ask anything… (Enter to send)"
+                    placeholder={attachedFile ? "Ask a question about the document…" : "Ask anything… (Enter to send)"}
                     rows={2}
                     className="w-full px-4 pt-3 pb-1 text-sm bg-transparent resize-none outline-none placeholder:text-muted-foreground/60"
                   />
@@ -363,7 +420,7 @@ export default function SummaryPage() {
                     </button>
                     <button
                       onClick={sendMessage}
-                      disabled={!input.trim() || sending}
+                      disabled={(!input.trim() && !attachedFile) || sending}
                       className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center text-primary-foreground disabled:opacity-40 transition-opacity hover:opacity-90 flex-shrink-0"
                     >
                       <ArrowUp className="w-4 h-4" />

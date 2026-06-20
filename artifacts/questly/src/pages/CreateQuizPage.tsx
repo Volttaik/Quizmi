@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { useLocation } from "wouter";
-import { Sparkles, ArrowLeft, Upload, FileText, X, ArrowRight, Loader2, Coins } from "lucide-react";
+import { Sparkles, ArrowLeft, Upload, FileText, X, ArrowRight, Loader2, Coins, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Link } from "wouter";
@@ -25,7 +25,7 @@ async function extractTextFromPDF(file: File): Promise<string> {
     const content = await page.getTextContent();
     pages.push(content.items.map((item: any) => item.str).join(" "));
   }
-  return pages.join("\n");
+  return pages.join("\n").trim();
 }
 
 export default function CreateQuizPage() {
@@ -38,32 +38,37 @@ export default function CreateQuizPage() {
   const [customCount, setCustomCount] = useState("");
   const [difficulty, setDifficulty] = useState("medium");
   const [generating, setGenerating] = useState(false);
+  const [extracting, setExtracting] = useState(false);
 
   const handleFileDrop = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
     if (!f) return;
     setFile(f);
+    setFileContent("");
+    setExtracting(true);
     try {
       let text: string;
       if (f.name.toLowerCase().endsWith(".pdf")) {
         toast.info("Reading PDF…");
         text = await extractTextFromPDF(f);
-        if (!text.trim()) {
-          toast.error("Could not extract text from this PDF. It may be a scanned image.");
+        if (!text) {
+          toast.error("Could not extract text from this PDF. It may be a scanned image — try a text-based PDF.");
           setFile(null);
           setFileContent("");
+          setExtracting(false);
           return;
         }
-        toast.success(`PDF loaded — ${text.length.toLocaleString()} characters extracted`);
       } else {
         text = await f.text();
-        toast.success(`File loaded — ${text.length.toLocaleString()} characters`);
       }
       setFileContent(text);
+      toast.success(`File ready — ${text.length.toLocaleString()} characters extracted`);
     } catch {
       toast.error("Could not read file. Please try a .txt, .md, or text-based PDF.");
       setFile(null);
       setFileContent("");
+    } finally {
+      setExtracting(false);
     }
   };
 
@@ -79,6 +84,10 @@ export default function CreateQuizPage() {
     const count = getQuestionCount();
     if (!fileContent && !topic.trim()) {
       toast.error("Please upload a study material or enter a topic");
+      return;
+    }
+    if (file && !fileContent) {
+      toast.error("Still reading the file — please wait a moment");
       return;
     }
     if (questionCount === "custom" && (!customCount || isNaN(parseInt(customCount)))) {
@@ -117,6 +126,7 @@ export default function CreateQuizPage() {
   };
 
   const hasFile = !!file && !!fileContent;
+  const fileReady = hasFile && !extracting;
 
   return (
     <div className="min-h-screen bg-background pb-28">
@@ -137,21 +147,26 @@ export default function CreateQuizPage() {
         <div className="space-y-4">
           <motion.div
             initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
-            onClick={() => fileRef.current?.click()}
+            onClick={() => !extracting && fileRef.current?.click()}
             className="rounded-2xl bg-card border-2 border-dashed border-border hover:border-primary/40 p-8 text-center cursor-pointer transition-all shadow-card dark:shadow-elevated"
           >
             <input ref={fileRef} type="file" accept=".pdf,.txt,.doc,.docx,.md" className="hidden" onChange={handleFileDrop} />
-            {file ? (
+            {extracting ? (
               <div className="flex items-center justify-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <FileText className="w-5 h-5 text-primary" />
+                <Loader2 className="w-5 h-5 text-primary animate-spin" />
+                <p className="text-sm font-medium text-muted-foreground">Extracting text from {file?.name}…</p>
+              </div>
+            ) : file ? (
+              <div className="flex items-center justify-center gap-3">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${fileReady ? "bg-primary/10" : "bg-destructive/10"}`}>
+                  {fileReady ? <FileText className="w-5 h-5 text-primary" /> : <AlertCircle className="w-5 h-5 text-destructive" />}
                 </div>
                 <div className="text-left">
                   <p className="text-sm font-bold text-foreground">{file.name}</p>
                   <p className="text-xs text-muted-foreground">
-                    {fileContent
-                      ? `${fileContent.length.toLocaleString()} chars · Quiz will be based on this material`
-                      : `${(file.size / 1024).toFixed(1)} KB`}
+                    {fileReady
+                      ? `✓ ${fileContent.length.toLocaleString()} characters — quiz will be based on this material`
+                      : "Failed to read content — try another file"}
                   </p>
                 </div>
                 <button
@@ -167,36 +182,36 @@ export default function CreateQuizPage() {
                   <Upload className="w-6 h-6 text-primary" />
                 </div>
                 <p className="text-sm font-bold text-foreground mb-1">Upload your study material</p>
-                <p className="text-xs text-muted-foreground">PDF, TXT, MD, DOC — AI reads it and generates questions from your content</p>
+                <p className="text-xs text-muted-foreground">PDF, TXT, MD — AI reads the content and creates questions from it</p>
               </>
             )}
           </motion.div>
 
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }} className="flex items-center gap-3">
             <div className="flex-1 h-px bg-border" />
-            <span className="text-xs font-bold text-muted-foreground">{hasFile ? "OPTIONAL DIRECTION" : "OR TYPE A TOPIC"}</span>
+            <span className="text-xs font-bold text-muted-foreground">{fileReady ? "OPTIONAL FOCUS" : "OR ENTER A TOPIC"}</span>
             <div className="flex-1 h-px bg-border" />
           </motion.div>
 
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }} className="rounded-2xl bg-card border border-border p-5 space-y-4 shadow-card dark:shadow-elevated">
             <div>
               <Label className="text-xs font-bold">
-                {hasFile ? "Focus / Direction (optional)" : "Topic or Subject"}
+                {fileReady ? "Focus / Direction (optional)" : "Topic or Subject"}
               </Label>
               <Input
                 className="mt-1.5"
                 placeholder={
-                  hasFile
-                    ? "e.g. Focus on Chapter 3, or test only cardiovascular system"
+                  fileReady
+                    ? "e.g. Focus on Chapter 3, or only cardiovascular system"
                     : "e.g. Photosynthesis, World War II, Calculus"
                 }
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleGenerate()}
               />
-              {hasFile && (
+              {fileReady && (
                 <p className="text-[10px] text-muted-foreground mt-1.5">
-                  Quiz questions will be generated from your uploaded file. Use this field to narrow the focus.
+                  ✓ Questions will be generated from your file. Use this field to narrow the focus area.
                 </p>
               )}
             </div>
@@ -236,7 +251,12 @@ export default function CreateQuizPage() {
           </motion.div>
 
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }}>
-            <Button onClick={handleGenerate} className="w-full rounded-full gap-2 shadow-elevated" size="lg" disabled={generating}>
+            <Button
+              onClick={handleGenerate}
+              className="w-full rounded-full gap-2 shadow-elevated"
+              size="lg"
+              disabled={generating || extracting}
+            >
               {generating ? (
                 <><Loader2 className="w-4 h-4 animate-spin" /> Generating {getQuestionCount()} Questions…</>
               ) : (
@@ -244,7 +264,7 @@ export default function CreateQuizPage() {
               )}
             </Button>
             <p className="text-center text-[11px] text-muted-foreground mt-2">
-              Uses 1 credit · {hasFile ? "AI reads your uploaded material" : "AI generates from topic"}
+              Uses 1 credit · {fileReady ? `Reading ${fileContent.length.toLocaleString()} chars from your file` : "AI generates from topic"}
             </p>
           </motion.div>
         </div>
