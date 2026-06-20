@@ -68,13 +68,19 @@ router.post("/chat/message", async (req, res) => {
   if (!userId) return res.status(401).json({ error: "Unauthorized" });
 
   const schema = z.object({
-    message: z.string().min(1).max(4000),
+    message: z.string().min(0).max(4000).default(""),
+    fileContent: z.string().max(100000).optional(),
+    fileName: z.string().max(500).optional(),
     sessionId: z.number().optional(),
   });
   const parsed = schema.safeParse(req.body);
-  if (!parsed.success) return res.status(400).json({ error: "Invalid input" });
+  if (!parsed.success) return res.status(400).json({ error: "Invalid input", details: parsed.error.issues });
 
-  const { message, sessionId: existingSessionId } = parsed.data;
+  const { message, fileContent, fileName, sessionId: existingSessionId } = parsed.data;
+
+  if (!message.trim() && !fileContent) {
+    return res.status(400).json({ error: "Please provide a message or attach a file." });
+  }
 
   if (!process.env.GROQ_API_KEY) {
     return res.status(503).json({ error: "AI API key not configured. Please add GROQ_API_KEY in Secrets." });
@@ -89,20 +95,29 @@ router.post("/chat/message", async (req, res) => {
     );
     const history = historyResult.rows as Array<{ role: string; content: string }>;
 
+    const userDisplayMessage = fileContent
+      ? (message.trim() ? `📎 ${fileName ?? "document"}\n\n${message.trim()}` : `📎 ${fileName ?? "document"}`)
+      : message.trim();
+
+    const aiInputMessage = fileContent
+      ? `The user has shared a document. Answer based on its content.\n\n--- DOCUMENT: ${fileName ?? "document"} ---\n${fileContent.slice(0, 80000)}\n--- END OF DOCUMENT ---\n\n${message.trim() || "Please summarize the key points from this document."}`
+      : message.trim();
+
     await pool.query(
       `INSERT INTO chat_messages (session_id, user_id, role, content) VALUES ($1, $2, 'user', $3)`,
-      [sessionId, userId, message]
+      [sessionId, userId, userDisplayMessage]
     );
 
-    const aiResponse = await chatWithAI(message, history);
+    const aiResponse = await chatWithAI(aiInputMessage, history);
 
     await pool.query(
       `INSERT INTO chat_messages (session_id, user_id, role, content) VALUES ($1, $2, 'assistant', $3)`,
       [sessionId, userId, aiResponse]
     );
 
+    const titleSource = message.trim() || (fileName ?? "Document chat");
     if (history.length === 0) {
-      const title = message.length > 60 ? message.slice(0, 57) + "..." : message;
+      const title = titleSource.length > 60 ? titleSource.slice(0, 57) + "..." : titleSource;
       await pool.query(
         `UPDATE chat_sessions SET title = $1, updated_at = NOW() WHERE id = $2`,
         [title, sessionId]

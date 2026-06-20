@@ -113,15 +113,18 @@ export default function SummaryPage() {
     const text = input.trim();
     if ((!text && !attachedFile) || sending) return;
 
-    let messageToSend = text;
-
-    if (attachedFile) {
-      messageToSend = `I'm sharing a document with you. Please use its content to answer my questions.\n\n--- DOCUMENT: ${attachedFile.name} ---\n${attachedFile.content.slice(0, 10000)}\n--- END OF DOCUMENT ---\n\n${text || "Please summarize the key points from this document."}`;
-    }
-
     const displayText = attachedFile
       ? `📎 ${attachedFile.name}${text ? `\n\n${text}` : ""}`
       : text;
+
+    const payload: Record<string, unknown> = {
+      message: text,
+      sessionId: activeSession ?? undefined,
+    };
+    if (attachedFile) {
+      payload.fileContent = attachedFile.content;
+      payload.fileName = attachedFile.name;
+    }
 
     setInput("");
     setAttachedFile(null);
@@ -132,7 +135,7 @@ export default function SummaryPage() {
       const res = await fetch("/api/chat/message", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: messageToSend, sessionId: activeSession ?? undefined }),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
       if (!res.ok) {
