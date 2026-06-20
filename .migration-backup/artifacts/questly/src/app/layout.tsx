@@ -8,6 +8,11 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Quizmi — Study Reimagined",
   description: "AI-powered study platform. Generate quizzes, flashcards, and summaries instantly.",
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 const clerkAppearance = {
