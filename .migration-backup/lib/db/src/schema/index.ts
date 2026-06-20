@@ -1,12 +1,4 @@
-import {
-  sqliteTable,
-  integer,
-  text,
-  real,
-} from "drizzle-orm/sqlite-core";
-import { createInsertSchema } from "drizzle-zod";
-import { sql } from "drizzle-orm";
-import { z } from "zod/v4";
+import { sqliteTable, text, integer, real, unique } from "drizzle-orm/sqlite-core";
 
 export const usersTable = sqliteTable("users", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -16,39 +8,37 @@ export const usersTable = sqliteTable("users", {
   credits: integer("credits").notNull().default(100),
   plan: text("plan").notNull().default("free"),
   avatarUrl: text("avatar_url"),
-  createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
 });
 
 export const quizzesTable = sqliteTable("quizzes", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   userId: text("user_id").notNull(),
   title: text("title").notNull(),
-  topic: text("topic").notNull(),
+  topic: text("topic").notNull().default(""),
   difficulty: text("difficulty").notNull().default("medium"),
-  questions: text("questions", { mode: "json" }).notNull().default("[]"),
+  questions: text("questions", { mode: "json" }).notNull().default([]),
   questionCount: integer("question_count").notNull().default(0),
-  createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
 });
 
 export const quizAttemptsTable = sqliteTable("quiz_attempts", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   userId: text("user_id").notNull(),
   quizId: integer("quiz_id").notNull(),
-  score: integer("score").notNull(),
-  total: integer("total").notNull(),
-  timeTaken: integer("time_taken"),
-  bonusPoints: integer("bonus_points").notNull().default(0),
-  completedAt: text("completed_at").notNull().default(sql`(datetime('now'))`),
+  score: integer("score").notNull().default(0),
+  total: integer("total").notNull().default(0),
+  completedAt: text("completed_at").notNull().$defaultFn(() => new Date().toISOString()),
 });
 
 export const flashcardSetsTable = sqliteTable("flashcard_sets", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   userId: text("user_id").notNull(),
   title: text("title").notNull(),
-  topic: text("topic").notNull(),
-  cards: text("cards", { mode: "json" }).notNull().default("[]"),
+  topic: text("topic").notNull().default(""),
+  cards: text("cards", { mode: "json" }).notNull().default([]),
   count: integer("count").notNull().default(0),
-  createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
 });
 
 export const flashcardReviewsTable = sqliteTable("flashcard_reviews", {
@@ -59,17 +49,16 @@ export const flashcardReviewsTable = sqliteTable("flashcard_reviews", {
   easeFactor: real("ease_factor").notNull().default(2.5),
   interval: integer("interval").notNull().default(1),
   repetitions: integer("repetitions").notNull().default(0),
-  nextReview: text("next_review").notNull().default(sql`(datetime('now'))`),
+  nextReview: text("next_review"),
   lastReview: text("last_review"),
 });
 
-export const summariesTable = sqliteTable("summaries", {
+export const achievementsTable = sqliteTable("achievements", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   userId: text("user_id").notNull(),
-  topic: text("topic").notNull(),
-  content: text("content").notNull(),
-  createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
-});
+  type: text("type").notNull(),
+  unlockedAt: text("unlocked_at").notNull().$defaultFn(() => new Date().toISOString()),
+}, (t) => [unique("achievements_user_type").on(t.userId, t.type)]);
 
 export const creditTransactionsTable = sqliteTable("credit_transactions", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -77,8 +66,8 @@ export const creditTransactionsTable = sqliteTable("credit_transactions", {
   amount: integer("amount").notNull(),
   type: text("type").notNull().default("usage"),
   description: text("description").notNull().default(""),
-  reference: text("reference").unique(),
-  createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
+  reference: text("reference"),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
 });
 
 export const streaksTable = sqliteTable("streaks", {
@@ -88,22 +77,23 @@ export const streaksTable = sqliteTable("streaks", {
   longestStreak: integer("longest_streak").notNull().default(0),
   lastStudyDate: text("last_study_date"),
   totalStudyDays: integer("total_study_days").notNull().default(0),
-  updatedAt: text("updated_at").notNull().default(sql`(datetime('now'))`),
+  updatedAt: text("updated_at"),
 });
 
-export const achievementsTable = sqliteTable("achievements", {
+export const summariesTable = sqliteTable("summaries", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   userId: text("user_id").notNull(),
-  type: text("type").notNull(),
-  unlockedAt: text("unlocked_at").notNull().default(sql`(datetime('now'))`),
+  topic: text("topic").notNull().default(""),
+  content: text("content").notNull(),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
 });
 
 export const chatSessionsTable = sqliteTable("chat_sessions", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   userId: text("user_id").notNull(),
   title: text("title").notNull().default("New Chat"),
-  createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
-  updatedAt: text("updated_at").notNull().default(sql`(datetime('now'))`),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at"),
 });
 
 export const chatMessagesTable = sqliteTable("chat_messages", {
@@ -112,24 +102,5 @@ export const chatMessagesTable = sqliteTable("chat_messages", {
   userId: text("user_id").notNull(),
   role: text("role").notNull(),
   content: text("content").notNull(),
-  createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
 });
-
-export const insertUserSchema = createInsertSchema(usersTable).omit({ id: true, createdAt: true });
-export const insertQuizSchema = createInsertSchema(quizzesTable).omit({ id: true, createdAt: true });
-export const insertFlashcardSetSchema = createInsertSchema(flashcardSetsTable).omit({ id: true, createdAt: true });
-export const insertSummarySchema = createInsertSchema(summariesTable).omit({ id: true, createdAt: true });
-export const insertCreditTransactionSchema = createInsertSchema(creditTransactionsTable).omit({ id: true, createdAt: true });
-
-export type User = typeof usersTable.$inferSelect;
-export type InsertUser = z.infer<typeof insertUserSchema>;
-export type Quiz = typeof quizzesTable.$inferSelect;
-export type QuizAttempt = typeof quizAttemptsTable.$inferSelect;
-export type FlashcardSet = typeof flashcardSetsTable.$inferSelect;
-export type Summary = typeof summariesTable.$inferSelect;
-export type CreditTransaction = typeof creditTransactionsTable.$inferSelect;
-export type ChatSession = typeof chatSessionsTable.$inferSelect;
-export type ChatMessage = typeof chatMessagesTable.$inferSelect;
-export type Streak = typeof streaksTable.$inferSelect;
-export type Achievement = typeof achievementsTable.$inferSelect;
-export type FlashcardReview = typeof flashcardReviewsTable.$inferSelect;
