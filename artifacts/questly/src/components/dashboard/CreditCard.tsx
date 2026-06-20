@@ -1,5 +1,6 @@
+"use client";
 import { Zap, PlusCircle, BookOpen } from "lucide-react";
-import { Link } from "wouter";
+import Link from "next/link";
 
 interface Props {
   credits: number;
@@ -46,7 +47,7 @@ export default function CreditCard({ credits, plan }: Props) {
             </span>
           </div>
           <Link
-            to="/buy-credits"
+            href="/buy-credits"
             className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/15 hover:bg-white/25 transition-colors text-xs font-bold text-white"
           >
             <PlusCircle className="w-3.5 h-3.5" />

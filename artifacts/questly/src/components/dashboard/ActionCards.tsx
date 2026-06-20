@@ -1,4 +1,5 @@
-import { Link } from "wouter";
+"use client";
+import Link from "next/link";
 import { CreditCard, GraduationCap, BookMarked, ScrollText, ArrowRight } from "lucide-react";
 
 const actions = [
@@ -42,7 +43,7 @@ export default function ActionCards() {
       {actions.map(({ icon: Icon, label, desc, path, iconBg, iconColor }) => (
         <Link
           key={label}
-          to={path}
+          href={path}
           className="group rounded-2xl bg-card border border-border/60 p-4 shadow-card dark:shadow-elevated hover:shadow-card-hover dark:hover:shadow-card-hover hover:-translate-y-0.5 hover:border-primary/20 transition-all duration-200"
         >
           <div className={`w-11 h-11 rounded-2xl ${iconBg} flex items-center justify-center mb-3 shadow-sm`}>

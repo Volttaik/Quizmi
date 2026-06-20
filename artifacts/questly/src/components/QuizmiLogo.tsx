@@ -1,3 +1,4 @@
+"use client";
 export default function QuizmiLogo({
   className = "",
   size = 36,

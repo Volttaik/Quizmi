@@ -1,4 +1,5 @@
-import { Link } from "wouter";
+"use client";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Brain, Zap, BookOpen } from "lucide-react";
 
@@ -40,7 +41,7 @@ export default function HeroSection() {
         </p>
 
         <div className="flex flex-col sm:flex-row justify-center gap-3 mt-10">
-          <Link to="/sign-up">
+          <Link href="/sign-up">
             <Button size="lg" className="rounded-full px-8 text-sm font-bold shadow-xl shadow-primary/30 w-full sm:w-auto">
               Start for Free <ArrowRight className="w-4 h-4 ml-1.5" />
             </Button>

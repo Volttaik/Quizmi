@@ -1,2 +1,3 @@
 - [Quizmi Clerk Setup](quizmi-clerk.md) — Clerk is Replit-managed; keys set via setupClerkWhitelabelAuth(); proxy middleware only active in production.
 - [Quizmi DB Pattern](quizmi-db.md) — API server imports db/pool from @workspace/db; never import pg directly in api-server (causes build error).
+- [Quizmi Next.js Migration](quizmi-nextjs.md) — Migrated from Vite SPA + Express to Next.js 15 App Router; key pitfalls documented.
