@@ -17,14 +17,6 @@ export default function HeroSection() {
       <div className="absolute bottom-20 right-1/4 w-[400px] h-[400px] bg-[hsl(280,72%,50%)]/8 rounded-full blur-[140px] pointer-events-none" />
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="flex justify-center mb-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold">
-            <Sparkles className="w-3 h-3" />
-            AI-Powered Learning
-            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-          </div>
-        </div>
-
         <div className="text-center max-w-4xl mx-auto">
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.92] tracking-tighter">
             Study
