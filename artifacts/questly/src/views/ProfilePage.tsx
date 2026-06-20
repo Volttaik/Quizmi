@@ -37,7 +37,21 @@ export default function ProfilePage() {
     if (!file || !user) return;
     setUploadingPhoto(true);
     try {
-      await user.setProfileImage({ file });
+      const res = await fetch("/api/upload/avatar", {
+        method: "POST",
+        headers: { "content-type": file.type },
+        body: file,
+      });
+      if (!res.ok) throw new Error((await res.json()).error ?? "Upload failed");
+      const { url } = await res.json();
+      await Promise.all([
+        user.setProfileImage({ file }),
+        fetch("/api/user", {
+          method: "PATCH",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ avatarUrl: url }),
+        }),
+      ]);
       toast.success("Profile photo updated!");
     } catch {
       toast.error("Failed to upload photo. Try a smaller image.");

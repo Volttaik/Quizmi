@@ -44,12 +44,16 @@ export async function PATCH(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { name, email } = (await req.json()) as { name?: string; email?: string };
+  const { name, email, avatarUrl } = (await req.json()) as { name?: string; email?: string; avatarUrl?: string };
 
   try {
     const [updated] = await db
       .update(usersTable)
-      .set({ ...(name ? { name } : {}), ...(email ? { email } : {}) })
+      .set({
+        ...(name ? { name } : {}),
+        ...(email ? { email } : {}),
+        ...(avatarUrl ? { avatarUrl } : {}),
+      })
       .where(eq(usersTable.clerkId, userId))
       .returning();
     return NextResponse.json(updated);
