@@ -57,11 +57,19 @@ const clerkAppearance = {
   },
 };
 
+const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://app.quizmi.online";
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <ClerkProvider appearance={clerkAppearance}>
+        <ClerkProvider
+          appearance={clerkAppearance}
+          signInUrl="/sign-in"
+          signUpUrl="/sign-up"
+          signInFallbackRedirectUrl={`${appUrl}/dashboard`}
+          signUpFallbackRedirectUrl={`${appUrl}/dashboard`}
+        >
           <Providers>
             {children}
             <Toaster position="bottom-center" richColors />
