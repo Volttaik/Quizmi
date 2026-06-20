@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import CreditCard from "@/components/dashboard/CreditCard";
 import RecentTransactions from "@/components/dashboard/RecentTransactions";
@@ -8,8 +8,8 @@ import ActionCards from "@/components/dashboard/ActionCards";
 import PromoBanner from "@/components/dashboard/PromoBanner";
 import BottomNav from "@/components/dashboard/BottomNav";
 import StudySlideshow from "@/components/dashboard/StudySlideshow";
+import StreakWidget from "@/components/dashboard/StreakWidget";
 import { toast } from "sonner";
-import { CheckCircle2, XCircle } from "lucide-react";
 
 interface UserData {
   credits: number;
@@ -27,12 +27,8 @@ interface Transaction {
 
 const container = {
   hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.07, delayChildren: 0.1 },
-  },
+  show: { opacity: 1, transition: { staggerChildren: 0.07, delayChildren: 0.1 } },
 };
-
 const item = {
   hidden: { opacity: 0, y: 18 },
   show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 300, damping: 28 } },
@@ -71,14 +67,10 @@ export default function DashboardPage() {
         <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-background to-transparent" />
       </div>
 
-      <motion.div
-        className="relative max-w-lg mx-auto px-4 pt-6"
-        variants={container}
-        initial="hidden"
-        animate="show"
-      >
+      <motion.div className="relative max-w-lg mx-auto px-4 pt-6" variants={container} initial="hidden" animate="show">
         <motion.div variants={item}><DashboardHeader name={userData?.name} /></motion.div>
         <motion.div variants={item}><CreditCard credits={userData?.credits ?? 0} plan={userData?.plan ?? "free"} /></motion.div>
+        <motion.div variants={item}><StreakWidget /></motion.div>
         <motion.div variants={item}><StudySlideshow /></motion.div>
         <motion.div variants={item} className="mb-3 px-0.5">
           <h3 className="text-sm font-extrabold text-foreground">Quick Actions</h3>

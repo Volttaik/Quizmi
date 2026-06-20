@@ -1,16 +1,22 @@
 import { defineConfig } from "drizzle-kit";
 import path from "path";
 
-const url = process.env.TURSO_DATABASE_URL ?? process.env.DATABASE_URL;
-if (!url) {
-  throw new Error("TURSO_DATABASE_URL must be set. Configure your Turso database.");
-}
+const tursoUrl = process.env.TURSO_DATABASE_URL;
 
 export default defineConfig({
   schema: path.join(__dirname, "./src/schema/index.ts"),
-  dialect: "turso",
-  dbCredentials: {
-    url,
-    authToken: process.env.TURSO_AUTH_TOKEN,
-  },
+  ...(tursoUrl
+    ? {
+        dialect: "turso" as const,
+        dbCredentials: {
+          url: tursoUrl,
+          authToken: process.env.TURSO_AUTH_TOKEN ?? "",
+        },
+      }
+    : {
+        dialect: "sqlite" as const,
+        dbCredentials: {
+          url: path.resolve(__dirname, "../../artifacts/questly/dev.db"),
+        },
+      }),
 });

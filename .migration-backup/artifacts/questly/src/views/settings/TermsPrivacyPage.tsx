@@ -16,13 +16,13 @@ export default function TermsPrivacyPage() {
 
         <div className="space-y-4">
           <Section title="Terms of Service">
-            <p>By using Quizmi, you agree to use the platform for lawful educational purposes only. You are responsible for the content you submit for AI generation.</p>
+            <p>By using Quizmi, you agree to use the platform for lawful educational purposes only. You are responsible for the content you submit for generation.</p>
             <p>Quizmi reserves the right to suspend accounts that violate these terms. Credits are non-refundable except where required by law.</p>
           </Section>
 
           <Section title="Privacy Policy">
-            <p>Quizmi collects your email address and name for authentication purposes only via Clerk. We do not sell or share your personal data with any third parties.</p>
-            <p>Study content you paste into the AI generator is processed by Groq AI. We do not store your raw input content beyond your session.</p>
+            <p>Quizmi collects your email address and name for authentication purposes only. We do not sell or share your personal data with any third parties.</p>
+            <p>Study content you paste into the generator is used solely to create your learning materials and is not stored beyond your session.</p>
           </Section>
 
           <Section title="Data & Cookies">
@@ -31,7 +31,7 @@ export default function TermsPrivacyPage() {
           </Section>
 
           <Section title="AI-Generated Content">
-            <p>Quizmi uses Groq AI to generate quizzes, flashcards, and summaries. AI-generated content may contain errors. Always verify important information independently.</p>
+            <p>Quizmi uses AI to generate quizzes, flashcards, and summaries. AI-generated content may contain errors. Always verify important information independently.</p>
           </Section>
 
           <div className="text-center text-xs text-muted-foreground pt-2">

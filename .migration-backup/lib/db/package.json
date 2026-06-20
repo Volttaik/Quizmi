@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "@libsql/client": "^0.14.0",
-    "@libsql/linux-x64-gnu": "0.4.7",
     "drizzle-orm": "catalog:",
     "drizzle-zod": "^0.8.3",
     "zod": "catalog:"

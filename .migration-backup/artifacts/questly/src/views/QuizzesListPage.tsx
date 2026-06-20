@@ -3,10 +3,11 @@ import BottomNav from "@/components/dashboard/BottomNav";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { GraduationCap, Plus, ArrowLeft, Loader2, ChevronRight, Trash2, Trophy, Clock } from "lucide-react";
+import { GraduationCap, Plus, ArrowLeft, Loader2, ChevronRight, Trash2, Trophy, Clock, Share2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { shareContent } from "@/lib/share";
 
 interface Quiz {
   id: number;
@@ -38,6 +39,7 @@ export default function QuizzesListPage() {
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<number | null>(null);
+  const [sharing, setSharing] = useState<number | null>(null);
 
   useEffect(() => {
     fetch("/api/quizzes")
@@ -59,6 +61,21 @@ export default function QuizzesListPage() {
     } finally {
       setDeleting(null);
     }
+  };
+
+  const handleShare = async (quiz: Quiz, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSharing(quiz.id);
+    const quizUrl = `${window.location.origin}/quiz/${quiz.id}`;
+    const result = await shareContent({
+      title: quiz.title,
+      text: `Check out this quiz on Quizmi: "${quiz.title}" — ${quiz.questionCount} questions at ${quiz.difficulty} difficulty!`,
+      url: quizUrl,
+    });
+    if (result === "shared") toast.success("Quiz shared!");
+    else if (result === "copied") toast.success("Quiz link copied to clipboard!");
+    else toast.error("Couldn't share right now");
+    setSharing(null);
   };
 
   return (
@@ -93,10 +110,7 @@ export default function QuizzesListPage() {
             </div>
             <h2 className="text-base font-extrabold text-foreground mb-1">No quizzes yet</h2>
             <p className="text-sm text-muted-foreground mb-5">Create your first AI-powered quiz</p>
-            <Button
-              className="rounded-full gap-2 shadow-elevated"
-              onClick={() => router.push("/create-quiz")}
-            >
+            <Button className="rounded-full gap-2 shadow-elevated" onClick={() => router.push("/create-quiz")}>
               <Plus className="w-4 h-4" /> Create Quiz
             </Button>
           </motion.div>
@@ -121,7 +135,7 @@ export default function QuizzesListPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <h3 className="text-sm font-bold text-foreground truncate">{quiz.title}</h3>
-                        <div className="flex items-center gap-2 mt-0.5">
+                        <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                           <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full capitalize ${DIFFICULTY_COLORS[quiz.difficulty] ?? DIFFICULTY_COLORS.medium}`}>
                             {quiz.difficulty}
                           </span>
@@ -135,8 +149,20 @@ export default function QuizzesListPage() {
                       </div>
                       <div className="flex items-center gap-1">
                         <button
+                          onClick={(e) => handleShare(quiz, e)}
+                          className="w-7 h-7 rounded-full flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+                          title="Share quiz"
+                        >
+                          {sharing === quiz.id ? (
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          ) : (
+                            <Share2 className="w-3.5 h-3.5" />
+                          )}
+                        </button>
+                        <button
                           onClick={(e) => handleDelete(quiz.id, e)}
                           className="w-7 h-7 rounded-full flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                          title="Delete quiz"
                         >
                           {deleting === quiz.id ? (
                             <Loader2 className="w-3.5 h-3.5 animate-spin" />
