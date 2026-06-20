@@ -9,6 +9,7 @@ import { Link } from "wouter";
 
 export default function SummaryPage() {
   const [file, setFile] = useState<File | null>(null);
+  const [fileContent, setFileContent] = useState<string>("");
   const [topic, setTopic] = useState("");
   const [summary, setSummary] = useState("");
   const [loading, setLoading] = useState(false);
@@ -16,13 +17,16 @@ export default function SummaryPage() {
   const fileRef = useRef<HTMLInputElement>(null);
 
   const handleGenerate = async () => {
-    if (!topic.trim()) { toast.error("Enter a topic to generate a summary"); return; }
+    if (!topic.trim() && !fileContent) { toast.error("Enter a topic or upload a study material"); return; }
     setLoading(true);
     try {
+      const body: Record<string, unknown> = {};
+      if (topic.trim()) body.topic = topic.trim();
+      else body.topic = file?.name?.replace(/\.[^/.]+$/, "") ?? "Uploaded Material";
       const res = await fetch("/api/generate-summary", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ topic }),
+        body: JSON.stringify(body),
       });
       const data = await res.json();
       if (!res.ok) { toast.error(data.error ?? "Failed to generate summary"); }
@@ -60,12 +64,12 @@ export default function SummaryPage() {
 
         <div className="space-y-4">
           <div onClick={() => fileRef.current?.click()} className="rounded-2xl bg-card border-2 border-dashed border-border hover:border-primary/40 p-8 text-center cursor-pointer transition-colors">
-            <input ref={fileRef} type="file" accept=".pdf,.txt,.doc,.docx" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) setFile(f); }} />
+            <input ref={fileRef} type="file" accept=".txt,.md,.doc,.docx" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; setFile(f); try { const text = await f.text(); setFileContent(text); } catch { toast.error("Could not read file. Try a .txt or .md file."); setFile(null); setFileContent(""); } }} />
             {file ? (
               <div className="flex items-center justify-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center"><FileText className="w-5 h-5 text-primary" /></div>
                 <div className="text-left"><p className="text-sm font-bold text-foreground">{file.name}</p><p className="text-xs text-muted-foreground">{(file.size / 1024).toFixed(1)} KB</p></div>
-                <button onClick={(e) => { e.stopPropagation(); setFile(null); }} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center"><X className="w-4 h-4" /></button>
+                <button onClick={(e) => { e.stopPropagation(); setFile(null); setFileContent(""); }} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center"><X className="w-4 h-4" /></button>
               </div>
             ) : (
               <>

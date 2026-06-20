@@ -133,14 +133,14 @@ function ClerkSignUpPage() {
   );
 }
 
-function HomeRedirect() {
+function HomeRoute() {
   return (
     <>
       <Show when="signed-in">
         <Redirect to="/dashboard" />
       </Show>
       <Show when="signed-out">
-        <Redirect to="/sign-in" />
+        <HomePage />
       </Show>
     </>
   );
@@ -198,7 +198,7 @@ function AppRoutes() {
       <QueryClientProvider client={queryClient}>
         <ClerkQueryClientCacheInvalidator />
         <Switch>
-          <Route path="/" component={HomeRedirect} />
+          <Route path="/" component={HomeRoute} />
           <Route path="/sign-in/*?" component={ClerkSignInPage} />
           <Route path="/sign-up/*?" component={ClerkSignUpPage} />
           <Route path="/demo">{() => <Redirect to="/sign-in" />}</Route>

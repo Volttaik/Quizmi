@@ -12,9 +12,9 @@ const packages = [
 ] as const;
 
 const CREDIT_COSTS = [
-  { action: "Generate a quiz (10 questions)", cost: 5 },
-  { action: "Generate flashcard set (20 cards)", cost: 3 },
-  { action: "Generate AI summary", cost: 2 },
+  { action: "Generate a quiz (any length)", cost: 1 },
+  { action: "Generate flashcard set (any count)", cost: 1 },
+  { action: "Generate AI summary", cost: 1 },
 ];
 
 export default function BuyCreditsPage() {
