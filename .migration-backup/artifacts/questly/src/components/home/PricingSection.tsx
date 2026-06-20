@@ -6,31 +6,31 @@ import { motion } from "framer-motion";
 
 const plans = [
   {
-    name: "Free",
-    price: "$0",
-    period: "/forever",
-    desc: "Get started",
-    features: ["5 quizzes per month", "10 flashcard sets", "Basic AI summaries", "Mobile access"],
+    name: "Starter",
+    price: "₦500",
+    credits: "500 credits",
+    desc: "Perfect for occasional use",
+    features: ["500 AI credits", "Generate quizzes", "Create flashcards", "AI summaries", "Mobile access"],
     popular: false,
-    cta: "Start Free",
+    cta: "Buy Starter",
+  },
+  {
+    name: "Standard",
+    price: "₦1,200",
+    credits: "1,500 credits",
+    desc: "Best for regular students",
+    features: ["1,500 AI credits", "Generate quizzes", "Create flashcards", "Advanced AI summaries", "Spaced repetition", "Priority support"],
+    popular: true,
+    cta: "Buy Standard",
   },
   {
     name: "Pro",
-    price: "$9",
-    period: "/month",
-    desc: "For serious students",
-    features: ["Unlimited quizzes", "Unlimited flashcards", "Advanced AI summaries", "Spaced repetition", "Study analytics", "Priority support"],
-    popular: true,
-    cta: "Get Pro",
-  },
-  {
-    name: "Team",
-    price: "$29",
-    period: "/month",
-    desc: "Study groups",
-    features: ["Everything in Pro", "Up to 10 members", "Shared study sets", "Collaboration tools", "Admin dashboard", "API access"],
+    price: "₦3,500",
+    credits: "5,000 credits",
+    desc: "Maximum learning power",
+    features: ["5,000 AI credits", "Everything in Standard", "Bulk quiz generation", "Study analytics", "Fastest AI responses", "Priority support"],
     popular: false,
-    cta: "Get Team",
+    cta: "Buy Pro",
   },
 ];
 
@@ -44,12 +44,13 @@ export default function PricingSection() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Pricing</span>
+          <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Credits</span>
           <h2 className="text-3xl md:text-5xl font-bold text-white mt-4 tracking-tight">
-            Simple pricing,
+            Buy credits,
             <br />
-            <span className="text-white/40">no surprises</span>
+            <span className="text-white/40">study smarter</span>
           </h2>
+          <p className="text-white/40 text-sm mt-4 max-w-md mx-auto">Credits never expire. Use them at your own pace.</p>
         </motion.div>
 
         <div className="grid md:grid-cols-3 gap-5 max-w-5xl mx-auto items-start">
@@ -74,7 +75,10 @@ export default function PricingSection() {
               <h3 className="text-lg font-bold">{plan.name}</h3>
               <div className="mt-3 flex items-baseline gap-1">
                 <span className="text-4xl font-black">{plan.price}</span>
-                <span className={`text-sm ${plan.popular ? "text-white/60" : "text-white/30"}`}>{plan.period}</span>
+              </div>
+              <div className="flex items-center gap-1 mt-1">
+                <Zap className={`w-3.5 h-3.5 ${plan.popular ? "text-yellow-300" : "text-primary"}`} />
+                <span className={`text-sm font-bold ${plan.popular ? "text-white" : "text-white/70"}`}>{plan.credits}</span>
               </div>
               <p className={`mt-1 text-xs ${plan.popular ? "text-white/60" : "text-white/30"}`}>{plan.desc}</p>
 

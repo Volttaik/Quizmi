@@ -10,10 +10,10 @@ import { User } from "lucide-react";
 
 const container = {
   hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.06, delayChildren: 0.15 } },
+  show: { opacity: 1, transition: { staggerChildren: 0.06, delayChildren: 0.1 } },
 };
 const item = {
-  hidden: { opacity: 0, y: 16 },
+  hidden: { opacity: 0, y: 12 },
   show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 280, damping: 26 } },
 };
 
@@ -21,14 +21,14 @@ export default function ProfilePage() {
   const { user } = useUser();
   const { signOut } = useClerk();
   const [credits, setCredits] = useState<number | null>(null);
-  const [plan, setPlan] = useState("free");
+  const [plan, setPlan] = useState("starter");
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const photoRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetch("/api/user")
       .then((r) => r.json())
-      .then((d) => { setCredits(d.credits ?? 0); setPlan(d.plan ?? "free"); })
+      .then((d) => { setCredits(d.credits ?? 0); setPlan(d.plan ?? "starter"); })
       .catch(() => {});
   }, []);
 
@@ -64,26 +64,13 @@ export default function ProfilePage() {
   const initials = (user?.fullName ?? user?.firstName ?? "U")
     .split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2);
 
-  const isPro = plan === "pro";
-
   return (
-    <div className="min-h-screen bg-background pb-28 overflow-hidden">
-      {/* Header gradient */}
-      <div className="absolute top-0 left-0 right-0 h-[260px] pointer-events-none">
+    <div className="min-h-screen bg-background pb-28 relative">
+      <div className="absolute top-0 left-0 right-0 h-[220px] pointer-events-none overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[hsl(262,72%,32%)] via-[hsl(265,65%,28%)] to-[hsl(275,60%,22%)]" />
-        <div className="absolute top-0 left-0 w-80 h-80 bg-primary/35 rounded-full blur-[90px] -translate-x-1/3 -translate-y-1/3" />
-        <div className="absolute top-0 right-0 w-72 h-72 bg-[hsl(280,72%,50%)]/30 rounded-full blur-[80px] translate-x-1/4 -translate-y-1/3" />
-        <div className="absolute top-1/2 left-1/2 w-48 h-48 bg-[hsl(200,90%,50%)]/10 rounded-full blur-[60px] -translate-x-1/2 -translate-y-1/4" />
-        {/* dot pattern */}
-        <svg className="absolute inset-0 w-full h-full opacity-[0.06]" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="profile-dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-              <circle cx="1" cy="1" r="1" fill="white" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#profile-dots)" />
-        </svg>
-        <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-background to-transparent" />
+        <div className="absolute top-0 left-0 w-64 h-64 bg-primary/30 rounded-full blur-[70px] -translate-x-1/3 -translate-y-1/3" />
+        <div className="absolute top-0 right-0 w-56 h-56 bg-[hsl(280,72%,50%)]/25 rounded-full blur-[60px] translate-x-1/4 -translate-y-1/3" />
+        <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-background to-transparent" />
       </div>
 
       <motion.div
@@ -94,7 +81,6 @@ export default function ProfilePage() {
       >
         <motion.h1 variants={item} className="text-lg font-extrabold text-white mb-6">Profile</motion.h1>
 
-        {/* Avatar + name */}
         <motion.div variants={item} className="flex flex-col items-center mb-6">
           <input ref={photoRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} />
           <button
@@ -111,35 +97,25 @@ export default function ProfilePage() {
                 </div>
               )}
             </div>
-            {/* Camera overlay */}
             <div className="absolute inset-0 rounded-full bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-all">
               {uploadingPhoto
                 ? <Loader2 className="w-6 h-6 text-white animate-spin" />
                 : <Camera className="w-6 h-6 text-white" />}
             </div>
-            {/* Upload badge */}
-            <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-primary border-2 border-white dark:border-card flex items-center justify-center shadow-md">
+            <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-primary border-2 border-background flex items-center justify-center shadow-md">
               <Camera className="w-3 h-3 text-white" />
             </div>
           </button>
 
           <h2 className="text-xl font-extrabold text-white mt-1">{user?.fullName ?? user?.firstName ?? "Learner"}</h2>
           <p className="text-white/55 text-sm mb-2">{user?.emailAddresses?.[0]?.emailAddress ?? ""}</p>
-          <span className={`inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold border ${
-            isPro
-              ? "bg-yellow-400/20 text-yellow-300 border-yellow-400/20"
-              : "bg-white/10 text-white/60 border-white/10"
-          }`}>
-            {isPro ? <><Sparkles className="w-3 h-3" /> Pro Learner</> : "Free Plan"}
-          </span>
         </motion.div>
 
-        {/* Credits card */}
         <motion.div variants={item} className="relative overflow-hidden bg-gradient-to-r from-primary/90 to-[hsl(275,72%,48%)] rounded-2xl p-4 mb-4 shadow-glow-primary">
           <div className="absolute -top-6 -right-6 w-24 h-24 bg-white/10 rounded-full blur-xl" />
           <div className="relative flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0">
                 <Coins className="w-5 h-5 text-white" />
               </div>
               <div>
@@ -158,7 +134,6 @@ export default function ProfilePage() {
           </div>
         </motion.div>
 
-        {/* Settings sections */}
         <motion.div variants={item} className="bg-card rounded-2xl overflow-hidden border border-border/40 shadow-card dark:shadow-card mb-4">
           <SettingRow icon={Award} label="Achievements" to="/achievements" accent />
           <SettingRow icon={User} label="Account Details" to="/settings/account" />

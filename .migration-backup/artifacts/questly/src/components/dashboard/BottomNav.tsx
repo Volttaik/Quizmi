@@ -2,7 +2,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, GraduationCap, Sparkles, BookMarked, User } from "lucide-react";
-import { motion } from "framer-motion";
 
 const tabs = [
   { icon: Home, label: "Home", path: "/dashboard" },
@@ -24,12 +23,9 @@ export default function BottomNav() {
           if (center) {
             return (
               <Link key={label} href={path} className="flex flex-col items-center -mt-5">
-                <motion.div
-                  whileTap={{ scale: 0.92 }}
-                  className="w-14 h-14 rounded-full bg-gradient-to-br from-[hsl(262,72%,58%)] to-[hsl(275,72%,42%)] flex items-center justify-center shadow-glow-primary mb-0.5"
-                >
+                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[hsl(262,72%,58%)] to-[hsl(275,72%,42%)] flex items-center justify-center shadow-glow-primary mb-0.5 active:scale-95 transition-transform">
                   <Icon className="w-6 h-6 text-white" />
-                </motion.div>
+                </div>
                 <span className="text-[10px] font-bold text-primary">{label}</span>
               </Link>
             );
@@ -39,38 +35,23 @@ export default function BottomNav() {
             <Link
               key={label}
               href={path}
-              className="flex flex-col items-center gap-0.5 py-1 px-3 relative"
+              className="flex flex-col items-center gap-0.5 py-1 px-3"
             >
-              <motion.div
-                whileTap={{ scale: 0.88 }}
-                className={`w-9 h-9 rounded-xl flex items-center justify-center transition-colors relative ${
+              <div
+                className={`w-9 h-9 rounded-xl flex items-center justify-center transition-colors ${
                   active ? "bg-primary/12" : ""
                 }`}
               >
-                {active && (
-                  <motion.div
-                    layoutId="nav-indicator"
-                    className="absolute inset-0 bg-primary/10 rounded-xl"
-                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                  />
-                )}
                 <Icon
-                  className={`w-5 h-5 relative z-10 transition-all ${
+                  className={`w-5 h-5 transition-all ${
                     active ? "text-primary" : "text-muted-foreground"
                   }`}
                   strokeWidth={active ? 2.2 : 1.8}
                 />
-              </motion.div>
+              </div>
               <span className={`text-[10px] font-semibold transition-colors ${active ? "text-primary font-bold" : "text-muted-foreground"}`}>
                 {label}
               </span>
-              {active && (
-                <motion.div
-                  layoutId="nav-dot"
-                  className="absolute top-0.5 w-1 h-1 rounded-full bg-primary"
-                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                />
-              )}
             </Link>
           );
         })}
