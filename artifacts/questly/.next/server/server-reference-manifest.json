@@ -1,58 +1,5 @@
 {
-  "node": {
-    "7f165133beeab40279f467493801f14d0c413d94f8": {
-      "workers": {
-        "app/page": {
-          "moduleId": "(rsc)/../../node_modules/.pnpm/next@15.5.19_react-dom@19.1.0_react@19.1.0__react@19.1.0/node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Frunner%2Fworkspace%2Fnode_modules%2F.pnpm%2F%40clerk%2Bnextjs%407.5.6_next%4015.5.19_react-dom%4019.1.0_react%4019.1.0__react%4019.1.0__react-dom_83a4bf89f9e24e14e7ccce1dd0352d57%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fkeyless-actions.js%22%2C%5B%7B%22id%22%3A%227f165133beeab40279f467493801f14d0c413d94f8%22%2C%22exportedName%22%3A%22deleteKeylessAction%22%2C%22filename%22%3A%22..%2F..%2F..%2Fnode_modules%2F.pnpm%2F%40clerk%2Bnextjs%407.5.6_next%4015.5.19_react-dom%4019.1.0_react%4019.1.0__react%4019.1.0__react-dom_83a4bf89f9e24e14e7ccce1dd0352d57%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fkeyless-actions.js%22%7D%2C%7B%22id%22%3A%227f697d946954a9c09e7c94cfbb1e4d18c32fcf17c3%22%2C%22exportedName%22%3A%22syncKeylessConfigAction%22%2C%22filename%22%3A%22..%2F..%2F..%2Fnode_modules%2F.pnpm%2F%40clerk%2Bnextjs%407.5.6_next%4015.5.19_react-dom%4019.1.0_react%4019.1.0__react%4019.1.0__react-dom_83a4bf89f9e24e14e7ccce1dd0352d57%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fkeyless-actions.js%22%7D%2C%7B%22id%22%3A%227f774b4f67ed035b107a9fdd5ced998ef17d9666d1%22%2C%22exportedName%22%3A%22createOrReadKeylessAction%22%2C%22filename%22%3A%22..%2F..%2F..%2Fnode_modules%2F.pnpm%2F%40clerk%2Bnextjs%407.5.6_next%4015.5.19_react-dom%4019.1.0_react%4019.1.0__react%4019.1.0__react-dom_83a4bf89f9e24e14e7ccce1dd0352d57%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fkeyless-actions.js%22%7D%5D%5D%5D&__client_imported__=!",
-          "async": false
-        }
-      },
-      "layer": {
-        "app/page": "rsc"
-      },
-      "filename": "../../../node_modules/.pnpm/@clerk+nextjs@7.5.6_next@15.5.19_react-dom@19.1.0_react@19.1.0__react@19.1.0__react-dom_83a4bf89f9e24e14e7ccce1dd0352d57/node_modules/@clerk/nextjs/dist/esm/app-router/keyless-actions.js",
-      "exportedName": "deleteKeylessAction"
-    },
-    "7f697d946954a9c09e7c94cfbb1e4d18c32fcf17c3": {
-      "workers": {
-        "app/page": {
-          "moduleId": "(rsc)/../../node_modules/.pnpm/next@15.5.19_react-dom@19.1.0_react@19.1.0__react@19.1.0/node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Frunner%2Fworkspace%2Fnode_modules%2F.pnpm%2F%40clerk%2Bnextjs%407.5.6_next%4015.5.19_react-dom%4019.1.0_react%4019.1.0__react%4019.1.0__react-dom_83a4bf89f9e24e14e7ccce1dd0352d57%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fkeyless-actions.js%22%2C%5B%7B%22id%22%3A%227f165133beeab40279f467493801f14d0c413d94f8%22%2C%22exportedName%22%3A%22deleteKeylessAction%22%2C%22filename%22%3A%22..%2F..%2F..%2Fnode_modules%2F.pnpm%2F%40clerk%2Bnextjs%407.5.6_next%4015.5.19_react-dom%4019.1.0_react%4019.1.0__react%4019.1.0__react-dom_83a4bf89f9e24e14e7ccce1dd0352d57%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fkeyless-actions.js%22%7D%2C%7B%22id%22%3A%227f697d946954a9c09e7c94cfbb1e4d18c32fcf17c3%22%2C%22exportedName%22%3A%22syncKeylessConfigAction%22%2C%22filename%22%3A%22..%2F..%2F..%2Fnode_modules%2F.pnpm%2F%40clerk%2Bnextjs%407.5.6_next%4015.5.19_react-dom%4019.1.0_react%4019.1.0__react%4019.1.0__react-dom_83a4bf89f9e24e14e7ccce1dd0352d57%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fkeyless-actions.js%22%7D%2C%7B%22id%22%3A%227f774b4f67ed035b107a9fdd5ced998ef17d9666d1%22%2C%22exportedName%22%3A%22createOrReadKeylessAction%22%2C%22filename%22%3A%22..%2F..%2F..%2Fnode_modules%2F.pnpm%2F%40clerk%2Bnextjs%407.5.6_next%4015.5.19_react-dom%4019.1.0_react%4019.1.0__react%4019.1.0__react-dom_83a4bf89f9e24e14e7ccce1dd0352d57%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fkeyless-actions.js%22%7D%5D%5D%5D&__client_imported__=!",
-          "async": false
-        }
-      },
-      "layer": {
-        "app/page": "rsc"
-      },
-      "filename": "../../../node_modules/.pnpm/@clerk+nextjs@7.5.6_next@15.5.19_react-dom@19.1.0_react@19.1.0__react@19.1.0__react-dom_83a4bf89f9e24e14e7ccce1dd0352d57/node_modules/@clerk/nextjs/dist/esm/app-router/keyless-actions.js",
-      "exportedName": "syncKeylessConfigAction"
-    },
-    "7f774b4f67ed035b107a9fdd5ced998ef17d9666d1": {
-      "workers": {
-        "app/page": {
-          "moduleId": "(rsc)/../../node_modules/.pnpm/next@15.5.19_react-dom@19.1.0_react@19.1.0__react@19.1.0/node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Frunner%2Fworkspace%2Fnode_modules%2F.pnpm%2F%40clerk%2Bnextjs%407.5.6_next%4015.5.19_react-dom%4019.1.0_react%4019.1.0__react%4019.1.0__react-dom_83a4bf89f9e24e14e7ccce1dd0352d57%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fkeyless-actions.js%22%2C%5B%7B%22id%22%3A%227f165133beeab40279f467493801f14d0c413d94f8%22%2C%22exportedName%22%3A%22deleteKeylessAction%22%2C%22filename%22%3A%22..%2F..%2F..%2Fnode_modules%2F.pnpm%2F%40clerk%2Bnextjs%407.5.6_next%4015.5.19_react-dom%4019.1.0_react%4019.1.0__react%4019.1.0__react-dom_83a4bf89f9e24e14e7ccce1dd0352d57%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fkeyless-actions.js%22%7D%2C%7B%22id%22%3A%227f697d946954a9c09e7c94cfbb1e4d18c32fcf17c3%22%2C%22exportedName%22%3A%22syncKeylessConfigAction%22%2C%22filename%22%3A%22..%2F..%2F..%2Fnode_modules%2F.pnpm%2F%40clerk%2Bnextjs%407.5.6_next%4015.5.19_react-dom%4019.1.0_react%4019.1.0__react%4019.1.0__react-dom_83a4bf89f9e24e14e7ccce1dd0352d57%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fkeyless-actions.js%22%7D%2C%7B%22id%22%3A%227f774b4f67ed035b107a9fdd5ced998ef17d9666d1%22%2C%22exportedName%22%3A%22createOrReadKeylessAction%22%2C%22filename%22%3A%22..%2F..%2F..%2Fnode_modules%2F.pnpm%2F%40clerk%2Bnextjs%407.5.6_next%4015.5.19_react-dom%4019.1.0_react%4019.1.0__react%4019.1.0__react-dom_83a4bf89f9e24e14e7ccce1dd0352d57%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fkeyless-actions.js%22%7D%5D%5D%5D&__client_imported__=!",
-          "async": false
-        }
-      },
-      "layer": {
-        "app/page": "rsc"
-      },
-      "filename": "../../../node_modules/.pnpm/@clerk+nextjs@7.5.6_next@15.5.19_react-dom@19.1.0_react@19.1.0__react@19.1.0__react-dom_83a4bf89f9e24e14e7ccce1dd0352d57/node_modules/@clerk/nextjs/dist/esm/app-router/keyless-actions.js",
-      "exportedName": "createOrReadKeylessAction"
-    },
-    "7fdf265d1b2c90abab294d2be90afe18291ec65c73": {
-      "workers": {
-        "app/page": {
-          "moduleId": "(action-browser)/../../node_modules/.pnpm/next@15.5.19_react-dom@19.1.0_react@19.1.0__react@19.1.0/node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Frunner%2Fworkspace%2Fnode_modules%2F.pnpm%2F%40clerk%2Bnextjs%407.5.6_next%4015.5.19_react-dom%4019.1.0_react%4019.1.0__react%4019.1.0__react-dom_83a4bf89f9e24e14e7ccce1dd0352d57%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fserver-actions.js%22%2C%5B%7B%22id%22%3A%227fdf265d1b2c90abab294d2be90afe18291ec65c73%22%2C%22exportedName%22%3A%22invalidateCacheAction%22%2C%22filename%22%3A%22..%2F..%2F..%2Fnode_modules%2F.pnpm%2F%40clerk%2Bnextjs%407.5.6_next%4015.5.19_react-dom%4019.1.0_react%4019.1.0__react%4019.1.0__react-dom_83a4bf89f9e24e14e7ccce1dd0352d57%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fserver-actions.js%22%7D%5D%5D%5D&__client_imported__=true!",
-          "async": false
-        }
-      },
-      "layer": {
-        "app/page": "action-browser"
-      },
-      "filename": "../../../node_modules/.pnpm/@clerk+nextjs@7.5.6_next@15.5.19_react-dom@19.1.0_react@19.1.0__react@19.1.0__react-dom_83a4bf89f9e24e14e7ccce1dd0352d57/node_modules/@clerk/nextjs/dist/esm/app-router/server-actions.js",
-      "exportedName": "invalidateCacheAction"
-    }
-  },
+  "node": {},
   "edge": {},
   "encryptionKey": "gip9cylBqdmx4c3jV66AZigQldYO6DFuwneizFB50Ms="
 }
