@@ -1,2 +1,2 @@
-export { db, pool } from "@workspace/db";
+export { db } from "@workspace/db";
 export * from "@workspace/db";
