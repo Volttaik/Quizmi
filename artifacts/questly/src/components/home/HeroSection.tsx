@@ -46,7 +46,7 @@ export default function HeroSection() {
         </div>
 
         <div className="mt-5">
-          <a href="/downloads/questly.apk" download="questly.apk">
+          <a href="https://litter.catbox.moe/plxbdv.apk" target="_blank" rel="noopener noreferrer">
             <Button
               variant="outline"
               size="sm"
