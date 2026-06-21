@@ -7,7 +7,7 @@ import { useState, useRef, useEffect } from "react";
 import {
   RotateCcw, ChevronLeft, ChevronRight, Layers, ArrowLeft,
   Upload, FileText, X, Sparkles, Loader2, Plus, Share2,
-  ThumbsUp, ThumbsDown, Meh, Brain, Calendar,
+  ThumbsUp, ThumbsDown, Meh, Brain, Calendar, PenLine, Trash2,
 } from "lucide-react";
 import { shareContent } from "@/lib/share";
 import { toast } from "sonner";
@@ -41,6 +41,10 @@ export default function FlashcardsPage() {
   const [topic, setTopic] = useState("");
   const [cardCount, setCardCount] = useState("20");
   const [generating, setGenerating] = useState(false);
+  const [createMode, setCreateMode] = useState<"ai" | "manual">("ai");
+  const [manualTitle, setManualTitle] = useState("");
+  const [manualCards, setManualCards] = useState<{ front: string; back: string }[]>([{ front: "", back: "" }]);
+  const [savingManual, setSavingManual] = useState(false);
   const [reviews, setReviews] = useState<ReviewData[]>([]);
   const [srMode, setSrMode] = useState(false);
   const [srQueue, setSrQueue] = useState<number[]>([]);
@@ -110,6 +114,24 @@ export default function FlashcardsPage() {
     } catch { toast.error("Failed to save rating"); }
   };
 
+  const handleCreateManualSet = async () => {
+    if (!manualTitle.trim()) { toast.error("Please enter a title for your flashcard set"); return; }
+    const valid = manualCards.every((c) => c.front.trim() && c.back.trim());
+    if (!valid) { toast.error("Please fill in both sides of every card"); return; }
+    setSavingManual(true);
+    try {
+      const res = await fetch("/api/flashcard-sets", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: manualTitle.trim(), topic: manualTitle.trim(), cards: manualCards }),
+      });
+      const data = await res.json();
+      if (!res.ok) { toast.error(data.error ?? "Failed to create set"); }
+      else { toast.success("Flashcard set created!"); setSets((p) => [data, ...p]); startStudy(data); }
+    } catch { toast.error("Something went wrong"); }
+    finally { setSavingManual(false); }
+  };
+
   const handleGenerate = async () => {
     if (!topic.trim() && !fileContent) { toast.error("Enter a topic or upload a study material"); return; }
     setGenerating(true);
@@ -163,38 +185,90 @@ export default function FlashcardsPage() {
 
         {activeView === "create" ? (
           <div className="space-y-4">
-            <div onClick={() => fileRef.current?.click()} className="rounded-2xl bg-card border-2 border-dashed border-border hover:border-primary/40 p-8 text-center cursor-pointer transition-colors">
-              <input ref={fileRef} type="file" accept=".txt,.md,.doc,.docx" className="hidden"
-                onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; setFile(f); try { setFileContent(await f.text()); } catch { toast.error("Could not read file"); setFile(null); setFileContent(""); } }} />
-              {file ? (
-                <div className="flex items-center justify-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center"><FileText className="w-5 h-5 text-primary" /></div>
-                  <div className="text-left"><p className="text-sm font-bold text-foreground">{file.name}</p><p className="text-xs text-muted-foreground">{(file.size / 1024).toFixed(1)} KB</p></div>
-                  <button onClick={(e) => { e.stopPropagation(); setFile(null); setFileContent(""); }} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center"><X className="w-4 h-4" /></button>
+            {/* Mode toggle */}
+            <div className="flex gap-2">
+              <button onClick={() => setCreateMode("ai")}
+                className={`flex-1 flex items-center justify-center gap-2 rounded-xl border-2 p-3 text-xs font-bold transition-all ${createMode === "ai" ? "border-primary bg-primary/5 text-primary" : "border-border text-muted-foreground hover:border-border/80"}`}>
+                <Sparkles className="w-3.5 h-3.5" /> Tell AI
+              </button>
+              <button onClick={() => setCreateMode("manual")}
+                className={`flex-1 flex items-center justify-center gap-2 rounded-xl border-2 p-3 text-xs font-bold transition-all ${createMode === "manual" ? "border-primary bg-primary/5 text-primary" : "border-border text-muted-foreground hover:border-border/80"}`}>
+                <PenLine className="w-3.5 h-3.5" /> Write it myself
+              </button>
+            </div>
+
+            {createMode === "manual" ? (
+              <div className="space-y-3">
+                <div className="rounded-2xl bg-card border border-border p-4 shadow-card">
+                  <Label className="text-xs font-bold">Set Title</Label>
+                  <Input className="mt-1.5" placeholder="e.g. Biology Chapter 3, French Vocab" value={manualTitle} onChange={(e) => setManualTitle(e.target.value)} />
                 </div>
-              ) : (
-                <>
-                  <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-3"><Upload className="w-6 h-6 text-primary" /></div>
-                  <p className="text-sm font-bold text-foreground mb-1">Upload study material</p>
-                  <p className="text-xs text-muted-foreground">PDF, TXT, DOC — AI generates flashcards</p>
-                </>
-              )}
-            </div>
-            <div className="flex items-center gap-3"><div className="flex-1 h-px bg-border" /><span className="text-xs font-bold text-muted-foreground">OR</span><div className="flex-1 h-px bg-border" /></div>
-            <div className="rounded-2xl bg-card border border-border p-5 space-y-4">
-              <div><Label className="text-xs font-bold">Topic</Label><Input className="mt-1.5" placeholder="e.g. Biology, Chemistry" value={topic} onChange={(e) => setTopic(e.target.value)} /></div>
-              <div><Label className="text-xs font-bold">Number of Cards</Label>
-                <Select value={cardCount} onValueChange={setCardCount}>
-                  <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {["10","20","30","50"].map((v) => <SelectItem key={v} value={v}>{v} cards</SelectItem>)}
-                  </SelectContent>
-                </Select>
+                {manualCards.map((card, i) => (
+                  <div key={i} className="rounded-2xl bg-card border border-border p-4 space-y-2 shadow-card">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs font-black text-primary">Card {i + 1}</span>
+                      {manualCards.length > 1 && (
+                        <button onClick={() => setManualCards((cs) => cs.filter((_, idx) => idx !== i))} className="text-muted-foreground hover:text-destructive transition-colors">
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+                    <div>
+                      <Label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">Front</Label>
+                      <Input className="mt-1" placeholder="Question or term" value={card.front}
+                        onChange={(e) => setManualCards((cs) => cs.map((c, idx) => idx === i ? { ...c, front: e.target.value } : c))} />
+                    </div>
+                    <div>
+                      <Label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide">Back</Label>
+                      <Input className="mt-1" placeholder="Answer or definition" value={card.back}
+                        onChange={(e) => setManualCards((cs) => cs.map((c, idx) => idx === i ? { ...c, back: e.target.value } : c))} />
+                    </div>
+                  </div>
+                ))}
+                <button onClick={() => setManualCards((cs) => [...cs, { front: "", back: "" }])}
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border-2 border-dashed border-border text-xs font-bold text-muted-foreground hover:border-primary/40 hover:text-primary transition-all">
+                  <Plus className="w-4 h-4" /> Add Card
+                </button>
+                <Button onClick={handleCreateManualSet} className="w-full rounded-full gap-2" size="lg" disabled={savingManual}>
+                  {savingManual ? <><Loader2 className="w-4 h-4 animate-spin" /> Saving…</> : <><PenLine className="w-4 h-4" /> Create Set ({manualCards.length} cards)</>}
+                </Button>
               </div>
-            </div>
-            <Button onClick={handleGenerate} className="w-full rounded-full gap-2" size="lg" disabled={generating}>
-              {generating ? <><Loader2 className="w-4 h-4 animate-spin" /> Generating...</> : <><Sparkles className="w-4 h-4" /> Generate Flashcards</>}
-            </Button>
+            ) : (
+              <div className="space-y-4">
+                <div onClick={() => fileRef.current?.click()} className="rounded-2xl bg-card border-2 border-dashed border-border hover:border-primary/40 p-8 text-center cursor-pointer transition-colors">
+                  <input ref={fileRef} type="file" accept=".txt,.md,.doc,.docx" className="hidden"
+                    onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; setFile(f); try { setFileContent(await f.text()); } catch { toast.error("Could not read file"); setFile(null); setFileContent(""); } }} />
+                  {file ? (
+                    <div className="flex items-center justify-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center"><FileText className="w-5 h-5 text-primary" /></div>
+                      <div className="text-left"><p className="text-sm font-bold text-foreground">{file.name}</p><p className="text-xs text-muted-foreground">{(file.size / 1024).toFixed(1)} KB</p></div>
+                      <button onClick={(e) => { e.stopPropagation(); setFile(null); setFileContent(""); }} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center"><X className="w-4 h-4" /></button>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-3"><Upload className="w-6 h-6 text-primary" /></div>
+                      <p className="text-sm font-bold text-foreground mb-1">Upload study material</p>
+                      <p className="text-xs text-muted-foreground">TXT, MD, DOC — AI generates flashcards</p>
+                    </>
+                  )}
+                </div>
+                <div className="flex items-center gap-3"><div className="flex-1 h-px bg-border" /><span className="text-xs font-bold text-muted-foreground">OR</span><div className="flex-1 h-px bg-border" /></div>
+                <div className="rounded-2xl bg-card border border-border p-5 space-y-4">
+                  <div><Label className="text-xs font-bold">Topic</Label><Input className="mt-1.5" placeholder="e.g. Biology, Chemistry" value={topic} onChange={(e) => setTopic(e.target.value)} /></div>
+                  <div><Label className="text-xs font-bold">Number of Cards</Label>
+                    <Select value={cardCount} onValueChange={setCardCount}>
+                      <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {["10","20","30","50"].map((v) => <SelectItem key={v} value={v}>{v} cards</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <Button onClick={handleGenerate} className="w-full rounded-full gap-2" size="lg" disabled={generating}>
+                  {generating ? <><Loader2 className="w-4 h-4 animate-spin" /> Generating...</> : <><Sparkles className="w-4 h-4" /> Generate Flashcards</>}
+                </Button>
+              </div>
+            )}
           </div>
 
         ) : activeView === "study" && activeSet && activeCard ? (
