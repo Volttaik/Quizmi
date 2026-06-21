@@ -2,30 +2,16 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
-
-const slides = [
-  { src: "/hero-phone-1.png", alt: "Quizmi App Preview" },
-  { src: "/hero-phone-2.png", alt: "Quizmi Quiz Creation" },
-];
+import { motion } from "framer-motion";
 
 export default function HeroSection() {
-  const [current, setCurrent] = useState(0);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % slides.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
-
   return (
-    <section className="relative pt-24 pb-4 min-h-screen flex flex-col items-center justify-center overflow-hidden">
+    <section className="relative pt-24 pb-0 min-h-screen flex flex-col items-center justify-center overflow-hidden">
       <div className="absolute top-20 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[160px] pointer-events-none" />
       <div className="absolute bottom-20 right-1/4 w-[400px] h-[400px] bg-[hsl(280,72%,50%)]/8 rounded-full blur-[140px] pointer-events-none" />
 
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="container mx-auto px-4 relative z-10 flex flex-col items-center">
+        {/* Heading */}
         <div className="text-center max-w-4xl mx-auto">
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.92] tracking-tighter">
             Study
@@ -58,44 +44,20 @@ export default function HeroSection() {
           </a>
         </div>
 
-        {/* Slideshow — one image at a time */}
-        <div className="relative mt-16 flex flex-col items-center">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-primary/20 rounded-full blur-[100px] pointer-events-none" />
-
-          <div className="relative w-[260px] sm:w-[300px] h-[420px] sm:h-[480px]">
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={current}
-                initial={{ opacity: 0, y: 32, scale: 0.94 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -32, scale: 0.94 }}
-                transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute inset-0 flex items-center justify-center"
-              >
-                <img
-                  src={slides[current].src}
-                  alt={slides[current].alt}
-                  className="w-full h-full object-contain drop-shadow-2xl"
-                />
-              </motion.div>
-            </AnimatePresence>
-          </div>
-
-          {/* Dot indicators */}
-          <div className="flex gap-2 mt-6 relative z-10">
-            {slides.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrent(i)}
-                className={`rounded-full transition-all duration-300 ${
-                  i === current
-                    ? "w-6 h-2 bg-primary"
-                    : "w-2 h-2 bg-white/25 hover:bg-white/50"
-                }`}
-                aria-label={`Slide ${i + 1}`}
-              />
-            ))}
-          </div>
+        {/* Hero phone — soft-edged, no borders, melts into background */}
+        <div className="relative mt-6 w-[420px] sm:w-[520px] md:w-[620px]">
+          {/* Soft glow behind the phone */}
+          <div className="absolute inset-0 -top-16 bg-primary/25 rounded-full blur-[100px] pointer-events-none" />
+          {/* Image with mask that fades all edges softly into the dark background */}
+          <img
+            src="/hero-phone-1.png"
+            alt="Quizmi App"
+            className="relative w-full h-auto object-contain"
+            style={{
+              maskImage: "radial-gradient(ellipse 88% 82% at 50% 44%, black 38%, transparent 76%)",
+              WebkitMaskImage: "radial-gradient(ellipse 88% 82% at 50% 44%, black 38%, transparent 76%)",
+            }}
+          />
         </div>
       </div>
     </section>

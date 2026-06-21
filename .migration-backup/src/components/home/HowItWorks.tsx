@@ -27,6 +27,7 @@ export default function HowItWorks() {
   return (
     <section id="how-it-works" className="py-28 relative">
       <div className="absolute left-1/2 top-0 w-px h-full bg-gradient-to-b from-transparent via-white/[0.06] to-transparent hidden md:block" />
+
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -42,27 +43,52 @@ export default function HowItWorks() {
           </h2>
         </motion.div>
 
-        <div className="max-w-4xl mx-auto space-y-0">
-          {steps.map((step, i) => (
-            <motion.div
-              key={step.num}
-              initial={{ opacity: 0, x: i % 2 === 0 ? -40 : 40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.15 }}
-              className={`flex flex-col md:flex-row items-center gap-8 py-12 ${i % 2 !== 0 ? "md:flex-row-reverse" : ""}`}
-            >
-              <div className="flex-1 text-center md:text-left">
-                <span className="text-6xl font-black text-white/[0.04]">{step.num}</span>
-                <h3 className="text-xl font-bold text-white -mt-6 mb-3">{step.title}</h3>
-                <p className="text-sm text-white/40 leading-relaxed max-w-sm">{step.desc}</p>
-              </div>
-              <div className="w-20 h-20 rounded-3xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-center flex-shrink-0">
-                <step.icon className="w-8 h-8 text-primary" />
-              </div>
-              <div className="flex-1" />
-            </motion.div>
-          ))}
+        {/* Steps + floating phone side-by-side on desktop */}
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-12 md:gap-0">
+
+          {/* Steps column */}
+          <div className="flex-1 space-y-0">
+            {steps.map((step, i) => (
+              <motion.div
+                key={step.num}
+                initial={{ opacity: 0, x: -40 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.15 }}
+                className="flex items-start gap-6 py-10"
+              >
+                <div className="w-14 h-14 rounded-3xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-center flex-shrink-0 mt-1">
+                  <step.icon className="w-6 h-6 text-primary" />
+                </div>
+                <div>
+                  <span className="text-5xl font-black text-white/[0.04] leading-none block -mb-2">{step.num}</span>
+                  <h3 className="text-xl font-bold text-white mb-2">{step.title}</h3>
+                  <p className="text-sm text-white/40 leading-relaxed max-w-sm">{step.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Second phone image — soft, floats on the right */}
+          <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            className="flex-1 flex justify-center items-center relative"
+          >
+            {/* Soft glow */}
+            <div className="absolute w-[300px] h-[300px] bg-[hsl(280,72%,50%)]/15 rounded-full blur-[90px] pointer-events-none" />
+            <img
+              src="/hero-phone-2.png"
+              alt="Quizmi Study"
+              className="relative w-[240px] sm:w-[280px] md:w-[300px] h-auto object-contain"
+              style={{
+                maskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 78%)",
+                WebkitMaskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 78%)",
+              }}
+            />
+          </motion.div>
         </div>
       </div>
     </section>
