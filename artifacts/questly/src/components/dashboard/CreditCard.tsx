@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useState } from "react";
 import { PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -9,17 +10,26 @@ interface Props {
   wallpaperUrl?: string;
 }
 
-function CreditSkeleton() {
-  return (
-    <div className="flex items-baseline gap-2 mb-5">
-      <div className="h-12 w-32 rounded-xl bg-white/20 animate-pulse" />
-      <div className="h-4 w-12 rounded-lg bg-white/15 animate-pulse" />
-    </div>
-  );
+function useCountUp(target: number | undefined, duration = 1100) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    if (target === undefined) return;
+    if (target === 0) { setCount(0); return; }
+    const startTime = performance.now();
+    const step = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.round(ease * target));
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [target, duration]);
+  return count;
 }
 
 export default function CreditCard({ credits, plan, wallpaperUrl }: Props) {
-  const isLoading = credits === undefined;
+  const displayCount = useCountUp(credits);
 
   return (
     <div className="relative overflow-hidden rounded-3xl mb-5 shadow-2xl shadow-primary/35">
@@ -33,8 +43,8 @@ export default function CreditCard({ credits, plan, wallpaperUrl }: Props) {
             src={wallpaperUrl}
             alt=""
             aria-hidden
-            className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-700 ease-in"
-            style={{ opacity: 0 }}
+            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-[1800ms] ease-in-out"
+            style={{ opacity: 0, willChange: "opacity" }}
             onLoad={(e) => {
               (e.currentTarget as HTMLImageElement).style.opacity = "0.6";
             }}
@@ -79,21 +89,17 @@ export default function CreditCard({ credits, plan, wallpaperUrl }: Props) {
       <div className="relative p-6">
         <p className="text-[10px] font-bold text-white/50 uppercase tracking-widest mb-1">Study Credits</p>
 
-        {credits === undefined ? (
-          <CreditSkeleton />
-        ) : (
-          <motion.div
-            className="flex items-baseline gap-2 mb-5"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, ease: "easeOut" }}
-          >
-            <span className="text-5xl font-black text-white tracking-tight leading-none tabular-nums">
-              {credits.toLocaleString()}
-            </span>
-            <span className="text-sm font-semibold text-white/50">credits</span>
-          </motion.div>
-        )}
+        <motion.div
+          className="flex items-baseline gap-2 mb-5"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: credits !== undefined ? 1 : 0.4, y: 0 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+        >
+          <span className="text-5xl font-black text-white tracking-tight leading-none tabular-nums">
+            {displayCount.toLocaleString()}
+          </span>
+          <span className="text-sm font-semibold text-white/50">credits</span>
+        </motion.div>
 
         <Link
           href="/buy-credits"
