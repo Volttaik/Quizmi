@@ -1,4 +1,10 @@
 {
+  "/api/user/route": "app/api/user/route.js",
+  "/api/quizzes/slug/[slug]/route": "app/api/quizzes/slug/[slug]/route.js",
+  "/api/generate-quiz/route": "app/api/generate-quiz/route.js",
+  "/api/generate-flashcards/route": "app/api/generate-flashcards/route.js",
+  "/api/upload/wallpaper/route": "app/api/upload/wallpaper/route.js",
+  "/_not-found/page": "app/_not-found/page.js",
   "/page": "app/page.js",
   "/(auth)/sign-up/[[...sign-up]]/page": "app/(auth)/sign-up/[[...sign-up]]/page.js"
 }

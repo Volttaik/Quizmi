@@ -2,13 +2,14 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { motion } from "framer-motion";
 
 export default function HeroSection() {
   return (
-    <section className="relative pt-24 pb-0 min-h-screen flex flex-col items-center justify-center overflow-hidden">
-      <div className="absolute top-20 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[160px] pointer-events-none" />
-      <div className="absolute bottom-20 right-1/4 w-[400px] h-[400px] bg-[hsl(280,72%,50%)]/8 rounded-full blur-[140px] pointer-events-none" />
+    <section className="relative pt-24 pb-0 flex flex-col items-center justify-center overflow-hidden">
+      {/* Background glow spread across the full section — no hard edges */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="w-full h-full bg-[radial-gradient(ellipse_80%_60%_at_50%_55%,hsl(262,72%,40%,0.18)_0%,transparent_70%)]" />
+      </div>
 
       <div className="container mx-auto px-4 relative z-10 flex flex-col items-center">
         {/* Heading */}
@@ -44,18 +45,23 @@ export default function HeroSection() {
           </a>
         </div>
 
-        {/* Hero phone — soft-edged, no borders, melts into background */}
-        <div className="relative mt-6 w-[420px] sm:w-[520px] md:w-[620px]">
-          {/* Soft glow behind the phone */}
-          <div className="absolute inset-0 -top-16 bg-primary/25 rounded-full blur-[100px] pointer-events-none" />
-          {/* Image with mask that fades all edges softly into the dark background */}
+        {/* Phone — no separate glow div; mask fades all 4 edges into background */}
+        <div className="relative mt-8 w-[420px] sm:w-[520px] md:w-[640px]">
           <img
             src="/hero-phone-1.png"
             alt="Quizmi App"
-            className="relative w-full h-auto object-contain"
+            className="w-full h-auto object-contain"
             style={{
-              maskImage: "radial-gradient(ellipse 88% 82% at 50% 44%, black 38%, transparent 76%)",
-              WebkitMaskImage: "radial-gradient(ellipse 88% 82% at 50% 44%, black 38%, transparent 76%)",
+              maskImage: [
+                "radial-gradient(ellipse 90% 100% at 50% 50%, black 30%, transparent 70%)",
+                "linear-gradient(to bottom, black 20%, black 50%, transparent 85%)",
+              ].join(", "),
+              WebkitMaskImage: [
+                "radial-gradient(ellipse 90% 100% at 50% 50%, black 30%, transparent 70%)",
+                "linear-gradient(to bottom, black 20%, black 50%, transparent 85%)",
+              ].join(", "),
+              maskComposite: "intersect",
+              WebkitMaskComposite: "source-in",
             }}
           />
         </div>
