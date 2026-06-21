@@ -10,7 +10,7 @@ const plans = [
     price: "₦500",
     credits: "500 credits",
     desc: "Perfect for occasional use",
-    features: ["500 AI credits", "All 5 quiz types", "Shareable quiz links", "Create flashcards", "AI summaries", "Mobile access"],
+    features: ["500 AI credits", "Generate quizzes", "Create flashcards", "AI summaries", "Mobile access"],
     popular: false,
     cta: "Buy Starter",
   },
@@ -18,8 +18,8 @@ const plans = [
     name: "Standard",
     price: "₦1,200",
     credits: "1,500 credits",
-    desc: "Best for regular users",
-    features: ["1,500 AI credits", "All 5 quiz types", "Shareable quiz links", "Personalised result banners", "Advanced AI summaries", "Spaced repetition", "Priority support"],
+    desc: "Best for regular students",
+    features: ["1,500 AI credits", "Generate quizzes", "Create flashcards", "Advanced AI summaries", "Spaced repetition", "Priority support"],
     popular: true,
     cta: "Buy Standard",
   },
@@ -27,7 +27,7 @@ const plans = [
     name: "Pro",
     price: "₦3,500",
     credits: "5,000 credits",
-    desc: "Maximum power",
+    desc: "Maximum learning power",
     features: ["5,000 AI credits", "Everything in Standard", "Bulk quiz generation", "Study analytics", "Fastest AI responses", "Priority support"],
     popular: false,
     cta: "Buy Pro",
@@ -48,9 +48,9 @@ export default function PricingSection() {
           <h2 className="text-3xl md:text-5xl font-bold text-white mt-4 tracking-tight">
             Buy credits,
             <br />
-            <span className="text-white/40">quiz smarter</span>
+            <span className="text-white/40">study smarter</span>
           </h2>
-          <p className="text-white/40 text-sm mt-4 max-w-md mx-auto">Credits never expire. Use them for any quiz type at your own pace.</p>
+          <p className="text-white/40 text-sm mt-4 max-w-md mx-auto">Credits never expire. Use them at your own pace.</p>
         </motion.div>
 
         <div className="grid md:grid-cols-3 gap-5 max-w-5xl mx-auto items-start">
