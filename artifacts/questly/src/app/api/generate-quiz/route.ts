@@ -6,6 +6,11 @@ import { generateQuiz, generateQuizFromContent, generateSocialQuiz, generateSoci
 import { generateShareSlug } from "@/lib/quizTypes";
 import { z } from "zod";
 
+function generatePassKey(): string {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  return Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
+}
+
 const generateSchema = z.object({
   topic: z.string().min(1).max(500).optional(),
   fileContent: z.string().optional(),
@@ -16,6 +21,7 @@ const generateSchema = z.object({
   subjectName: z.string().max(100).optional(),
   description: z.string().max(3000).optional(),
   aiPrompt: z.string().max(2000).optional(),
+  isPrivate: z.boolean().default(false),
 });
 
 const CREDIT_PER_QUESTION = 1;
@@ -27,7 +33,7 @@ export async function POST(req: NextRequest) {
   const parsed = generateSchema.safeParse(await req.json());
   if (!parsed.success) return NextResponse.json({ error: "Invalid input" }, { status: 400 });
 
-  const { topic, fileContent, fileName, questionCount, difficulty, quizType, subjectName, description, aiPrompt } = parsed.data;
+  const { topic, fileContent, fileName, questionCount, difficulty, quizType, subjectName, description, aiPrompt, isPrivate } = parsed.data;
 
   const isSocial = quizType !== "study";
 
@@ -107,6 +113,7 @@ export async function POST(req: NextRequest) {
         description: description ?? aiPrompt ?? null,
         shareSlug,
         isPublic: true,
+        passKey: isPrivate ? generatePassKey() : null,
       })
       .returning();
 

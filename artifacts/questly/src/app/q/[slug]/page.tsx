@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Loader2, BookOpen, Trophy, Share2, Timer, Zap, ArrowRight,
   CheckCircle2, XCircle, Check, X as XIcon, Heart, Users, Home,
-  GraduationCap, RotateCcw, Link2, Brain, HelpCircle,
+  GraduationCap, RotateCcw, Link2, Brain, HelpCircle, Lock, Eye, EyeOff,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { QUIZ_TYPE_CONFIG, getResultMessage, type QuizType } from "@/lib/quizTypes";
@@ -16,6 +16,7 @@ interface Question { question: string; options: string[]; correct: number; expla
 interface Quiz {
   id: number; title: string; difficulty: string; questions: Question[];
   quizType?: QuizType; subjectName?: string; shareSlug?: string; topic?: string;
+  questionCount?: number; isLocked?: boolean;
 }
 
 const LABELS = ["A", "B", "C", "D"];
@@ -57,7 +58,10 @@ export default function PublicQuizPage() {
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
-  const [phase, setPhase] = useState<"landing" | "playing" | "done">("landing");
+  const [phase, setPhase] = useState<"locked" | "landing" | "playing" | "done">("landing");
+  const [passKeyInput, setPassKeyInput] = useState("");
+  const [passKeyError, setPassKeyError] = useState("");
+  const [passKeyChecking, setPassKeyChecking] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [timedMode, setTimedMode] = useState(false);
   const [current, setCurrent] = useState(0);
@@ -71,9 +75,33 @@ export default function PublicQuizPage() {
   useEffect(() => {
     fetch(`/api/quizzes/slug/${slug}`)
       .then((r) => { if (!r.ok) { setNotFound(true); setLoading(false); return null; } return r.json(); })
-      .then((d) => { if (d) { setQuiz(d); } setLoading(false); })
+      .then((d) => {
+        if (d) {
+          setQuiz(d);
+          if (d.isLocked) setPhase("locked");
+        }
+        setLoading(false);
+      })
       .catch(() => { setNotFound(true); setLoading(false); });
   }, [slug]);
+
+  const handlePassKeySubmit = async () => {
+    if (!passKeyInput.trim()) { setPassKeyError("Please enter the passkey"); return; }
+    setPassKeyChecking(true);
+    setPassKeyError("");
+    try {
+      const r = await fetch(`/api/quizzes/slug/${slug}?key=${encodeURIComponent(passKeyInput.trim())}`);
+      if (r.status === 401) { setPassKeyError("Incorrect passkey. Ask the quiz creator for the right one."); setPassKeyChecking(false); return; }
+      if (!r.ok) { setPassKeyError("Something went wrong. Try again."); setPassKeyChecking(false); return; }
+      const d = await r.json();
+      setQuiz(d);
+      setPhase("landing");
+    } catch {
+      setPassKeyError("Something went wrong. Try again.");
+    } finally {
+      setPassKeyChecking(false);
+    }
+  };
 
   useEffect(() => {
     if (!timedMode || feedback !== null || phase !== "playing") return;
@@ -146,6 +174,76 @@ export default function PublicQuizPage() {
       </a>
     </div>
   );
+
+  if (phase === "locked") {
+    const lockedType: QuizType = (quiz?.quizType as QuizType) || "study";
+    const lockedCfg = QUIZ_TYPE_CONFIG[lockedType];
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6 py-12">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-sm flex flex-col items-center text-center gap-5">
+
+          <div className={`w-24 h-24 rounded-3xl bg-gradient-to-br ${lockedCfg.theme.gradient} flex items-center justify-center shadow-xl relative`}>
+            <QuizTypeIcon type={lockedType} className="w-11 h-11 text-white/40" />
+            <div className="absolute -bottom-2 -right-2 w-9 h-9 rounded-xl bg-violet-500 flex items-center justify-center shadow-lg border-2 border-background">
+              <Lock className="w-4 h-4 text-white" />
+            </div>
+          </div>
+
+          <div>
+            <span className="text-xs font-bold px-3 py-1 rounded-full bg-violet-500/15 text-violet-600 dark:text-violet-400 border border-violet-400/30 mb-3 inline-block">
+              Private Quiz
+            </span>
+            <h1 className="text-2xl font-extrabold text-foreground mt-2 mb-2">
+              {quiz?.title ?? "Private Quiz"}
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              The creator made this quiz private.{"\n"}Enter the passkey to unlock it.
+            </p>
+          </div>
+
+          <div className="w-full space-y-3">
+            <div className="relative">
+              <input
+                type="text"
+                value={passKeyInput}
+                onChange={(e) => { setPassKeyInput(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "")); setPassKeyError(""); }}
+                onKeyDown={(e) => e.key === "Enter" && handlePassKeySubmit()}
+                placeholder="Enter passkey (e.g. R3K7PQ)"
+                maxLength={6}
+                className="w-full rounded-2xl border-2 border-border bg-card px-4 py-4 text-center text-2xl font-black tracking-[0.3em] text-foreground placeholder:text-muted-foreground/50 placeholder:text-base placeholder:tracking-normal placeholder:font-normal focus:outline-none focus:border-violet-400 transition-all"
+                autoFocus
+              />
+            </div>
+
+            {passKeyError && (
+              <motion.p
+                initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
+                className="text-sm text-destructive font-semibold text-center">
+                {passKeyError}
+              </motion.p>
+            )}
+
+            <Button
+              onClick={handlePassKeySubmit}
+              disabled={passKeyChecking || passKeyInput.length < 1}
+              className="w-full rounded-full gap-2"
+              size="lg">
+              {passKeyChecking
+                ? <><Loader2 className="w-4 h-4 animate-spin" /> Checking…</>
+                : <><Lock className="w-4 h-4" /> Unlock Quiz</>}
+            </Button>
+          </div>
+
+          <p className="text-xs text-muted-foreground">
+            Don't have the passkey? Ask the person who shared this quiz with you.
+          </p>
+        </motion.div>
+      </div>
+    );
+  }
 
   if (phase === "done") {
     const subjectName = quiz.subjectName || quiz.topic || "this";

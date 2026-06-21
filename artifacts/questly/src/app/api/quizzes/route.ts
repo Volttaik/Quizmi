@@ -6,13 +6,18 @@ import { generateShareSlug } from "@/lib/quizTypes";
 
 const CREDIT_PER_QUESTION = 1;
 
+function generatePassKey(): string {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  return Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
+}
+
 export async function POST(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
     const body = await req.json();
-    const { title, topic, quizType, subjectName, questions, difficulty } = body;
+    const { title, topic, quizType, subjectName, questions, difficulty, isPrivate } = body;
     if (!title || !Array.isArray(questions) || questions.length === 0)
       return NextResponse.json({ error: "Title and at least one question are required" }, { status: 400 });
 
@@ -38,6 +43,7 @@ export async function POST(req: NextRequest) {
       description: null,
       shareSlug,
       isPublic: true,
+      passKey: isPrivate ? generatePassKey() : null,
     }).returning();
 
     // Deduct credits and log activity

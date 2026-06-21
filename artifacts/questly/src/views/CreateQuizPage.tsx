@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles, ArrowLeft, Upload, FileText, X, ArrowRight, Loader2,
   AlertCircle, BookOpen, Heart, Users, Home, GraduationCap, Wand2, Link2,
-  PenLine, Plus, Trash2, CheckCircle2, Circle, Brain, HelpCircle,
+  PenLine, Plus, Trash2, CheckCircle2, Circle, Brain, HelpCircle, Lock, Copy, Check,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -120,6 +120,9 @@ export default function CreateQuizPage() {
     { question: string; options: [string, string, string, string]; correct: number; imageUrl?: string; uploadingImage?: boolean }[]
   >([{ question: "", options: ["", "", "", ""], correct: 0 }]);
   const [creating, setCreating] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [revealedPassKey, setRevealedPassKey] = useState<{ key: string; quizId: number } | null>(null);
+  const [passKeyCopied, setPassKeyCopied] = useState(false);
 
   const handleFileDrop = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
@@ -198,6 +201,8 @@ export default function CreateQuizPage() {
         }
       }
 
+      body.isPrivate = isPrivate;
+
       const res = await fetch("/api/generate-quiz", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -206,6 +211,9 @@ export default function CreateQuizPage() {
       const data = await res.json();
       if (!res.ok) {
         toast.error(data.error ?? "Failed to generate quiz");
+      } else if (data.passKey) {
+        toast.success("Private quiz created!");
+        setRevealedPassKey({ key: data.passKey, quizId: data.id });
       } else {
         toast.success("Quiz created!");
         router.push(`/quiz/${data.id}`);
@@ -229,10 +237,11 @@ export default function CreateQuizPage() {
       const res = await fetch("/api/quizzes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, topic: subjectName.trim(), quizType, subjectName: subjectName.trim(), questions: manualQuestions.map((q) => ({ question: q.question, options: q.options, correct: q.correct, imageUrl: q.imageUrl ?? null })) }),
+        body: JSON.stringify({ title, topic: subjectName.trim(), quizType, subjectName: subjectName.trim(), isPrivate, questions: manualQuestions.map((q) => ({ question: q.question, options: q.options, correct: q.correct, imageUrl: q.imageUrl ?? null })) }),
       });
       const data = await res.json();
       if (!res.ok) { toast.error(data.error ?? "Failed to create quiz"); }
+      else if (data.passKey) { toast.success("Private quiz created!"); setRevealedPassKey({ key: data.passKey, quizId: data.id }); }
       else { toast.success("Quiz created!"); router.push(`/quiz/${data.id}`); }
     } catch { toast.error("Something went wrong"); }
     finally { setCreating(false); }
@@ -390,6 +399,24 @@ export default function CreateQuizPage() {
                   maxLength={80}
                 />
               </div>
+
+              {/* Private toggle */}
+              <button
+                onClick={() => setIsPrivate((p) => !p)}
+                className={`w-full flex items-center justify-between gap-3 rounded-2xl border-2 p-4 transition-all ${isPrivate ? "border-violet-400/60 bg-violet-500/10" : "border-border bg-card hover:border-border/80"}`}>
+                <div className="flex items-center gap-3">
+                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${isPrivate ? "bg-violet-500 text-white" : "bg-muted text-muted-foreground"}`}>
+                    <Lock className="w-4 h-4" />
+                  </div>
+                  <div className="text-left">
+                    <p className={`text-sm font-bold ${isPrivate ? "text-violet-600 dark:text-violet-400" : "text-foreground"}`}>Private quiz</p>
+                    <p className="text-[11px] text-muted-foreground">{isPrivate ? "Passkey required to access" : "Anyone with the link can take it"}</p>
+                  </div>
+                </div>
+                <div className={`w-11 h-6 rounded-full flex items-center transition-all px-0.5 ${isPrivate ? "bg-violet-500 justify-end" : "bg-muted justify-start"}`}>
+                  <div className="w-5 h-5 rounded-full bg-white shadow-sm" />
+                </div>
+              </button>
 
               {/* Mode toggle */}
               <div className="flex gap-2">
@@ -661,6 +688,24 @@ export default function CreateQuizPage() {
                 </div>
               </div>
 
+              {/* Private toggle */}
+              <button
+                onClick={() => setIsPrivate((p) => !p)}
+                className={`w-full flex items-center justify-between gap-3 rounded-2xl border-2 p-4 transition-all ${isPrivate ? "border-violet-400/60 bg-violet-500/10" : "border-border bg-card hover:border-border/80"}`}>
+                <div className="flex items-center gap-3">
+                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${isPrivate ? "bg-violet-500 text-white" : "bg-muted text-muted-foreground"}`}>
+                    <Lock className="w-4 h-4" />
+                  </div>
+                  <div className="text-left">
+                    <p className={`text-sm font-bold ${isPrivate ? "text-violet-600 dark:text-violet-400" : "text-foreground"}`}>Private quiz</p>
+                    <p className="text-[11px] text-muted-foreground">{isPrivate ? "Passkey required to access" : "Anyone with the link can take it"}</p>
+                  </div>
+                </div>
+                <div className={`w-11 h-6 rounded-full flex items-center transition-all px-0.5 ${isPrivate ? "bg-violet-500 justify-end" : "bg-muted justify-start"}`}>
+                  <div className="w-5 h-5 rounded-full bg-white shadow-sm" />
+                </div>
+              </button>
+
               <Button
                 onClick={handleGenerate}
                 className="w-full rounded-full gap-2 shadow-elevated"
@@ -678,6 +723,62 @@ export default function CreateQuizPage() {
         </AnimatePresence>
       </div>
       <BottomNav />
+
+      {/* Passkey reveal bottom sheet */}
+      <AnimatePresence>
+        {revealedPassKey && (
+          <>
+            <motion.div
+              className="fixed inset-0 bg-black/60 z-40"
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={() => { setRevealedPassKey(null); router.push(`/quiz/${revealedPassKey.quizId}`); }}
+            />
+            <motion.div
+              className="fixed inset-x-0 bottom-0 z-50 bg-background rounded-t-3xl p-6 pb-10 shadow-2xl border-t border-border"
+              initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}>
+              <div className="w-10 h-1 bg-muted rounded-full mx-auto mb-5" />
+
+              <div className="flex flex-col items-center text-center mb-6">
+                <div className="w-16 h-16 rounded-2xl bg-violet-500 flex items-center justify-center mb-4 shadow-lg">
+                  <Lock className="w-8 h-8 text-white" />
+                </div>
+                <h2 className="text-xl font-extrabold text-foreground mb-1">Your quiz is private!</h2>
+                <p className="text-sm text-muted-foreground max-w-xs">
+                  Share this passkey with people you want to give access. Without it, they can't take your quiz.
+                </p>
+              </div>
+
+              <div className="bg-muted/50 border-2 border-violet-400/40 rounded-2xl p-5 mb-5 text-center">
+                <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Passkey</p>
+                <p className="text-4xl font-black tracking-[0.3em] text-violet-600 dark:text-violet-400 select-all">
+                  {revealedPassKey.key}
+                </p>
+              </div>
+
+              <button
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(revealedPassKey.key);
+                    setPassKeyCopied(true);
+                    setTimeout(() => setPassKeyCopied(false), 2000);
+                  } catch {
+                    toast.info(`Passkey: ${revealedPassKey.key}`);
+                  }
+                }}
+                className={`w-full flex items-center justify-center gap-2 rounded-2xl border-2 py-3.5 font-bold text-sm mb-3 transition-all ${passKeyCopied ? "border-emerald-400/60 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "border-violet-400/60 bg-violet-500/10 text-violet-600 dark:text-violet-400 hover:bg-violet-500/15"}`}>
+                {passKeyCopied ? <><Check className="w-4 h-4" /> Copied!</> : <><Copy className="w-4 h-4" /> Copy Passkey</>}
+              </button>
+
+              <Button
+                className="w-full rounded-full"
+                onClick={() => { setRevealedPassKey(null); router.push(`/quiz/${revealedPassKey.quizId}`); }}>
+                Go to My Quiz
+              </Button>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
