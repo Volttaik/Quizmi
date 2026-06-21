@@ -21,6 +21,10 @@ export const QUIZ_TYPE_CONFIG = {
       keep: (name: string) => `Keep studying ${name}!`,
       low: (name: string) => `Time to hit the books on ${name}!`,
     },
+    floatingMessages: {
+      good: (_name: string) => "Genius unlocked! 🧠",
+      bad: (name: string) => `Hit the books on ${name}! 📚`,
+    },
   },
   love: {
     iconName: "Heart",
@@ -41,6 +45,10 @@ export const QUIZ_TYPE_CONFIG = {
       good: (name: string) => `You know ${name} pretty well!`,
       keep: (name: string) => `Still learning about ${name}!`,
       low: (name: string) => `Get to know ${name} better!`,
+    },
+    floatingMessages: {
+      good: (name: string) => `${name} is lucky to have you 💕`,
+      bad: (name: string) => `Do you really love ${name}? 💔`,
     },
   },
   friendship: {
@@ -63,6 +71,10 @@ export const QUIZ_TYPE_CONFIG = {
       keep: (name: string) => `Still building that bond with ${name}!`,
       low: (name: string) => `Time to hang out with ${name} more!`,
     },
+    floatingMessages: {
+      good: (_name: string) => "Group for life! 🔥",
+      bad: (name: string) => `Do you even know ${name}? 😅`,
+    },
   },
   family: {
     iconName: "Home",
@@ -83,6 +95,10 @@ export const QUIZ_TYPE_CONFIG = {
       good: (name: string) => `You know ${name} well!`,
       keep: (name: string) => `Spend more time with ${name}!`,
       low: (name: string) => `Time to connect with ${name}!`,
+    },
+    floatingMessages: {
+      good: (_name: string) => "Family bond is unbreakable! 💪",
+      bad: (name: string) => `Call ${name} more often! 📞`,
     },
   },
   classroom: {
@@ -105,8 +121,18 @@ export const QUIZ_TYPE_CONFIG = {
       keep: (name: string) => `Keep studying ${name}!`,
       low: (name: string) => `Review your notes on ${name}!`,
     },
+    floatingMessages: {
+      good: (_name: string) => "Teacher's favourite! ⭐",
+      bad: (name: string) => `Study harder in ${name}! 😬`,
+    },
   },
 } as const;
+
+export function getFloatingMessage(type: QuizType, subjectName: string, pct: number): string {
+  const cfg = QUIZ_TYPE_CONFIG[type];
+  const name = subjectName || "this";
+  return pct >= 60 ? cfg.floatingMessages.good(name) : cfg.floatingMessages.bad(name);
+}
 
 export function getResultMessage(type: QuizType, subjectName: string, pct: number): string {
   const cfg = QUIZ_TYPE_CONFIG[type];
