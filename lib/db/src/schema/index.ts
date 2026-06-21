@@ -63,7 +63,7 @@ export const chatSessionsTable = pgTable("chat_sessions", {
   userId: text("user_id").notNull(),
   title: text("title").notNull().default("New Chat"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  updatedAt: text("updated_at"),
 });
 
 export const chatMessagesTable = pgTable("chat_messages", {
