@@ -15,15 +15,15 @@ paths = [ "/" ]
 localPort = 20698
 
 [services.development]
-run = "sh -c 'sleep infinity'"
+run = "sh -c 'cd /home/runner/workspace && PORT=20698 pnpm run dev'"
 
 [services.production]
 
 [services.production.build]
-args = ["sh", "-c", "echo skip"]
+args = ["sh", "-c", "cd /home/runner/workspace && pnpm run build"]
 
 [services.production.run]
-args = ["sh", "-c", "sleep infinity"]
+args = ["sh", "-c", "cd /home/runner/workspace && PORT=20698 pnpm run start"]
 
 [services.production.run.env]
 PORT = "20698"
