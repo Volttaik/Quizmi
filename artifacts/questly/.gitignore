@@ -10,3 +10,6 @@ build/
 
 # misc
 *.log
+
+# clerk configuration (can include secrets)
+/.clerk/
