@@ -1,6 +1,0 @@
-{
-  "buildCommand": "pnpm --filter @workspace/questly run build",
-  "outputDirectory": "artifacts/questly/.next",
-  "installCommand": "pnpm install",
-  "framework": "nextjs"
-}

@@ -8,9 +8,9 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
 const packages = [
-  { id: "starter", name: "Starter", credits: 500, price: "₦500", desc: "Perfect for occasional use", popular: false, perCredit: "₦1.00/credit" },
-  { id: "standard", name: "Standard", credits: 1500, price: "₦1,200", desc: "Best for regular students", popular: true, perCredit: "₦0.80/credit" },
-  { id: "pro", name: "Pro", credits: 5000, price: "₦3,500", desc: "Unlimited learning power", popular: false, perCredit: "₦0.70/credit" },
+  { id: "starter", name: "Starter", credits: 50, price: "₦500", desc: "Perfect for occasional use", popular: false, perCredit: "₦10.00/credit" },
+  { id: "standard", name: "Standard", credits: 100, price: "₦1,000", desc: "Best for regular students", popular: true, perCredit: "₦10.00/credit" },
+  { id: "pro", name: "Pro", credits: 350, price: "₦3,500", desc: "Unlimited learning power", popular: false, perCredit: "₦10.00/credit" },
 ] as const;
 
 const CREDIT_COSTS = [

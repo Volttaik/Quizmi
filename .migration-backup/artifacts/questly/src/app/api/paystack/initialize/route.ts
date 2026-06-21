@@ -5,9 +5,9 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 const CREDIT_PACKAGES = {
-  starter: { credits: 500, amount: 500 },
-  standard: { credits: 1500, amount: 1200 },
-  pro: { credits: 5000, amount: 3500 },
+  starter: { credits: 50, amount: 500 },
+  standard: { credits: 100, amount: 1000 },
+  pro: { credits: 350, amount: 3500 },
 } as const;
 
 const schema = z.object({
