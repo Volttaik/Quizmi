@@ -5,14 +5,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Loader2, BookOpen, Trophy, Share2, Timer, Zap, ArrowRight,
   CheckCircle2, XCircle, Check, X as XIcon, Heart, Users, Home,
-  GraduationCap, RotateCcw, Link2,
+  GraduationCap, RotateCcw, Link2, Brain, HelpCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { QUIZ_TYPE_CONFIG, getResultMessage, type QuizType } from "@/lib/quizTypes";
 import { toast } from "sonner";
-import { shareContent } from "@/lib/share";
+import ShareModal from "@/components/ShareModal";
 
-interface Question { question: string; options: string[]; correct: number; explanation?: string; }
+interface Question { question: string; options: string[]; correct: number; explanation?: string; imageUrl?: string; }
 interface Quiz {
   id: number; title: string; difficulty: string; questions: Question[];
   quizType?: QuizType; subjectName?: string; shareSlug?: string; topic?: string;
@@ -28,6 +28,8 @@ function QuizTypeIcon({ type, className }: { type: QuizType; className?: string 
     friendship: <Users className={className} />,
     family: <Home className={className} />,
     classroom: <GraduationCap className={className} />,
+    personality: <Brain className={className} />,
+    knowme: <HelpCircle className={className} />,
   };
   return icons[type] ?? <BookOpen className={className} />;
 }
@@ -56,6 +58,7 @@ export default function PublicQuizPage() {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [phase, setPhase] = useState<"landing" | "playing" | "done">("landing");
+  const [shareOpen, setShareOpen] = useState(false);
   const [timedMode, setTimedMode] = useState(false);
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
@@ -204,19 +207,23 @@ export default function PublicQuizPage() {
           </a>
         </motion.div>
 
-        <motion.div className="flex gap-2 w-full max-w-sm"
+        <motion.div className="w-full max-w-sm"
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.65 }}>
-          <Button variant="ghost" size="sm" className="flex-1 rounded-full gap-1.5 text-muted-foreground text-xs"
-            onClick={async () => {
-              const res = await shareContent({ title: `Quiz Result — ${pct}%`, text: `I scored ${pct}% on "${quiz.title}". ${banner} — Try Quizmi!`, url: window.location.href });
-              if (res === "copied") toast.success("Copied!"); else if (res === "shared") toast.success("Shared!");
-            }}>
-            <Share2 className="w-3.5 h-3.5" /> Share Score
-          </Button>
-          <Button variant="ghost" size="sm" className="flex-1 rounded-full gap-1.5 text-muted-foreground text-xs" onClick={handleCopyLink}>
-            <Link2 className="w-3.5 h-3.5" /> Copy Quiz Link
+          <Button onClick={() => setShareOpen(true)} className="w-full rounded-full gap-2 shadow-elevated" size="lg">
+            <Share2 className="w-4 h-4" /> Share My Result
           </Button>
         </motion.div>
+
+        <ShareModal
+          open={shareOpen}
+          onClose={() => setShareOpen(false)}
+          quizType={type}
+          quizTitle={quiz.title}
+          subjectName={quiz.subjectName || quiz.topic || "this"}
+          pct={pct}
+          banner={banner}
+          shareUrl={typeof window !== "undefined" ? window.location.href : ""}
+        />
       </div>
     );
   }
@@ -279,7 +286,11 @@ export default function PublicQuizPage() {
         className="rounded-2xl bg-muted/40 border border-border/40 p-3.5 flex items-center gap-2.5 w-full max-w-sm">
         <Link2 className="w-4 h-4 text-muted-foreground flex-shrink-0" />
         <p className="text-xs text-muted-foreground">
-          Created on <span className="font-semibold text-foreground">Quizmi</span> &mdash; create your own at quizmi.app
+          Made with <span className="font-semibold text-foreground">Quizmi</span> &mdash;{" "}
+          <a href="https://quizmi.space/sign-up" target="_blank" rel="noreferrer"
+            className="font-semibold text-primary underline underline-offset-2">
+            Create your own quiz free
+          </a>
         </p>
       </motion.div>
     </div>
@@ -390,6 +401,16 @@ export default function PublicQuizPage() {
                 <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: cfg.theme.accent }}>
                   Question {current + 1}
                 </p>
+                {q.imageUrl && (
+                  <div className="rounded-2xl overflow-hidden mb-4 -mx-1 bg-muted/20">
+                    <img
+                      src={q.imageUrl}
+                      alt="Question"
+                      className="w-full max-h-52 object-cover"
+                      style={{ display: "block" }}
+                    />
+                  </div>
+                )}
                 <h2 className="text-base font-bold text-foreground leading-snug">{q.question}</h2>
               </div>
               <div className="space-y-3">

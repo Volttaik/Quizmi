@@ -12,13 +12,13 @@ const generateSchema = z.object({
   fileName: z.string().optional(),
   questionCount: z.number().min(1).max(200).default(10),
   difficulty: z.enum(["easy", "medium", "hard"]).default("medium"),
-  quizType: z.enum(["study", "love", "friendship", "family", "classroom"]).default("study"),
+  quizType: z.enum(["study", "love", "friendship", "family", "classroom", "personality", "knowme"]).default("study"),
   subjectName: z.string().max(100).optional(),
   description: z.string().max(3000).optional(),
   aiPrompt: z.string().max(2000).optional(),
 });
 
-const QUIZ_CREDIT_COST = 1;
+const CREDIT_PER_QUESTION = 1;
 
 export async function POST(req: NextRequest) {
   const { userId } = await auth();
@@ -39,8 +39,10 @@ export async function POST(req: NextRequest) {
 
   try {
     const user = await db.query.usersTable.findFirst({ where: eq(usersTable.clerkId, userId) });
-    if (!user || user.credits < QUIZ_CREDIT_COST)
-      return NextResponse.json({ error: `Not enough credits. You need ${QUIZ_CREDIT_COST} credit to generate a quiz.` }, { status: 402 });
+
+    // Pre-check: need at least 1 credit (we'll check exact cost after generation)
+    if (!user || user.credits < 1)
+      return NextResponse.json({ error: "Not enough credits. Buy more credits to continue." }, { status: 402 });
 
     if (!process.env.GROQ_API_KEY)
       return NextResponse.json({ error: "AI API key not configured. Please add GROQ_API_KEY in Secrets." }, { status: 503 });
@@ -49,14 +51,17 @@ export async function POST(req: NextRequest) {
     let title: string;
     let finalTopic = topic ?? subjectName ?? "Quiz";
 
+    const typeLabels: Record<string, string> = {
+      love: "Love Quiz",
+      friendship: "Friendship Quiz",
+      family: "Family Quiz",
+      classroom: "Quiz",
+      personality: "Personality Quiz",
+      knowme: "Know Me Quiz",
+    };
+
     if (isSocial) {
       const name = subjectName ?? "them";
-      const typeLabels: Record<string, string> = {
-        love: "Love Quiz",
-        friendship: "Friendship Quiz",
-        family: "Family Quiz",
-        classroom: "Quiz",
-      };
       title = `${name}'s ${typeLabels[quizType] ?? "Quiz"}`;
 
       if (aiPrompt) {
@@ -78,6 +83,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No valid source material provided." }, { status: 400 });
     }
 
+    // Cost = 1 credit per question actually generated
+    const cost = questions.length * CREDIT_PER_QUESTION;
+
+    if (user.credits < cost)
+      return NextResponse.json({
+        error: `Not enough credits. This quiz needs ${cost} credits (${questions.length} questions × 1 credit). You have ${user.credits}.`,
+      }, { status: 402 });
+
     const shareSlug = generateShareSlug(title);
 
     const [quiz] = await db
@@ -98,8 +111,13 @@ export async function POST(req: NextRequest) {
       .returning();
 
     await db.transaction(async (tx) => {
-      await tx.update(usersTable).set({ credits: user.credits - QUIZ_CREDIT_COST }).where(eq(usersTable.clerkId, userId));
-      await tx.insert(creditTransactionsTable).values({ userId, amount: -QUIZ_CREDIT_COST, type: "usage", description: `Generated quiz: ${title}` });
+      await tx.update(usersTable).set({ credits: user.credits - cost }).where(eq(usersTable.clerkId, userId));
+      await tx.insert(creditTransactionsTable).values({
+        userId,
+        amount: -cost,
+        type: "usage",
+        description: `Generated quiz: ${title} (${questions.length} questions)`,
+      });
     });
 
     return NextResponse.json(quiz);

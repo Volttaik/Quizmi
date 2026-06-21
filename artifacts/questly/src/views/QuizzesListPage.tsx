@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   BookOpen, Plus, ArrowLeft, Loader2, ChevronRight, Trash2, Trophy,
-  Clock, Link2, Heart, Users, Home, GraduationCap, type LucideProps,
+  Clock, Link2, Heart, Users, Home, GraduationCap, Brain, HelpCircle, type LucideProps,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -48,6 +48,8 @@ const TYPE_ICONS: Record<QuizType, FC<LucideProps>> = {
   friendship: Users,
   family: Home,
   classroom: GraduationCap,
+  personality: Brain,
+  knowme: HelpCircle,
 };
 
 function QuizTypeIcon({ type, className }: { type: QuizType; className?: string }) {

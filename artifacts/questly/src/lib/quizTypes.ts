@@ -1,4 +1,4 @@
-export type QuizType = "study" | "love" | "friendship" | "family" | "classroom";
+export type QuizType = "study" | "love" | "friendship" | "family" | "classroom" | "personality" | "knowme";
 
 export const QUIZ_TYPE_CONFIG = {
   study: {
@@ -6,6 +6,9 @@ export const QUIZ_TYPE_CONFIG = {
     label: "Study Quiz",
     shortLabel: "Study",
     description: "Test academic knowledge on any topic",
+    shareEmoji: "🧠",
+    shareVerb: "I scored",
+    shareCta: "Test your knowledge!",
     theme: {
       gradient: "from-[hsl(262,72%,56%)] via-[hsl(265,72%,48%)] to-[hsl(275,72%,36%)]",
       accent: "hsl(262,72%,56%)",
@@ -31,6 +34,9 @@ export const QUIZ_TYPE_CONFIG = {
     label: "Love Quiz",
     shortLabel: "Love",
     description: "How well do they know you?",
+    shareEmoji: "💕",
+    shareVerb: "I scored",
+    shareCta: "Can you beat me?",
     theme: {
       gradient: "from-rose-500 via-pink-500 to-red-500",
       accent: "hsl(340,80%,55%)",
@@ -56,6 +62,9 @@ export const QUIZ_TYPE_CONFIG = {
     label: "Friendship Quiz",
     shortLabel: "Friendship",
     description: "Test how well you know your bestie",
+    shareEmoji: "🔥",
+    shareVerb: "I scored",
+    shareCta: "Try it on your bestie!",
     theme: {
       gradient: "from-amber-500 via-orange-500 to-yellow-500",
       accent: "hsl(35,90%,55%)",
@@ -81,6 +90,9 @@ export const QUIZ_TYPE_CONFIG = {
     label: "Family Quiz",
     shortLabel: "Family",
     description: "How well do you know your family?",
+    shareEmoji: "💪",
+    shareVerb: "I scored",
+    shareCta: "Test your family!",
     theme: {
       gradient: "from-emerald-500 via-teal-500 to-green-600",
       accent: "hsl(158,64%,52%)",
@@ -106,6 +118,9 @@ export const QUIZ_TYPE_CONFIG = {
     label: "Classroom Quiz",
     shortLabel: "Class",
     description: "Challenge your classmates",
+    shareEmoji: "⭐",
+    shareVerb: "I scored",
+    shareCta: "Beat my score!",
     theme: {
       gradient: "from-blue-500 via-indigo-500 to-blue-700",
       accent: "hsl(217,91%,60%)",
@@ -126,6 +141,62 @@ export const QUIZ_TYPE_CONFIG = {
       bad: (name: string) => `Study harder in ${name}! 😬`,
     },
   },
+  personality: {
+    iconName: "Brain",
+    label: "Personality Quiz",
+    shortLabel: "Personality",
+    description: "Discover who you really are",
+    shareEmoji: "🧩",
+    shareVerb: "I scored",
+    shareCta: "Find out your personality!",
+    theme: {
+      gradient: "from-purple-500 via-fuchsia-500 to-pink-500",
+      accent: "hsl(280,80%,62%)",
+      badge: "bg-purple-500/15 text-purple-600 dark:text-purple-400 border-purple-400/20",
+      resultGradient: "from-purple-500 to-fuchsia-600",
+      iconColor: "text-purple-500",
+      iconBg: "bg-purple-500/10",
+    },
+    resultMessages: {
+      perfect: (name: string) => `You totally get ${name}'s vibe!`,
+      great: (name: string) => `You know ${name}'s personality well!`,
+      good: (name: string) => `You understand ${name} pretty well!`,
+      keep: (name: string) => `Still figuring out ${name}'s personality!`,
+      low: (name: string) => `Get to know ${name} deeper!`,
+    },
+    floatingMessages: {
+      good: (_name: string) => "You know them inside out! 🧩",
+      bad: (name: string) => `${name} is still a mystery to you! 🔮`,
+    },
+  },
+  knowme: {
+    iconName: "HelpCircle",
+    label: "Know Me Quiz",
+    shortLabel: "Know Me",
+    description: "How much do you know this person?",
+    shareEmoji: "🤔",
+    shareVerb: "I scored",
+    shareCta: "How well do YOU know me?",
+    theme: {
+      gradient: "from-cyan-500 via-teal-500 to-sky-600",
+      accent: "hsl(188,85%,48%)",
+      badge: "bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border-cyan-400/20",
+      resultGradient: "from-cyan-500 to-teal-600",
+      iconColor: "text-cyan-500",
+      iconBg: "bg-cyan-500/10",
+    },
+    resultMessages: {
+      perfect: (name: string) => `You know ${name} like the back of your hand!`,
+      great: (name: string) => `You really know ${name}!`,
+      good: (name: string) => `You know ${name} pretty well!`,
+      keep: (name: string) => `Still learning about ${name}!`,
+      low: (name: string) => `Time to get to know ${name} better!`,
+    },
+    floatingMessages: {
+      good: (name: string) => `${name} would be proud! 🤩`,
+      bad: (name: string) => `Do you even know ${name}? 🤔`,
+    },
+  },
 } as const;
 
 export function getFloatingMessage(type: QuizType, subjectName: string, pct: number): string {
@@ -142,6 +213,17 @@ export function getResultMessage(type: QuizType, subjectName: string, pct: numbe
   if (pct >= 60) return cfg.resultMessages.good(name);
   if (pct >= 40) return cfg.resultMessages.keep(name);
   return cfg.resultMessages.low(name);
+}
+
+export function buildWhatsAppMessage(
+  type: QuizType,
+  quizTitle: string,
+  pct: number,
+  banner: string,
+  shareUrl: string
+): string {
+  const cfg = QUIZ_TYPE_CONFIG[type];
+  return `${cfg.shareEmoji} ${cfg.shareVerb} *${pct}%* on "${quizTitle}"!\n${banner}\n\n${cfg.shareCta} 👉 ${shareUrl}`;
 }
 
 export function generateShareSlug(title: string): string {

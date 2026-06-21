@@ -1,8 +1,10 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
-import { db, quizzesTable } from "@/lib/db";
+import { db, quizzesTable, usersTable, creditTransactionsTable } from "@/lib/db";
 import { eq, desc } from "drizzle-orm";
 import { generateShareSlug } from "@/lib/quizTypes";
+
+const CREDIT_PER_QUESTION = 1;
 
 export async function POST(req: NextRequest) {
   const { userId } = await auth();
@@ -13,6 +15,15 @@ export async function POST(req: NextRequest) {
     const { title, topic, quizType, subjectName, questions, difficulty } = body;
     if (!title || !Array.isArray(questions) || questions.length === 0)
       return NextResponse.json({ error: "Title and at least one question are required" }, { status: 400 });
+
+    const cost = questions.length * CREDIT_PER_QUESTION;
+
+    // Credit check
+    const user = await db.query.usersTable.findFirst({ where: eq(usersTable.clerkId, userId) });
+    if (!user || user.credits < cost)
+      return NextResponse.json({
+        error: `Not enough credits. This quiz needs ${cost} credits (${questions.length} questions × 1 credit). You have ${user?.credits ?? 0}.`,
+      }, { status: 402 });
 
     const shareSlug = generateShareSlug(title);
     const [quiz] = await db.insert(quizzesTable).values({
@@ -28,6 +39,18 @@ export async function POST(req: NextRequest) {
       shareSlug,
       isPublic: true,
     }).returning();
+
+    // Deduct credits and log activity
+    await db.transaction(async (tx) => {
+      await tx.update(usersTable).set({ credits: user.credits - cost }).where(eq(usersTable.clerkId, userId));
+      await tx.insert(creditTransactionsTable).values({
+        userId,
+        amount: -cost,
+        type: "usage",
+        description: `Created quiz: ${title} (${questions.length} questions)`,
+      });
+    });
+
     return NextResponse.json(quiz);
   } catch (err: any) {
     console.error("POST /api/quizzes error", err);

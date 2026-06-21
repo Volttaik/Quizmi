@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles, ArrowLeft, Upload, FileText, X, ArrowRight, Loader2,
   AlertCircle, BookOpen, Heart, Users, Home, GraduationCap, Wand2, Link2,
-  PenLine, Plus, Trash2, CheckCircle2, Circle,
+  PenLine, Plus, Trash2, CheckCircle2, Circle, Brain, HelpCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -76,6 +76,24 @@ const SOCIAL_TYPES: {
     bg: "bg-blue-500/10",
     border: "border-blue-400/30",
   },
+  {
+    type: "personality",
+    icon: <Brain className="w-5 h-5" />,
+    label: "Personality Quiz",
+    desc: "Reveal your true self!",
+    color: "text-purple-500",
+    bg: "bg-purple-500/10",
+    border: "border-purple-400/30",
+  },
+  {
+    type: "knowme",
+    icon: <HelpCircle className="w-5 h-5" />,
+    label: "Know Me Quiz",
+    desc: "How well do they know you?",
+    color: "text-cyan-500",
+    bg: "bg-cyan-500/10",
+    border: "border-cyan-400/30",
+  },
 ];
 
 type Step = "category" | "social-type" | "social-details" | "study-details";
@@ -99,7 +117,7 @@ export default function CreateQuizPage() {
   const [extracting, setExtracting] = useState(false);
   const [socialMode, setSocialMode] = useState<"ai" | "manual">("ai");
   const [manualQuestions, setManualQuestions] = useState<
-    { question: string; options: [string, string, string, string]; correct: number }[]
+    { question: string; options: [string, string, string, string]; correct: number; imageUrl?: string; uploadingImage?: boolean }[]
   >([{ question: "", options: ["", "", "", ""], correct: 0 }]);
   const [creating, setCreating] = useState(false);
 
@@ -204,14 +222,14 @@ export default function CreateQuizPage() {
     const valid = manualQuestions.every((q) => q.question.trim() && q.options.every((o) => o.trim()));
     if (!valid) { toast.error("Please fill in all questions and options"); return; }
     if (manualQuestions.length < 1) { toast.error("Add at least one question"); return; }
-    const typeLabels: Record<string, string> = { love: "Love Quiz", friendship: "Friendship Quiz", family: "Family Quiz", classroom: "Quiz" };
+    const typeLabels: Record<string, string> = { love: "Love Quiz", friendship: "Friendship Quiz", family: "Family Quiz", classroom: "Quiz", personality: "Personality Quiz", knowme: "Know Me Quiz" };
     const title = `${subjectName.trim()}'s ${typeLabels[quizType] ?? "Quiz"}`;
     setCreating(true);
     try {
       const res = await fetch("/api/quizzes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, topic: subjectName.trim(), quizType, subjectName: subjectName.trim(), questions: manualQuestions.map((q) => ({ question: q.question, options: q.options, correct: q.correct })) }),
+        body: JSON.stringify({ title, topic: subjectName.trim(), quizType, subjectName: subjectName.trim(), questions: manualQuestions.map((q) => ({ question: q.question, options: q.options, correct: q.correct, imageUrl: q.imageUrl ?? null })) }),
       });
       const data = await res.json();
       if (!res.ok) { toast.error(data.error ?? "Failed to create quiz"); }
@@ -224,7 +242,23 @@ export default function CreateQuizPage() {
     setManualQuestions((qs) => qs.map((q, idx) => idx === i ? { ...q, [field]: val } : q));
   const updateManualOption = (qi: number, oi: number, val: string) =>
     setManualQuestions((qs) => qs.map((q, idx) => idx === qi ? { ...q, options: q.options.map((o, j) => j === oi ? val : o) as [string,string,string,string] } : q));
-  const addManualQ = () => setManualQuestions((qs) => [...qs, { question: "", options: ["", "", "", ""], correct: 0 }]);
+  const addManualQ = () => setManualQuestions((qs) => [...qs, { question: "", options: ["", "", "", ""], correct: 0, imageUrl: undefined }]);
+
+  const handleImageUpload = async (qi: number, file: File) => {
+    setManualQuestions((qs) => qs.map((q, idx) => idx === qi ? { ...q, uploadingImage: true } : q));
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      const res = await fetch("/api/upload-image", { method: "POST", body: form });
+      const data = await res.json();
+      if (!res.ok) { toast.error(data.error ?? "Image upload failed"); return; }
+      setManualQuestions((qs) => qs.map((q, idx) => idx === qi ? { ...q, imageUrl: data.url, uploadingImage: false } : q));
+      toast.success("Image added! (10 credits used)");
+    } catch {
+      toast.error("Image upload failed");
+      setManualQuestions((qs) => qs.map((q, idx) => idx === qi ? { ...q, uploadingImage: false } : q));
+    }
+  };
   const removeManualQ = (i: number) => setManualQuestions((qs) => qs.filter((_, idx) => idx !== i));
 
   const hasFile = !!file && !!fileContent;
@@ -387,6 +421,30 @@ export default function CreateQuizPage() {
                           </button>
                         )}
                       </div>
+
+                      {/* Image upload */}
+                      {q.imageUrl ? (
+                        <div className="relative rounded-2xl overflow-hidden bg-muted/20">
+                          <img src={q.imageUrl} alt="Question" className="w-full max-h-40 object-cover" />
+                          <button
+                            onClick={() => setManualQuestions((qs) => qs.map((qq, idx) => idx === qi ? { ...qq, imageUrl: undefined } : qq))}
+                            className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 flex items-center justify-center">
+                            <X className="w-3.5 h-3.5 text-white" />
+                          </button>
+                        </div>
+                      ) : (
+                        <label className="flex items-center gap-2 cursor-pointer group">
+                          <input type="file" accept="image/*" className="hidden"
+                            onChange={(e) => { const f = e.target.files?.[0]; if (f) handleImageUpload(qi, f); e.target.value = ""; }} />
+                          <div className={`flex items-center gap-2 text-xs font-semibold px-3 py-2 rounded-xl border border-dashed transition-all ${q.uploadingImage ? "border-primary/40 text-primary" : "border-border text-muted-foreground hover:border-primary/40 hover:text-primary"}`}>
+                            {q.uploadingImage
+                              ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Uploading…</>
+                              : <><Upload className="w-3.5 h-3.5" /> Add Image <span className="text-[10px] ml-1 bg-amber-400/20 text-amber-600 dark:text-amber-400 px-1.5 py-0.5 rounded-full font-bold">10 credits</span></>
+                            }
+                          </div>
+                        </label>
+                      )}
+
                       <div className="space-y-2">
                         {q.options.map((opt, oi) => (
                           <div key={oi} className="flex items-center gap-2">

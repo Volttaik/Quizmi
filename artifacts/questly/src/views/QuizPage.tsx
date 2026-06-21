@@ -3,18 +3,18 @@ import { useState, useEffect, useRef, type ReactElement } from "react";
 import {
   ArrowLeft, RotateCcw, ArrowRight, Loader2, BookOpen, Trophy, Share2,
   Timer, Zap, Link2, CheckCircle2, XCircle, Heart, Users, Home,
-  GraduationCap, Check, X as XIcon,
+  GraduationCap, Check, X as XIcon, Brain, HelpCircle,
 } from "lucide-react";
-import { shareContent } from "@/lib/share";
 import { toast } from "sonner";
 import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import BottomNav from "@/components/dashboard/BottomNav";
-import { QUIZ_TYPE_CONFIG, getResultMessage, getFloatingMessage, type QuizType } from "@/lib/quizTypes";
+import ShareModal from "@/components/ShareModal";
+import { QUIZ_TYPE_CONFIG, getResultMessage, getFloatingMessage, buildWhatsAppMessage, type QuizType } from "@/lib/quizTypes";
 
-interface Question { question: string; options: string[]; correct: number; explanation?: string; reference?: string; }
+interface Question { question: string; options: string[]; correct: number; explanation?: string; reference?: string; imageUrl?: string; }
 interface Quiz {
   id: number; title: string; difficulty: string; questions: Question[];
   quizType?: QuizType; subjectName?: string; shareSlug?: string; topic?: string;
@@ -30,6 +30,8 @@ function QuizTypeIcon({ type, className }: { type: QuizType; className?: string 
     friendship: <Users className={className} />,
     family: <Home className={className} />,
     classroom: <GraduationCap className={className} />,
+    personality: <Brain className={className} />,
+    knowme: <HelpCircle className={className} />,
   };
   return icons[type] ?? <BookOpen className={className} />;
 }
@@ -154,22 +156,7 @@ function ResultsScreen({ score, total, quiz, onRestart, onDash, bonusPoints, tim
   const isGood = pct >= 60;
   const totalScore = score + bonusPoints;
   const shareLink = quiz.shareSlug ? `${typeof window !== "undefined" ? window.location.origin : ""}/q/${quiz.shareSlug}` : null;
-
-  const handleShareResult = async () => {
-    const result = await shareContent({
-      title: `Quiz Result — ${pct}%`,
-      text: `${floatingMsg}\n\nI scored ${pct}% on "${quiz.title}" — Try Quizmi!`,
-      url: shareLink ?? window.location.href,
-    });
-    if (result === "copied") toast.success("Result copied to clipboard!");
-    else if (result === "shared") toast.success("Shared!");
-  };
-
-  const handleCopyLink = async () => {
-    if (!shareLink) return;
-    try { await navigator.clipboard.writeText(shareLink); toast.success("Quiz link copied!"); }
-    catch { toast.info(shareLink); }
-  };
+  const [shareOpen, setShareOpen] = useState(false);
 
   return (
     <motion.div className="min-h-screen bg-background flex flex-col items-center px-4 pt-6 pb-28"
@@ -266,7 +253,7 @@ function ResultsScreen({ score, total, quiz, onRestart, onDash, bonusPoints, tim
       {/* Share result — prominent */}
       <motion.div className="w-full max-w-sm mb-3"
         initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.65 }}>
-        <Button onClick={handleShareResult} className="w-full rounded-full gap-2 shadow-elevated" size="lg">
+        <Button onClick={() => setShareOpen(true)} className="w-full rounded-full gap-2 shadow-elevated" size="lg">
           <Share2 className="w-4 h-4" /> Share My Result
         </Button>
       </motion.div>
@@ -282,14 +269,16 @@ function ResultsScreen({ score, total, quiz, onRestart, onDash, bonusPoints, tim
         </Button>
       </motion.div>
 
-      {shareLink && (
-        <motion.div className="w-full max-w-sm"
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.78 }}>
-          <Button variant="ghost" size="sm" className="w-full rounded-full gap-1.5 text-muted-foreground text-xs" onClick={handleCopyLink}>
-            <Link2 className="w-3.5 h-3.5" /> Copy Quiz Link
-          </Button>
-        </motion.div>
-      )}
+      <ShareModal
+        open={shareOpen}
+        onClose={() => setShareOpen(false)}
+        quizType={type}
+        quizTitle={quiz.title}
+        subjectName={subjectName}
+        pct={pct}
+        banner={banner}
+        shareUrl={shareLink ?? (typeof window !== "undefined" ? window.location.href : "")}
+      />
     </motion.div>
   );
 }
@@ -535,6 +524,16 @@ export default function QuizPage() {
                 <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: cfg.theme.accent }}>
                   Question {current + 1}
                 </p>
+                {q.imageUrl && (
+                  <div className="rounded-2xl overflow-hidden mb-4 -mx-1 bg-muted/20">
+                    <img
+                      src={q.imageUrl}
+                      alt="Question"
+                      className="w-full max-h-52 object-cover"
+                      style={{ display: "block" }}
+                    />
+                  </div>
+                )}
                 <h2 className="text-base font-bold text-foreground leading-snug">{q.question}</h2>
               </div>
               <div className="space-y-3">

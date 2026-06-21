@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { db, usersTable } from "@/lib/db";
 import { eq } from "drizzle-orm";
 
+const INITIAL_CREDITS = 20;
+
 export async function GET() {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -26,7 +28,7 @@ export async function GET() {
 
       const [created] = await db
         .insert(usersTable)
-        .values({ clerkId: userId, name, email, credits: 100, plan: "free" })
+        .values({ clerkId: userId, name, email, credits: INITIAL_CREDITS, plan: "free" })
         .onConflictDoNothing()
         .returning();
 

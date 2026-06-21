@@ -42,7 +42,7 @@ export default function HelpSupportPage() {
 
         <div className="grid grid-cols-2 gap-3 mb-6">
           <a
-            href="mailto:support@quizmi.app"
+            href="mailto:support@quizmi.space"
             className="bg-card rounded-2xl border border-border/40 p-4 flex flex-col items-center gap-2 hover:border-primary/30 transition-colors"
           >
             <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
