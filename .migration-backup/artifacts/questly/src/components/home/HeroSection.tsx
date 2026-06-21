@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Smartphone } from "lucide-react";
 
 export default function HeroSection() {
   return (
@@ -41,6 +41,19 @@ export default function HeroSection() {
               className="rounded-full px-8 text-sm font-semibold text-white/60 hover:text-white hover:bg-white/5 border border-white/10 hover:border-white/20 w-full sm:w-auto"
             >
               See How It Works
+            </Button>
+          </a>
+        </div>
+
+        <div className="mt-5">
+          <a href="/downloads/questly.apk" download="questly.apk">
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-full px-6 text-xs font-semibold text-white/70 hover:text-white bg-white/5 hover:bg-white/10 border border-white/15 hover:border-white/30 gap-2"
+            >
+              <Smartphone className="w-3.5 h-3.5" />
+              Download Android App (.apk)
             </Button>
           </a>
         </div>

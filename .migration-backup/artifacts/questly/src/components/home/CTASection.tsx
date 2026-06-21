@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles, Smartphone } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function CTASection() {
@@ -46,6 +46,18 @@ export default function CTASection() {
                   Already have an account?
                 </Button>
               </Link>
+            </div>
+            <div className="mt-6">
+              <a href="/downloads/questly.apk" download="questly.apk">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="rounded-full px-6 text-xs font-semibold text-white/60 hover:text-white bg-white/5 hover:bg-white/10 border border-white/15 hover:border-white/30 gap-2"
+                >
+                  <Smartphone className="w-3.5 h-3.5" />
+                  Download Android App (.apk)
+                </Button>
+              </a>
             </div>
           </div>
         </motion.div>
