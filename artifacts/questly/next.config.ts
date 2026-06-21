@@ -16,14 +16,12 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: require("path").join(__dirname, "../../"),
   outputFileTracingExcludes: {
     "*": [
-      "./node_modules/.pnpm/**",
-      "../../node_modules/.pnpm/**",
-    ],
-  },
-  outputFileTracingIncludes: {
-    "/api/**/*": [
-      "./node_modules/@libsql/**/*",
-      "./node_modules/libsql/**/*",
+      "**/@libsql/linux-arm64-gnu/**",
+      "**/@libsql/linux-arm64-musl/**",
+      "**/@libsql/darwin-x64/**",
+      "**/@libsql/darwin-arm64/**",
+      "**/@libsql/win32-x64-msvc/**",
+      "**/pdfjs-dist/**",
     ],
   },
   serverExternalPackages: libsqlPackages,
