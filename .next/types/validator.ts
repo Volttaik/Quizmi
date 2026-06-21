@@ -227,6 +227,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../src/app/q/[slug]/page.tsx
+{
+  type __IsExpected<Specific extends AppPageConfig<"/q/[slug]">> = Specific
+  const handler = {} as typeof import("../../src/app/q/[slug]/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../src/app/api/achievements/route.ts
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/achievements">> = Specific
@@ -389,6 +398,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../src/app/api/quizzes/slug/[slug]/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/quizzes/slug/[slug]">> = Specific
+  const handler = {} as typeof import("../../src/app/api/quizzes/slug/[slug]/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../src/app/api/streak/route.ts
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/streak">> = Specific
@@ -411,6 +429,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/upload/avatar">> = Specific
   const handler = {} as typeof import("../../src/app/api/upload/avatar/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../src/app/api/upload/wallpaper/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/upload/wallpaper">> = Specific
+  const handler = {} as typeof import("../../src/app/api/upload/wallpaper/route.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check

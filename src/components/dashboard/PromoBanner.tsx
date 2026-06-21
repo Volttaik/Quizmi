@@ -22,7 +22,7 @@ export default function PromoBanner() {
           </div>
           <h3 className="text-base font-extrabold text-white leading-tight mb-1.5">
             Power your learning<br />
-            <span className="text-primary">with AI credits.</span>
+            <span className="text-primary">with AI.</span>
           </h3>
           <p className="text-[11px] text-white/40 leading-relaxed mb-3">
             Generate quizzes, flashcards & summaries instantly.

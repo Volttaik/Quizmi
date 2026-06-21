@@ -1,0 +1,3 @@
+- [Social Quiz Architecture](social-quiz-arch.md) — quizTypes.ts is the single source of truth for all 5 types; iconName strings map to Lucide icons in components
+- [Turso CJS Migration](turso-migration.md) — use migrate.cjs + require() with the full pnpm store path to run ad-hoc Turso migrations
+- [Platform Design Rules](platform-design.md) — NO emojis anywhere; icons only (Lucide React). No emoji in toasts, banners, result screens, or UI text.

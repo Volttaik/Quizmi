@@ -1,0 +1,32 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "Ylaot3fTRCcKBM6BaB59I"
+uri = "file://public/quiz-slide-love.png"
+type = "image"
+title = "love quiz mobile screen"
+
+[[generated]]
+id = "A2l8KvDycMPa54RvxeX2A"
+uri = "file://public/quiz-slide-friendship.png"
+type = "image"
+title = "friendship quiz mobile screen"
+
+[[generated]]
+id = "WnCJ52eAR601TnYuqrpv_"
+uri = "file://public/quiz-slide-study.png"
+type = "image"
+title = "study quiz mobile screen"
+
+[[generated]]
+id = "50vsZIoQYkdyfj6ytXrZu"
+uri = "file://public/quiz-slide-classroom.png"
+type = "image"
+title = "classroom quiz mobile screen"
+
+[[generated]]
+id = "pUS-nn2rCnveXOn7ee_F4"
+uri = "file://public/quiz-slide-family.png"
+type = "image"
+title = "family quiz mobile screen"

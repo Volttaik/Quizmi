@@ -1,38 +1,60 @@
 "use client";
-import { Zap, Brain, Layers, Target } from "lucide-react";
+import { Heart, Users, Home, GraduationCap, BookOpen, Share2 } from "lucide-react";
 
-const features = [
+const quizTypes = [
   {
-    icon: Zap,
-    title: "AI-Generated Quizzes",
-    desc: "Paste your notes. Get a full quiz in seconds. Our AI understands context, creates targeted questions, and adapts to your level.",
-    img: "/feature-quiz.png",
+    icon: Heart,
+    title: "Love Quizzes",
+    desc: "Build a quiz about yourself — favourite things, habits, preferences — and see how deeply your partner really knows you.",
+    color: "text-rose-400",
+    bg: "bg-rose-400/10",
+    border: "border-rose-400/10",
+    glow: "group-hover:shadow-rose-500/10",
+  },
+  {
+    icon: Users,
+    title: "Friendship Quizzes",
+    desc: "Test your squad's knowledge. Create questions about your crew's memories, inside jokes, and shared moments.",
+    color: "text-amber-400",
+    bg: "bg-amber-400/10",
+    border: "border-amber-400/10",
+    glow: "group-hover:shadow-amber-500/10",
+  },
+  {
+    icon: Home,
+    title: "Family Quizzes",
+    desc: "Bring the family together with fun questions about shared memories, traditions, and who knows who best.",
+    color: "text-emerald-400",
+    bg: "bg-emerald-400/10",
+    border: "border-emerald-400/10",
+    glow: "group-hover:shadow-emerald-500/10",
+  },
+  {
+    icon: GraduationCap,
+    title: "Classroom Quizzes",
+    desc: "Teachers can build topic quizzes in seconds, share with a link, and track how well the class is doing.",
+    color: "text-sky-400",
+    bg: "bg-sky-400/10",
+    border: "border-sky-400/10",
+    glow: "group-hover:shadow-sky-500/10",
+  },
+  {
+    icon: BookOpen,
+    title: "Study Quizzes",
+    desc: "Paste your notes, get a full AI-generated quiz in seconds. Adaptive questions that target your weak spots.",
+    color: "text-violet-400",
+    bg: "bg-violet-400/10",
+    border: "border-violet-400/10",
+    glow: "group-hover:shadow-violet-500/10",
+  },
+  {
+    icon: Share2,
+    title: "Share with Anyone",
+    desc: "Every quiz gets a unique link. Share it publicly — no sign-up needed to take someone else's quiz.",
     color: "text-primary",
     bg: "bg-primary/10",
-  },
-  {
-    icon: Brain,
-    title: "Smart Summaries",
-    desc: "Extract the essence of any material. Key concepts, definitions, and relationships — distilled into crystal clear summaries.",
-    img: "/feature-summary.png",
-    color: "text-[hsl(280,72%,60%)]",
-    bg: "bg-[hsl(280,72%,60%)]/10",
-  },
-  {
-    icon: Layers,
-    title: "Adaptive Flashcards",
-    desc: "Spaced repetition that actually works. Cards reappear at the perfect moment — right before you forget.",
-    img: "/feature-flashcards.png",
-    color: "text-[hsl(199,89%,48%)]",
-    bg: "bg-[hsl(199,89%,48%)]/10",
-  },
-  {
-    icon: Target,
-    title: "Pinpoint Weak Spots",
-    desc: "Identify exactly which topics you struggle with. Focus your time where it matters, skip what you already know.",
-    img: "/feature-progress.png",
-    color: "text-[hsl(142,70%,45%)]",
-    bg: "bg-[hsl(142,70%,45%)]/10",
+    border: "border-primary/10",
+    glow: "group-hover:shadow-primary/10",
   },
 ];
 
@@ -41,36 +63,28 @@ export default function FeaturesSection() {
     <section id="features" className="py-28 relative">
       <div className="container mx-auto px-4">
         <div className="text-center mb-20">
-          <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Features</span>
+          <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">What you can create</span>
           <h2 className="text-3xl md:text-5xl font-bold text-white mt-4 tracking-tight">
-            Everything you need to
+            A quiz for every
             <br />
-            <span className="text-white/40">ace every exam</span>
+            <span className="text-white/40">relationship in your life</span>
           </h2>
+          <p className="text-white/35 text-sm mt-4 max-w-sm mx-auto leading-relaxed">
+            From studying for exams to finding out who knows you best — one platform, five quiz types.
+          </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-5 max-w-5xl mx-auto">
-          {features.map((f) => (
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
+          {quizTypes.map((f) => (
             <div
               key={f.title}
-              className="group relative rounded-3xl border border-white/[0.06] overflow-hidden hover:border-white/[0.14] transition-all duration-500"
+              className={`group relative rounded-2xl border ${f.border} bg-white/[0.02] p-6 hover:bg-white/[0.04] transition-all duration-500 hover:shadow-xl ${f.glow}`}
             >
-              <div className="relative h-52 overflow-hidden bg-white/[0.03]">
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[hsl(222,47%,6%)] z-10" />
-                <img
-                  src={f.img}
-                  alt={f.title}
-                  className="w-full h-full object-cover object-center opacity-90 group-hover:scale-105 transition-all duration-700"
-                />
+              <div className={`w-10 h-10 rounded-2xl ${f.bg} flex items-center justify-center mb-4`}>
+                <f.icon className={`w-5 h-5 ${f.color}`} />
               </div>
-
-              <div className="p-7">
-                <div className={`w-10 h-10 rounded-2xl ${f.bg} border border-white/[0.06] flex items-center justify-center mb-4`}>
-                  <f.icon className={`w-5 h-5 ${f.color}`} />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-2">{f.title}</h3>
-                <p className="text-sm text-white/40 leading-relaxed">{f.desc}</p>
-              </div>
+              <h3 className="text-base font-bold text-white mb-2">{f.title}</h3>
+              <p className="text-sm text-white/35 leading-relaxed">{f.desc}</p>
             </div>
           ))}
         </div>

@@ -8,6 +8,7 @@ export const usersTable = sqliteTable("users", {
   credits: integer("credits").notNull().default(100),
   plan: text("plan").notNull().default("free"),
   avatarUrl: text("avatar_url"),
+  wallpaperUrl: text("wallpaper_url"),
   createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
 });
 
@@ -19,6 +20,12 @@ export const quizzesTable = sqliteTable("quizzes", {
   difficulty: text("difficulty").notNull().default("medium"),
   questions: text("questions", { mode: "json" }).notNull().default([]),
   questionCount: integer("question_count").notNull().default(0),
+  quizType: text("quiz_type").notNull().default("study"),
+  subjectName: text("subject_name"),
+  shareSlug: text("share_slug"),
+  description: text("description"),
+  isPublic: integer("is_public", { mode: "boolean" }).default(true),
+  bannerUrl: text("banner_url"),
   createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
 });
 

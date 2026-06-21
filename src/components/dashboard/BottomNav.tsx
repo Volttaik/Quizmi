@@ -15,14 +15,14 @@ export default function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl border-t border-border/50 shadow-bottom-nav dark:shadow-[0_-4px_32px_rgba(0,0,0,0.55)]">
-      <div className="max-w-lg mx-auto flex items-end justify-around px-2 pt-1.5 pb-safe pb-3">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-2xl">
+      <div className="max-w-lg mx-auto flex items-end justify-around px-2 pt-1.5 pb-safe pb-4">
         {tabs.map(({ icon: Icon, label, path, center }) => {
           const active = (pathname ?? "") === path || (pathname ?? "").startsWith(path + "/");
 
           if (center) {
             return (
-              <Link key={label} href={path} className="flex flex-col items-center -mt-5">
+              <Link key={label} href={path} className="flex flex-col items-center -mt-6">
                 <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[hsl(262,72%,58%)] to-[hsl(275,72%,42%)] flex items-center justify-center shadow-glow-primary mb-0.5 active:scale-95 transition-transform">
                   <Icon className="w-6 h-6 text-white" />
                 </div>

@@ -51,6 +51,53 @@ export async function generateQuiz(
   return parseJsonArray(completion.choices[0]?.message?.content?.trim() ?? "");
 }
 
+export async function generateSocialQuiz(
+  quizType: string,
+  subjectName: string,
+  description: string,
+  questionCount: number,
+): Promise<Array<{ question: string; options: string[]; correct: number; explanation: string }>> {
+  const client = getClient();
+
+  const typePrompts: Record<string, string> = {
+    love: `You are creating a LOVE quiz about a person named "${subjectName}". The quiz will be taken by people who want to test how well they know ${subjectName}. Generate fun, romantic, personal multiple-choice questions based on the description provided. Questions should feel warm, affectionate, and personal.`,
+    friendship: `You are creating a FRIENDSHIP quiz about a person named "${subjectName}". The quiz will be taken by friends who want to test how well they know ${subjectName}. Generate fun, friendly, personal multiple-choice questions based on the description provided. Questions should feel warm and celebratory of friendship.`,
+    family: `You are creating a FAMILY quiz about a person named "${subjectName}". The quiz will test how well family members know ${subjectName}. Generate warm, family-oriented multiple-choice questions based on the description provided.`,
+    classroom: `You are creating a CLASSROOM quiz about "${subjectName}". Generate educational, engaging multiple-choice questions suitable for classroom use based on the description provided.`,
+  };
+
+  const systemPrompt = typePrompts[quizType] ?? typePrompts.friendship;
+
+  const completion = await client.chat.completions.create({
+    model: MODEL,
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: `ABOUT ${subjectName.toUpperCase()}:\n${description}\n\nGenerate exactly ${questionCount} multiple-choice questions. Each question should be based on the details provided above. Make the wrong options plausible but clearly different from the correct answer.\n\nReturn ONLY a valid JSON array:\n[\n  {\n    "question": "Clear question about ${subjectName} ending with '?'",\n    "options": ["Option A", "Option B", "Option C", "Option D"],\n    "correct": 0,\n    "explanation": "Why this is the correct answer based on what was shared."\n  }\n]\n"correct" is 0-based index (0, 1, 2, or 3). Vary which option is correct.` },
+    ],
+    temperature: 0.7, max_tokens: 6000,
+  });
+  return parseJsonArray(completion.choices[0]?.message?.content?.trim() ?? "");
+}
+
+export async function generateSocialQuizFromPrompt(
+  quizType: string,
+  subjectName: string,
+  prompt: string,
+  questionCount: number,
+): Promise<Array<{ question: string; options: string[]; correct: number; explanation: string }>> {
+  const client = getClient();
+
+  const completion = await client.chat.completions.create({
+    model: MODEL,
+    messages: [
+      { role: "system", content: `You are creating a creative ${quizType} quiz. The user has described what they want in natural language. Generate exactly ${questionCount} engaging multiple-choice questions based on their description. Make questions fun, personal, and relevant to the context.` },
+      { role: "user", content: `Quiz subject: ${subjectName}\n\nUser's description of what they want:\n${prompt}\n\nGenerate exactly ${questionCount} fun multiple-choice questions.\n\nReturn ONLY a valid JSON array:\n[\n  {\n    "question": "Clear, engaging question ending with '?'",\n    "options": ["Option A", "Option B", "Option C", "Option D"],\n    "correct": 0,\n    "explanation": "Why this answer is correct."\n  }\n]\n"correct" is 0-based index. Vary which option is correct.` },
+    ],
+    temperature: 0.75, max_tokens: 6000,
+  });
+  return parseJsonArray(completion.choices[0]?.message?.content?.trim() ?? "");
+}
+
 export async function generateFlashcardsFromContent(
   content: string, cardCount: number, direction?: string
 ): Promise<Array<{ front: string; back: string }>> {
@@ -82,46 +129,58 @@ export async function generateFlashcards(
   return parseJsonArray(completion.choices[0]?.message?.content?.trim() ?? "");
 }
 
-export async function generateSummary(topic: string): Promise<string> {
+export async function generateSummary(
+  topic: string
+): Promise<string> {
   const client = getClient();
   const completion = await client.chat.completions.create({
     model: MODEL,
     messages: [
-      { role: "system", content: "You are an expert educational content writer. Create comprehensive, well-structured study summaries." },
-      { role: "user", content: `Create a comprehensive study summary about "${topic}".\n\nStructure:\n## Overview\nBrief introduction (2-3 sentences)\n\n## Key Concepts\nMain ideas with **bold key terms**\n\n## Core Principles / How It Works\nStep-by-step breakdown\n\n## Important Details\nCritical facts students must know\n\n## Common Misconceptions\nWhat students often get wrong\n\n## Quick Review\n• 5-7 bullet point summary` },
+      { role: "system", content: "You are an expert educator. Create comprehensive, well-structured summaries." },
+      { role: "user", content: `Create a comprehensive summary about "${topic}". Include key concepts, important facts, and essential information. Use clear headings and bullet points where appropriate. Keep it concise but thorough (400-600 words).` },
     ],
-    temperature: 0.65, max_tokens: 4096,
-  });
-  return completion.choices[0]?.message?.content?.trim() ?? "";
-}
-
-export async function generateSummaryFromContent(content: string, topic?: string): Promise<string> {
-  const client = getClient();
-  const completion = await client.chat.completions.create({
-    model: MODEL,
-    messages: [
-      { role: "system", content: "You are an expert educational content writer. Extract key information and create a well-structured summary." },
-      { role: "user", content: `Summarize this study material${topic ? ` about "${topic}"` : ""} into a clear, comprehensive study guide.\n\nSTUDY MATERIAL:\n${content.slice(0, 15000)}\n\nStructure:\n## Overview\n## Key Concepts\n## Core Details\n## Key Takeaways\n• 5-7 essential points` },
-    ],
-    temperature: 0.6, max_tokens: 3000,
+    temperature: 0.5, max_tokens: 2048,
   });
   return completion.choices[0]?.message?.content?.trim() ?? "";
 }
 
 export async function chatWithAI(
-  message: string, history: Array<{ role: string; content: string }>
+  message: string,
+  history: Array<{ role: string; content: string }>
 ): Promise<string> {
   const client = getClient();
-  const messages: Array<{ role: "system" | "user" | "assistant"; content: string }> = [
+  const messages: Groq.Chat.ChatCompletionMessageParam[] = [
     {
       role: "system",
-      content: `You are Quizmi AI — an expert study assistant. Help students learn faster and retain more.\n\nCapabilities:\n- Explain complex concepts with real-world analogies\n- Create study plans, mnemonics, and memory techniques\n- Break down difficult topics step by step\n- Quiz students to reinforce learning\n- Summarize documents and extract key insights\n\nResponse style:\n- Use **bold** for key terms\n- Use bullet points (•) for lists\n- Use numbered lists for processes\n- Use ## Headers for major sections\n- Add emojis sparingly (📌 💡 ⚠️ ✅)\n- End complex explanations with "Key Takeaway:" summary`,
+      content: "You are a helpful AI study assistant. You help students understand concepts, summarize materials, explain topics clearly, and answer academic questions. Be concise, accurate, and encouraging.",
     },
-    ...history.map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
+    ...history.map((m) => ({
+      role: m.role as "user" | "assistant",
+      content: m.content,
+    })),
     { role: "user", content: message },
   ];
   const completion = await client.chat.completions.create({
-    model: MODEL, messages, temperature: 0.65, max_tokens: 2048,
+    model: MODEL,
+    messages,
+    temperature: 0.7,
+    max_tokens: 2048,
   });
   return completion.choices[0]?.message?.content?.trim() ?? "I couldn't generate a response. Please try again.";
+}
+
+export async function generateSummaryFromContent(
+  content: string, direction?: string
+): Promise<string> {
+  const client = getClient();
+  const directionNote = direction ? `\nFOCUS: Emphasize content about: "${direction}"\n` : "";
+  const completion = await client.chat.completions.create({
+    model: MODEL,
+    messages: [
+      { role: "system", content: "You are an expert educator. Create comprehensive, well-structured summaries from provided material." },
+      { role: "user", content: `Create a comprehensive summary of the following study material. Highlight key concepts, important facts, and essential information.${directionNote}\nMATERIAL:\n${content.slice(0, 12000)}\n\nProvide a clear, structured summary (400-600 words) with headings and bullet points where appropriate.` },
+    ],
+    temperature: 0.5, max_tokens: 2048,
+  });
+  return completion.choices[0]?.message?.content?.trim() ?? "";
 }
