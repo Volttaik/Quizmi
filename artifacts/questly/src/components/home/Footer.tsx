@@ -11,7 +11,7 @@ const links = {
 
 export default function Footer() {
   return (
-    <footer className="border-t border-white/[0.04] py-16">
+    <footer className="py-16">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
           <div className="col-span-2 md:col-span-1">
@@ -41,7 +41,7 @@ export default function Footer() {
           ))}
         </div>
 
-        <div className="mt-16 pt-8 border-t border-white/[0.04] flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="mt-16 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-white/20 text-xs">
             &copy; {new Date().getFullYear()} Quizmi. All rights reserved.
           </p>
