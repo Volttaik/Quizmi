@@ -2,9 +2,24 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
+
+const slides = [
+  { src: "/hero-phone-1.png", alt: "Quizmi App Preview" },
+  { src: "/hero-phone-2.png", alt: "Quizmi Quiz Creation" },
+];
 
 export default function HeroSection() {
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % slides.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <section className="relative pt-24 pb-4 min-h-screen flex flex-col items-center justify-center overflow-hidden">
       <div className="absolute top-20 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[160px] pointer-events-none" />
@@ -43,39 +58,44 @@ export default function HeroSection() {
           </a>
         </div>
 
-        {/* Two hero images sliding in from left and right */}
-        <div className="relative mt-16 flex justify-center items-end gap-6 sm:gap-10 overflow-hidden">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-primary/15 rounded-full blur-[100px] pointer-events-none" />
+        {/* Slideshow — one image at a time */}
+        <div className="relative mt-16 flex flex-col items-center">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-primary/20 rounded-full blur-[100px] pointer-events-none" />
 
-          {/* Image 1 — slides in from left */}
-          <motion.div
-            initial={{ opacity: 0, x: -80 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="relative z-10 w-[44%] max-w-[220px] sm:max-w-[260px]"
-          >
-            <img
-              src="/hero-phone-1.png"
-              alt="Quizmi App Preview"
-              className="w-full h-auto object-contain drop-shadow-2xl"
-            />
-          </motion.div>
+          <div className="relative w-[260px] sm:w-[300px] h-[420px] sm:h-[480px]">
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={current}
+                initial={{ opacity: 0, y: 32, scale: 0.94 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -32, scale: 0.94 }}
+                transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+                className="absolute inset-0 flex items-center justify-center"
+              >
+                <img
+                  src={slides[current].src}
+                  alt={slides[current].alt}
+                  className="w-full h-full object-contain drop-shadow-2xl"
+                />
+              </motion.div>
+            </AnimatePresence>
+          </div>
 
-          {/* Image 2 — slides in from right */}
-          <motion.div
-            initial={{ opacity: 0, x: 80 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.1 }}
-            className="relative z-10 w-[44%] max-w-[220px] sm:max-w-[260px]"
-          >
-            <img
-              src="/hero-phone-2.png"
-              alt="Quizmi Quiz Creation"
-              className="w-full h-auto object-contain drop-shadow-2xl"
-            />
-          </motion.div>
+          {/* Dot indicators */}
+          <div className="flex gap-2 mt-6 relative z-10">
+            {slides.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrent(i)}
+                className={`rounded-full transition-all duration-300 ${
+                  i === current
+                    ? "w-6 h-2 bg-primary"
+                    : "w-2 h-2 bg-white/25 hover:bg-white/50"
+                }`}
+                aria-label={`Slide ${i + 1}`}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>
