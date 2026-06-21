@@ -91,7 +91,7 @@ export default function DashboardPage() {
 
       {/* Scrollable content */}
       <motion.div className="relative max-w-lg mx-auto px-4" variants={container} initial="hidden" animate="show">
-        <motion.div variants={item}><CreditCard credits={userData?.credits ?? 0} plan={userData?.plan ?? "starter"} wallpaperUrl={userData?.wallpaperUrl} /></motion.div>
+        <motion.div variants={item}><CreditCard credits={userData?.credits ?? 0} plan={userData?.plan ?? "starter"}  /></motion.div>
         <motion.div variants={item}><StreakWidget /></motion.div>
         <motion.div variants={item}><StudySlideshow /></motion.div>
         <motion.div variants={item} className="mb-3 px-0.5">

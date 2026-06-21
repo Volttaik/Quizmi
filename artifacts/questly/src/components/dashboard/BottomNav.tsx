@@ -15,7 +15,7 @@ export default function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-2xl">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-2xl border-0 outline-none">
       <div className="max-w-lg mx-auto flex items-end justify-around px-2 pt-1.5 pb-safe pb-4">
         {tabs.map(({ icon: Icon, label, path, center }) => {
           const active = (pathname ?? "") === path || (pathname ?? "").startsWith(path + "/");
