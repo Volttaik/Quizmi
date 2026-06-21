@@ -25,6 +25,7 @@ export const quizzesTable = sqliteTable("quizzes", {
   shareSlug: text("share_slug").unique(),
   description: text("description"),
   isPublic: integer("is_public", { mode: "boolean" }).notNull().default(false),
+  passKey: text("pass_key"),
   bannerUrl: text("banner_url"),
   createdAt: text("created_at").notNull().default(""),
 });

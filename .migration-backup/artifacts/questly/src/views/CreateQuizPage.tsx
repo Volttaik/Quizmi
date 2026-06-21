@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles, ArrowLeft, Upload, FileText, X, ArrowRight, Loader2,
   AlertCircle, BookOpen, Heart, Users, Home, GraduationCap, Wand2, Link2,
+  PenLine, Plus, Trash2, CheckCircle2, Circle, Brain, HelpCircle, Lock, Copy, Check,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -75,6 +76,24 @@ const SOCIAL_TYPES: {
     bg: "bg-blue-500/10",
     border: "border-blue-400/30",
   },
+  {
+    type: "personality",
+    icon: <Brain className="w-5 h-5" />,
+    label: "Personality Quiz",
+    desc: "Reveal your true self!",
+    color: "text-purple-500",
+    bg: "bg-purple-500/10",
+    border: "border-purple-400/30",
+  },
+  {
+    type: "knowme",
+    icon: <HelpCircle className="w-5 h-5" />,
+    label: "Know Me Quiz",
+    desc: "How well do they know you?",
+    color: "text-cyan-500",
+    bg: "bg-cyan-500/10",
+    border: "border-cyan-400/30",
+  },
 ];
 
 type Step = "category" | "social-type" | "social-details" | "study-details";
@@ -96,6 +115,14 @@ export default function CreateQuizPage() {
   const [difficulty, setDifficulty] = useState("medium");
   const [generating, setGenerating] = useState(false);
   const [extracting, setExtracting] = useState(false);
+  const [socialMode, setSocialMode] = useState<"ai" | "manual">("ai");
+  const [manualQuestions, setManualQuestions] = useState<
+    { question: string; options: [string, string, string, string]; correct: number; imageUrl?: string; uploadingImage?: boolean }[]
+  >([{ question: "", options: ["", "", "", ""], correct: 0 }]);
+  const [creating, setCreating] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [revealedPassKey, setRevealedPassKey] = useState<{ key: string; quizId: number } | null>(null);
+  const [passKeyCopied, setPassKeyCopied] = useState(false);
 
   const handleFileDrop = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
@@ -174,6 +201,8 @@ export default function CreateQuizPage() {
         }
       }
 
+      body.isPrivate = isPrivate;
+
       const res = await fetch("/api/generate-quiz", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -182,6 +211,9 @@ export default function CreateQuizPage() {
       const data = await res.json();
       if (!res.ok) {
         toast.error(data.error ?? "Failed to generate quiz");
+      } else if (data.passKey) {
+        toast.success("Private quiz created!");
+        setRevealedPassKey({ key: data.passKey, quizId: data.id });
       } else {
         toast.success("Quiz created!");
         router.push(`/quiz/${data.id}`);
@@ -192,6 +224,51 @@ export default function CreateQuizPage() {
       setGenerating(false);
     }
   };
+
+  const handleCreateManual = async () => {
+    if (!subjectName.trim()) { toast.error("Please enter a name for this quiz"); return; }
+    const valid = manualQuestions.every((q) => q.question.trim() && q.options.every((o) => o.trim()));
+    if (!valid) { toast.error("Please fill in all questions and options"); return; }
+    if (manualQuestions.length < 1) { toast.error("Add at least one question"); return; }
+    const typeLabels: Record<string, string> = { love: "Love Quiz", friendship: "Friendship Quiz", family: "Family Quiz", classroom: "Quiz", personality: "Personality Quiz", knowme: "Know Me Quiz" };
+    const title = `${subjectName.trim()}'s ${typeLabels[quizType] ?? "Quiz"}`;
+    setCreating(true);
+    try {
+      const res = await fetch("/api/quizzes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, topic: subjectName.trim(), quizType, subjectName: subjectName.trim(), isPrivate, questions: manualQuestions.map((q) => ({ question: q.question, options: q.options, correct: q.correct, imageUrl: q.imageUrl ?? null })) }),
+      });
+      const data = await res.json();
+      if (!res.ok) { toast.error(data.error ?? "Failed to create quiz"); }
+      else if (data.passKey) { toast.success("Private quiz created!"); setRevealedPassKey({ key: data.passKey, quizId: data.id }); }
+      else { toast.success("Quiz created!"); router.push(`/quiz/${data.id}`); }
+    } catch { toast.error("Something went wrong"); }
+    finally { setCreating(false); }
+  };
+
+  const updateManualQ = (i: number, field: "question", val: string) =>
+    setManualQuestions((qs) => qs.map((q, idx) => idx === i ? { ...q, [field]: val } : q));
+  const updateManualOption = (qi: number, oi: number, val: string) =>
+    setManualQuestions((qs) => qs.map((q, idx) => idx === qi ? { ...q, options: q.options.map((o, j) => j === oi ? val : o) as [string,string,string,string] } : q));
+  const addManualQ = () => setManualQuestions((qs) => [...qs, { question: "", options: ["", "", "", ""], correct: 0, imageUrl: undefined }]);
+
+  const handleImageUpload = async (qi: number, file: File) => {
+    setManualQuestions((qs) => qs.map((q, idx) => idx === qi ? { ...q, uploadingImage: true } : q));
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      const res = await fetch("/api/upload-image", { method: "POST", body: form });
+      const data = await res.json();
+      if (!res.ok) { toast.error(data.error ?? "Image upload failed"); return; }
+      setManualQuestions((qs) => qs.map((q, idx) => idx === qi ? { ...q, imageUrl: data.url, uploadingImage: false } : q));
+      toast.success("Image added! (10 credits used)");
+    } catch {
+      toast.error("Image upload failed");
+      setManualQuestions((qs) => qs.map((q, idx) => idx === qi ? { ...q, uploadingImage: false } : q));
+    }
+  };
+  const removeManualQ = (i: number) => setManualQuestions((qs) => qs.filter((_, idx) => idx !== i));
 
   const hasFile = !!file && !!fileContent;
   const fileReady = hasFile && !extracting;
@@ -230,6 +307,7 @@ export default function CreateQuizPage() {
           {step === "category" && (
             <motion.div key="category"
               initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.15 }}
               className="space-y-3">
 
               <button onClick={() => { setQuizType("study"); setStep("study-details"); }}
@@ -281,6 +359,7 @@ export default function CreateQuizPage() {
           {step === "social-type" && (
             <motion.div key="social-type"
               initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.15 }}
               className="space-y-3">
               {SOCIAL_TYPES.map((t) => (
                 <button key={t.type}
@@ -304,147 +383,209 @@ export default function CreateQuizPage() {
           {step === "social-details" && (
             <motion.div key="social-details"
               initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.15 }}
               className="space-y-4">
 
-              <div className="rounded-2xl bg-card border border-border p-5 space-y-4 shadow-card">
-                <div>
-                  <Label className="text-xs font-bold">
-                    {quizType === "classroom" ? "Subject or class name" : "Who is this quiz about?"}
-                  </Label>
-                  <Input
-                    className="mt-1.5"
-                    placeholder={
-                      quizType === "classroom"
-                        ? "e.g. Mathematics 101, Biology Class"
-                        : "e.g. Sarah, John, Mom"
-                    }
-                    value={subjectName}
-                    onChange={(e) => setSubjectName(e.target.value)}
-                    maxLength={80}
-                  />
-                </div>
+              {/* Name field — always shown */}
+              <div className="rounded-2xl bg-card border border-border p-5 shadow-card">
+                <Label className="text-xs font-bold">
+                  {quizType === "classroom" ? "Subject or class name" : "Who is this quiz about?"}
+                </Label>
+                <Input
+                  className="mt-1.5"
+                  placeholder={quizType === "classroom" ? "e.g. Mathematics 101, Biology Class" : "e.g. Sarah, John, Mom"}
+                  value={subjectName}
+                  onChange={(e) => setSubjectName(e.target.value)}
+                  maxLength={80}
+                />
+              </div>
 
+              {/* Private toggle */}
+              <button
+                onClick={() => setIsPrivate((p) => !p)}
+                className={`w-full flex items-center justify-between gap-3 rounded-2xl border-2 p-4 transition-all ${isPrivate ? "border-violet-400/60 bg-violet-500/10" : "border-border bg-card hover:border-border/80"}`}>
                 <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setUseAiPrompt(false)}
-                    className={`flex-1 rounded-xl border-2 p-3 text-center text-xs font-bold transition-all ${
-                      !useAiPrompt
-                        ? "border-primary bg-primary/5 text-primary"
-                        : "border-border text-muted-foreground hover:border-border/80"
-                    }`}>
-                    Describe the person
-                  </button>
-                  <button
-                    onClick={() => setUseAiPrompt(true)}
-                    className={`flex-1 rounded-xl border-2 p-3 text-center text-xs font-bold transition-all ${
-                      useAiPrompt
-                        ? "border-primary bg-primary/5 text-primary"
-                        : "border-border text-muted-foreground hover:border-border/80"
-                    }`}>
-                    <span className="flex items-center justify-center gap-1.5">
-                      <Wand2 className="w-3 h-3" /> Describe what you want
-                    </span>
-                  </button>
+                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${isPrivate ? "bg-violet-500 text-white" : "bg-muted text-muted-foreground"}`}>
+                    <Lock className="w-4 h-4" />
+                  </div>
+                  <div className="text-left">
+                    <p className={`text-sm font-bold ${isPrivate ? "text-violet-600 dark:text-violet-400" : "text-foreground"}`}>Private quiz</p>
+                    <p className="text-[11px] text-muted-foreground">{isPrivate ? "Passkey required to access" : "Anyone with the link can take it"}</p>
+                  </div>
                 </div>
+                <div className={`w-11 h-6 rounded-full flex items-center transition-all px-0.5 ${isPrivate ? "bg-violet-500 justify-end" : "bg-muted justify-start"}`}>
+                  <div className="w-5 h-5 rounded-full bg-white shadow-sm" />
+                </div>
+              </button>
 
-                {!useAiPrompt ? (
-                  <div>
-                    <Label className="text-xs font-bold">
-                      Tell AI about {subjectName || "them"}
-                    </Label>
-                    <textarea
-                      className="mt-1.5 w-full rounded-xl border border-input bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
-                      rows={4}
-                      placeholder={
-                        quizType === "love"
-                          ? `e.g. ${subjectName || "They"} loves pizza, hates horror movies, grew up in Lagos, their favorite color is blue, we met in 2021...`
-                          : quizType === "classroom"
-                          ? "e.g. Topics covered: algebra, quadratic equations, linear functions, geometry basics..."
-                          : `e.g. ${subjectName || "They"} loves football, is afraid of heights, has a dog named Max, their birthday is March 15...`
-                      }
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      maxLength={2000}
-                    />
-                    <p className="text-[10px] text-muted-foreground mt-1">
-                      {description.length}/2000 &middot; The more detail, the better the quiz
-                    </p>
-                  </div>
-                ) : (
-                  <div>
-                    <Label className="text-xs font-bold">Describe your quiz idea</Label>
-                    <textarea
-                      className="mt-1.5 w-full rounded-xl border border-input bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
-                      rows={4}
-                      placeholder="e.g. Create a quiz testing how well my friends know our college memories — the trips we took, inside jokes, and all the things we went through in 2022..."
-                      value={aiPrompt}
-                      onChange={(e) => setAiPrompt(e.target.value)}
-                      maxLength={1500}
-                    />
-                    <p className="text-[10px] text-muted-foreground mt-1">
-                      {aiPrompt.length}/1500 &middot; AI creates questions based on your description
-                    </p>
-                  </div>
-                )}
+              {/* Mode toggle */}
+              <div className="flex gap-2">
+                <button onClick={() => setSocialMode("manual")}
+                  className={`flex-1 flex items-center justify-center gap-2 rounded-xl border-2 p-3 text-xs font-bold transition-all ${socialMode === "manual" ? "border-primary bg-primary/5 text-primary" : "border-border text-muted-foreground hover:border-border/80"}`}>
+                  <PenLine className="w-3.5 h-3.5" /> Write it myself
+                </button>
+                <button onClick={() => setSocialMode("ai")}
+                  className={`flex-1 flex items-center justify-center gap-2 rounded-xl border-2 p-3 text-xs font-bold transition-all ${socialMode === "ai" ? "border-primary bg-primary/5 text-primary" : "border-border text-muted-foreground hover:border-border/80"}`}>
+                  <Sparkles className="w-3.5 h-3.5" /> Tell AI
+                </button>
+              </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <Label className="text-xs font-bold">Questions</Label>
-                    <Select value={questionCount} onValueChange={setQuestionCount}>
-                      <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        {["5", "10", "15", "20", "30"].map((n) => (
-                          <SelectItem key={n} value={n}>{n} questions</SelectItem>
+              {socialMode === "manual" ? (
+                <div className="space-y-3">
+                  {manualQuestions.map((q, qi) => (
+                    <div key={qi} className="rounded-2xl bg-card border border-border p-4 space-y-3 shadow-card">
+                      <div className="flex items-start gap-2">
+                        <span className="text-xs font-black text-primary mt-2.5 w-5 flex-shrink-0">Q{qi + 1}</span>
+                        <Input
+                          placeholder="Enter your question"
+                          value={q.question}
+                          onChange={(e) => updateManualQ(qi, "question", e.target.value)}
+                          className="flex-1"
+                        />
+                        {manualQuestions.length > 1 && (
+                          <button onClick={() => removeManualQ(qi)} className="mt-2 text-muted-foreground hover:text-destructive transition-colors">
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Image upload */}
+                      {q.imageUrl ? (
+                        <div className="relative rounded-2xl overflow-hidden bg-muted/20">
+                          <img src={q.imageUrl} alt="Question" className="w-full max-h-40 object-cover" />
+                          <button
+                            onClick={() => setManualQuestions((qs) => qs.map((qq, idx) => idx === qi ? { ...qq, imageUrl: undefined } : qq))}
+                            className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 flex items-center justify-center">
+                            <X className="w-3.5 h-3.5 text-white" />
+                          </button>
+                        </div>
+                      ) : (
+                        <label className="flex items-center gap-2 cursor-pointer group">
+                          <input type="file" accept="image/*" className="hidden"
+                            onChange={(e) => { const f = e.target.files?.[0]; if (f) handleImageUpload(qi, f); e.target.value = ""; }} />
+                          <div className={`flex items-center gap-2 text-xs font-semibold px-3 py-2 rounded-xl border border-dashed transition-all ${q.uploadingImage ? "border-primary/40 text-primary" : "border-border text-muted-foreground hover:border-primary/40 hover:text-primary"}`}>
+                            {q.uploadingImage
+                              ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Uploading…</>
+                              : <><Upload className="w-3.5 h-3.5" /> Add Image <span className="text-[10px] ml-1 bg-amber-400/20 text-amber-600 dark:text-amber-400 px-1.5 py-0.5 rounded-full font-bold">10 credits</span></>
+                            }
+                          </div>
+                        </label>
+                      )}
+
+                      <div className="space-y-2">
+                        {q.options.map((opt, oi) => (
+                          <div key={oi} className="flex items-center gap-2">
+                            <button onClick={() => setManualQuestions((qs) => qs.map((qq, idx) => idx === qi ? { ...qq, correct: oi } : qq))}
+                              className="flex-shrink-0">
+                              {q.correct === oi
+                                ? <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                                : <Circle className="w-4 h-4 text-muted-foreground" />}
+                            </button>
+                            <Input
+                              placeholder={`Option ${String.fromCharCode(65 + oi)}`}
+                              value={opt}
+                              onChange={(e) => updateManualOption(qi, oi, e.target.value)}
+                              className={`flex-1 text-sm ${q.correct === oi ? "border-emerald-400/50 bg-emerald-500/5" : ""}`}
+                            />
+                          </div>
                         ))}
-                        <SelectItem value="custom">Custom…</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {questionCount === "custom" && (
-                      <Input type="number" min="1" max="50" className="mt-2" placeholder="e.g. 12"
-                        value={customCount} onChange={(e) => setCustomCount(e.target.value)} />
+                      </div>
+                      <p className="text-[10px] text-muted-foreground">Tap the circle to mark the correct answer</p>
+                    </div>
+                  ))}
+                  <button onClick={addManualQ}
+                    className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border-2 border-dashed border-border text-xs font-bold text-muted-foreground hover:border-primary/40 hover:text-primary transition-all">
+                    <Plus className="w-4 h-4" /> Add Question
+                  </button>
+                  <div className="rounded-2xl bg-muted/40 border border-border/40 p-3.5 flex items-start gap-2.5">
+                    <Link2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-xs font-bold text-foreground">Auto shareable link</p>
+                      <p className="text-[10px] text-muted-foreground">A unique link is generated automatically — no credits used.</p>
+                    </div>
+                  </div>
+                  <Button onClick={handleCreateManual} className="w-full rounded-full gap-2 shadow-elevated" size="lg" disabled={creating}>
+                    {creating ? <><Loader2 className="w-4 h-4 animate-spin" /> Creating…</> : <><PenLine className="w-4 h-4" /> Create Quiz <ArrowRight className="w-4 h-4 ml-1" /></>}
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="rounded-2xl bg-card border border-border p-5 space-y-4 shadow-card">
+                    <div className="flex items-center gap-3">
+                      <button onClick={() => setUseAiPrompt(false)}
+                        className={`flex-1 rounded-xl border-2 p-3 text-center text-xs font-bold transition-all ${!useAiPrompt ? "border-primary bg-primary/5 text-primary" : "border-border text-muted-foreground hover:border-border/80"}`}>
+                        Describe the person
+                      </button>
+                      <button onClick={() => setUseAiPrompt(true)}
+                        className={`flex-1 rounded-xl border-2 p-3 text-center text-xs font-bold transition-all ${useAiPrompt ? "border-primary bg-primary/5 text-primary" : "border-border text-muted-foreground hover:border-border/80"}`}>
+                        <span className="flex items-center justify-center gap-1.5"><Wand2 className="w-3 h-3" /> Describe what you want</span>
+                      </button>
+                    </div>
+                    {!useAiPrompt ? (
+                      <div>
+                        <Label className="text-xs font-bold">Tell AI about {subjectName || "them"}</Label>
+                        <textarea
+                          className="mt-1.5 w-full rounded-xl border border-input bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
+                          rows={4}
+                          placeholder={quizType === "love" ? `e.g. ${subjectName || "They"} loves pizza, hates horror movies, grew up in Lagos...` : quizType === "classroom" ? "e.g. Topics covered: algebra, quadratic equations, linear functions..." : `e.g. ${subjectName || "They"} loves football, is afraid of heights, has a dog named Max...`}
+                          value={description} onChange={(e) => setDescription(e.target.value)} maxLength={2000} />
+                        <p className="text-[10px] text-muted-foreground mt-1">{description.length}/2000 &middot; The more detail, the better the quiz</p>
+                      </div>
+                    ) : (
+                      <div>
+                        <Label className="text-xs font-bold">Describe your quiz idea</Label>
+                        <textarea
+                          className="mt-1.5 w-full rounded-xl border border-input bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring resize-none"
+                          rows={4}
+                          placeholder="e.g. Create a quiz testing how well my friends know our college memories..."
+                          value={aiPrompt} onChange={(e) => setAiPrompt(e.target.value)} maxLength={1500} />
+                        <p className="text-[10px] text-muted-foreground mt-1">{aiPrompt.length}/1500 &middot; AI creates questions based on your description</p>
+                      </div>
                     )}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Label className="text-xs font-bold">Questions</Label>
+                        <Select value={questionCount} onValueChange={setQuestionCount}>
+                          <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            {["5", "10", "15", "20", "30"].map((n) => <SelectItem key={n} value={n}>{n} questions</SelectItem>)}
+                            <SelectItem value="custom">Custom…</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        {questionCount === "custom" && <Input type="number" min="1" max="50" className="mt-2" placeholder="e.g. 12" value={customCount} onChange={(e) => setCustomCount(e.target.value)} />}
+                      </div>
+                      <div>
+                        <Label className="text-xs font-bold">Difficulty</Label>
+                        <Select value={difficulty} onValueChange={setDifficulty}>
+                          <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="easy">Easy</SelectItem>
+                            <SelectItem value="medium">Medium</SelectItem>
+                            <SelectItem value="hard">Hard</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <Label className="text-xs font-bold">Difficulty</Label>
-                    <Select value={difficulty} onValueChange={setDifficulty}>
-                      <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="easy">Easy</SelectItem>
-                        <SelectItem value="medium">Medium</SelectItem>
-                        <SelectItem value="hard">Hard</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  <div className="rounded-2xl bg-muted/40 border border-border/40 p-3.5 flex items-start gap-2.5">
+                    <Link2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-xs font-bold text-foreground">Auto shareable link</p>
+                      <p className="text-[10px] text-muted-foreground">A unique link is generated — anyone can take it without signing up.</p>
+                    </div>
                   </div>
+                  <Button onClick={handleGenerate} className="w-full rounded-full gap-2 shadow-elevated" size="lg" disabled={generating}>
+                    {generating ? <><Loader2 className="w-4 h-4 animate-spin" /> Generating {getQuestionCount()} Questions…</> : <><Sparkles className="w-4 h-4" /> Generate Quiz <ArrowRight className="w-4 h-4 ml-1" /></>}
+                  </Button>
                 </div>
-              </div>
-
-              <div className="rounded-2xl bg-muted/40 border border-border/40 p-3.5 flex items-start gap-2.5">
-                <Link2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                <div>
-                  <p className="text-xs font-bold text-foreground">Auto shareable link</p>
-                  <p className="text-[10px] text-muted-foreground">
-                    A unique link is generated automatically. Send it to anyone — no sign-up needed to take the quiz.
-                  </p>
-                </div>
-              </div>
-
-              <Button
-                onClick={handleGenerate}
-                className="w-full rounded-full gap-2 shadow-elevated"
-                size="lg"
-                disabled={generating}>
-                {generating ? (
-                  <><Loader2 className="w-4 h-4 animate-spin" /> Generating {getQuestionCount()} Questions…</>
-                ) : (
-                  <><Sparkles className="w-4 h-4" /> Generate Quiz <ArrowRight className="w-4 h-4 ml-1" /></>
-                )}
-              </Button>
+              )}
             </motion.div>
           )}
 
           {step === "study-details" && (
             <motion.div key="study-details"
               initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.15 }}
               className="space-y-4">
 
               <div
@@ -547,6 +688,24 @@ export default function CreateQuizPage() {
                 </div>
               </div>
 
+              {/* Private toggle */}
+              <button
+                onClick={() => setIsPrivate((p) => !p)}
+                className={`w-full flex items-center justify-between gap-3 rounded-2xl border-2 p-4 transition-all ${isPrivate ? "border-violet-400/60 bg-violet-500/10" : "border-border bg-card hover:border-border/80"}`}>
+                <div className="flex items-center gap-3">
+                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${isPrivate ? "bg-violet-500 text-white" : "bg-muted text-muted-foreground"}`}>
+                    <Lock className="w-4 h-4" />
+                  </div>
+                  <div className="text-left">
+                    <p className={`text-sm font-bold ${isPrivate ? "text-violet-600 dark:text-violet-400" : "text-foreground"}`}>Private quiz</p>
+                    <p className="text-[11px] text-muted-foreground">{isPrivate ? "Passkey required to access" : "Anyone with the link can take it"}</p>
+                  </div>
+                </div>
+                <div className={`w-11 h-6 rounded-full flex items-center transition-all px-0.5 ${isPrivate ? "bg-violet-500 justify-end" : "bg-muted justify-start"}`}>
+                  <div className="w-5 h-5 rounded-full bg-white shadow-sm" />
+                </div>
+              </button>
+
               <Button
                 onClick={handleGenerate}
                 className="w-full rounded-full gap-2 shadow-elevated"
@@ -564,6 +723,62 @@ export default function CreateQuizPage() {
         </AnimatePresence>
       </div>
       <BottomNav />
+
+      {/* Passkey reveal bottom sheet */}
+      <AnimatePresence>
+        {revealedPassKey && (
+          <>
+            <motion.div
+              className="fixed inset-0 bg-black/60 z-40"
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={() => { setRevealedPassKey(null); router.push(`/quiz/${revealedPassKey.quizId}`); }}
+            />
+            <motion.div
+              className="fixed inset-x-0 bottom-0 z-50 bg-background rounded-t-3xl p-6 pb-10 shadow-2xl border-t border-border"
+              initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}>
+              <div className="w-10 h-1 bg-muted rounded-full mx-auto mb-5" />
+
+              <div className="flex flex-col items-center text-center mb-6">
+                <div className="w-16 h-16 rounded-2xl bg-violet-500 flex items-center justify-center mb-4 shadow-lg">
+                  <Lock className="w-8 h-8 text-white" />
+                </div>
+                <h2 className="text-xl font-extrabold text-foreground mb-1">Your quiz is private!</h2>
+                <p className="text-sm text-muted-foreground max-w-xs">
+                  Share this passkey with people you want to give access. Without it, they can't take your quiz.
+                </p>
+              </div>
+
+              <div className="bg-muted/50 border-2 border-violet-400/40 rounded-2xl p-5 mb-5 text-center">
+                <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Passkey</p>
+                <p className="text-4xl font-black tracking-[0.3em] text-violet-600 dark:text-violet-400 select-all">
+                  {revealedPassKey.key}
+                </p>
+              </div>
+
+              <button
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(revealedPassKey.key);
+                    setPassKeyCopied(true);
+                    setTimeout(() => setPassKeyCopied(false), 2000);
+                  } catch {
+                    toast.info(`Passkey: ${revealedPassKey.key}`);
+                  }
+                }}
+                className={`w-full flex items-center justify-center gap-2 rounded-2xl border-2 py-3.5 font-bold text-sm mb-3 transition-all ${passKeyCopied ? "border-emerald-400/60 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "border-violet-400/60 bg-violet-500/10 text-violet-600 dark:text-violet-400 hover:bg-violet-500/15"}`}>
+                {passKeyCopied ? <><Check className="w-4 h-4" /> Copied!</> : <><Copy className="w-4 h-4" /> Copy Passkey</>}
+              </button>
+
+              <Button
+                className="w-full rounded-full"
+                onClick={() => { setRevealedPassKey(null); router.push(`/quiz/${revealedPassKey.quizId}`); }}>
+                Go to My Quiz
+              </Button>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

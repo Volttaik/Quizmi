@@ -3,18 +3,18 @@ import { useState, useEffect, useRef, type ReactElement } from "react";
 import {
   ArrowLeft, RotateCcw, ArrowRight, Loader2, BookOpen, Trophy, Share2,
   Timer, Zap, Link2, CheckCircle2, XCircle, Heart, Users, Home,
-  GraduationCap, Check, X as XIcon,
+  GraduationCap, Check, X as XIcon, Brain, HelpCircle,
 } from "lucide-react";
-import { shareContent } from "@/lib/share";
 import { toast } from "sonner";
 import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import BottomNav from "@/components/dashboard/BottomNav";
-import { QUIZ_TYPE_CONFIG, getResultMessage, type QuizType } from "@/lib/quizTypes";
+import ShareModal from "@/components/ShareModal";
+import { QUIZ_TYPE_CONFIG, getResultMessage, getFloatingMessage, buildWhatsAppMessage, type QuizType } from "@/lib/quizTypes";
 
-interface Question { question: string; options: string[]; correct: number; explanation?: string; reference?: string; }
+interface Question { question: string; options: string[]; correct: number; explanation?: string; reference?: string; imageUrl?: string; }
 interface Quiz {
   id: number; title: string; difficulty: string; questions: Question[];
   quizType?: QuizType; subjectName?: string; shareSlug?: string; topic?: string;
@@ -30,6 +30,8 @@ function QuizTypeIcon({ type, className }: { type: QuizType; className?: string 
     friendship: <Users className={className} />,
     family: <Home className={className} />,
     classroom: <GraduationCap className={className} />,
+    personality: <Brain className={className} />,
+    knowme: <HelpCircle className={className} />,
   };
   return icons[type] ?? <BookOpen className={className} />;
 }
@@ -150,68 +152,90 @@ function ResultsScreen({ score, total, quiz, onRestart, onDash, bonusPoints, tim
   const cfg = QUIZ_TYPE_CONFIG[type];
   const subjectName = quiz.subjectName || quiz.topic || "this";
   const banner = getResultMessage(type, subjectName, pct);
+  const floatingMsg = getFloatingMessage(type, subjectName, pct);
+  const isGood = pct >= 60;
   const totalScore = score + bonusPoints;
   const shareLink = quiz.shareSlug ? `${typeof window !== "undefined" ? window.location.origin : ""}/q/${quiz.shareSlug}` : null;
-
-  const handleShareResult = async () => {
-    const result = await shareContent({
-      title: `Quiz Result — ${pct}%`,
-      text: `I scored ${pct}% on "${quiz.title}". ${banner} — Try Quizmi!`,
-      url: shareLink ?? undefined,
-    });
-    if (result === "copied") toast.success("Score copied!");
-    else if (result === "shared") toast.success("Shared!");
-  };
-
-  const handleCopyLink = async () => {
-    if (!shareLink) return;
-    try { await navigator.clipboard.writeText(shareLink); toast.success("Quiz link copied!"); }
-    catch { toast.info(shareLink); }
-  };
+  const [shareOpen, setShareOpen] = useState(false);
 
   return (
-    <motion.div className="min-h-screen bg-background flex flex-col items-center justify-center px-6 pb-24"
+    <motion.div className="min-h-screen bg-background flex flex-col items-center px-4 pt-6 pb-28"
       initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
 
+      {/* Hero card with character image */}
       <motion.div
-        className={`w-full max-w-sm rounded-3xl bg-gradient-to-br ${cfg.theme.resultGradient} p-7 mb-5 flex flex-col items-center text-center shadow-2xl`}
-        initial={{ scale: 0.85, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.1 }}>
-        <motion.div
-          className="w-20 h-20 rounded-2xl bg-white/20 flex items-center justify-center mb-4"
-          initial={{ scale: 0, rotate: -20 }} animate={{ scale: 1, rotate: 0 }}
-          transition={{ type: "spring", stiffness: 200, damping: 12, delay: 0.2 }}>
-          <QuizTypeIcon type={type} className="w-10 h-10 text-white" />
-        </motion.div>
-        <motion.div className="text-5xl font-extrabold text-white mb-1"
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
-          {pct}%
-        </motion.div>
-        <motion.p className="text-sm text-white/80 mb-4"
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }}>
-          {score} of {total} correct
-          {timedMode && bonusPoints > 0 && <> &middot; <span className="font-bold">+{bonusPoints} speed bonus</span></>}
-        </motion.p>
-        <motion.div className="h-1 w-full rounded-full bg-white/20 overflow-hidden mb-4"
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
-          <motion.div className="h-full rounded-full bg-white"
-            initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }} />
-        </motion.div>
-        <motion.p className="text-base font-extrabold text-white leading-snug"
-          initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}>
-          {banner}
-        </motion.p>
-        {timedMode && bonusPoints > 0 && (
-          <motion.div className="flex items-center gap-1.5 bg-white/20 px-3 py-1 rounded-full mt-3"
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
-            <Zap className="w-3.5 h-3.5 text-yellow-300" />
-            <span className="text-xs font-extrabold text-white">{totalScore} total pts</span>
+        className={`w-full max-w-sm rounded-3xl bg-gradient-to-br ${cfg.theme.resultGradient} mb-4 shadow-2xl overflow-hidden relative`}
+        style={{ minHeight: 280 }}
+        initial={{ scale: 0.88, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }}
+        transition={{ type: "spring", stiffness: 220, damping: 18, delay: 0.08 }}>
+
+        {/* Character image — right side, bottom-anchored */}
+        <motion.img
+          src={isGood ? "/result-good.png" : "/result-bad.png"}
+          alt=""
+          className="absolute bottom-0 right-0 h-56 object-contain pointer-events-none select-none"
+          style={{ filter: "drop-shadow(0 4px 24px rgba(0,0,0,0.18))" }}
+          initial={{ opacity: 0, x: 30, scale: 0.9 }}
+          animate={{ opacity: 1, x: 0, scale: 1 }}
+          transition={{ type: "spring", stiffness: 160, damping: 18, delay: 0.25 }}
+        />
+
+        {/* Left content column */}
+        <div className="relative z-10 p-6 pr-32">
+          <motion.div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center mb-3"
+            initial={{ scale: 0 }} animate={{ scale: 1 }}
+            transition={{ type: "spring", stiffness: 260, damping: 14, delay: 0.18 }}>
+            <QuizTypeIcon type={type} className="w-5 h-5 text-white" />
           </motion.div>
-        )}
+          <motion.div className="text-5xl font-extrabold text-white leading-none mb-1"
+            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.28 }}>
+            {pct}%
+          </motion.div>
+          <motion.p className="text-xs text-white/75 mb-3"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }}>
+            {score}/{total} correct{timedMode && bonusPoints > 0 && ` · +${bonusPoints} bonus`}
+          </motion.p>
+          <motion.div className="h-1 w-full rounded-full bg-white/25 overflow-hidden mb-4"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
+            <motion.div className="h-full rounded-full bg-white"
+              initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ delay: 0.55, duration: 0.9, ease: "easeOut" }} />
+          </motion.div>
+          <motion.p className="text-sm font-bold text-white/90 leading-snug"
+            initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}>
+            {banner}
+          </motion.p>
+          {timedMode && bonusPoints > 0 && (
+            <motion.div className="flex items-center gap-1 bg-white/20 self-start px-2.5 py-1 rounded-full mt-2 w-fit"
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
+              <Zap className="w-3 h-3 text-yellow-300" />
+              <span className="text-xs font-extrabold text-white">{totalScore} pts</span>
+            </motion.div>
+          )}
+        </div>
       </motion.div>
 
+      {/* Floating vibe message badge */}
+      <motion.div
+        className="w-full max-w-sm mb-4"
+        initial={{ opacity: 0, scale: 0.85, y: -10 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ type: "spring", stiffness: 260, damping: 16, delay: 0.5 }}>
+        <div className={`rounded-2xl px-5 py-3 flex items-center gap-3 shadow-card border ${isGood ? "bg-emerald-500/10 border-emerald-400/30" : "bg-rose-500/10 border-rose-400/30"}`}>
+          <motion.span
+            className="text-2xl"
+            animate={{ rotate: [0, -12, 12, -8, 8, 0], scale: [1, 1.15, 1.15, 1.1, 1.1, 1] }}
+            transition={{ delay: 0.75, duration: 0.7 }}>
+            {isGood ? "🎉" : "😅"}
+          </motion.span>
+          <p className={`text-sm font-extrabold ${isGood ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
+            {floatingMsg}
+          </p>
+        </div>
+      </motion.div>
+
+      {/* Stats card */}
       <motion.div className="bg-card border border-border rounded-3xl p-5 w-full max-w-sm mb-4 shadow-card"
-        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
+        initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.58 }}>
         <div className="grid grid-cols-3 gap-4 text-center">
           {[
             { label: "Correct", value: score, color: "text-emerald-500" },
@@ -226,27 +250,35 @@ function ResultsScreen({ score, total, quiz, onRestart, onDash, bonusPoints, tim
         </div>
       </motion.div>
 
+      {/* Share result — prominent */}
+      <motion.div className="w-full max-w-sm mb-3"
+        initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.65 }}>
+        <Button onClick={() => setShareOpen(true)} className="w-full rounded-full gap-2 shadow-elevated" size="lg">
+          <Share2 className="w-4 h-4" /> Share My Result
+        </Button>
+      </motion.div>
+
+      {/* Secondary actions */}
       <motion.div className="flex gap-3 w-full max-w-sm mb-2"
-        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.55 }}>
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.72 }}>
         <Button variant="outline" onClick={onRestart} className="flex-1 rounded-full gap-2">
           <RotateCcw className="w-4 h-4" /> Retry
         </Button>
-        <Button onClick={onDash} className="flex-1 rounded-full gap-2">
+        <Button variant="outline" onClick={onDash} className="flex-1 rounded-full gap-2">
           Dashboard <ArrowRight className="w-4 h-4" />
         </Button>
       </motion.div>
 
-      <motion.div className="flex gap-2 w-full max-w-sm"
-        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.65 }}>
-        <Button variant="ghost" size="sm" className="flex-1 rounded-full gap-1.5 text-muted-foreground text-xs" onClick={handleShareResult}>
-          <Share2 className="w-3.5 h-3.5" /> Share Score
-        </Button>
-        {shareLink && (
-          <Button variant="ghost" size="sm" className="flex-1 rounded-full gap-1.5 text-muted-foreground text-xs" onClick={handleCopyLink}>
-            <Link2 className="w-3.5 h-3.5" /> Copy Link
-          </Button>
-        )}
-      </motion.div>
+      <ShareModal
+        open={shareOpen}
+        onClose={() => setShareOpen(false)}
+        quizType={type}
+        quizTitle={quiz.title}
+        subjectName={subjectName}
+        pct={pct}
+        banner={banner}
+        shareUrl={shareLink ?? (typeof window !== "undefined" ? window.location.href : "")}
+      />
     </motion.div>
   );
 }
@@ -492,6 +524,16 @@ export default function QuizPage() {
                 <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: cfg.theme.accent }}>
                   Question {current + 1}
                 </p>
+                {q.imageUrl && (
+                  <div className="rounded-2xl overflow-hidden mb-4 -mx-1 bg-muted/20">
+                    <img
+                      src={q.imageUrl}
+                      alt="Question"
+                      className="w-full max-h-52 object-cover"
+                      style={{ display: "block" }}
+                    />
+                  </div>
+                )}
                 <h2 className="text-base font-bold text-foreground leading-snug">{q.question}</h2>
               </div>
               <div className="space-y-3">

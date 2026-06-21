@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
-import { db, chatSessionsTable, chatMessagesTable } from "@/lib/db";
+import { db, chatSessionsTable, chatMessagesTable, usersTable, creditTransactionsTable } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { chatWithAI } from "@/lib/ai";
 import { z } from "zod";
@@ -11,6 +11,8 @@ const schema = z.object({
   fileName: z.string().max(500).optional(),
   sessionId: z.number().optional(),
 });
+
+const CHAT_COST = 1;
 
 export async function POST(req: NextRequest) {
   const { userId } = await auth();
@@ -24,6 +26,10 @@ export async function POST(req: NextRequest) {
 
   if (!message.trim() && !fileContent)
     return NextResponse.json({ error: "Please provide a message or attach a file." }, { status: 400 });
+
+  const user = await db.query.usersTable.findFirst({ where: eq(usersTable.clerkId, userId) });
+  if (!user || user.credits < CHAT_COST)
+    return NextResponse.json({ error: "Not enough credits. Buy more credits to continue." }, { status: 402 });
 
   if (!process.env.GROQ_API_KEY)
     return NextResponse.json({ error: "AI API key not configured. Please add GROQ_API_KEY in Secrets." }, { status: 503 });
@@ -56,6 +62,15 @@ export async function POST(req: NextRequest) {
     const aiResponse = await chatWithAI(aiInputMessage, history);
 
     await db.insert(chatMessagesTable).values({ sessionId: sessionId!, userId, role: "assistant", content: aiResponse });
+
+    // Deduct 1 credit per AI response
+    await db.transaction(async (tx) => {
+      await tx.update(usersTable).set({ credits: user.credits - CHAT_COST }).where(eq(usersTable.clerkId, userId));
+      await tx.insert(creditTransactionsTable).values({
+        userId, amount: -CHAT_COST, type: "usage",
+        description: `AI chat response`,
+      });
+    });
 
     const titleSource = message.trim() || (fileName ?? "Document chat");
     if (history.length === 0) {

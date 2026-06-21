@@ -1,18 +1,39 @@
 "use client";
+import { useEffect, useState } from "react";
 import { PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
 interface Props {
-  credits: number;
+  credits: number | undefined;
   plan: string;
   wallpaperUrl?: string;
 }
 
+function useCountUp(target: number | undefined, duration = 1100) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    if (target === undefined) return;
+    if (target === 0) { setCount(0); return; }
+    const startTime = performance.now();
+    const step = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.round(ease * target));
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [target, duration]);
+  return count;
+}
+
 export default function CreditCard({ credits, plan, wallpaperUrl }: Props) {
+  const displayCount = useCountUp(credits);
+
   return (
     <div className="relative overflow-hidden rounded-3xl mb-5 shadow-2xl shadow-primary/35">
-      {/* Base gradient */}
+      {/* Base gradient — always visible as fallback */}
       <div className="absolute inset-0 bg-gradient-to-br from-[hsl(262,72%,56%)] via-[hsl(265,72%,48%)] to-[hsl(275,72%,36%)]" />
 
       {/* Background: wallpaper image OR SVG aurora */}
@@ -22,7 +43,11 @@ export default function CreditCard({ credits, plan, wallpaperUrl }: Props) {
             src={wallpaperUrl}
             alt=""
             aria-hidden
-            className="absolute inset-0 w-full h-full object-cover opacity-60"
+            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-[1800ms] ease-in-out"
+            style={{ opacity: 0, willChange: "opacity" }}
+            onLoad={(e) => {
+              (e.currentTarget as HTMLImageElement).style.opacity = "0.6";
+            }}
           />
           <div className="absolute inset-0 bg-gradient-to-br from-[hsl(262,72%,40%)]/60 via-[hsl(265,65%,32%)]/50 to-[hsl(275,60%,24%)]/70" />
         </>
@@ -67,11 +92,11 @@ export default function CreditCard({ credits, plan, wallpaperUrl }: Props) {
         <motion.div
           className="flex items-baseline gap-2 mb-5"
           initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
+          animate={{ opacity: credits !== undefined ? 1 : 0.4, y: 0 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
         >
           <span className="text-5xl font-black text-white tracking-tight leading-none tabular-nums">
-            {credits.toLocaleString()}
+            {displayCount.toLocaleString()}
           </span>
           <span className="text-sm font-semibold text-white/50">credits</span>
         </motion.div>

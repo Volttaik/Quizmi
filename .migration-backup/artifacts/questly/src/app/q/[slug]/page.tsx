@@ -5,17 +5,18 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Loader2, BookOpen, Trophy, Share2, Timer, Zap, ArrowRight,
   CheckCircle2, XCircle, Check, X as XIcon, Heart, Users, Home,
-  GraduationCap, RotateCcw, Link2,
+  GraduationCap, RotateCcw, Link2, Brain, HelpCircle, Lock, Eye, EyeOff,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { QUIZ_TYPE_CONFIG, getResultMessage, type QuizType } from "@/lib/quizTypes";
 import { toast } from "sonner";
-import { shareContent } from "@/lib/share";
+import ShareModal from "@/components/ShareModal";
 
-interface Question { question: string; options: string[]; correct: number; explanation?: string; }
+interface Question { question: string; options: string[]; correct: number; explanation?: string; imageUrl?: string; }
 interface Quiz {
   id: number; title: string; difficulty: string; questions: Question[];
   quizType?: QuizType; subjectName?: string; shareSlug?: string; topic?: string;
+  questionCount?: number; isLocked?: boolean;
 }
 
 const LABELS = ["A", "B", "C", "D"];
@@ -28,6 +29,8 @@ function QuizTypeIcon({ type, className }: { type: QuizType; className?: string 
     friendship: <Users className={className} />,
     family: <Home className={className} />,
     classroom: <GraduationCap className={className} />,
+    personality: <Brain className={className} />,
+    knowme: <HelpCircle className={className} />,
   };
   return icons[type] ?? <BookOpen className={className} />;
 }
@@ -55,7 +58,11 @@ export default function PublicQuizPage() {
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
-  const [phase, setPhase] = useState<"landing" | "playing" | "done">("landing");
+  const [phase, setPhase] = useState<"locked" | "landing" | "playing" | "done">("landing");
+  const [passKeyInput, setPassKeyInput] = useState("");
+  const [passKeyError, setPassKeyError] = useState("");
+  const [passKeyChecking, setPassKeyChecking] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const [timedMode, setTimedMode] = useState(false);
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
@@ -68,9 +75,33 @@ export default function PublicQuizPage() {
   useEffect(() => {
     fetch(`/api/quizzes/slug/${slug}`)
       .then((r) => { if (!r.ok) { setNotFound(true); setLoading(false); return null; } return r.json(); })
-      .then((d) => { if (d) { setQuiz(d); } setLoading(false); })
+      .then((d) => {
+        if (d) {
+          setQuiz(d);
+          if (d.isLocked) setPhase("locked");
+        }
+        setLoading(false);
+      })
       .catch(() => { setNotFound(true); setLoading(false); });
   }, [slug]);
+
+  const handlePassKeySubmit = async () => {
+    if (!passKeyInput.trim()) { setPassKeyError("Please enter the passkey"); return; }
+    setPassKeyChecking(true);
+    setPassKeyError("");
+    try {
+      const r = await fetch(`/api/quizzes/slug/${slug}?key=${encodeURIComponent(passKeyInput.trim())}`);
+      if (r.status === 401) { setPassKeyError("Incorrect passkey. Ask the quiz creator for the right one."); setPassKeyChecking(false); return; }
+      if (!r.ok) { setPassKeyError("Something went wrong. Try again."); setPassKeyChecking(false); return; }
+      const d = await r.json();
+      setQuiz(d);
+      setPhase("landing");
+    } catch {
+      setPassKeyError("Something went wrong. Try again.");
+    } finally {
+      setPassKeyChecking(false);
+    }
+  };
 
   useEffect(() => {
     if (!timedMode || feedback !== null || phase !== "playing") return;
@@ -144,6 +175,76 @@ export default function PublicQuizPage() {
     </div>
   );
 
+  if (phase === "locked") {
+    const lockedType: QuizType = (quiz?.quizType as QuizType) || "study";
+    const lockedCfg = QUIZ_TYPE_CONFIG[lockedType];
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6 py-12">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-sm flex flex-col items-center text-center gap-5">
+
+          <div className={`w-24 h-24 rounded-3xl bg-gradient-to-br ${lockedCfg.theme.gradient} flex items-center justify-center shadow-xl relative`}>
+            <QuizTypeIcon type={lockedType} className="w-11 h-11 text-white/40" />
+            <div className="absolute -bottom-2 -right-2 w-9 h-9 rounded-xl bg-violet-500 flex items-center justify-center shadow-lg border-2 border-background">
+              <Lock className="w-4 h-4 text-white" />
+            </div>
+          </div>
+
+          <div>
+            <span className="text-xs font-bold px-3 py-1 rounded-full bg-violet-500/15 text-violet-600 dark:text-violet-400 border border-violet-400/30 mb-3 inline-block">
+              Private Quiz
+            </span>
+            <h1 className="text-2xl font-extrabold text-foreground mt-2 mb-2">
+              {quiz?.title ?? "Private Quiz"}
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              The creator made this quiz private.{"\n"}Enter the passkey to unlock it.
+            </p>
+          </div>
+
+          <div className="w-full space-y-3">
+            <div className="relative">
+              <input
+                type="text"
+                value={passKeyInput}
+                onChange={(e) => { setPassKeyInput(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "")); setPassKeyError(""); }}
+                onKeyDown={(e) => e.key === "Enter" && handlePassKeySubmit()}
+                placeholder="Enter passkey (e.g. R3K7PQ)"
+                maxLength={6}
+                className="w-full rounded-2xl border-2 border-border bg-card px-4 py-4 text-center text-2xl font-black tracking-[0.3em] text-foreground placeholder:text-muted-foreground/50 placeholder:text-base placeholder:tracking-normal placeholder:font-normal focus:outline-none focus:border-violet-400 transition-all"
+                autoFocus
+              />
+            </div>
+
+            {passKeyError && (
+              <motion.p
+                initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
+                className="text-sm text-destructive font-semibold text-center">
+                {passKeyError}
+              </motion.p>
+            )}
+
+            <Button
+              onClick={handlePassKeySubmit}
+              disabled={passKeyChecking || passKeyInput.length < 1}
+              className="w-full rounded-full gap-2"
+              size="lg">
+              {passKeyChecking
+                ? <><Loader2 className="w-4 h-4 animate-spin" /> Checking…</>
+                : <><Lock className="w-4 h-4" /> Unlock Quiz</>}
+            </Button>
+          </div>
+
+          <p className="text-xs text-muted-foreground">
+            Don't have the passkey? Ask the person who shared this quiz with you.
+          </p>
+        </motion.div>
+      </div>
+    );
+  }
+
   if (phase === "done") {
     const subjectName = quiz.subjectName || quiz.topic || "this";
     const banner = getResultMessage(type, subjectName, pct);
@@ -204,19 +305,23 @@ export default function PublicQuizPage() {
           </a>
         </motion.div>
 
-        <motion.div className="flex gap-2 w-full max-w-sm"
+        <motion.div className="w-full max-w-sm"
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.65 }}>
-          <Button variant="ghost" size="sm" className="flex-1 rounded-full gap-1.5 text-muted-foreground text-xs"
-            onClick={async () => {
-              const res = await shareContent({ title: `Quiz Result — ${pct}%`, text: `I scored ${pct}% on "${quiz.title}". ${banner} — Try Quizmi!`, url: window.location.href });
-              if (res === "copied") toast.success("Copied!"); else if (res === "shared") toast.success("Shared!");
-            }}>
-            <Share2 className="w-3.5 h-3.5" /> Share Score
-          </Button>
-          <Button variant="ghost" size="sm" className="flex-1 rounded-full gap-1.5 text-muted-foreground text-xs" onClick={handleCopyLink}>
-            <Link2 className="w-3.5 h-3.5" /> Copy Quiz Link
+          <Button onClick={() => setShareOpen(true)} className="w-full rounded-full gap-2 shadow-elevated" size="lg">
+            <Share2 className="w-4 h-4" /> Share My Result
           </Button>
         </motion.div>
+
+        <ShareModal
+          open={shareOpen}
+          onClose={() => setShareOpen(false)}
+          quizType={type}
+          quizTitle={quiz.title}
+          subjectName={quiz.subjectName || quiz.topic || "this"}
+          pct={pct}
+          banner={banner}
+          shareUrl={typeof window !== "undefined" ? window.location.href : ""}
+        />
       </div>
     );
   }
@@ -279,7 +384,11 @@ export default function PublicQuizPage() {
         className="rounded-2xl bg-muted/40 border border-border/40 p-3.5 flex items-center gap-2.5 w-full max-w-sm">
         <Link2 className="w-4 h-4 text-muted-foreground flex-shrink-0" />
         <p className="text-xs text-muted-foreground">
-          Created on <span className="font-semibold text-foreground">Quizmi</span> &mdash; create your own at quizmi.app
+          Made with <span className="font-semibold text-foreground">Quizmi</span> &mdash;{" "}
+          <a href="https://quizmi.space/sign-up" target="_blank" rel="noreferrer"
+            className="font-semibold text-primary underline underline-offset-2">
+            Create your own quiz free
+          </a>
         </p>
       </motion.div>
     </div>
@@ -390,6 +499,16 @@ export default function PublicQuizPage() {
                 <p className="text-[10px] font-bold uppercase tracking-widest mb-3" style={{ color: cfg.theme.accent }}>
                   Question {current + 1}
                 </p>
+                {q.imageUrl && (
+                  <div className="rounded-2xl overflow-hidden mb-4 -mx-1 bg-muted/20">
+                    <img
+                      src={q.imageUrl}
+                      alt="Question"
+                      className="w-full max-h-52 object-cover"
+                      style={{ display: "block" }}
+                    />
+                  </div>
+                )}
                 <h2 className="text-base font-bold text-foreground leading-snug">{q.question}</h2>
               </div>
               <div className="space-y-3">

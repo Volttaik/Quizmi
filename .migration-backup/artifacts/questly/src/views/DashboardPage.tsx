@@ -66,7 +66,9 @@ export default function DashboardPage() {
             <img
               src={userData.wallpaperUrl}
               alt="Wallpaper"
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full object-cover transition-opacity duration-[1800ms] ease-in-out"
+              style={{ opacity: 0, willChange: "opacity" }}
+              onLoad={(e) => { (e.currentTarget as HTMLImageElement).style.opacity = "1"; }}
             />
             <div className="absolute inset-0 bg-gradient-to-br from-[hsl(262,72%,35%)]/60 via-[hsl(265,65%,28%)]/50 to-[hsl(275,60%,22%)]/60" />
           </>
@@ -91,7 +93,7 @@ export default function DashboardPage() {
 
       {/* Scrollable content */}
       <motion.div className="relative max-w-lg mx-auto px-4" variants={container} initial="hidden" animate="show">
-        <motion.div variants={item}><CreditCard credits={userData?.credits ?? 0} plan={userData?.plan ?? "starter"} wallpaperUrl={userData?.wallpaperUrl} /></motion.div>
+        <motion.div variants={item}><CreditCard credits={userData?.credits} plan={userData?.plan ?? "starter"}  /></motion.div>
         <motion.div variants={item}><StreakWidget /></motion.div>
         <motion.div variants={item}><StudySlideshow /></motion.div>
         <motion.div variants={item} className="mb-3 px-0.5">
