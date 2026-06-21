@@ -4,15 +4,26 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 
 interface Props {
-  credits: number;
+  credits: number | undefined;
   plan: string;
   wallpaperUrl?: string;
 }
 
+function CreditSkeleton() {
+  return (
+    <div className="flex items-baseline gap-2 mb-5">
+      <div className="h-12 w-32 rounded-xl bg-white/20 animate-pulse" />
+      <div className="h-4 w-12 rounded-lg bg-white/15 animate-pulse" />
+    </div>
+  );
+}
+
 export default function CreditCard({ credits, plan, wallpaperUrl }: Props) {
+  const isLoading = credits === undefined;
+
   return (
     <div className="relative overflow-hidden rounded-3xl mb-5 shadow-2xl shadow-primary/35">
-      {/* Base gradient */}
+      {/* Base gradient — always visible as fallback */}
       <div className="absolute inset-0 bg-gradient-to-br from-[hsl(262,72%,56%)] via-[hsl(265,72%,48%)] to-[hsl(275,72%,36%)]" />
 
       {/* Background: wallpaper image OR SVG aurora */}
@@ -22,7 +33,11 @@ export default function CreditCard({ credits, plan, wallpaperUrl }: Props) {
             src={wallpaperUrl}
             alt=""
             aria-hidden
-            className="absolute inset-0 w-full h-full object-cover opacity-60"
+            className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-700 ease-in"
+            style={{ opacity: 0 }}
+            onLoad={(e) => {
+              (e.currentTarget as HTMLImageElement).style.opacity = "0.6";
+            }}
           />
           <div className="absolute inset-0 bg-gradient-to-br from-[hsl(262,72%,40%)]/60 via-[hsl(265,65%,32%)]/50 to-[hsl(275,60%,24%)]/70" />
         </>
@@ -64,17 +79,21 @@ export default function CreditCard({ credits, plan, wallpaperUrl }: Props) {
       <div className="relative p-6">
         <p className="text-[10px] font-bold text-white/50 uppercase tracking-widest mb-1">Study Credits</p>
 
-        <motion.div
-          className="flex items-baseline gap-2 mb-5"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-        >
-          <span className="text-5xl font-black text-white tracking-tight leading-none tabular-nums">
-            {credits.toLocaleString()}
-          </span>
-          <span className="text-sm font-semibold text-white/50">credits</span>
-        </motion.div>
+        {credits === undefined ? (
+          <CreditSkeleton />
+        ) : (
+          <motion.div
+            className="flex items-baseline gap-2 mb-5"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, ease: "easeOut" }}
+          >
+            <span className="text-5xl font-black text-white tracking-tight leading-none tabular-nums">
+              {credits.toLocaleString()}
+            </span>
+            <span className="text-sm font-semibold text-white/50">credits</span>
+          </motion.div>
+        )}
 
         <Link
           href="/buy-credits"
