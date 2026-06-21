@@ -1,0 +1,51 @@
+{
+  "name": "Quizmi — Study Reimagined",
+  "short_name": "Quizmi",
+  "description": "AI-powered study platform. Generate quizzes, flashcards, and summaries instantly.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_modes": ["standalone", "minimal-ui", "browser"],
+  "orientation": "portrait-primary",
+  "background_color": "#0b0f1a",
+  "theme_color": "#7c3aed",
+  "categories": ["education", "productivity"],
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/dashboard-screenshot.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Quizmi Dashboard"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "url": "/dashboard",
+      "description": "Go to your study dashboard"
+    },
+    {
+      "name": "Create Quiz",
+      "short_name": "Create",
+      "url": "/create-quiz",
+      "description": "Create a new AI quiz"
+    }
+  ],
+  "prefer_related_applications": false
+}
