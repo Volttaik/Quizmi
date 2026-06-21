@@ -45,8 +45,8 @@ export default function HeroSection() {
           </a>
         </div>
 
-        {/* Phone — no separate glow div; mask fades all 4 edges into background */}
-        <div className="relative mt-8 w-[420px] sm:w-[520px] md:w-[640px]">
+        {/* Phone — larger, seamless blend into background */}
+        <div className="relative mt-6 w-[480px] sm:w-[680px] md:w-[860px]">
           <img
             src="/hero-phone-1.png"
             alt="Quizmi App"

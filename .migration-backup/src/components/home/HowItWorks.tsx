@@ -25,10 +25,15 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section id="how-it-works" className="py-28 relative">
+    <section id="how-it-works" className="py-28 relative overflow-hidden">
+      {/* Full-section diffuse glow — no hard edges */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="w-full h-full bg-[radial-gradient(ellipse_60%_70%_at_70%_50%,hsl(280,72%,40%,0.14)_0%,transparent_70%)]" />
+      </div>
+
       <div className="absolute left-1/2 top-0 w-px h-full bg-gradient-to-b from-transparent via-white/[0.06] to-transparent hidden md:block" />
 
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -43,7 +48,7 @@ export default function HowItWorks() {
           </h2>
         </motion.div>
 
-        {/* Steps + floating phone side-by-side on desktop */}
+        {/* Steps + floating girl side-by-side on desktop */}
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-12 md:gap-0">
 
           {/* Steps column */}
@@ -69,23 +74,29 @@ export default function HowItWorks() {
             ))}
           </div>
 
-          {/* Second phone image — soft, floats on the right */}
+          {/* Girl with phone — seamless blend, no separate glow div */}
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-            className="flex-1 flex justify-center items-center relative"
+            className="flex-1 flex justify-center items-center"
           >
-            {/* Soft glow */}
-            <div className="absolute w-[300px] h-[300px] bg-[hsl(280,72%,50%)]/15 rounded-full blur-[90px] pointer-events-none" />
             <img
               src="/hero-phone-2.png"
               alt="Quizmi Study"
-              className="relative w-[240px] sm:w-[280px] md:w-[300px] h-auto object-contain"
+              className="w-[280px] sm:w-[340px] md:w-[400px] h-auto object-contain"
               style={{
-                maskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 78%)",
-                WebkitMaskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 78%)",
+                maskImage: [
+                  "radial-gradient(ellipse 90% 100% at 50% 50%, black 28%, transparent 68%)",
+                  "linear-gradient(to bottom, black 15%, black 55%, transparent 88%)",
+                ].join(", "),
+                WebkitMaskImage: [
+                  "radial-gradient(ellipse 90% 100% at 50% 50%, black 28%, transparent 68%)",
+                  "linear-gradient(to bottom, black 15%, black 55%, transparent 88%)",
+                ].join(", "),
+                maskComposite: "intersect",
+                WebkitMaskComposite: "source-in",
               }}
             />
           </motion.div>
