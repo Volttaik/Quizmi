@@ -1,0 +1,27 @@
+kind = "mobile"
+previewPath = "/quizmi-mobile/"
+title = "Quizmi Mobile"
+version = "1.0.0"
+id = "artifacts/quizmi-mobile"
+router = "expo-domain"
+
+[[integratedSkills]]
+name = "expo"
+version = "1.0.0"
+
+[[services]]
+ensurePreviewReachable = "/status"
+name = "expo"
+paths = [ "/quizmi-mobile/" ]
+localPort = 23324
+
+[services.development]
+run = "pnpm --filter @workspace/quizmi-mobile run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/quizmi-mobile", "run", "build" ]
+run = [ "pnpm", "--filter", "@workspace/quizmi-mobile", "run", "serve" ]
+
+[services.env]
+PORT = "23324"
+BASE_PATH = "/quizmi-mobile/"
