@@ -80,15 +80,9 @@ export default function DashboardPage() {
         <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-background to-transparent" />
       </div>
 
-      {/* Smart UI Sticky Header */}
+      {/* Sticky Header — transparent background, only text color adapts */}
       <div className="sticky top-0 z-30">
-        <div
-          className={`w-full transition-all duration-300 ${
-            scrolled
-              ? "bg-background/90 backdrop-blur-xl border-b border-border/30 shadow-sm"
-              : ""
-          }`}
-        >
+        <div className="w-full">
           <div className="max-w-lg mx-auto px-4 pt-6 pb-3">
             <DashboardHeader name={userData?.name} scrolled={scrolled} />
           </div>

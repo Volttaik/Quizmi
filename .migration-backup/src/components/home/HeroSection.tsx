@@ -1,32 +1,10 @@
 "use client";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles, Brain, Zap, BookOpen } from "lucide-react";
-import { useState, useEffect } from "react";
-
-const floatingBadges = [
-  { icon: Brain, label: "AI-Powered", color: "text-primary", bg: "bg-primary/15 border-primary/20", pos: { top: "8px", left: "-8px" } },
-  { icon: Sparkles, label: "Instant quizzes", color: "text-[hsl(142,70%,45%)]", bg: "bg-[hsl(142,70%,45%)]/15 border-[hsl(142,70%,45%)]/20", pos: { top: "8px", right: "-8px" } },
-  { icon: Zap, label: "Flashcards", color: "text-[hsl(30,90%,55%)]", bg: "bg-[hsl(30,90%,55%)]/15 border-[hsl(30,90%,55%)]/20", pos: { bottom: "40px", left: "-8px" } },
-  { icon: BookOpen, label: "AI Summaries", color: "text-[hsl(200,90%,50%)]", bg: "bg-[hsl(200,90%,50%)]/15 border-[hsl(200,90%,50%)]/20", pos: { bottom: "40px", right: "-8px" } },
-];
-
-const phoneScreenshots = [
-  { src: "/quiz-slide-love.png", position: "object-top" },
-  { src: "/quiz-slide-friendship.png", position: "object-top" },
-  { src: "/quiz-slide-study.png", position: "object-top" },
-  { src: "/quiz-slide-classroom.png", position: "object-top" },
-  { src: "/quiz-slide-family.png", position: "object-top" },
-];
+import { ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function HeroSection() {
-  const [current, setCurrent] = useState(0);
-
-  useEffect(() => {
-    const t = setInterval(() => setCurrent((c) => (c + 1) % phoneScreenshots.length), 3000);
-    return () => clearInterval(t);
-  }, []);
-
   return (
     <section className="relative pt-24 pb-4 min-h-screen flex flex-col items-center justify-center overflow-hidden">
       <div className="absolute top-20 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[160px] pointer-events-none" />
@@ -65,56 +43,39 @@ export default function HeroSection() {
           </a>
         </div>
 
-        <div className="relative mt-16 flex justify-center">
+        {/* Two hero images sliding in from left and right */}
+        <div className="relative mt-16 flex justify-center items-end gap-6 sm:gap-10 overflow-hidden">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-primary/15 rounded-full blur-[100px] pointer-events-none" />
 
-          <div className="relative z-10 w-full max-w-sm">
-            <div className="relative">
-              {/* Floating badges */}
-              {floatingBadges.map((badge) => (
-                <div
-                  key={badge.label}
-                  className={`absolute z-20 flex items-center gap-2 px-3 py-2 rounded-full border ${badge.bg} backdrop-blur-sm animate-float`}
-                  style={{
-                    ...badge.pos,
-                    animationDelay: `${floatingBadges.indexOf(badge) * 0.4}s`,
-                  }}
-                >
-                  <badge.icon className={`w-3.5 h-3.5 ${badge.color}`} />
-                  <span className={`text-[11px] font-bold ${badge.color}`}>{badge.label}</span>
-                </div>
-              ))}
+          {/* Image 1 — slides in from left */}
+          <motion.div
+            initial={{ opacity: 0, x: -80 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="relative z-10 w-[44%] max-w-[220px] sm:max-w-[260px]"
+          >
+            <img
+              src="/hero-phone-1.png"
+              alt="Quizmi App Preview"
+              className="w-full h-auto object-contain drop-shadow-2xl"
+            />
+          </motion.div>
 
-              {/* Phone mockup with slideshow */}
-              <div className="relative mx-auto w-[260px] sm:w-[280px]">
-                <div className="absolute inset-0 rounded-[36px] ring-1 ring-white/10 shadow-2xl shadow-black/60 z-10 pointer-events-none" />
-                <div className="absolute top-3 left-1/2 -translate-x-1/2 w-24 h-5 bg-black rounded-full z-20" />
-                <div className="rounded-[36px] overflow-hidden bg-[hsl(220,20%,97%)] aspect-[9/19.5] relative">
-                  {phoneScreenshots.map((shot, i) => (
-                    <img
-                      key={i}
-                      src={shot.src}
-                      alt={`Quizmi Screen ${i + 1}`}
-                      className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out ${shot.position}`}
-                      style={{ opacity: i === current ? 1 : 0 }}
-                    />
-                  ))}
-                </div>
-                {/* Slideshow dots */}
-                <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
-                  {phoneScreenshots.map((_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setCurrent(i)}
-                      className={`rounded-full transition-all duration-300 ${i === current ? "w-4 h-1.5 bg-white" : "w-1.5 h-1.5 bg-white/30"}`}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-[hsl(222,47%,6%)] to-transparent pointer-events-none" />
-            </div>
-          </div>
+          {/* Image 2 — slides in from right */}
+          <motion.div
+            initial={{ opacity: 0, x: 80 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94], delay: 0.1 }}
+            className="relative z-10 w-[44%] max-w-[220px] sm:max-w-[260px]"
+          >
+            <img
+              src="/hero-phone-2.png"
+              alt="Quizmi Quiz Creation"
+              className="w-full h-auto object-contain drop-shadow-2xl"
+            />
+          </motion.div>
         </div>
       </div>
     </section>

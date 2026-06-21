@@ -143,6 +143,14 @@
 .dark .shadow-bottom-nav { box-shadow: 0 -4px 32px rgba(0,0,0,0.55), 0 -1px 8px rgba(0,0,0,0.38); }
 .dark .shadow-glow-primary { box-shadow: 0 0 40px rgba(139,92,246,0.30), 0 4px 20px rgba(139,92,246,0.18); }
 
+/* ─── Suppress transitions during theme switch to prevent flash ─── */
+.no-theme-transition *,
+.no-theme-transition *::before,
+.no-theme-transition *::after {
+  transition: none !important;
+  animation: none !important;
+}
+
 /* ─── Smooth global transitions ─── */
 * {
   transition-property: color, background-color, border-color, box-shadow, transform, opacity, filter;

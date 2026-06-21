@@ -37,11 +37,7 @@ export default function BottomNav() {
               href={path}
               className="flex flex-col items-center gap-0.5 py-1 px-3"
             >
-              <div
-                className={`w-9 h-9 rounded-xl flex items-center justify-center transition-colors ${
-                  active ? "bg-primary/12" : ""
-                }`}
-              >
+              <div className="w-9 h-9 flex items-center justify-center">
                 <Icon
                   className={`w-5 h-5 transition-all ${
                     active ? "text-primary" : "text-muted-foreground"

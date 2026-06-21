@@ -272,7 +272,14 @@ export default function QuizPage() {
   useEffect(() => {
     fetch(`/api/quizzes/${params.id}`)
       .then((r) => r.json())
-      .then((d) => { setQuiz(d); setLoading(false); })
+      .then((d) => {
+        if (d && Array.isArray(d.questions) && d.questions.length > 0) {
+          setQuiz(d);
+        } else if (d?.error) {
+          console.error("Quiz load error:", d.error);
+        }
+        setLoading(false);
+      })
       .catch(() => setLoading(false));
   }, [params.id]);
 
@@ -347,8 +354,14 @@ export default function QuizPage() {
 
   if (!quiz) return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4 px-6">
-      <p className="text-muted-foreground text-center">Quiz not found.</p>
-      <Link href="/dashboard"><Button className="rounded-full">Back to Dashboard</Button></Link>
+      <div className="w-16 h-16 rounded-2xl bg-destructive/10 flex items-center justify-center mb-2">
+        <BookOpen className="w-8 h-8 text-destructive/70" />
+      </div>
+      <p className="text-foreground font-bold text-center">Quiz not found</p>
+      <p className="text-muted-foreground text-sm text-center max-w-xs">
+        This quiz may have been deleted or could not be loaded.
+      </p>
+      <Link href="/quizzes"><Button className="rounded-full">Back to Quizzes</Button></Link>
     </div>
   );
 

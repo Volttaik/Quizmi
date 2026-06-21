@@ -13,6 +13,7 @@ const libsqlPackages = [
 ];
 
 const nextConfig: NextConfig = {
+  outputFileTracingRoot: require("path").join(__dirname, "../"),
   serverExternalPackages: libsqlPackages,
   transpilePackages: ["pdfjs-dist"],
   eslint: { ignoreDuringBuilds: true },

@@ -2,15 +2,15 @@
 import { Bell, Sun, Moon } from "lucide-react";
 import { useTheme } from "@/components/ThemeProvider";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import { useUser } from "@clerk/nextjs";
 
 interface Props {
   name?: string;
   scrolled?: boolean;
+  unreadCount?: number;
 }
 
-export default function DashboardHeader({ name, scrolled = false }: Props) {
+export default function DashboardHeader({ name, scrolled = false, unreadCount = 0 }: Props) {
   const { user } = useUser();
   const displayName = name ?? user?.firstName ?? "Learner";
   const initials = displayName.charAt(0).toUpperCase();
@@ -21,9 +21,7 @@ export default function DashboardHeader({ name, scrolled = false }: Props) {
 
   const textColor = scrolled ? "text-foreground" : "text-white";
   const subTextColor = scrolled ? "text-muted-foreground" : "text-white/55";
-  const btnBg = scrolled
-    ? "bg-muted hover:bg-muted/80 border-border text-foreground"
-    : "bg-white/15 hover:bg-white/25 border-white/10 text-white";
+  const iconColor = scrolled ? "text-foreground" : "text-white";
 
   return (
     <div className="flex items-center justify-between">
@@ -42,7 +40,7 @@ export default function DashboardHeader({ name, scrolled = false }: Props) {
         </div>
         <div>
           <p className={`text-xs font-medium leading-none mb-0.5 transition-colors duration-300 ${subTextColor}`}>
-            Good {getGreeting()} 🌟
+            Good {getGreeting()}
           </p>
           <h1 className={`text-lg font-extrabold leading-tight transition-colors duration-300 ${textColor}`}>
             Hi, {displayName}!
@@ -54,18 +52,20 @@ export default function DashboardHeader({ name, scrolled = false }: Props) {
         {mounted && (
           <button
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className={`w-9 h-9 rounded-full border flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95 ${btnBg}`}
+            className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 ${iconColor}`}
             aria-label="Toggle theme"
           >
             {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </button>
         )}
         <button
-          onClick={() => toast.info("No new notifications", { description: "You're all caught up!" })}
-          className={`w-9 h-9 rounded-full border flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95 relative ${btnBg}`}
+          className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 relative ${iconColor}`}
+          aria-label="Notifications"
         >
           <Bell className="w-4 h-4" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[hsl(30,90%,55%)] border border-white/30" />
+          {unreadCount > 0 && (
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[hsl(30,90%,55%)]" />
+          )}
         </button>
       </div>
     </div>

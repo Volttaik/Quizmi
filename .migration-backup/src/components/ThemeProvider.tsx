@@ -34,15 +34,28 @@ export function ThemeProvider({
 
   useEffect(() => {
     const root = window.document.documentElement;
+
+    // Suppress transitions during theme switch to prevent flicker
+    root.classList.add("no-theme-transition");
+
     root.classList.remove("light", "dark");
     if (theme === "system") {
       const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
         ? "dark"
         : "light";
       root.classList.add(systemTheme);
-      return;
+    } else {
+      root.classList.add(theme);
     }
-    root.classList.add(theme);
+
+    // Re-enable transitions after a brief delay so paint completes first
+    const raf = requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        root.classList.remove("no-theme-transition");
+      });
+    });
+
+    return () => cancelAnimationFrame(raf);
   }, [theme]);
 
   const value = {
