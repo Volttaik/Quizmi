@@ -1,11 +1,11 @@
 import type { NextRequest } from "next/server";
-import { getSessionUser } from "@/lib/auth";
 import { loadAttemptState, saveDraftAnswers } from "@/lib/attempts";
-import { apiError, apiOk, parseId, readJson } from "@/lib/http";
+import { apiError, apiOk, parseId, readJson, requireSessionUser } from "@/lib/http";
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const user = await getSessionUser();
-  if (!user) return apiError("Unauthorized", 401);
+  const session = await requireSessionUser();
+  if (!session.ok) return session.response;
+  const user = session.user;
 
   const id = parseId((await params).id);
   if (!id) return apiError("Invalid attempt", 400);
@@ -26,8 +26,9 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
  * on every selection.
  */
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const user = await getSessionUser();
-  if (!user) return apiError("Unauthorized", 401);
+  const session = await requireSessionUser();
+  if (!session.ok) return session.response;
+  const user = session.user;
 
   const id = parseId((await params).id);
   if (!id) return apiError("Invalid attempt", 400);

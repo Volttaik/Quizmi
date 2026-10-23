@@ -14,6 +14,7 @@ import {
 } from "@gravity-ui/icons";
 import ButtonLink from "@/components/ui/ButtonLink";
 import { formatDate } from "@/lib/format";
+import { useSessionRequest } from "@/lib/use-session-request";
 import type { CourseSummary } from "@/lib/types";
 
 function CourseRow({ course }: { course: CourseSummary }) {
@@ -110,6 +111,7 @@ function CourseRow({ course }: { course: CourseSummary }) {
 
 export default function MyCoursesPage() {
   const router = useRouter();
+  const sessionFetch = useSessionRequest();
   const [courses, setCourses] = useState<CourseSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -120,14 +122,19 @@ export default function MyCoursesPage() {
     setLoading(true);
     setError(null);
 
-    fetch("/api/my-courses")
-      .then(async (response) => {
-        if (response.status === 401) {
-          router.replace("/sign-in?redirect_url=/my-courses");
-          return null;
+    sessionFetch("/api/my-courses", { cache: "no-store" })
+      .then(async (outcome) => {
+        if (!outcome.ok) {
+          if (outcome.failure === "unauthenticated") {
+            router.replace("/sign-in?redirect_url=/my-courses");
+            return null;
+          }
+          throw new Error("We couldn't load your courses just now. Try again in a moment.");
         }
-        const data = await response.json().catch(() => null);
-        if (!response.ok) throw new Error(data?.error ?? "Could not load your courses");
+        const data = await outcome.response.json().catch(() => null);
+        if (!outcome.response.ok) {
+          throw new Error(data?.error ?? "Could not load your courses");
+        }
         return data as { courses: CourseSummary[] };
       })
       .then((data) => {
@@ -143,7 +150,7 @@ export default function MyCoursesPage() {
     return () => {
       active = false;
     };
-  }, [router, reloadKey]);
+  }, [router, sessionFetch, reloadKey]);
 
   return (
     <div className="bg-background">

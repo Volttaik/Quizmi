@@ -19,6 +19,8 @@ import CourseCard from "@/components/CourseCard";
 import { Reveal } from "@/components/Motion";
 import { Button } from "@/components/ui/button";
 import { formatRelative } from "@/lib/format";
+import { attemptStatusMeta } from "@/lib/attempt-status";
+import { useSessionRequest } from "@/lib/use-session-request";
 import type { DashboardData } from "@/lib/types";
 
 function Stat({
@@ -41,6 +43,7 @@ function Stat({
 
 export default function DashboardPage() {
   const router = useRouter();
+  const sessionFetch = useSessionRequest();
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -49,14 +52,18 @@ export default function DashboardPage() {
   useEffect(() => {
     let active = true;
 
-    fetch("/api/dashboard")
-      .then(async (response) => {
-        if (response.status === 401) {
-          router.replace("/sign-in");
-          return null;
+    sessionFetch("/api/dashboard", { cache: "no-store" })
+      .then(async (outcome) => {
+        if (!outcome.ok) {
+          if (outcome.failure === "unauthenticated") {
+            router.replace("/sign-in?redirect_url=/dashboard");
+            return null;
+          }
+          // A connection or Clerk problem is retryable, never a sign-out.
+          throw new Error("We couldn't load your dashboard just now. Try again in a moment.");
         }
-        if (!response.ok) throw new Error("Could not load your dashboard");
-        return (await response.json()) as DashboardData;
+        if (!outcome.response.ok) throw new Error("Could not load your dashboard");
+        return (await outcome.response.json()) as DashboardData;
       })
       .then((payload) => {
         if (active && payload) setData(payload);
@@ -71,7 +78,7 @@ export default function DashboardPage() {
     return () => {
       active = false;
     };
-  }, [router]);
+  }, [router, sessionFetch]);
 
   if (loading) {
     return (
@@ -143,7 +150,7 @@ export default function DashboardPage() {
         )}
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-1">
           <Stat icon={Target} label="Average accuracy" value={`${data.stats.averagePercentage}%`} />
-          <Stat icon={Trophy} label="Completed attempts" value={String(data.stats.completedAttempts)} />
+          <Stat icon={Trophy} label="Graded attempts" value={String(data.stats.completedAttempts)} />
           <Stat
             icon={Flame}
             label={hasActivity ? "Personal best" : "Pass rate"}
@@ -178,18 +185,33 @@ export default function DashboardPage() {
               {data.recentResults.slice(0, 5).map((result) => (
                 <li key={result.attemptId}>
                   <Link
-                    href={`/results/${result.attemptId}`}
+                    href={
+                      result.status === "in_progress"
+                        ? `/exam/${result.attemptId}`
+                        : `/results/${result.attemptId}`
+                    }
                     className="flex items-center justify-between gap-3 py-3 transition-colors hover:bg-muted/50"
                   >
                     <div className="min-w-0">
                       <p className="truncate font-medium">{result.courseTitle}</p>
                       <p className="truncate text-xs text-muted-foreground">
-                        {result.status === "terminated" ? "Terminated · " : ""}
-                        {formatRelative(result.submittedAt)}
+                        {result.hasResult
+                          ? `${attemptStatusMeta(result.status).label} · ${formatRelative(
+                              result.submittedAt
+                            )}`
+                          : `${attemptStatusMeta(result.status).label} · ${result.answeredCount}/${result.totalQuestions} answered`}
                       </p>
                     </div>
                     <span className="flex items-center gap-2 font-serif text-lg font-semibold">
-                      {result.score}/{result.totalMarks}
+                      {result.hasResult ? (
+                        <>
+                          {result.score}/{result.totalMarks}
+                        </>
+                      ) : (
+                        <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                          {result.status === "in_progress" ? "Resume" : "No score"}
+                        </span>
+                      )}
                       <ChevronRight className="h-4 w-4 text-muted-foreground" />
                     </span>
                   </Link>

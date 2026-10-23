@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   AlertTriangle,
@@ -21,7 +22,8 @@ import {
 
 import BackgroundOrbs from "@/components/BackgroundOrbs";
 import { BrandLoader } from "@/components/Brand";
-import Graffiti from "@/components/Graffiti";
+import AnswerReveal from "@/components/AnswerReveal";
+import SessionRecovery from "@/components/SessionRecovery";
 import { ease } from "@/components/Motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -35,6 +37,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { formatCountdown } from "@/lib/format";
+import { requestWithSession, type SessionFailure } from "@/lib/session-request";
 import { feedbackCue, play, preloadClips, unlockAudio, type Cue } from "@/lib/sound";
 import type { AnswerFeedback, AttemptState, ResultMode } from "@/lib/types";
 
@@ -55,9 +58,13 @@ export default function ExamPage() {
   const params = useParams() as { attemptId?: string };
   const attemptId = Number(params?.attemptId);
   const router = useRouter();
+  const { getToken } = useAuth();
 
   const [attempt, setAttempt] = useState<AttemptState | null>(null);
   const [loading, setLoading] = useState(true);
+  const [sessionIssue, setSessionIssue] = useState<SessionFailure | null>(null);
+  const [checkingSession, setCheckingSession] = useState(false);
+  const [reloadNonce, setReloadNonce] = useState(0);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [terminated, setTerminated] = useState(false);
   const [current, setCurrent] = useState(0);
@@ -102,6 +109,12 @@ export default function ExamPage() {
   attemptRef.current = attempt;
   soundOnRef.current = soundOn;
 
+  // Keep Clerk's token getter in a ref so the session helpers below stay
+  // referentially stable — an unstable callback would re-run the attempt
+  // loader and reset the learner's position mid-quiz.
+  const getTokenRef = useRef(getToken);
+  getTokenRef.current = getToken;
+
   const mode: ResultMode = attempt?.resultMode ?? "instant";
   const isInstant = mode === "instant";
 
@@ -135,6 +148,42 @@ export default function ExamPage() {
     }
   };
 
+  /**
+   * Session plumbing.
+   *
+   * `refreshSession` asks Clerk for a freshly signed session token. The runner
+   * uses it before retrying a rejected request, and the keep-warm ticker below
+   * calls it while the quiz is open so the token never goes stale mid-attempt.
+   */
+  const refreshSession = useCallback(async () => {
+    try {
+      await getTokenRef.current({ skipCache: true });
+    } catch {
+      // A failed refresh is not a sign-out; the request retry decides.
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!attempt) return;
+    if (typeof document === "undefined") return;
+
+    const warm = () => {
+      if (document.visibilityState !== "visible" || finishedRef.current) return;
+      void refreshSession();
+    };
+
+    warm();
+    const interval = setInterval(warm, 45_000);
+    const onVisible = () => {
+      if (document.visibilityState === "visible") void refreshSession();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [attempt, refreshSession]);
+
   /* ── Load the attempt ─────────────────────────────────────────────────── */
   useEffect(() => {
     if (!Number.isFinite(attemptId) || attemptId <= 0) {
@@ -145,86 +194,99 @@ export default function ExamPage() {
 
     let active = true;
     setLoading(true);
+    setSessionIssue(null);
 
-    fetch(`/api/attempts/${attemptId}`)
-      .then(async (response) => {
-        const data = await response.json().catch(() => null);
-        if (response.status === 401) {
-          router.replace(`/sign-in?redirect_url=/exam/${attemptId}`);
-          return null;
-        }
-        if (!response.ok) throw new Error(data?.error ?? "Could not load this attempt");
-        return data as AttemptState;
-      })
-      .then((data) => {
-        if (!active || !data) return;
+    (async () => {
+      const outcome = await requestWithSession(
+        `/api/attempts/${attemptId}`,
+        { cache: "no-store" },
+        { refresh: refreshSession }
+      );
 
-        if (data.status === "terminated") {
-          setAttempt(data);
-          setTerminated(true);
-          return;
-        }
-        if (data.status !== "in_progress") {
-          finishedRef.current = true;
-          router.replace(`/results/${attemptId}`);
-          return;
-        }
+      if (!active) return;
 
-        const initialAnswers: Record<number, number | null> = {};
-        for (const answer of data.answers) initialAnswers[answer.questionId] = answer.selectedIndex;
+      if (!outcome.ok) {
+        setSessionIssue(outcome.failure);
+        setLoading(false);
+        return;
+      }
 
-        const initialFeedback: Record<number, AnswerFeedback> = {};
-        for (const item of data.feedback) {
-          initialFeedback[item.questionId] = item;
-          gradedOnceRef.current.add(item.questionId);
-        }
-
-        // Rebuild the streak from the graded answers already persisted so a
-        // refresh does not silently reset the encouragement.
-        let correctRun = 0;
-        let wrongRun = 0;
-        for (const item of data.feedback) {
-          if (item.correct) {
-            correctRun += 1;
-            wrongRun = 0;
-          } else {
-            correctRun = 0;
-            wrongRun += 1;
-          }
-        }
-        streakRef.current = correctRun;
-        incorrectStreakRef.current = wrongRun;
-        setStreak(correctRun);
-
-        // Instant Results resumes at the first answer that has not been
-        // submitted; Results at the End starts at the beginning so the learner
-        // can review their saved answers in order.
-        let startIndex = 0;
-        if (data.resultMode === "instant") {
-          const submitted = new Set(Object.keys(initialFeedback).map(Number));
-          const firstOpen = data.questions.findIndex((question) => !submitted.has(question.id));
-          startIndex = firstOpen === -1 ? Math.max(0, data.questions.length - 1) : firstOpen;
-        }
-
-        setAttempt(data);
-        setAnswers(initialAnswers);
-        setFeedbackByQuestion(initialFeedback);
-        setCurrent(startIndex);
-        setDeadline(
-          data.secondsRemaining !== null ? Date.now() + data.secondsRemaining * 1000 : null
+      const data = (await outcome.response.json().catch(() => null)) as AttemptState | null;
+      if (!outcome.response.ok) {
+        setLoadError(
+          (data as unknown as { error?: string } | null)?.error ?? "Could not load this attempt"
         );
-      })
-      .catch((err) => {
-        if (active) setLoadError(err instanceof Error ? err.message : "Could not load this attempt");
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
+        setLoading(false);
+        return;
+      }
+      if (!data) {
+        setLoadError("Could not load this attempt");
+        setLoading(false);
+        return;
+      }
+
+      if (data.status === "terminated") {
+        setAttempt(data);
+        setTerminated(true);
+        setLoading(false);
+        return;
+      }
+      if (data.status !== "in_progress") {
+        finishedRef.current = true;
+        router.replace(`/results/${attemptId}`);
+        return;
+      }
+
+      const initialAnswers: Record<number, number | null> = {};
+      for (const answer of data.answers) initialAnswers[answer.questionId] = answer.selectedIndex;
+
+      const initialFeedback: Record<number, AnswerFeedback> = {};
+      for (const item of data.feedback) {
+        initialFeedback[item.questionId] = item;
+        gradedOnceRef.current.add(item.questionId);
+      }
+
+      // Rebuild the streak from the graded answers already persisted so a
+      // refresh does not silently reset the encouragement.
+      let correctRun = 0;
+      let wrongRun = 0;
+      for (const item of data.feedback) {
+        if (item.correct) {
+          correctRun += 1;
+          wrongRun = 0;
+        } else {
+          correctRun = 0;
+          wrongRun += 1;
+        }
+      }
+      streakRef.current = correctRun;
+      incorrectStreakRef.current = wrongRun;
+      setStreak(correctRun);
+
+      // Instant Results resumes at the first answer that has not been
+      // submitted; Results at the End starts at the beginning so the learner
+      // can review their saved answers in order.
+      let startIndex = 0;
+      if (data.resultMode === "instant") {
+        const submitted = new Set(Object.keys(initialFeedback).map(Number));
+        const firstOpen = data.questions.findIndex((question) => !submitted.has(question.id));
+        startIndex = firstOpen === -1 ? Math.max(0, data.questions.length - 1) : firstOpen;
+      }
+
+      setAttempt(data);
+      setAnswers(initialAnswers);
+      setFeedbackByQuestion(initialFeedback);
+      setCurrent(startIndex);
+      setDeadline(
+        data.secondsRemaining !== null ? Date.now() + data.secondsRemaining * 1000 : null
+      );
+      setLoading(false);
+    })();
 
     return () => {
       active = false;
     };
-  }, [attemptId, router]);
+  }, [attemptId, router, refreshSession, reloadNonce]);
 
   /* ── Clock ────────────────────────────────────────────────────────────── */
   useEffect(() => {
@@ -301,13 +363,30 @@ export default function ExamPage() {
     savingRef.current = true;
     setSaveState("saving");
     try {
-      const response = await fetch(`/api/attempts/${currentAttempt.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ answers: sent }),
-      });
-      const data = await response.json().catch(() => null);
-      if (!response.ok) throw new Error("save failed");
+      const outcome = await requestWithSession(
+        `/api/attempts/${currentAttempt.id}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ answers: sent }),
+        },
+        { refresh: refreshSession }
+      );
+
+      if (!outcome.ok) {
+        // Autosave is retried, never turned into a sign-out: the draft stays
+        // dirty and the next tick tries again.
+        for (const item of sent) dirtyRef.current.add(item.questionId);
+        setSaveState("error");
+        if (outcome.failure === "unauthenticated") setSessionIssue("unauthenticated");
+        setTimeout(() => setSaveNonce((value) => value + 1), 2000);
+        return;
+      }
+
+      const data = (await outcome.response.json().catch(() => null)) as {
+        status?: string;
+      } | null;
+      if (!outcome.response.ok) throw new Error("save failed");
 
       if (data?.status && data.status !== "in_progress") {
         finishedRef.current = true;
@@ -323,17 +402,20 @@ export default function ExamPage() {
       savingRef.current = false;
       if (dirtyRef.current.size > 0) setSaveNonce((value) => value + 1);
     }
-  }, [router]);
+  }, [router, refreshSession]);
 
   useEffect(() => {
     if (!attempt || isInstant) return;
+    // While the session panel is up, wait for the learner's retry instead of
+    // hammering the API with doomed autosaves.
+    if (sessionIssue) return;
     if (dirtyRef.current.size === 0) return;
 
     const timer = setTimeout(() => {
       void persistDirty();
     }, AUTOSAVE_DELAY);
     return () => clearTimeout(timer);
-  }, [answers, attempt, isInstant, persistDirty, saveNonce]);
+  }, [answers, attempt, isInstant, persistDirty, saveNonce, sessionIssue]);
 
   /* ── Submit one answer (Instant Results) ──────────────────────────────── */
   const selection = question ? answers[question.id] ?? null : null;
@@ -356,20 +438,32 @@ export default function ExamPage() {
     setAnswerError(null);
 
     try {
-      const response = await fetch(`/api/attempts/${currentAttempt.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          answers: [{ questionId: activeQuestion.id, selectedIndex }],
-        }),
-      });
-      const data = await response.json().catch(() => null);
+      const outcome = await requestWithSession(
+        `/api/attempts/${currentAttempt.id}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            answers: [{ questionId: activeQuestion.id, selectedIndex }],
+          }),
+        },
+        { refresh: refreshSession }
+      );
 
-      if (response.status === 401) {
-        router.replace(`/sign-in?redirect_url=/exam/${currentAttempt.id}`);
+      // A rejected session never navigates away on its own: the runner keeps
+      // the attempt, the selected answer and the timer, and shows an explicit
+      // recovery panel instead.
+      if (!outcome.ok) {
+        setSessionIssue(outcome.failure);
         return;
       }
-      if (!response.ok) throw new Error(data?.error ?? "Could not submit your answer");
+
+      const data = (await outcome.response.json().catch(() => null)) as {
+        status?: string;
+        error?: string;
+        graded?: AnswerFeedback[];
+      } | null;
+      if (!outcome.response.ok) throw new Error(data?.error ?? "Could not submit your answer");
 
       if (data?.status && data.status !== "in_progress") {
         finishedRef.current = true;
@@ -383,11 +477,13 @@ export default function ExamPage() {
         // A previous request may have graded this answer even if its response
         // was lost. Re-read the attempt so feedback stays consistent instead
         // of leaving the question stuck on Submit.
-        const refreshed = await fetch(`/api/attempts/${currentAttempt.id}`, {
-          cache: "no-store",
-        });
+        const refreshed = await requestWithSession(
+          `/api/attempts/${currentAttempt.id}`,
+          { cache: "no-store" },
+          { refresh: refreshSession }
+        );
         if (refreshed.ok) {
-          const state = (await refreshed.json()) as AttemptState;
+          const state = (await refreshed.response.json()) as AttemptState;
           if (state.status !== "in_progress") {
             finishedRef.current = true;
             router.replace(`/results/${currentAttempt.id}`);
@@ -412,7 +508,7 @@ export default function ExamPage() {
       submittingAnswerRef.current = false;
       setSubmittingAnswer(false);
     }
-  }, [applyFeedback, current, router]);
+  }, [applyFeedback, current, router, refreshSession]);
 
   /* ── Finalize the whole attempt ───────────────────────────────────────── */
   const finalize = useCallback(
@@ -432,18 +528,29 @@ export default function ExamPage() {
       }));
 
       try {
-        const response = await fetch(`/api/attempts/${currentAttempt.id}/submit`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ answers: payload }),
-        });
-        const data = await response.json().catch(() => null);
+        const outcome = await requestWithSession(
+          `/api/attempts/${currentAttempt.id}/submit`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ answers: payload }),
+          },
+          { refresh: refreshSession }
+        );
 
-        if (response.status === 401) {
-          router.replace(`/sign-in?redirect_url=/exam/${currentAttempt.id}`);
+        if (!outcome.ok) {
+          setSessionIssue(outcome.failure);
+          submittingAttemptRef.current = false;
+          setSubmittingAttempt(false);
           return;
         }
-        if (!response.ok) throw new Error(data?.error ?? "Could not submit your assessment");
+
+        const data = (await outcome.response.json().catch(() => null)) as {
+          error?: string;
+        } | null;
+        if (!outcome.response.ok) {
+          throw new Error(data?.error ?? "Could not submit your assessment");
+        }
 
         sound("complete");
         finishedRef.current = true;
@@ -465,7 +572,7 @@ export default function ExamPage() {
         }
       }
     },
-    [router, sound]
+    [router, sound, refreshSession]
   );
 
   finalizeRef.current = finalize;
@@ -504,55 +611,85 @@ export default function ExamPage() {
     }).catch(() => {});
   }, []);
 
-  const refreshAttempt = useCallback(async () => {
+  const refreshAttempt = useCallback(async (): Promise<boolean> => {
     const currentAttempt = attemptRef.current;
-    if (!currentAttempt) return;
+    if (!currentAttempt) return false;
 
     try {
-      const response = await fetch(`/api/attempts/${currentAttempt.id}`, { cache: "no-store" });
-      if (!response.ok) return;
-      const data = (await response.json()) as AttemptState;
+      const outcome = await requestWithSession(
+        `/api/attempts/${currentAttempt.id}`,
+        { cache: "no-store" },
+        { refresh: refreshSession }
+      );
+      if (!outcome.ok) {
+        setSessionIssue(outcome.failure);
+        return false;
+      }
+      if (!outcome.response.ok) return false;
+      const data = (await outcome.response.json()) as AttemptState;
       setAttempt(data);
+      setSessionIssue(null);
 
       if (data.status === "terminated") {
         finishedRef.current = true;
         setTerminated(true);
-        return;
+        return true;
       }
       if (data.status !== "in_progress") {
         finishedRef.current = true;
         router.replace(`/results/${currentAttempt.id}`);
-        return;
+        return true;
       }
       if (data.secondsRemaining !== null) {
         setDeadline(Date.now() + data.secondsRemaining * 1000);
       }
+      return true;
     } catch {
       // A transient network failure leaves the local attempt intact.
+      return false;
     }
-  }, [router]);
+  }, [router, refreshSession]);
+
+  /** Manual recovery from the session panel: refresh the token and retry. */
+  const retrySession = useCallback(async () => {
+    if (checkingSession) return;
+    setCheckingSession(true);
+    try {
+      await refreshSession();
+      if (attemptRef.current) {
+        const recovered = await refreshAttempt();
+        if (recovered) setSessionIssue(null);
+      } else {
+        setSessionIssue(null);
+        setReloadNonce((value) => value + 1);
+      }
+    } finally {
+      setCheckingSession(false);
+    }
+  }, [checkingSession, refreshAttempt, refreshSession]);
 
   useEffect(() => {
     if (!attempt) return;
 
+    // Flush the saved draft as the page goes away, but do NOT count a reload
+    // as a departure: refreshing the tab must not nudge an attempt towards
+    // termination. Real departures are detected by visibility changes and by
+    // the explicit "Leave quiz" action.
     const onPageHide = () => {
       if (finishedRef.current) return;
-      if (dirtyRef.current.size > 0) {
-        const currentAttempt = attemptRef.current;
-        if (currentAttempt) {
-          const payload = Array.from(dirtyRef.current).map((questionId) => ({
-            questionId,
-            selectedIndex: answersRef.current[questionId] ?? null,
-          }));
-          void fetch(`/api/attempts/${currentAttempt.id}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ answers: payload }),
-            keepalive: true,
-          }).catch(() => {});
-        }
-      }
-      sendDeparture("page unloaded");
+      if (dirtyRef.current.size === 0) return;
+      const currentAttempt = attemptRef.current;
+      if (!currentAttempt) return;
+      const payload = Array.from(dirtyRef.current).map((questionId) => ({
+        questionId,
+        selectedIndex: answersRef.current[questionId] ?? null,
+      }));
+      void fetch(`/api/attempts/${currentAttempt.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ answers: payload }),
+        keepalive: true,
+      }).catch(() => {});
     };
 
     const onVisibility = () => {
@@ -594,7 +731,7 @@ export default function ExamPage() {
 
   /* ── Activity heartbeat ───────────────────────────────────────────────── */
   useEffect(() => {
-    if (!attempt) return;
+    if (!attempt || sessionIssue) return;
     const ping = () => {
       if (document.visibilityState !== "visible" || finishedRef.current) return;
       void fetch(`/api/attempts/${attempt.id}/heartbeat`, { method: "POST" }).catch(() => {});
@@ -602,7 +739,7 @@ export default function ExamPage() {
     ping();
     const interval = setInterval(ping, 30_000);
     return () => clearInterval(interval);
-  }, [attempt]);
+  }, [attempt, sessionIssue]);
 
   /* ── Selection & navigation ───────────────────────────────────────────── */
   const selectOption = useCallback(
@@ -723,6 +860,25 @@ export default function ExamPage() {
   /* ── Loading / terminal states ────────────────────────────────────────── */
   if (loading) {
     return <BrandLoader message="Setting up your quiz…" />;
+  }
+
+  // A session problem is shown, never silently redirected. The attempt, its
+  // answers and the timer all stay in place so recovery resumes the quiz.
+  if (sessionIssue) {
+    return (
+      <div className="relative flex min-h-screen flex-col paper-dots">
+        <BackgroundOrbs variant="quiz" />
+        <div className="relative z-10 flex flex-1 items-center justify-center px-4 py-16">
+          <SessionRecovery
+            failure={sessionIssue}
+            onRetry={() => void retrySession()}
+            retrying={checkingSession}
+            signInHref={`/sign-in?redirect_url=${encodeURIComponent(`/exam/${attemptId}`)}`}
+            courseHref={attempt ? `/courses/${attempt.courseSlug}` : "/courses"}
+          />
+        </div>
+      </div>
+    );
   }
 
   if (terminated && attempt) {
@@ -1009,11 +1165,11 @@ export default function ExamPage() {
             )}
 
             <div className="relative mt-6">
-              {isCorrect && <Graffiti seed={current} />}
+              {currentFeedback && (
+                <AnswerReveal variant={isCorrect ? "correct" : "incorrect"} seed={current} />
+              )}
               <motion.div
                 className="space-y-2.5"
-                animate={currentFeedback && !isCorrect ? { x: [0, -7, 7, -4, 4, 0] } : {}}
-                transition={{ duration: 0.4 }}
                 role="radiogroup"
                 aria-label="Answer options"
               >
@@ -1084,24 +1240,42 @@ export default function ExamPage() {
             <AnimatePresence>
               {isInstant && currentFeedback && (
                 <motion.div
-                  initial={{ opacity: 0, y: 8 }}
+                  initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2, ease }}
-                  className={`mt-5 rounded-[5px] border px-4 py-3.5 ${
+                  transition={{ duration: 0.24, ease }}
+                  className={`relative mt-5 overflow-hidden rounded-[var(--radius)] border pl-4 pr-4 py-3.5 ${
                     isCorrect
-                      ? "border-success/30 bg-success/10"
-                      : "border-destructive/30 bg-destructive/10"
+                      ? "border-success/35 bg-success/[0.07]"
+                      : "border-destructive/30 bg-destructive/[0.06]"
                   }`}
                   role="status"
                 >
-                  <p
-                    className={`text-sm font-semibold ${
-                      isCorrect ? "text-success" : "text-destructive"
+                  <span
+                    aria-hidden
+                    className={`absolute inset-y-0 left-0 w-[3px] ${
+                      isCorrect ? "bg-success" : "bg-destructive"
                     }`}
-                  >
-                    {isCorrect ? "Correct!" : "Not quite."}
-                  </p>
+                  />
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`flex h-6 w-6 items-center justify-center rounded-full ${
+                        isCorrect
+                          ? "bg-success text-white"
+                          : "bg-destructive/12 text-destructive"
+                      }`}
+                      aria-hidden
+                    >
+                      {isCorrect ? <Check className="h-3.5 w-3.5" /> : <X className="h-3.5 w-3.5" />}
+                    </span>
+                    <p
+                      className={`text-sm font-semibold tracking-tight ${
+                        isCorrect ? "text-success" : "text-destructive"
+                      }`}
+                    >
+                      {isCorrect ? "Scored — that one counts" : "Not this time — here's the correction"}
+                    </p>
+                  </div>
                   {!isCorrect && correctOptionText && (
                     <p className="mt-1 text-sm leading-relaxed text-foreground/85">
                       Correct answer:{" "}

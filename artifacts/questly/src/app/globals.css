@@ -297,6 +297,48 @@
   background-size: 22px 22px;
 }
 
+/* ─── Hero canvas ─────────────────────────────────────────────────────────
+   A measured exam hall: faint column rules, a warm violet bloom and a floor
+   tone that separates the hero from the catalogue below. */
+.hero-stage {
+  background:
+    radial-gradient(56rem 26rem at 82% -12%, hsl(var(--accent) / 0.12), transparent 70%),
+    radial-gradient(28rem 18rem at 8% 8%, hsl(292 70% 60% / 0.08), transparent 72%),
+    linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--background)) 62%, hsl(var(--muted) / 0.6) 100%);
+}
+.hero-grid {
+  background-image: linear-gradient(
+    to right,
+    hsl(var(--foreground) / 0.05) 1px,
+    transparent 1px
+  );
+  background-size: 4.5rem 100%;
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 76%);
+  mask-image: linear-gradient(180deg, #000 0%, transparent 76%);
+  pointer-events: none;
+}
+
+/* The hero search sits on a hall-ticket slip: a ruled card with a spine. */
+.exam-slip {
+  position: relative;
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  background: hsl(var(--card) / 0.92);
+  padding: 1rem 1.1rem 1rem 1.25rem;
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.exam-slip::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 3px;
+  border-radius: var(--radius) 0 0 var(--radius);
+  background-image: linear-gradient(180deg, hsl(var(--accent)), hsl(var(--primary)));
+}
+
 /* Quizmi's violet identity, used wherever a gradient was inherited from Lumio. */
 .brand-gradient {
   background-image: linear-gradient(132deg, #3b0764 0%, #5b21b6 48%, #7c3aed 100%);
@@ -340,7 +382,7 @@
   z-index: -1;
   pointer-events: none;
   border-radius: inherit;
-  opacity: 0.5;
+  opacity: 0.4;
   background-image:
     radial-gradient(circle, hsl(var(--accent) / 0.55) 1.15px, transparent 1.25px),
     radial-gradient(circle, hsl(var(--accent) / 0.3) 1.15px, transparent 1.25px);
@@ -360,7 +402,7 @@
 }
 .dark .dotted-edge::before,
 .dark .dotted-edge-tl::before {
-  opacity: 0.62;
+  opacity: 0.5;
 }
 .dotted-edge-sm::before {
   background-size:

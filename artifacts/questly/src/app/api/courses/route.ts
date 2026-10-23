@@ -1,10 +1,10 @@
 import type { NextRequest } from "next/server";
-import { getSessionUser } from "@/lib/auth";
+import { getOptionalSessionUser } from "@/lib/auth";
 import { listPublishedCourses, listSubjects } from "@/lib/courses";
 import { apiError, apiOk, clampInt } from "@/lib/http";
 
 export async function GET(req: NextRequest) {
-  const user = await getSessionUser();
+  const user = await getOptionalSessionUser();
   const params = req.nextUrl.searchParams;
 
   try {

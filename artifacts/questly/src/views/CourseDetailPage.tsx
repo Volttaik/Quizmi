@@ -22,6 +22,7 @@ import {
   TriangleExclamation,
 } from "@gravity-ui/icons";
 import ButtonLink from "@/components/ui/ButtonLink";
+import ShareCourseButton from "@/components/ShareCourseButton";
 import { formatDate, formatPrice } from "@/lib/format";
 import type { CourseDetail } from "@/lib/types";
 
@@ -132,14 +133,14 @@ export default function CourseDetailPage() {
     return (
       <main className="mx-auto max-w-6xl px-5 py-8 sm:px-6 lg:px-8">
         <div className="skeleton h-5 w-24 rounded-lg" />
-        <div className="skeleton mt-5 h-[22rem] rounded-[2rem]" />
+        <div className="skeleton mt-5 h-[22rem] rounded-[var(--radius)]" />
         <div className="mt-8 grid gap-8 lg:grid-cols-[1.4fr_0.6fr]">
           <div className="space-y-4">
             <div className="skeleton h-8 w-2/3 rounded-xl" />
             <div className="skeleton h-4 w-full rounded-lg" />
             <div className="skeleton h-4 w-5/6 rounded-lg" />
           </div>
-          <div className="skeleton h-72 rounded-[1.75rem]" />
+          <div className="skeleton h-72 rounded-[var(--radius)]" />
         </div>
       </main>
     );
@@ -248,7 +249,7 @@ export default function CourseDetailPage() {
         )}
 
         {/* ── Editorial course hero ────────────────────────────────────────── */}
-        <section className="relative mt-4 overflow-hidden rounded-[2rem] bg-[var(--background-inverse)]">
+        <section className="relative mt-4 overflow-hidden rounded-[var(--radius)] bg-[var(--background-inverse)] shadow-[var(--shadow-md)]">
           {course.coverImageUrl ? (
             <>
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -268,6 +269,10 @@ export default function CourseDetailPage() {
               <div className="absolute -bottom-20 left-10 h-64 w-64 rounded-full border border-white/10" />
             </div>
           )}
+
+          <div className="absolute right-4 top-4 z-10 sm:right-6 sm:top-6">
+            <ShareCourseButton slug={course.slug} title={course.title} />
+          </div>
 
           <div className="relative flex min-h-[20rem] flex-col justify-end px-6 pb-8 pt-24 sm:min-h-[24rem] sm:px-9 sm:pb-10">
             <div className="flex flex-wrap items-center gap-2">
@@ -461,7 +466,7 @@ export default function CourseDetailPage() {
 
           {/* ── Action rail ─────────────────────────────────────────────────── */}
           <aside className="lg:sticky lg:top-24">
-            <div className="dotted-edge rounded-[1.75rem] border border-border/80 bg-surface p-6 shadow-[0_20px_50px_-32px_rgba(35,25,80,0.45)]">
+            <div className="dotted-edge rounded-[var(--radius)] border border-border/80 bg-surface p-6 shadow-[var(--shadow-lg)]">
               <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
                 {locked ? "Course access" : course.isPurchased ? "You own this course" : "Free to start"}
               </p>
@@ -508,6 +513,12 @@ export default function CourseDetailPage() {
                   </Button>
                 )}
 
+                <ShareCourseButton
+                  slug={course.slug}
+                  title={course.title}
+                  variant="button"
+                  className="w-full"
+                />
               </div>
 
               <dl className="mt-6 space-y-3 border-t border-border/70 pt-5">

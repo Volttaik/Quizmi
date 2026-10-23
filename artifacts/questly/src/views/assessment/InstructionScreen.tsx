@@ -21,12 +21,14 @@ import {
   type AssessmentPreferences,
 } from "@/lib/assessment-preferences";
 import { unlockAudio } from "@/lib/sound";
+import { useSessionRequest } from "@/lib/use-session-request";
 import type { CourseDetail } from "@/lib/types";
 
 export default function InstructionScreen() {
   const params = useParams() as { slug?: string };
   const slug = params?.slug ?? "";
   const router = useRouter();
+  const sessionFetch = useSessionRequest();
   const { isSignedIn, isLoaded } = useUser();
 
   const [course, setCourse] = useState<CourseDetail | null>(null);
@@ -125,7 +127,10 @@ export default function InstructionScreen() {
     setError(null);
 
     try {
-      const response = await fetch("/api/attempts", {
+      // Starting an attempt refreshes a stale session token instead of bouncing
+      // the learner to sign-in: a recoverable token must never lose the quiz
+      // they were about to take.
+      const outcome = await sessionFetch("/api/attempts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -136,15 +141,20 @@ export default function InstructionScreen() {
           chapterNumber: preferences.chapterNumber,
         }),
       });
-      const data = await response.json().catch(() => null);
 
-      if (response.status === 401) {
-        const query = preferencesToQuery(preferences);
-        const nextUrl = `/courses/${course.slug}/instructions?${query}`;
-        router.push(`/sign-in?redirect_url=${encodeURIComponent(nextUrl)}`);
+      if (!outcome.ok) {
+        if (outcome.failure === "unauthenticated") {
+          const query = preferencesToQuery(preferences);
+          const nextUrl = `/courses/${course.slug}/instructions?${query}`;
+          router.push(`/sign-in?redirect_url=${encodeURIComponent(nextUrl)}`);
+        } else {
+          setError("We couldn't reach the server. Check your connection and try again.");
+        }
         return;
       }
-      if (!response.ok) {
+
+      const data = await outcome.response.json().catch(() => null);
+      if (!outcome.response.ok) {
         setError(data?.error ?? "Could not start this assessment");
         return;
       }
@@ -156,7 +166,7 @@ export default function InstructionScreen() {
       startingRef.current = false;
       setStarting(false);
     }
-  }, [course, preferences, isSignedIn, router]);
+  }, [course, preferences, isSignedIn, router, sessionFetch]);
 
   if (loading || redirecting) {
     return (

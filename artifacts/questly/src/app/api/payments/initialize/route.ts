@@ -1,12 +1,12 @@
 import type { NextRequest } from "next/server";
-import { getSessionUser } from "@/lib/auth";
 import { createPaymentIntent } from "@/lib/purchases";
 import { PaystackError } from "@/lib/paystack";
-import { apiError, apiOk, isNonEmptyString, readJson } from "@/lib/http";
+import { apiError, apiOk, isNonEmptyString, readJson, requireSessionUser } from "@/lib/http";
 
 export async function POST(req: NextRequest) {
-  const user = await getSessionUser();
-  if (!user) return apiError("Sign in to purchase this course", 401);
+  const session = await requireSessionUser("Sign in to purchase this course");
+  if (!session.ok) return session.response;
+  const user = session.user;
 
   const body = await readJson<{ slug?: string }>(req);
   if (!body || !isNonEmptyString(body.slug)) return apiError("Course slug is required");

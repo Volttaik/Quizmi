@@ -31,6 +31,11 @@ export function courseUrlFor(slug: string): string {
 }
 
 export function shareTextFor(result: AttemptResult, courseUrl: string): string {
+  // A card is only offered for graded attempts, but never let a missing result
+  // turn into a claimed score if that changes.
+  if (!result.hasResult) {
+    return `I'm studying ${result.courseTitle} on QUIZMI. Take the course here: ${courseUrl}`;
+  }
   const headline =
     result.status === "submitted"
       ? `I scored ${result.percentage}% on the ${result.courseTitle} assessment on QUIZMI!`
@@ -41,6 +46,7 @@ export function shareTextFor(result: AttemptResult, courseUrl: string): string {
 function statusChip(result: AttemptResult): { label: string; color: string } {
   if (result.status === "terminated") return { label: "ATTEMPT ENDED", color: AMBER };
   if (result.status === "expired") return { label: "TIME EXPIRED", color: AMBER };
+  if (result.status === "not_submitted") return { label: "NOT SUBMITTED", color: AMBER };
   if (result.passed) return { label: "PASSED", color: GREEN };
   return { label: "COMPLETED", color: LAVENDER };
 }

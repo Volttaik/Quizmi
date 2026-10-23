@@ -26,7 +26,12 @@ export default clerkMiddleware(async (auth, req) => {
     // API clients need a machine-readable response; page visits go to Clerk's
     // sign-in flow instead of rendering an empty shell.
     if (req.nextUrl.pathname.startsWith("/api")) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      // Machine-readable so clients can tell a real sign-out apart from a
+      // temporary verification problem (which the routes report as 503).
+      return NextResponse.json(
+        { error: "Unauthorized", code: "unauthenticated" },
+        { status: 401 }
+      );
     }
 
     // Redirect pages ourselves so the behaviour does not depend on Clerk's

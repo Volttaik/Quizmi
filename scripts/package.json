@@ -9,7 +9,9 @@
     "db:verify": "tsx ./src/verify-db.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "demo-course": "tsx ./src/demo-course.ts",
-    "ingest:decn101": "tsx ./src/ingest-decn101.ts"
+    "ingest:decn101": "tsx ./src/ingest-decn101.ts",
+    "ingest:ecn102": "tsx ./src/ingest-ecn102.ts",
+    "repair:attempts": "tsx ./src/repair-attempts.ts"
   },
   "dependencies": {
     "@libsql/client": "^0.14.0",

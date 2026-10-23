@@ -1,6 +1,5 @@
-import { getSessionUser } from "@/lib/auth";
 import { listPurchasedCourses } from "@/lib/courses";
-import { apiError, apiOk } from "@/lib/http";
+import { apiError, apiOk, requireSessionUser } from "@/lib/http";
 
 /**
  * Courses the signed-in learner owns. The list is read from the purchases
@@ -8,11 +7,11 @@ import { apiError, apiOk } from "@/lib/http";
  * client cannot fabricate an entry here.
  */
 export async function GET() {
-  const user = await getSessionUser();
-  if (!user) return apiError("Unauthorized", 401);
+  const session = await requireSessionUser();
+  if (!session.ok) return session.response;
 
   try {
-    const courses = await listPurchasedCourses(user.id);
+    const courses = await listPurchasedCourses(session.user.id);
     return apiOk({ courses });
   } catch (error) {
     console.error("GET /api/my-courses failed", error);

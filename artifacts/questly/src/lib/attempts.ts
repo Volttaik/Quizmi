@@ -1,4 +1,16 @@
-import { and, asc, desc, eq, gt, inArray, isNull, lt, or, sql } from "drizzle-orm";
+import {
+  and,
+  asc,
+  desc,
+  eq,
+  inArray,
+  isNotNull,
+  isNull,
+  lt,
+  lte,
+  or,
+  sql,
+} from "drizzle-orm";
 import {
   db,
   attemptsTable,
@@ -26,6 +38,8 @@ import {
   secondsRemaining,
   type AnswerInput,
 } from "@/lib/scoring";
+import { GRADED_ATTEMPT_STATUSES, isGradedStatus } from "@/lib/attempt-status";
+import { summarizeAnswers } from "@/lib/attempt-summary";
 import { courseHasAccess, getCourseById, getCourseBySlug, isCoursePurchased } from "@/lib/courses";
 import type {
   AnswerFeedback,
@@ -178,6 +192,8 @@ export async function buildAttemptState(
       marks: question.marks || 1,
       imageUrl: question.imageUrl,
       orderIndex: question.orderIndex,
+      chapterNumber: question.chapterNumber > 0 ? question.chapterNumber : null,
+      chapterTitle: question.chapterTitle?.trim() ? question.chapterTitle : null,
     })),
     answers: stored.map((answer) => ({
       questionId: answer.questionId,
@@ -194,6 +210,7 @@ export async function buildAttemptState(
 function resultStatus(attempt: Attempt): AttemptResult["status"] {
   if (attempt.status === "expired") return "expired";
   if (attempt.status === "terminated") return "terminated";
+  if (attempt.status === "not_submitted") return "not_submitted";
   return "submitted";
 }
 
@@ -203,26 +220,41 @@ function buildResult(
   questions: Question[],
   scored: ReturnType<typeof scoreAttempt>,
   status: AttemptResult["status"],
-  submittedAt: string
+  submittedAt: string | null
 ): AttemptResult {
+  const graded = isGradedStatus(status);
   const answerMap = new Map(scored.answers.map((answer) => [answer.questionId, answer]));
 
-  const reviewQuestions: ResultQuestion[] = questions.map((question) => {
-    const answer = answerMap.get(question.id);
-    return {
-      id: question.id,
-      prompt: question.prompt,
-      options: Array.isArray(question.options) ? question.options : [],
-      marks: question.marks || 1,
-      imageUrl: question.imageUrl,
-      orderIndex: question.orderIndex,
-      correctIndex: question.correctIndex,
-      explanation: question.explanation ?? null,
-      reference: question.reference ?? null,
-      selectedIndex: answer?.selectedIndex ?? null,
-      correct: Boolean(answer?.correct),
-      marksAwarded: answer?.marksAwarded ?? 0,
-    };
+  // The review is built from the attempt's own question set, so it can never
+  // show another course's questions or another attempt's answers.
+  const reviewQuestions: ResultQuestion[] = graded
+    ? questions.map((question) => {
+        const answer = answerMap.get(question.id);
+        return {
+          id: question.id,
+          prompt: question.prompt,
+          options: Array.isArray(question.options) ? question.options : [],
+          marks: question.marks || 1,
+          imageUrl: question.imageUrl,
+          orderIndex: question.orderIndex,
+          chapterNumber: question.chapterNumber > 0 ? question.chapterNumber : null,
+          chapterTitle: question.chapterTitle?.trim() ? question.chapterTitle : null,
+          correctIndex: question.correctIndex,
+          explanation: question.explanation ?? null,
+          reference: question.reference ?? null,
+          selectedIndex: answer?.selectedIndex ?? null,
+          correct: Boolean(answer?.correct),
+          marksAwarded: answer?.marksAwarded ?? 0,
+        };
+      })
+    : [];
+
+  // Counts always come from the stored answer sheet: a padded null is an
+  // unanswered question, never a wrong answer and never an answer at all.
+  const summary = summarizeAnswers({
+    status,
+    answers: scored.answers,
+    questionIds: questions.map((question) => question.id),
   });
 
   return {
@@ -240,15 +272,19 @@ function buildResult(
     resultMode: isSupportedResultMode(attempt.resultMode)
       ? attempt.resultMode
       : DEFAULT_RESULT_MODE,
-    score: scored.score,
-    totalMarks: scored.totalMarks,
-    percentage: scored.percentage,
-    passed: scored.passed,
+    score: graded ? scored.score : 0,
+    totalMarks: graded ? scored.totalMarks : 0,
+    percentage: graded ? scored.percentage : 0,
+    passed: graded ? scored.passed : false,
     passScore: course.passScore,
-    correctCount: scored.correctCount,
-    totalQuestions: scored.totalQuestions,
+    correctCount: summary.correctCount,
+    incorrectCount: summary.incorrectCount,
+    unansweredCount: summary.unansweredCount,
+    answeredCount: summary.answeredCount,
+    totalQuestions: summary.totalQuestions,
     terminationReason: attempt.terminationReason,
-    hasReview: true,
+    hasResult: graded,
+    hasReview: graded && reviewQuestions.length > 0,
     questions: reviewQuestions,
   };
 }
@@ -278,20 +314,66 @@ export type StartOptions = {
 };
 
 /**
- * Removes every open draft for a course. Quizmi, like Lumio, never resumes an
- * unfinished quiz, so an open draft is disposable state rather than a record:
- * completed attempts and their results are untouched.
+ * Closes an attempt the learner walked away from without deleting its record.
+ *
+ * History used to lose these entirely (the draft row was deleted) or convert
+ * them into a 0/20 "expired" result. Neither is honest: the attempt was
+ * opened, so it stays in the record as `not_submitted`, with its saved answers
+ * intact and no score of any kind.
  */
-export async function discardOpenAttempts(userId: number, courseId: number): Promise<void> {
-  await db
-    .delete(attemptsTable)
+export async function abandonOpenAttempts(userId: number, courseId: number): Promise<number> {
+  const rows = await db
+    .update(attemptsTable)
+    .set({
+      status: "not_submitted",
+      submittedAt: null,
+      score: 0,
+      totalMarks: 0,
+      percentage: 0,
+      passed: false,
+      timeTakenSeconds: null,
+    })
     .where(
       and(
         eq(attemptsTable.userId, userId),
         eq(attemptsTable.courseId, courseId),
         eq(attemptsTable.status, "in_progress")
       )
-    );
+    )
+    .returning({ id: attemptsTable.id });
+  return rows.length;
+}
+
+/**
+ * Closes every timed-out attempt for a learner.
+ *
+ * Expiry is otherwise lazy (an attempt is only closed when it is opened), so a
+ * history or analytics request could list an attempt as "in progress" long
+ * after its timer ran out. Sweeping first keeps every read consistent.
+ */
+export async function closeExpiredAttempts(userId: number): Promise<number> {
+  const now = new Date().toISOString();
+  const stale = await db
+    .select()
+    .from(attemptsTable)
+    .where(
+      and(
+        eq(attemptsTable.userId, userId),
+        eq(attemptsTable.status, "in_progress"),
+        isNotNull(attemptsTable.expiresAt),
+        lte(attemptsTable.expiresAt, now)
+      )
+    )
+    .limit(50);
+
+  let closed = 0;
+  for (const attempt of stale) {
+    const course = await getCourseById(attempt.courseId);
+    if (!course) continue;
+    await finalizeAttempt(attempt, course);
+    closed += 1;
+  }
+  return closed;
 }
 
 /**
@@ -320,7 +402,8 @@ export async function startAttemptForUser(
   }
 
   // An expired draft is scored first so a timed-out attempt is still recorded;
-  // a live draft is simply discarded, because it can no longer be resumed.
+  // a live draft is abandoned (not deleted) so it stays visible in history as
+  // "Not submitted" without ever producing a score.
   const open = await db.query.attemptsTable.findFirst({
     where: and(
       eq(attemptsTable.userId, user.id),
@@ -330,10 +413,13 @@ export async function startAttemptForUser(
     orderBy: desc(attemptsTable.id),
   });
 
-  if (open && attemptIsExpired(open.expiresAt)) {
-    await finalizeAttempt(open, course);
+  if (open) {
+    if (attemptIsExpired(open.expiresAt)) {
+      await finalizeAttempt(open, course);
+    } else {
+      await abandonOpenAttempts(user.id, course.id);
+    }
   }
-  await discardOpenAttempts(user.id, course.id);
 
   const [{ count }] = await db
     .select({ count: sql<number>`count(*)` })
@@ -429,10 +515,18 @@ export async function startAttemptForUser(
     };
   }
 
+  // The attempt limit counts graded attempts only. Abandoned drafts stay in
+  // history but never consume one of the learner's paid attempts.
   const [{ used }] = await db
     .select({ used: sql<number>`count(*)` })
     .from(attemptsTable)
-    .where(and(eq(attemptsTable.userId, user.id), eq(attemptsTable.courseId, course.id)));
+    .where(
+      and(
+        eq(attemptsTable.userId, user.id),
+        eq(attemptsTable.courseId, course.id),
+        inArray(attemptsTable.status, [...GRADED_ATTEMPT_STATUSES])
+      )
+    );
 
   const maxAttempts = course.maxAttempts && course.maxAttempts > 0 ? course.maxAttempts : null;
   if (maxAttempts !== null && Number(used) >= maxAttempts) {
@@ -467,9 +561,9 @@ export async function startAttemptForUser(
       .returning();
   } catch (error) {
     // The partial unique index allows one open attempt per course. If a
-    // concurrent request won the race, clear it and take the slot ourselves so
+    // concurrent request won the race, close it and take the slot ourselves so
     // the learner still gets a brand-new attempt instead of a resumed one.
-    await discardOpenAttempts(user.id, course.id);
+    await abandonOpenAttempts(user.id, course.id);
     try {
       [attempt] = await db
         .insert(attemptsTable)
@@ -672,7 +766,16 @@ export async function finalizeAttempt(
   }
 
   const questions = await loadAttemptQuestions(attempt);
-  const submittedAnswers = answersForAttempt(attempt, submitted ?? inputFor(attempt));
+  const storedAnswers = inputFor(attempt);
+
+  // A submit payload is only trusted when it actually contains answers. An
+  // empty or malformed body (a retried request, a proxy that dropped the body)
+  // falls back to the saved draft instead of silently wiping a full answer
+  // sheet — otherwise one bad request would turn a completed quiz into 0/20.
+  const submittedAnswers = answersForAttempt(
+    attempt,
+    submitted && submitted.length > 0 ? submitted : storedAnswers
+  );
 
   // Instant Results answers were graded when each one was submitted. Those
   // stored answers are authoritative at scoring time, so a modified client
@@ -686,7 +789,7 @@ export async function finalizeAttempt(
   if (instantMode) {
     // Only answers the server graded when they were submitted can score.
     const finalAnswers = new Map<number, AnswerInput>();
-    for (const answer of inputFor(attempt)) finalAnswers.set(answer.questionId, answer);
+    for (const answer of storedAnswers) finalAnswers.set(answer.questionId, answer);
     answers = Array.from(finalAnswers.values());
   }
 
@@ -699,22 +802,33 @@ export async function finalizeAttempt(
     answers,
     course.passScore
   );
+  const answeredCount = scored.answers.filter(
+    (answer) => answer.selectedIndex !== null
+  ).length;
 
   const expired = attemptIsExpired(attempt.expiresAt);
-  const status: AttemptResult["status"] = expired ? "expired" : "submitted";
   const submittedAt = expired && attempt.expiresAt ? attempt.expiresAt : new Date().toISOString();
+
+  // An attempt that closes without a single recorded answer has no result. A
+  // manual submit with unanswered questions is still a submission and is
+  // scored normally; only an empty auto-close falls through to
+  // `not_submitted`.
+  const status: AttemptResult["status"] =
+    answeredCount === 0 && expired ? "not_submitted" : expired ? "expired" : "submitted";
+  const graded = isGradedStatus(status);
+  const finalAnswers = graded ? scored.answers : [];
 
   const [finished] = await db
     .update(attemptsTable)
     .set({
       status,
-      submittedAt,
-      score: scored.score,
-      totalMarks: scored.totalMarks,
-      percentage: scored.percentage,
-      passed: scored.passed,
-      answers: scored.answers,
-      timeTakenSeconds: timeTakenSeconds(attempt.startedAt, submittedAt),
+      submittedAt: graded ? submittedAt : null,
+      score: graded ? scored.score : 0,
+      totalMarks: graded ? scored.totalMarks : 0,
+      percentage: graded ? scored.percentage : 0,
+      passed: graded ? scored.passed : false,
+      answers: finalAnswers,
+      timeTakenSeconds: graded ? timeTakenSeconds(attempt.startedAt, submittedAt) : null,
     })
     .where(and(eq(attemptsTable.id, attempt.id), eq(attemptsTable.status, "in_progress")))
     .returning();
@@ -724,7 +838,7 @@ export async function finalizeAttempt(
     return buildResultFromStored((await getAttemptById(attempt.id)) ?? attempt, course);
   }
 
-  return buildResult(finished, course, questions, scored, status, submittedAt);
+  return buildResult(finished, course, questions, scored, status, graded ? submittedAt : null);
 }
 
 /** Ends an attempt under the departure policy, scoring the last saved draft. */
@@ -745,20 +859,28 @@ export async function terminateAttempt(
     answersForAttempt(attempt, inputFor(attempt)),
     course.passScore
   );
+  const answeredCount = scored.answers.filter(
+    (answer) => answer.selectedIndex !== null
+  ).length;
+  // Closing an attempt that never recorded an answer must not create a 0/20
+  // result, whatever ended it (the departure policy included).
+  const status: AttemptResult["status"] =
+    answeredCount === 0 ? "not_submitted" : "terminated";
+  const graded = isGradedStatus(status);
   const submittedAt = new Date().toISOString();
 
   const [finished] = await db
     .update(attemptsTable)
     .set({
-      status: "terminated",
+      status,
       terminationReason: reason,
-      submittedAt,
-      score: scored.score,
-      totalMarks: scored.totalMarks,
-      percentage: scored.percentage,
-      passed: scored.passed,
-      answers: scored.answers,
-      timeTakenSeconds: timeTakenSeconds(attempt.startedAt, submittedAt),
+      submittedAt: graded ? submittedAt : null,
+      score: graded ? scored.score : 0,
+      totalMarks: graded ? scored.totalMarks : 0,
+      percentage: graded ? scored.percentage : 0,
+      passed: graded ? scored.passed : false,
+      answers: graded ? scored.answers : [],
+      timeTakenSeconds: graded ? timeTakenSeconds(attempt.startedAt, submittedAt) : null,
     })
     .where(and(eq(attemptsTable.id, attempt.id), eq(attemptsTable.status, "in_progress")))
     .returning();
@@ -767,7 +889,7 @@ export async function terminateAttempt(
     return buildResultFromStored((await getAttemptById(attempt.id)) ?? attempt, course);
   }
 
-  return buildResult(finished, course, questions, scored, "terminated", submittedAt);
+  return buildResult(finished, course, questions, scored, status, graded ? submittedAt : null);
 }
 
 export type DepartureResult = {
@@ -896,37 +1018,6 @@ export async function buildResultFromStored(
 ): Promise<AttemptResult> {
   const storedAnswers = Array.isArray(attempt.answers) ? attempt.answers : [];
   const status = resultStatus(attempt);
-
-  if (storedAnswers.length === 0) {
-    return {
-      id: attempt.id,
-      courseId: course.id,
-      courseSlug: course.slug,
-      courseTitle: course.title,
-      subject: course.subject,
-      status,
-      startedAt: attempt.startedAt,
-      submittedAt: attempt.submittedAt ?? attempt.startedAt,
-      timeTakenSeconds:
-        attempt.timeTakenSeconds ?? timeTakenSeconds(attempt.startedAt, attempt.submittedAt),
-      durationMinutes: attempt.durationMinutes ?? null,
-      chapterNumber: attempt.chapterNumber ?? null,
-      resultMode: isSupportedResultMode(attempt.resultMode)
-        ? attempt.resultMode
-        : DEFAULT_RESULT_MODE,
-      score: attempt.score,
-      totalMarks: attempt.totalMarks,
-      percentage: attempt.percentage,
-      passed: Boolean(attempt.passed),
-      passScore: course.passScore,
-      correctCount: 0,
-      totalQuestions: 0,
-      terminationReason: attempt.terminationReason,
-      hasReview: false,
-      questions: [],
-    };
-  }
-
   const questions = await loadAttemptQuestions(attempt);
 
   // Closed attempts already store the scored answer set. Reuse it so editing a
@@ -941,12 +1032,29 @@ export async function buildResultFromStored(
     answers: storedAnswers,
   };
 
-  return buildResult(
+  const result = buildResult(
     attempt,
     course,
     questions,
     scored,
     status,
-    attempt.submittedAt ?? attempt.startedAt
+    attempt.submittedAt
   );
+
+  // Older attempts stored only an aggregate score. They keep their recorded
+  // result, but there is no answer sheet to review and no per-question counts
+  // to invent — the page shows the score alone instead of 0 correct answers.
+  if (storedAnswers.length === 0) {
+    return {
+      ...result,
+      correctCount: 0,
+      incorrectCount: 0,
+      answeredCount: 0,
+      unansweredCount: 0,
+      totalQuestions: 0,
+      hasReview: false,
+    };
+  }
+
+  return result;
 }

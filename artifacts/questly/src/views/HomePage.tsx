@@ -1,24 +1,21 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
   BookOpen,
-  CheckCircle2,
   Clock,
   ListChecks,
   Search,
   ShieldCheck,
-  Sparkles,
   Target,
   X,
 } from "lucide-react";
 
-import BackgroundOrbs from "@/components/BackgroundOrbs";
+import AnswerSheetStage from "@/components/AnswerSheetStage";
 import Logo from "@/components/Brand";
 import CourseCard from "@/components/CourseCard";
 import { Reveal, ease } from "@/components/Motion";
@@ -67,6 +64,7 @@ export default function HomePage({ initialCourses, initialSubjects, initialError
   const abortRef = useRef<AbortController | null>(null);
   const skippedInitialFetch = useRef(false);
   const resultsRef = useRef<HTMLDivElement | null>(null);
+  const searchRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setDebounced(search.trim()), 280);
@@ -118,6 +116,11 @@ export default function HomePage({ initialCourses, initialSubjects, initialError
 
   const isFiltering = debounced.length > 0 || subject !== "all";
 
+  const totalQuestions = useMemo(
+    () => courses.reduce((total, course) => total + (course.questionCount || 0), 0),
+    [courses]
+  );
+
   const scrollToCourses = () => {
     resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
@@ -131,140 +134,155 @@ export default function HomePage({ initialCourses, initialSubjects, initialError
   return (
     <div className="overflow-x-clip">
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden paper-dots">
-        <BackgroundOrbs variant="home" />
-        <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-10 px-4 py-12 sm:px-6 md:py-14 lg:grid-cols-2">
-          <div>
-            <motion.span
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ ease }}
-              className="inline-flex items-center gap-2 rounded-full bg-secondary px-3 py-1 text-xs font-semibold"
-            >
-              <Sparkles className="h-3.5 w-3.5 text-accent" />
-              Course-based CBT practice
-            </motion.span>
+      <section className="hero-stage relative overflow-hidden">
+        <div aria-hidden className="hero-grid absolute inset-0" />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -left-28 top-6 h-72 w-72 rounded-full bg-accent/15 blur-3xl"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-20 bottom-0 h-64 w-64 rounded-full bg-primary/10 blur-3xl"
+        />
 
-            <motion.h1
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.08, duration: 0.5, ease }}
-              className="mt-4 text-[2rem] font-semibold leading-[1.08] sm:text-4xl lg:text-[2.75rem]"
-            >
-              Practise like it&apos;s
-              <br />
-              <span className="relative">
-                the real thing.
-                <svg
-                  className="absolute -bottom-2 left-0 w-full"
-                  viewBox="0 0 300 12"
-                  preserveAspectRatio="none"
-                  aria-hidden
+        <div className="relative z-10 mx-auto max-w-6xl px-4 pb-14 pt-10 sm:px-6 sm:pt-14 lg:pb-20">
+          <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1.04fr)_minmax(0,0.96fr)] lg:gap-14">
+            <div className="min-w-0">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ ease }}
+                className="flex items-center gap-3"
+              >
+                <span aria-hidden className="h-px w-8 bg-accent" />
+                <span className="eyebrow">Course-based CBT practice</span>
+              </motion.div>
+
+              <motion.h1
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.06, duration: 0.55, ease }}
+                className="mt-4 text-display-xl text-foreground"
+              >
+                Sit the paper
+                <span className="mt-1.5 block font-serif text-[0.58em] font-normal italic leading-tight text-muted-foreground">
+                  before it counts.
+                </span>
+              </motion.h1>
+
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.14, duration: 0.5, ease }}
+                className="lede mt-5 max-w-[31rem]"
+              >
+                Real questions from your course, a clock you set, and a marked paper the moment you
+                finish. QUIZMI is the practice hall between your notes and exam day.
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2, duration: 0.5, ease }}
+                className="mt-7 flex flex-col gap-3 sm:flex-row"
+              >
+                <Button
+                  className="h-12 px-6 text-[15px]"
+                  onClick={() => {
+                    searchRef.current?.focus();
+                    searchRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+                  }}
                 >
-                  <motion.path
-                    d="M2 9 C 80 2, 200 2, 298 7"
-                    stroke="hsl(var(--accent))"
-                    strokeWidth="5"
-                    fill="none"
-                    strokeLinecap="round"
-                    initial={{ pathLength: 0 }}
-                    animate={{ pathLength: 1 }}
-                    transition={{ delay: 0.6, duration: 0.8 }}
-                  />
-                </svg>
-              </span>
-            </motion.h1>
+                  Find your course
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+                <Button asChild variant="outline" className="h-12 px-6 text-[15px]">
+                  <Link href="/courses">Browse the catalogue</Link>
+                </Button>
+              </motion.div>
 
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.16, duration: 0.5, ease }}
-              className="mt-5 max-w-md text-[15px] leading-relaxed text-muted-foreground"
-            >
-              Real course questions, real timing, real feedback. Choose a course, set the conditions
-              for this attempt, and walk into the exam having already done the work.
-            </motion.p>
+              {/* The search sits on a hall-ticket slip rather than a floating bar. */}
+              <motion.form
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.26, duration: 0.5, ease }}
+                role="search"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  setDebounced(search.trim());
+                  scrollToCourses();
+                }}
+                className="exam-slip mt-8 max-w-[33rem]"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <label htmlFor="course-search" className="eyebrow">
+                    Course name or code
+                  </label>
+                  <span className="rounded-full bg-secondary px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-secondary-foreground">
+                    Search
+                  </span>
+                </div>
+                <div className="mt-2.5 flex flex-col gap-2 sm:flex-row">
+                  <div className="relative flex-1">
+                    <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <input
+                      id="course-search"
+                      ref={searchRef}
+                      value={search}
+                      onChange={(event) => setSearch(event.target.value)}
+                      aria-label="Search courses by name or code"
+                      placeholder="e.g. DECN 101 or Economics"
+                      className="h-11 w-full rounded-[var(--radius)] border border-input bg-background/70 pl-10 pr-9 text-sm shadow-[inset_0_1px_2px_hsl(258_45%_12%/0.05)] outline-none transition-colors placeholder:text-muted-foreground focus:border-accent focus:bg-background"
+                    />
+                    {search && (
+                      <button
+                        type="button"
+                        onClick={() => setSearch("")}
+                        aria-label="Clear search"
+                        className="absolute right-2.5 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground hover:bg-muted"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                  <Button type="submit" className="h-11 px-5">
+                    Search
+                  </Button>
+                </div>
+              </motion.form>
 
-            <motion.form
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.24, duration: 0.5, ease }}
-              role="search"
-              onSubmit={(event) => {
-                event.preventDefault();
-                setDebounced(search.trim());
-                scrollToCourses();
-              }}
-              className="mt-7 flex max-w-lg flex-col gap-2 sm:flex-row"
-            >
-              <div className="relative flex-1">
-                <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <input
-                  value={search}
-                  onChange={(event) => setSearch(event.target.value)}
-                  aria-label="Search courses by name or code"
-                  placeholder="Course name or code, e.g. GST 112"
-                  className="h-12 w-full rounded-[5px] border border-input bg-card pl-10 pr-9 text-sm shadow-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-accent"
-                />
-                {search && (
-                  <button
-                    type="button"
-                    onClick={() => setSearch("")}
-                    aria-label="Clear search"
-                    className="absolute right-2.5 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground hover:bg-muted"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                )}
-              </div>
-              <Button type="submit" className="h-12 px-6">
-                Find a course
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </motion.form>
+              <motion.ul
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.32, duration: 0.5, ease }}
+                className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-muted-foreground"
+              >
+                <li>
+                  <span className="font-semibold text-foreground">{courses.length}</span>{" "}
+                  {courses.length === 1 ? "course" : "courses"} published
+                </li>
+                <li>
+                  <span className="font-semibold text-foreground">
+                    {totalQuestions.toLocaleString()}
+                  </span>{" "}
+                  questions in the bank
+                </li>
+                <li className="hidden sm:list-item">Timed and marked on the server</li>
+              </motion.ul>
+            </div>
 
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3, duration: 0.5, ease }}
-              className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.12, duration: 0.6, ease }}
+              className="relative lg:pl-4"
             >
-              <span className="inline-flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-success" />
-                Choose your question count
-              </span>
-              <span className="inline-flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-success" />
-                Results saved automatically
-              </span>
-              <a href="#how" className="font-semibold text-foreground hover:underline">
-                How it works
-              </a>
+              <AnswerSheetStage />
             </motion.div>
           </div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.1, duration: 0.8, ease }}
-            className="relative"
-          >
-            <div
-              aria-hidden
-              className="absolute -right-6 -top-6 h-40 w-40 rounded-full bg-accent/30 blur-3xl"
-            />
-            <Image
-              src="/hero-mockup.png"
-              alt="QUIZMI open on a phone, showing course discovery"
-              width={1536}
-              height={1024}
-              priority
-              sizes="(max-width: 640px) 92vw, (max-width: 1024px) 620px, 560px"
-              className="relative mx-auto h-auto w-full max-w-[34rem] drop-shadow-[0_32px_60px_rgba(35,25,90,0.18)]"
-            />
-          </motion.div>
         </div>
       </section>
+
 
       {/* ── Course catalogue ─────────────────────────────────────────────── */}
       <section

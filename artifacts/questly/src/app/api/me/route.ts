@@ -1,12 +1,12 @@
 import type { NextRequest } from "next/server";
 import { eq } from "drizzle-orm";
 import { db, usersTable } from "@/lib/db";
-import { getSessionUser } from "@/lib/auth";
-import { apiError, apiOk, readJson } from "@/lib/http";
+import { apiError, apiOk, readJson, requireSessionUser } from "@/lib/http";
 
 export async function GET() {
-  const user = await getSessionUser();
-  if (!user) return apiError("Unauthorized", 401);
+  const session = await requireSessionUser();
+  if (!session.ok) return session.response;
+  const user = session.user;
 
   return apiOk({
     id: user.id,
@@ -18,8 +18,9 @@ export async function GET() {
 }
 
 export async function PATCH(req: NextRequest) {
-  const user = await getSessionUser();
-  if (!user) return apiError("Unauthorized", 401);
+  const session = await requireSessionUser();
+  if (!session.ok) return session.response;
+  const user = session.user;
 
   const body = await readJson<{ name?: string; avatarUrl?: string | null }>(req);
   if (!body) return apiError("Invalid request body");

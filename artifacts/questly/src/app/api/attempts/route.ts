@@ -1,48 +1,18 @@
 import type { NextRequest } from "next/server";
-import { desc, eq } from "drizzle-orm";
-import { db, attemptsTable, coursesTable } from "@/lib/db";
-import { getSessionUser } from "@/lib/auth";
 import { startAttemptForUser } from "@/lib/attempts";
+import { loadAttemptHistory } from "@/lib/stats";
 import { isSupportedDuration, isSupportedResultMode } from "@/lib/course-config";
-import { apiError, apiOk, isNonEmptyString, readJson } from "@/lib/http";
-import type { HistoryItem } from "@/lib/types";
+import { apiError, apiOk, isNonEmptyString, readJson, requireSessionUser } from "@/lib/http";
 
 export async function GET() {
-  const user = await getSessionUser();
-  if (!user) return apiError("Unauthorized", 401);
+  const session = await requireSessionUser();
+  if (!session.ok) return session.response;
+  const user = session.user;
 
   try {
-    const rows = await db
-      .select({
-        attemptId: attemptsTable.id,
-        courseId: attemptsTable.courseId,
-        courseSlug: coursesTable.slug,
-        courseTitle: coursesTable.title,
-        subject: coursesTable.subject,
-        difficulty: coursesTable.difficulty,
-        status: attemptsTable.status,
-        score: attemptsTable.score,
-        totalMarks: attemptsTable.totalMarks,
-        percentage: attemptsTable.percentage,
-        passed: attemptsTable.passed,
-        submittedAt: attemptsTable.submittedAt,
-        timeTakenSeconds: attemptsTable.timeTakenSeconds,
-        terminationReason: attemptsTable.terminationReason,
-      })
-      .from(attemptsTable)
-      .innerJoin(coursesTable, eq(attemptsTable.courseId, coursesTable.id))
-      .where(eq(attemptsTable.userId, user.id))
-      .orderBy(desc(attemptsTable.id))
-      .limit(200);
-
-    const items: HistoryItem[] = rows.map((row) => ({
-      ...row,
-      status: row.status as HistoryItem["status"],
-      difficulty: row.difficulty as HistoryItem["difficulty"],
-      passed: Boolean(row.passed),
-    }));
-
-    return apiOk({ items });
+    // Same loader as analytics and the dashboard: one status model, one set of
+    // counts, one place where expired drafts are closed.
+    return apiOk({ items: await loadAttemptHistory(user.id) });
   } catch (error) {
     console.error("GET /api/attempts failed", error);
     return apiError("Could not load your attempt history", 500);
@@ -50,8 +20,9 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const user = await getSessionUser();
-  if (!user) return apiError("Sign in to start an assessment", 401);
+  const session = await requireSessionUser();
+  if (!session.ok) return session.response;
+  const user = session.user;
 
   const body = await readJson<{
     slug?: string;

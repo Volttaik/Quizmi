@@ -1,9 +1,48 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { resolveSession, type SessionUser } from "@/lib/auth";
 
 /** Small helper so route handlers can bail out with a consistent error shape. */
 export function apiError(message: string, status = 400) {
   return NextResponse.json({ error: message }, { status });
+}
+
+/**
+ * Machine-readable auth failures.
+ *
+ * `unauthenticated`  → there is no usable session; the learner must sign in.
+ * `session_unavailable` → we could not verify the session right now. The client
+ *   must retry instead of treating this as a sign-out.
+ */
+export type AuthFailure = { ok: false; response: NextResponse };
+export type AuthSuccess = { ok: true; user: SessionUser };
+
+export function unauthenticated(message = "Sign in to continue"): NextResponse {
+  return NextResponse.json({ error: message, code: "unauthenticated" }, { status: 401 });
+}
+
+export function sessionUnavailable(): NextResponse {
+  return NextResponse.json(
+    {
+      error: "We couldn't confirm your session just now. Your progress is safe — try again.",
+      code: "session_unavailable",
+    },
+    { status: 503 }
+  );
+}
+
+/**
+ * Resolves the caller for a protected route. Returns the user, or the response
+ * the route should send back. Temporary verification failures are 503 (retry),
+ * never 401 (sign out).
+ */
+export async function requireSessionUser(
+  message?: string
+): Promise<AuthSuccess | AuthFailure> {
+  const session = await resolveSession();
+  if (session.status === "ok") return { ok: true, user: session.user };
+  if (session.status === "unavailable") return { ok: false, response: sessionUnavailable() };
+  return { ok: false, response: unauthenticated(message) };
 }
 
 export function apiOk<T>(data: T, status = 200) {
