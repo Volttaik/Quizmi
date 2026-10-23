@@ -11,6 +11,9 @@ const isPublicRoute = createRouteMatcher([
   "/manifest.json",
   "/robots.txt",
   "/api/courses(.*)",
+  "/demo",
+  "/api/demo(.*)",
+  "/api/courses(.*)",
   "/api/payments/callback(.*)",
   "/api/payments/webhook(.*)",
 ]);

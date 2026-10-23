@@ -7,7 +7,8 @@
     "hello": "tsx ./src/hello.ts",
     "db:migrate": "tsx ./src/migrate.ts",
     "db:verify": "tsx ./src/verify-db.ts",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "demo-course": "tsx ./src/demo-course.ts"
   },
   "dependencies": {
     "@libsql/client": "^0.14.0",

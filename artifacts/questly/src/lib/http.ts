@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 /** Small helper so route handlers can bail out with a consistent error shape. */
@@ -32,3 +33,12 @@ export function parseId(value: string | undefined): number | null {
   const id = Number.parseInt(value, 10);
   return Number.isFinite(id) && id > 0 ? id : null;
 }
+
+/**
+ * Creates a new cookie instance for the current request context.
+ *
+ * Next.js route handlers that call `cookies()` at the top of a function are
+ * bound to the request; helpers that need to read/write cookies should call
+ * this once and pass the store in rather than calling `cookies()` again.
+ */
+export { cookies };
