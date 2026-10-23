@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 
 import BackgroundOrbs from "@/components/BackgroundOrbs";
-import { QuizmiLoader } from "@/components/Brand";
+import { BrandLoader } from "@/components/Brand";
 import Graffiti from "@/components/Graffiti";
 import { ease } from "@/components/Motion";
 import { Button } from "@/components/ui/button";
@@ -722,7 +722,7 @@ export default function ExamPage() {
 
   /* ── Loading / terminal states ────────────────────────────────────────── */
   if (loading) {
-    return <QuizmiLoader message="Setting up your quiz…" />;
+    return <BrandLoader message="Setting up your quiz…" />;
   }
 
   if (terminated && attempt) {
@@ -887,7 +887,7 @@ export default function ExamPage() {
             variant="outline"
             size="sm"
             onClick={() => goTo(current - 1)}
-            disabled={isInstant || isFirstQuestion || submittingAttempt}
+            disabled={isFirstQuestion || submittingAttempt}
             className="h-9 bg-card px-3 shadow-sm sm:px-4"
           >
             <ArrowLeft className="mr-1.5 h-4 w-4" />
@@ -1033,7 +1033,7 @@ export default function ExamPage() {
                       initial={{ opacity: 0, y: 6 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.2, delay: index * 0.04, ease }}
-                      className={`flex w-full items-center gap-3 rounded-full border-2 bg-card px-4 py-3 text-left transition-colors sm:gap-4 sm:py-3.5 ${
+                      className={`flex w-full items-center gap-3 rounded-[10px] border-2 bg-card px-4 py-3 text-left transition-colors sm:gap-4 sm:py-3.5 ${
                         right
                           ? "border-success bg-success/10"
                           : wrongSel
