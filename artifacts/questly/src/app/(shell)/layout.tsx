@@ -13,7 +13,10 @@ import { RouteTransition } from "@/components/Motion";
  */
 export default function ShellLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    // 100dvh (not 100vh): mobile browsers resize the viewport when the URL
+    // bar hides/shows as the page bottom is reached, and a 100vh reserve
+    // creates the over-scroll that made the bottom bar appear to drift.
+    <div className="flex min-h-dvh flex-col bg-background">
       <SiteHeader />
       <div className="flex-1 pb-[calc(var(--bottom-nav-h)+var(--safe-bottom)+0.5rem)] md:pb-0">
         <RouteTransition>{children}</RouteTransition>

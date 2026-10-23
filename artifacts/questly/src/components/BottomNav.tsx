@@ -9,10 +9,13 @@ import { Bookmark, BookOpen, Clock, House, UserRound } from "lucide-react";
  * Mobile navigation.
  *
  * Lumio keeps its only navigation in a single, full-width bar anchored to the
- * viewport edge (`sticky top-0` with a hairline border). The mobile tab bar
- * copies that construction at the bottom: `fixed inset-x-0 bottom-0`, full
- * width, solid background, one hairline border, and no transforms, margins or
- * height changes of its own — so scrolling content can never make it drift.
+ * viewport edge. The mobile tab bar copies that construction at the bottom,
+ * and is `sticky bottom-0` rather than `fixed`: it sits in flow as the last
+ * child of the shell's flex column and pins itself to the viewport bottom
+ * while scrolling. Sticky anchoring is re-applied by the browser on every
+ * scroll frame, so unlike a fixed bar it never lags or drifts when the mobile
+ * viewport resizes (URL bar hide/show) as the page bottom is reached — the
+ * glitch reported on the dashboard's long scroll.
  *
  * Safe-area padding lives on an inner wrapper and the shell reserves exactly
  * the same height, so the bar can never cover a button or an answer option.
@@ -36,7 +39,7 @@ export default function BottomNav() {
   return (
     <nav
       aria-label="Primary mobile navigation"
-      className="fixed inset-x-0 bottom-0 z-50 border-t border-border/60 bg-background md:hidden"
+      className="sticky bottom-0 z-50 border-t border-border/60 bg-background md:hidden"
       style={{ paddingBottom: "var(--safe-bottom)" }}
     >
       <div className="mx-auto flex h-[4.5rem] max-w-md items-center justify-around px-2">
