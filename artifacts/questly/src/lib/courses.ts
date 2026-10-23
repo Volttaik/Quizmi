@@ -8,6 +8,7 @@ import {
   type Course,
 } from "@/lib/db";
 import { attemptsRemaining } from "@/lib/scoring";
+import { GRADED_ATTEMPT_STATUSES, isGradedStatus } from "@/lib/attempt-status";
 import { paystackConfigured } from "@/lib/paystack";
 import type { CourseChapter, CourseDetail, CourseSummary, Difficulty } from "@/lib/types";
 
@@ -66,7 +67,10 @@ async function loadAttemptStats(
     .orderBy(desc(attemptsTable.id));
 
   for (const row of rows) {
-    if (row.status === "in_progress") continue;
+    // Only graded attempts consume a try and produce a score. Drafts and
+    // abandoned attempts stay in the learner's history without polluting the
+    // course's attempt count or best/last percentages.
+    if (!isGradedStatus(row.status)) continue;
 
     const current = stats.get(row.courseId) ?? { used: 0, best: null, last: null };
     current.used += 1;
@@ -274,7 +278,7 @@ export async function buildCourseDetail(
       .where(
         and(
           eq(attemptsTable.courseId, course.id),
-          inArray(attemptsTable.status, ["submitted", "expired", "terminated"])
+          inArray(attemptsTable.status, [...GRADED_ATTEMPT_STATUSES])
         )
       ),
     userId ? isCoursePurchased(userId, course.id) : Promise.resolve(false),

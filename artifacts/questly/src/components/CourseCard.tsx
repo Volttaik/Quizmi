@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight, BookOpen, CheckCircle2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import ShareCourseButton from "@/components/ShareCourseButton";
 import type { CourseSummary } from "@/lib/types";
 
 /** Coverless courses fall back to Quizmi's violet range, never another brand's. */
@@ -31,31 +32,39 @@ export default function CourseCard({ course }: { course: CourseSummary }) {
   const action = unlocked ? "Practise" : course.isFree ? "Start free" : "Preview & unlock";
 
   return (
-    <div className="group dotted-edge flex h-full flex-col overflow-hidden rounded-[5px] bg-card shadow-sm ring-1 ring-border/60 transition-shadow duration-200 hover:shadow-md">
-      <Link
-        href={`/courses/${course.slug}`}
-        className="block shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        aria-label={`${course.title}${course.code ? ` (${course.code})` : ""}`}
-      >
-        {course.coverImageUrl && coverOk ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={course.coverImageUrl}
-            alt={`${course.title} banner`}
-            loading="lazy"
-            onError={() => setCoverOk(false)}
-            className="block aspect-[16/9] w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
-          />
-        ) : (
-          <div
-            aria-hidden
-            className="flex aspect-[16/9] w-full items-center justify-center"
-            style={{ backgroundImage: fallbackFor(course) }}
-          >
-            <BookOpen className="h-10 w-10 text-white/70" />
-          </div>
-        )}
-      </Link>
+    <div className="group dotted-edge flex h-full flex-col overflow-hidden rounded-[var(--radius)] border border-border/70 bg-card shadow-[var(--shadow-sm)] transition-[box-shadow,transform,border-color] duration-200 hover:-translate-y-0.5 hover:border-border hover:shadow-[var(--shadow-md)]">
+      <div className="relative shrink-0 overflow-hidden">
+        <Link
+          href={`/courses/${course.slug}`}
+          className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          aria-label={`${course.title}${course.code ? ` (${course.code})` : ""}`}
+        >
+          {course.coverImageUrl && coverOk ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={course.coverImageUrl}
+              alt={`${course.title} banner`}
+              loading="lazy"
+              onError={() => setCoverOk(false)}
+              className="block aspect-[16/9] w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+            />
+          ) : (
+            <div
+              aria-hidden
+              className="flex aspect-[16/9] w-full items-center justify-center"
+              style={{ backgroundImage: fallbackFor(course) }}
+            >
+              <BookOpen className="h-10 w-10 text-white/70" />
+            </div>
+          )}
+        </Link>
+
+        <ShareCourseButton
+          slug={course.slug}
+          title={course.title}
+          className="absolute right-3 top-3 z-10"
+        />
+      </div>
 
       <div className="flex flex-1 flex-col p-5">
         <div className="flex items-start justify-between gap-3">
@@ -97,17 +106,19 @@ export default function CourseCard({ course }: { course: CourseSummary }) {
           )}
         </div>
 
-        <div className="mt-auto flex items-center justify-between gap-3 pt-5">
-          <span className="text-xs text-muted-foreground">
-            {course.questionCount.toLocaleString()} question{course.questionCount === 1 ? "" : "s"}
-            {course.durationMinutes ? ` · ${course.durationMinutes} min` : " · your timer"}
-          </span>
-          <Button asChild>
-            <Link href={`/courses/${course.slug}`}>
-              {action}
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
+        <div className="mt-auto pt-5">
+          <div className="flex items-center justify-between gap-3 border-t border-border/50 pt-4">
+            <span className="text-xs text-muted-foreground">
+              {course.questionCount.toLocaleString()} question{course.questionCount === 1 ? "" : "s"}
+              {course.durationMinutes ? ` · ${course.durationMinutes} min` : " · your timer"}
+            </span>
+            <Button asChild>
+              <Link href={`/courses/${course.slug}`}>
+                {action}
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
         </div>
       </div>
     </div>

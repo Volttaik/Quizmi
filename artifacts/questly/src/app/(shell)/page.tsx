@@ -1,5 +1,5 @@
 import HomePage from "@/views/HomePage";
-import { getSessionUser } from "@/lib/auth";
+import { getOptionalSessionUser } from "@/lib/auth";
 import { listPublishedCourses, listSubjects } from "@/lib/courses";
 import type { CourseSummary } from "@/lib/types";
 
@@ -12,7 +12,7 @@ export default async function Page() {
   let initialError: string | null = null;
 
   try {
-    const user = await getSessionUser();
+    const user = await getOptionalSessionUser();
     [initialCourses, initialSubjects] = await Promise.all([
       listPublishedCourses({ limit: 12 }, user?.id ?? null),
       listSubjects(),

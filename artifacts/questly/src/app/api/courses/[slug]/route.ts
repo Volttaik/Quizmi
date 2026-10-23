@@ -1,12 +1,12 @@
 import type { NextRequest } from "next/server";
-import { getSessionUser } from "@/lib/auth";
+import { getOptionalSessionUser } from "@/lib/auth";
 import { buildCourseDetail, getCourseBySlug } from "@/lib/courses";
 import { paystackConfigured } from "@/lib/paystack";
 import { apiError, apiOk } from "@/lib/http";
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const user = await getSessionUser();
+  const user = await getOptionalSessionUser();
 
   try {
     const course = await getCourseBySlug(slug);
