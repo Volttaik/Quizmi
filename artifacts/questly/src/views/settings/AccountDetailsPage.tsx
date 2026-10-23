@@ -2,7 +2,6 @@
 import { useUser } from "@clerk/nextjs";
 import { ChevronLeft, User, Mail, Phone, Calendar, Pencil, Check, X, Loader2 } from "lucide-react";
 import Link from "next/link";
-import BottomNav from "@/components/dashboard/BottomNav";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -31,7 +30,7 @@ export default function AccountDetailsPage() {
     setSavingName(true);
     try {
       await user.update({ firstName: newFirstName.trim(), lastName: newLastName.trim() });
-      await fetch("/api/user", {
+      await fetch("/api/me", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: `${newFirstName.trim()} ${newLastName.trim()}`.trim() }),
@@ -124,7 +123,6 @@ export default function AccountDetailsPage() {
           />
         </div>
       </div>
-      <BottomNav />
     </div>
   );
 }

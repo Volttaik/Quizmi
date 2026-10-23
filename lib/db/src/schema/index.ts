@@ -1,42 +1,140 @@
-import { sqliteTable, text, integer, real, uniqueIndex } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, real, uniqueIndex, index } from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
+
+/* ────────────────────────────────────────────────────────────────────────────
+ * Accounts
+ * ──────────────────────────────────────────────────────────────────────────── */
 
 export const usersTable = sqliteTable("users", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   clerkId: text("clerk_id").notNull().unique(),
   name: text("name").notNull().default("Learner"),
   email: text("email").notNull().default(""),
-  credits: integer("credits").notNull().default(20),
-  plan: text("plan").notNull().default("free"),
   avatarUrl: text("avatar_url"),
-  wallpaperUrl: text("wallpaper_url"),
   createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
+  updatedAt: text("updated_at").notNull().default(sql`(datetime('now'))`),
+  /* Deprecated columns from the credits era. Retained so existing rows keep their data. */
+  role: text("role").notNull().default("student"),
+  credits: integer("credits").notNull().default(0),
+  plan: text("plan").notNull().default("free"),
+  wallpaperUrl: text("wallpaper_url"),
 });
 
 export type User = typeof usersTable.$inferSelect;
 export type InsertUser = typeof usersTable.$inferInsert;
 
-export const quizzesTable = sqliteTable("quizzes", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  userId: text("user_id").notNull(),
-  title: text("title").notNull(),
-  topic: text("topic").notNull(),
-  difficulty: text("difficulty").notNull().default("medium"),
-  questions: text("questions", { mode: "json" }).notNull().$type<
-    Array<{ question: string; options: string[]; correct: number; explanation?: string; reference?: string }>
-  >(),
-  questionCount: integer("question_count").notNull().default(0),
-  quizType: text("quiz_type").notNull().default("study"),
-  subjectName: text("subject_name"),
-  description: text("description"),
-  shareSlug: text("share_slug").notNull().unique(),
-  isPublic: integer("is_public", { mode: "boolean" }).notNull().default(true),
-  passKey: text("pass_key"),
-  createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
-});
+/* ────────────────────────────────────────────────────────────────────────────
+ * Quizzes
+ *
+ * Content is written directly to these tables by the quiz ingestion workflow —
+ * there is no in-app authoring surface. A quiz holds any number of questions
+ * (the UI is built for up to 1,000) and its own timing/attempt rules.
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+export const quizzesTable = sqliteTable(
+  "quizzes",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    title: text("title").notNull(),
+    /** Public URL identifier. Stored as `share_slug` for backwards compatibility. */
+    slug: text("share_slug").notNull().unique(),
+    description: text("description").notNull().default(""),
+    subject: text("subject_name"),
+    /** "easy" | "medium" | "hard" */
+    difficulty: text("difficulty").notNull().default("medium"),
+    /** null = untimed. Otherwise the time limit for a full attempt. */
+    durationMinutes: integer("duration_minutes"),
+    /** Percentage required to pass (0-100). */
+    passScore: integer("pass_score").notNull().default(50),
+    /** null = unlimited attempts. */
+    maxAttempts: integer("max_attempts"),
+    shuffleQuestions: integer("shuffle_questions", { mode: "boolean" }).notNull().default(false),
+    /** Restricted quizzes require the access code to start an attempt. */
+    accessCode: text("pass_key"),
+    /** Cached count; kept in sync by the ingestion workflow. */
+    questionCount: integer("question_count").notNull().default(0),
+    /** Published quizzes are listed in the catalogue. Stored as `is_public`. */
+    isPublished: integer("is_public", { mode: "boolean" }).notNull().default(true),
+    createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
+    updatedAt: text("updated_at").notNull().default(sql`(datetime('now'))`),
+    /* Deprecated columns retained for existing rows. */
+    topic: text("topic"),
+    userId: text("user_id"),
+    quizType: text("quiz_type"),
+    questions: text("questions", { mode: "json" }).notNull().default(sql`'[]'`),
+  },
+  (t) => [index("quizzes_published_idx").on(t.isPublished, t.difficulty)]
+);
 
 export type Quiz = typeof quizzesTable.$inferSelect;
 export type InsertQuiz = typeof quizzesTable.$inferInsert;
+
+export const questionsTable = sqliteTable(
+  "questions",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    quizId: integer("quiz_id").notNull(),
+    prompt: text("prompt").notNull(),
+    options: text("options", { mode: "json" }).notNull().$type<string[]>(),
+    correctIndex: integer("correct_index").notNull().default(0),
+    explanation: text("explanation"),
+    reference: text("reference"),
+    imageUrl: text("image_url"),
+    marks: integer("marks").notNull().default(1),
+    orderIndex: integer("order_index").notNull().default(0),
+  },
+  (t) => [index("questions_quiz_idx").on(t.quizId, t.orderIndex)]
+);
+
+export type Question = typeof questionsTable.$inferSelect;
+export type InsertQuestion = typeof questionsTable.$inferInsert;
+
+/* ────────────────────────────────────────────────────────────────────────────
+ * Attempts
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+export type StoredAnswer = {
+  questionId: number;
+  selectedIndex: number | null;
+  correct: boolean;
+  marksAwarded: number;
+};
+
+export const attemptsTable = sqliteTable(
+  "quiz_attempts",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id").notNull(),
+    quizId: integer("quiz_id").notNull(),
+    /** "in_progress" | "submitted" | "expired" */
+    status: text("status").notNull().default("in_progress"),
+    startedAt: text("started_at").notNull().default(sql`(datetime('now'))`),
+    expiresAt: text("expires_at"),
+    /** Submission time. Stored as `completed_at` for backwards compatibility. */
+    submittedAt: text("completed_at"),
+    score: integer("score").notNull().default(0),
+    totalMarks: integer("total").notNull().default(0),
+    percentage: integer("percentage").notNull().default(0),
+    passed: integer("passed", { mode: "boolean" }).notNull().default(false),
+    timeTakenSeconds: integer("time_taken_seconds"),
+    /** Draft answers while the attempt is open, final answers once submitted. */
+    answers: text("answers", { mode: "json" }).notNull().default(sql`'[]'`).$type<StoredAnswer[]>(),
+  },
+  (t) => [
+    index("attempts_user_idx").on(t.userId, t.quizId),
+    index("attempts_status_idx").on(t.userId, t.status),
+  ]
+);
+
+export type Attempt = typeof attemptsTable.$inferSelect;
+export type InsertAttempt = typeof attemptsTable.$inferInsert;
+
+/* ────────────────────────────────────────────────────────────────────────────
+ * Deprecated tables from the old AI/credit product.
+ *
+ * No longer read or written by the application, but still declared so the
+ * schema sync never drops historical data.
+ * ──────────────────────────────────────────────────────────────────────────── */
 
 export const flashcardSetsTable = sqliteTable("flashcard_sets", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -47,9 +145,6 @@ export const flashcardSetsTable = sqliteTable("flashcard_sets", {
   count: integer("count").notNull().default(0),
   createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
 });
-
-export type FlashcardSet = typeof flashcardSetsTable.$inferSelect;
-export type InsertFlashcardSet = typeof flashcardSetsTable.$inferInsert;
 
 export const flashcardReviewsTable = sqliteTable(
   "flashcard_reviews",
@@ -67,9 +162,6 @@ export const flashcardReviewsTable = sqliteTable(
   (t) => [uniqueIndex("flashcard_reviews_user_set_card").on(t.userId, t.setId, t.cardIndex)]
 );
 
-export type FlashcardReview = typeof flashcardReviewsTable.$inferSelect;
-export type InsertFlashcardReview = typeof flashcardReviewsTable.$inferInsert;
-
 export const creditTransactionsTable = sqliteTable("credit_transactions", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   userId: text("user_id").notNull(),
@@ -80,9 +172,6 @@ export const creditTransactionsTable = sqliteTable("credit_transactions", {
   createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
 });
 
-export type CreditTransaction = typeof creditTransactionsTable.$inferSelect;
-export type InsertCreditTransaction = typeof creditTransactionsTable.$inferInsert;
-
 export const chatSessionsTable = sqliteTable("chat_sessions", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   userId: text("user_id").notNull(),
@@ -90,9 +179,6 @@ export const chatSessionsTable = sqliteTable("chat_sessions", {
   createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
   updatedAt: text("updated_at").notNull().default(sql`(datetime('now'))`),
 });
-
-export type ChatSession = typeof chatSessionsTable.$inferSelect;
-export type InsertChatSession = typeof chatSessionsTable.$inferInsert;
 
 export const chatMessagesTable = sqliteTable("chat_messages", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -103,21 +189,6 @@ export const chatMessagesTable = sqliteTable("chat_messages", {
   createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
 });
 
-export type ChatMessage = typeof chatMessagesTable.$inferSelect;
-export type InsertChatMessage = typeof chatMessagesTable.$inferInsert;
-
-export const quizAttemptsTable = sqliteTable("quiz_attempts", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  userId: text("user_id").notNull(),
-  quizId: integer("quiz_id").notNull(),
-  score: integer("score").notNull(),
-  total: integer("total").notNull(),
-  completedAt: text("completed_at").notNull().default(sql`(datetime('now'))`),
-});
-
-export type QuizAttempt = typeof quizAttemptsTable.$inferSelect;
-export type InsertQuizAttempt = typeof quizAttemptsTable.$inferInsert;
-
 export const summariesTable = sqliteTable("summaries", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   userId: text("user_id").notNull(),
@@ -125,9 +196,6 @@ export const summariesTable = sqliteTable("summaries", {
   content: text("content").notNull(),
   createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
 });
-
-export type Summary = typeof summariesTable.$inferSelect;
-export type InsertSummary = typeof summariesTable.$inferInsert;
 
 export const streaksTable = sqliteTable("streaks", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -139,15 +207,9 @@ export const streaksTable = sqliteTable("streaks", {
   updatedAt: text("updated_at").notNull().default(sql`(datetime('now'))`),
 });
 
-export type Streak = typeof streaksTable.$inferSelect;
-export type InsertStreak = typeof streaksTable.$inferInsert;
-
 export const achievementsTable = sqliteTable("achievements", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   userId: text("user_id").notNull(),
   type: text("type").notNull(),
   unlockedAt: text("unlocked_at").notNull().default(sql`(datetime('now'))`),
 });
-
-export type Achievement = typeof achievementsTable.$inferSelect;
-export type InsertAchievement = typeof achievementsTable.$inferInsert;

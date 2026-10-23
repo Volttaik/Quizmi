@@ -1,7 +1,7 @@
 {
-  "name": "Quizmi — Study Reimagined",
+  "name": "Quizmi — Practice Tests & CBT Exams",
   "short_name": "Quizmi",
-  "description": "AI-powered study platform. Generate quizzes, flashcards, and summaries instantly.",
+  "description": "Practice tests and computer-based examinations with timing, instant scoring and full answer reviews.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -23,29 +23,5 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ],
-  "screenshots": [
-    {
-      "src": "/dashboard-screenshot.png",
-      "sizes": "1080x1920",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Quizmi Dashboard"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "Dashboard",
-      "short_name": "Dashboard",
-      "url": "/dashboard",
-      "description": "Go to your study dashboard"
-    },
-    {
-      "name": "Create Quiz",
-      "short_name": "Create",
-      "url": "/create-quiz",
-      "description": "Create a new AI quiz"
-    }
-  ],
-  "prefer_related_applications": false
+  ]
 }

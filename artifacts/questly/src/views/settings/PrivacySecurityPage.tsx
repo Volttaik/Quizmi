@@ -2,7 +2,6 @@
 import { ChevronLeft, Shield, Lock, Eye, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useClerk } from "@clerk/nextjs";
-import BottomNav from "@/components/dashboard/BottomNav";
 
 export default function PrivacySecurityPage() {
   const { openUserProfile } = useClerk();
@@ -57,7 +56,6 @@ export default function PrivacySecurityPage() {
           </p>
         </div>
       </div>
-      <BottomNav />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v1";
+const CACHE_VERSION = "v2";
 const STATIC_CACHE = `quizmi-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `quizmi-dynamic-${CACHE_VERSION}`;
 const OFFLINE_URL = "/offline";
@@ -18,6 +18,14 @@ const NEVER_CACHE = [
   "/sign-in",
   "/sign-up",
   "clerk",
+  // Exam, attempt and account pages must always come from the network.
+  "/dashboard",
+  "/history",
+  "/profile",
+  "/settings",
+  "/exam",
+  "/results",
+  "/quizzes",
 ];
 
 function shouldSkipCache(url) {

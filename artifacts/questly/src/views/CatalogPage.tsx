@@ -1,0 +1,284 @@
+"use client";
+
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Search, SlidersHorizontal, X } from "lucide-react";
+import SiteHeader from "@/components/SiteHeader";
+import QuizCard from "@/components/QuizCard";
+import { Button } from "@/components/ui/button";
+import type { QuizSummary } from "@/lib/types";
+
+const DIFFICULTIES = [
+  { value: "all", label: "All levels" },
+  { value: "easy", label: "Easy" },
+  { value: "medium", label: "Medium" },
+  { value: "hard", label: "Hard" },
+];
+
+const SORTS = [
+  { value: "title", label: "A–Z" },
+  { value: "newest", label: "Newest" },
+  { value: "shortest", label: "Fewest questions" },
+  { value: "popular", label: "Most attempted" },
+];
+
+export default function CatalogPage() {
+  const [quizzes, setQuizzes] = useState<QuizSummary[]>([]);
+  const [subjects, setSubjects] = useState<string[]>([]);
+  const [search, setSearch] = useState("");
+  const [debounced, setDebounced] = useState("");
+  const [subject, setSubject] = useState("all");
+  const [difficulty, setDifficulty] = useState("all");
+  const [sort, setSort] = useState("title");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
+  const abortRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebounced(search.trim()), 250);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  useEffect(() => {
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    const params = new URLSearchParams();
+    if (debounced) params.set("q", debounced);
+    if (subject !== "all") params.set("subject", subject);
+    if (difficulty !== "all") params.set("difficulty", difficulty);
+    params.set("sort", sort);
+
+    setLoading(true);
+    setError(null);
+
+    fetch(`/api/quizzes?${params.toString()}`, { signal: controller.signal })
+      .then(async (response) => {
+        if (!response.ok) throw new Error((await response.json()).error ?? "Request failed");
+        return response.json() as Promise<{ quizzes: QuizSummary[]; subjects: string[] }>;
+      })
+      .then((data) => {
+        setQuizzes(Array.isArray(data.quizzes) ? data.quizzes : []);
+        setSubjects(Array.isArray(data.subjects) ? data.subjects : []);
+      })
+      .catch((err: unknown) => {
+        if (err instanceof DOMException && err.name === "AbortError") return;
+        setError(err instanceof Error ? err.message : "Could not load quizzes");
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
+
+    return () => controller.abort();
+  }, [debounced, subject, difficulty, sort, reloadKey]);
+
+  const activeFilters = useMemo(() => {
+    let count = 0;
+    if (subject !== "all") count += 1;
+    if (difficulty !== "all") count += 1;
+    if (sort !== "title") count += 1;
+    return count;
+  }, [subject, difficulty, sort]);
+
+  const isFiltering = activeFilters > 0 || debounced.length > 0;
+
+  const resetFilters = () => {
+    setSubject("all");
+    setDifficulty("all");
+    setSort("title");
+  };
+
+  return (
+    <div className="min-h-screen bg-background pb-24 md:pb-12">
+      <SiteHeader />
+
+      <main className="mx-auto max-w-6xl px-4 py-8">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
+              Quiz library
+            </h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Practice tests and CBT examinations, ready when you are.
+            </p>
+          </div>
+          {!loading && (
+            <p className="text-xs font-semibold text-muted-foreground">
+              {quizzes.length} {quizzes.length === 1 ? "quiz" : "quizzes"} available
+            </p>
+          )}
+        </div>
+
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="relative flex-1">
+            <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <input
+              type="search"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search by title, subject or description"
+              aria-label="Search quizzes"
+              className="h-11 w-full rounded-xl border border-border/70 bg-card pl-10 pr-10 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-primary/50 focus:ring-2 focus:ring-primary/15"
+            />
+            {search && (
+              <button
+                type="button"
+                onClick={() => setSearch("")}
+                aria-label="Clear search"
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-muted-foreground hover:text-foreground"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setFiltersOpen((open) => !open)}
+              className="h-11 gap-2 rounded-xl border-border px-4 font-semibold sm:hidden"
+              aria-expanded={filtersOpen}
+            >
+              <SlidersHorizontal className="h-4 w-4" />
+              Filters{activeFilters > 0 ? ` (${activeFilters})` : ""}
+            </Button>
+
+            <select
+              value={sort}
+              onChange={(event) => setSort(event.target.value)}
+              aria-label="Sort quizzes"
+              className="hidden h-11 rounded-xl border border-border/70 bg-card px-3 text-sm font-semibold text-foreground outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/15 sm:block"
+            >
+              {SORTS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className={`${filtersOpen ? "block" : "hidden"} mt-3 space-y-3 sm:block`}>
+          <div className="flex flex-wrap items-center gap-2">
+            {DIFFICULTIES.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => setDifficulty(option.value)}
+                aria-pressed={difficulty === option.value}
+                className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
+                  difficulty === option.value
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-border/70 bg-card text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
+
+            {subjects.length > 0 && <span className="mx-1 h-5 w-px bg-border" aria-hidden />}
+
+            {["all", ...subjects].map((option) => (
+              <button
+                key={option}
+                type="button"
+                onClick={() => setSubject(option)}
+                aria-pressed={subject === option}
+                className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
+                  subject === option
+                    ? "border-primary bg-primary/10 text-primary"
+                    : "border-border/70 bg-card text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {option === "all" ? "All subjects" : option}
+              </button>
+            ))}
+
+            {activeFilters > 0 && (
+              <button
+                type="button"
+                onClick={resetFilters}
+                className="text-xs font-semibold text-primary underline-offset-4 hover:underline"
+              >
+                Reset
+              </button>
+            )}
+          </div>
+
+          <div className="sm:hidden">
+            <select
+              value={sort}
+              onChange={(event) => setSort(event.target.value)}
+              aria-label="Sort quizzes"
+              className="h-10 w-full rounded-xl border border-border/70 bg-card px-3 text-sm font-semibold text-foreground"
+            >
+              {SORTS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="mt-8">
+          {error ? (
+            <div className="rounded-2xl border border-destructive/30 bg-destructive/5 p-8 text-center">
+              <p className="text-sm font-semibold text-destructive">{error}</p>
+              <Button
+                variant="outline"
+                size="sm"
+                className="mt-4 rounded-full"
+                onClick={() => setReloadKey((key) => key + 1)}
+              >
+                Try again
+              </Button>
+            </div>
+          ) : loading ? (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <div key={index} className="skeleton h-56 rounded-2xl" />
+              ))}
+            </div>
+          ) : quizzes.length === 0 ? (
+            <div className="rounded-2xl border border-border/70 bg-card p-12 text-center">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-muted">
+                <Search className="h-5 w-5 text-muted-foreground" />
+              </div>
+              <h2 className="text-base font-bold text-foreground">
+                {isFiltering ? "No quizzes match those filters" : "No quizzes published yet"}
+              </h2>
+              <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
+                {isFiltering
+                  ? "Try a different subject or clear your search to see the full library."
+                  : "New practice papers will appear here as soon as they are published."}
+              </p>
+              {isFiltering && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-5 rounded-full"
+                  onClick={() => {
+                    setSearch("");
+                    resetFilters();
+                  }}
+                >
+                  Clear filters
+                </Button>
+              )}
+            </div>
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {quizzes.map((quiz) => (
+                <QuizCard key={quiz.id} quiz={quiz} />
+              ))}
+            </div>
+          )}
+        </div>
+      </main>
+    </div>
+  );
+}

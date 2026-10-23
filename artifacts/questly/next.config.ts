@@ -21,11 +21,9 @@ const nextConfig: NextConfig = {
       "**/@libsql/darwin-x64/**",
       "**/@libsql/darwin-arm64/**",
       "**/@libsql/win32-x64-msvc/**",
-      "**/pdfjs-dist/**",
     ],
   },
   serverExternalPackages: libsqlPackages,
-  transpilePackages: ["pdfjs-dist"],
   eslint: { ignoreDuringBuilds: true },
   webpack: (config, { isServer }) => {
     config.resolve.alias = {

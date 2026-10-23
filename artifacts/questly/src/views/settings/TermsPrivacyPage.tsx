@@ -1,58 +1,97 @@
 "use client";
-import { ChevronLeft } from "lucide-react";
+
 import Link from "next/link";
-import BottomNav from "@/components/dashboard/BottomNav";
+import { ChevronLeft } from "lucide-react";
 
 export default function TermsPrivacyPage() {
   return (
-    <div className="min-h-screen bg-background pb-28">
-      <div className="max-w-lg mx-auto px-4 pt-6">
-        <div className="flex items-center gap-3 mb-6">
-          <Link href="/profile" className="w-9 h-9 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-colors">
-            <ChevronLeft className="w-5 h-5 text-foreground" />
+    <div className="min-h-screen bg-background pb-24 md:pb-12">
+      <div className="mx-auto max-w-2xl px-4 py-6">
+        <div className="mb-6 flex items-center gap-3">
+          <Link
+            href="/profile"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-muted transition-colors hover:bg-muted/80"
+            aria-label="Back to profile"
+          >
+            <ChevronLeft className="h-5 w-5 text-foreground" />
           </Link>
-          <h1 className="text-lg font-extrabold text-foreground">Terms & Privacy</h1>
+          <h1 className="text-lg font-extrabold text-foreground">Terms &amp; privacy</h1>
         </div>
 
         <div className="space-y-4">
-          <Section title="Terms of Service">
-            <p>By using Quizmi, you agree to use the platform for lawful educational purposes only. You are responsible for the content you submit for generation.</p>
-            <p>Quizmi reserves the right to suspend accounts that violate these terms. Credits are non-refundable except where required by law.</p>
+          <Section title="Using Quizmi">
+            <p>
+              Quizmi provides practice tests and computer-based examination simulations for
+              educational use. Quiz content is supplied by Quizmi and is intended for revision and
+              self-assessment.
+            </p>
+            <p>
+              Results are a practice indicator only. We make no guarantee that performance in a
+              Quizmi exam predicts the outcome of any external examination.
+            </p>
           </Section>
 
-          <Section title="Privacy Policy">
-            <p>Quizmi collects your email address and name for authentication purposes only. We do not sell or share your personal data with any third parties.</p>
-            <p>Study content you paste into the generator is used solely to create your learning materials and is not stored beyond your session.</p>
+          <Section title="Accounts">
+            <p>
+              You need an account to take an exam so that your attempt, timer and result can be
+              stored. You are responsible for keeping your login credentials secure and for activity
+              on your account.
+            </p>
+            <p>
+              Accounts used to disrupt the service, attempt to extract answer keys, or automate
+              submissions may be suspended.
+            </p>
           </Section>
 
-          <Section title="Data & Cookies">
-            <p>We use session cookies for authentication and localStorage for your theme preference. No advertising cookies are used.</p>
-            <p>Your quiz history and credit transactions are stored in our secure database and are only accessible to you.</p>
+          <Section title="What we store">
+            <p>
+              We store your name, email address and profile image (managed by our authentication
+              provider), along with your attempts: the answers you selected, your score, timing and
+              submission time.
+            </p>
+            <p>
+              We do not sell your personal data. Attempt data is visible only to you and to
+              authorised service operators for support and integrity checks.
+            </p>
           </Section>
 
-          <Section title="AI-Generated Content">
-            <p>Quizmi uses AI to generate quizzes, flashcards, and summaries. AI-generated content may contain errors. Always verify important information independently.</p>
+          <Section title="Cookies and local storage">
+            <p>
+              Session cookies keep you signed in. Local storage holds your theme preference and your
+              notification preferences on this device. No advertising or tracking cookies are used.
+            </p>
           </Section>
 
-          <div className="text-center text-xs text-muted-foreground pt-2">
-            Last updated: June 2025 · Version 1.0
+          <Section title="Exam integrity">
+            <p>
+              Correct answers are withheld while an attempt is in progress and are revealed in your
+              answer review after submission. Sharing access codes or answer keys for restricted
+              quizzes is not permitted.
+            </p>
+          </Section>
+
+          <div className="pt-2 text-center text-xs text-muted-foreground">
+            Last updated: October 2026 · Version 2.0
           </div>
         </div>
       </div>
-      <BottomNav />
     </div>
   );
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-card rounded-2xl border border-border/40 p-5">
-      <h2 className="text-sm font-extrabold text-foreground mb-3">{title}</h2>
+    <div className="rounded-2xl border border-border/70 bg-card p-5">
+      <h2 className="mb-3 text-sm font-extrabold text-foreground">{title}</h2>
       <div className="space-y-2">
-        {Array.isArray(children) ? children.map((child, i) => (
-          <div key={i} className="text-sm text-muted-foreground leading-relaxed">{child}</div>
-        )) : (
-          <div className="text-sm text-muted-foreground leading-relaxed">{children}</div>
+        {Array.isArray(children) ? (
+          children.map((child, index) => (
+            <p key={index} className="text-sm leading-relaxed text-muted-foreground">
+              {child}
+            </p>
+          ))
+        ) : (
+          <p className="text-sm leading-relaxed text-muted-foreground">{children}</p>
         )}
       </div>
     </div>
