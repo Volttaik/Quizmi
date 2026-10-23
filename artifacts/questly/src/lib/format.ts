@@ -20,7 +20,7 @@ export function formatPrice(priceKobo: number, currency = "NGN"): string {
 }
 
 export function formatTimeTaken(seconds: number | null | undefined): string {
-  if (!seconds || seconds <= 0) return "—";
+  if (!seconds || seconds <= 0) return "0s";
   const mins = Math.floor(seconds / 60);
   const secs = seconds % 60;
   if (mins === 0) return `${secs}s`;

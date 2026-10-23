@@ -16,7 +16,6 @@ export async function GET(req: NextRequest) {
         {
           search: params.get("q") ?? undefined,
           subject: params.get("subject") ?? undefined,
-          difficulty: params.get("difficulty") ?? undefined,
           sort: params.get("sort") ?? undefined,
           limit,
           offset,

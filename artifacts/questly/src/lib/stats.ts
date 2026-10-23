@@ -14,6 +14,7 @@ type CompletedRow = {
   courseTitle: string;
   subject: string | null;
   difficulty: string;
+  status: string;
   score: number;
   totalMarks: number;
   percentage: number;
@@ -35,6 +36,7 @@ export async function loadCompletedAttempts(
       courseTitle: coursesTable.title,
       subject: coursesTable.subject,
       difficulty: coursesTable.difficulty,
+      status: attemptsTable.status,
       score: attemptsTable.score,
       totalMarks: attemptsTable.totalMarks,
       percentage: attemptsTable.percentage,
@@ -120,7 +122,7 @@ function toHistoryItem(row: CompletedRow): HistoryItem {
     courseTitle: row.courseTitle,
     subject: row.subject,
     difficulty: row.difficulty as HistoryItem["difficulty"],
-    status: "submitted",
+    status: row.status as HistoryItem["status"],
     score: row.score,
     totalMarks: row.totalMarks,
     percentage: row.percentage,

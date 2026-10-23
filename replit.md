@@ -108,14 +108,35 @@ SQLite, in-memory or mock fallback.
 
 ## Product notes
 
-- Homepage: split hero with a functional course search, a lightweight rotating
-  cube centrepiece, subject filters, real course cards, and empty/error/loading
-  states — no simulated exams or invented statistics.
+- Homepage: split hero with a functional course search, a transparent product
+  showcase image (served via `next/image`) between the hero copy and the
+  lightweight rotating cube centrepiece, subject filters, real course cards, and
+  empty/error/loading states — no simulated exams or invented statistics.
 - Navigation: the `(shell)` layout keeps one header and one bottom navigation
-  mounted across home, courses, course details, dashboard, history, profile,
-  results and settings. The exam runner keeps its dedicated layout.
+  mounted across home, my-courses, courses, course details, dashboard, history,
+  profile, results and settings. The exam runner keeps its dedicated layout.
+- My Courses (`/my-courses` + `/api/my-courses`): only rows from the verified
+  `purchases` table, with real thumbnails, purchase dates and resume/start
+  shortcuts, plus an Explore Courses empty state.
+- Shareable results: the results screen renders a branded 1080×1080 achievement
+  card on a canvas from the persisted attempt (`src/lib/share-card.ts`), with a
+  QR code to the public course page. Web Share API file sharing is used when
+  available; the fallback sheet offers image download, WhatsApp (message +
+  course link) and copy. The link is an invitation to view/purchase — it never
+  grants access.
+- Instant quiz feedback: the attempt PATCH grades first-time answers on the
+  server (once per question, never re-graded, final score still computed at
+  submission) so the runner can show correct/incorrect feedback, streaks at
+  3/5/7/10 and a dismissable study nudge after ten consecutive wrong answers.
+  All motion respects `prefers-reduced-motion`.
 - Course page: description, price, purchase state, question count, timer choice
-  (10–60 minutes or unlimited) and start/resume.
+  (10–60 minutes or unlimited) and start/resume. Course cards and the detail
+  page show the optional institution course code (e.g. "GST 112") and banner
+  when the ingested row provides them.
+- Discovery: catalogue search matches the stored course name, subject,
+  description and course code (case-insensitive; code matching ignores spaces,
+  so "GST112" finds "GST 112"). There is intentionally no difficulty filter —
+  courses are identified by name and code, not level.
 - Exam runner: question map with pagination, keyboard shortcuts, incremental
   autosave, answer progress, server countdown, submission confirmation and
   termination handling.

@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import { toast } from "sonner";
 import {
   AlertTriangle,
   ArrowLeft,
+  ArrowRight,
   BookOpen,
   CheckCircle2,
   Clock,
@@ -16,6 +18,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import ShareResultButton from "@/views/ShareResultButton";
 import {
   formatDate,
   formatTimeTaken,
@@ -39,6 +42,8 @@ export default function ResultPage() {
   const [inProgress, setInProgress] = useState(false);
   const [filter, setFilter] = useState<Filter>("all");
   const [visible, setVisible] = useState(PAGE_SIZE);
+  const [retaking, setRetaking] = useState(false);
+  const reviewRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!Number.isFinite(id) || id <= 0) {
@@ -86,6 +91,47 @@ export default function ResultPage() {
 
   useEffect(() => setVisible(PAGE_SIZE), [filter]);
 
+  /**
+   * Retake uses the same course, question count and timer as this attempt.
+   * The server creates a new attempt row; the stored result below is never
+   * overwritten, and attempt-limit rules still apply.
+   */
+  const retake = async () => {
+    if (!result || retaking) return;
+    setRetaking(true);
+    try {
+      const response = await fetch("/api/attempts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          slug: result.courseSlug,
+          questionCount: result.totalQuestions > 0 ? result.totalQuestions : undefined,
+          durationMinutes: result.durationMinutes,
+        }),
+      });
+      const data = await response.json().catch(() => null);
+      if (response.status === 401) {
+        router.push(`/sign-in?redirect_url=/results/${result.id}`);
+        return;
+      }
+      if (!response.ok) {
+        toast.error(data?.error ?? "Could not start a new attempt");
+        return;
+      }
+      router.push(`/exam/${data.id}`);
+    } catch {
+      toast.error("Could not start a new attempt. Check your connection and try again.");
+    } finally {
+      setRetaking(false);
+    }
+  };
+
+  const jumpToReview = (target: Filter) => {
+    setFilter(target);
+    setVisible(PAGE_SIZE);
+    reviewRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-24">
@@ -132,7 +178,9 @@ export default function ResultPage() {
   }
 
   const unanswered = result.questions.filter((question) => question.selectedIndex === null).length;
-  const incorrect = result.totalQuestions - result.correctCount;
+  const incorrect = result.questions.filter(
+    (question) => question.selectedIndex !== null && !question.correct
+  ).length;
   const isExpired = result.status === "expired";
   const isTerminated = result.status === "terminated";
 
@@ -239,24 +287,51 @@ export default function ResultPage() {
           </div>
         )}
 
+        {/* Focus area: real, data-backed nudge toward the answers to review */}
+        {result.hasReview && incorrect > 0 && (
+          <button
+            type="button"
+            onClick={() => jumpToReview("incorrect")}
+            className="mt-4 flex w-full items-start gap-3 rounded-2xl border border-amber-500/25 bg-amber-500/5 p-4 text-left transition-colors hover:bg-amber-500/10"
+          >
+            <Target className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-600 dark:text-amber-400" />
+            <span className="flex-1 text-sm leading-relaxed text-amber-800 dark:text-amber-300">
+              <span className="font-bold">Focus area:</span> review your {incorrect} incorrect
+              answer{incorrect === 1 ? "" : "s"} — the explanations are in the answer review below.
+            </span>
+            <ArrowRight className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-600 dark:text-amber-400" />
+          </button>
+        )}
+
         <div className="mt-5 flex flex-col gap-2 sm:flex-row">
+          <ShareResultButton result={result} className="w-full flex-1 rounded-full" />
+          <Button
+            variant="outline"
+            onClick={() => void retake()}
+            disabled={retaking}
+            className="w-full flex-1 rounded-full"
+          >
+            {retaking ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" /> Starting…
+              </>
+            ) : (
+              <>
+                <RotateCcw className="h-4 w-4" /> Retake quiz
+              </>
+            )}
+          </Button>
           <Link href={`/courses/${result.courseSlug}`} className="flex-1">
-            <Button className="w-full rounded-full">
-              <RotateCcw className="h-4 w-4" />
-              Open this course
-            </Button>
-          </Link>
-          <Link href="/courses" className="flex-1">
             <Button variant="outline" className="w-full rounded-full">
               <BookOpen className="h-4 w-4" />
-              Browse courses
+              Open course
             </Button>
           </Link>
         </div>
 
         {/* Review */}
         {result.hasReview && (
-        <section className="mt-8">
+        <section ref={reviewRef} className="mt-8 scroll-mt-20">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-base font-extrabold text-foreground">Answer review</h2>
             <div className="flex items-center gap-1 rounded-full bg-muted p-1">

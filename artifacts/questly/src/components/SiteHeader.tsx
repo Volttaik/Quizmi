@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
-import { LayoutDashboard, Library, History } from "lucide-react";
+import { BookMarked, LayoutDashboard, Library, History } from "lucide-react";
 import { QuizmiWordmark } from "@/components/QuizmiLogo";
 import ThemeToggle from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 
 const LINKS = [
   { href: "/courses", label: "Courses", icon: Library },
+  { href: "/my-courses", label: "My courses", icon: BookMarked, authOnly: true },
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, authOnly: true },
   { href: "/history", label: "History", icon: History, authOnly: true },
 ];

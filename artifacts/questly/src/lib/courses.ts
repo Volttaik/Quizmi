@@ -14,7 +14,6 @@ import type { CourseDetail, CourseSummary, Difficulty } from "@/lib/types";
 export type CourseFilters = {
   search?: string;
   subject?: string;
-  difficulty?: string;
   sort?: string;
   limit?: number;
   offset?: number;
@@ -106,13 +105,15 @@ function toSummary(
   course: Course,
   questions: QuestionStats | undefined,
   attempts: AttemptStats | undefined,
-  purchased: boolean
+  purchased: boolean,
+  purchasedAt: string | null = null
 ): CourseSummary {
   const isFree = course.priceKobo <= 0;
   return {
     id: course.id,
     slug: course.slug,
     title: course.title,
+    code: course.code ?? null,
     description: course.description ?? "",
     subject: course.subject,
     difficulty: course.difficulty as Difficulty,
@@ -132,28 +133,35 @@ function toSummary(
     bestPercentage: attempts?.best ?? null,
     lastPercentage: attempts?.last ?? null,
     inProgressAttemptId: attempts?.inProgressId ?? null,
+    purchasedAt,
   };
 }
 
 function buildConditions(filters: CourseFilters) {
   const conditions = [eq(coursesTable.isPublished, true)];
 
+  // Search matches the stored course name, subject and description, plus the
+  // optional course code. Code matching ignores spaces and case on both sides,
+  // so "GST112", "gst 112" and "GST 112" all find the same course. Everything
+  // reads live rows — nothing is hardcoded client-side.
   const needle = filters.search?.trim();
   if (needle) {
     const pattern = `%${needle}%`;
+    const codeNeedle = needle.replace(/\s+/g, "").toLowerCase();
+    const codeCondition = codeNeedle
+      ? sql`replace(lower(${coursesTable.code}), ' ', '') like ${`%${codeNeedle}%`}`
+      : sql`0`;
     conditions.push(
       or(
         like(coursesTable.title, pattern),
         like(coursesTable.description, pattern),
-        like(coursesTable.subject, pattern)
+        like(coursesTable.subject, pattern),
+        codeCondition
       )!
     );
   }
   if (filters.subject?.trim() && filters.subject !== "all") {
     conditions.push(eq(coursesTable.subject, filters.subject.trim()));
-  }
-  if (filters.difficulty?.trim() && filters.difficulty !== "all") {
-    conditions.push(eq(coursesTable.difficulty, filters.difficulty.trim()));
   }
 
   return conditions;
@@ -286,7 +294,17 @@ export async function listPurchasedCourses(userId: number): Promise<CourseSummar
     loadAttemptStats(userId, ids),
   ]);
 
+  const purchasedAtByCourse = new Map(
+    rows.map((row) => [row.course.id, row.purchasedAt] as const)
+  );
+
   return courses.map((course) =>
-    toSummary(course, questionStats.get(course.id), attemptStats.get(course.id), true)
+    toSummary(
+      course,
+      questionStats.get(course.id),
+      attemptStats.get(course.id),
+      true,
+      purchasedAtByCourse.get(course.id) ?? null
+    )
   );
 }

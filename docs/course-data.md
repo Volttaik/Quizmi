@@ -14,6 +14,9 @@ Schema lives in `lib/db/src/schema/index.ts`; versioned SQL lives in
 | ------------------ | ------- | --------------------------------------------------------------------- |
 | `slug`             | text    | Required, unique. Lowercase letters, digits and hyphens.              |
 | `title`            | text    | Required.                                                             |
+| `code`             | text    | Optional course code as assigned by the institution, e.g. `GST 112`.  |
+|                    |         | Catalogue search matches it case-insensitively and ignores spaces,    |
+|                    |         | so `gst112` finds `GST 112`. NULL = no code; the app hides the chip.   |
 | `description`      | text    | Shown on the course card and course page.                             |
 | `subject`          | text    | Used for filtering and the analytics subject breakdown.               |
 | `difficulty`       | text    | `easy`, `medium` or `hard`.                                           |

@@ -17,6 +17,7 @@ import {
   Loader2,
   Lock,
   PlayCircle,
+  ShieldAlert,
   ShieldCheck,
   ShoppingBag,
   Timer,
@@ -276,6 +277,11 @@ export default function CourseDetailPage() {
         )}
 
         <div className="mt-5 flex flex-wrap items-center gap-2">
+          {course.code && (
+            <span className="rounded-full bg-accent px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-accent-foreground">
+              {course.code}
+            </span>
+          )}
           <span
             className={`rounded-full border px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide ${difficulty.className}`}
           >
@@ -350,6 +356,12 @@ export default function CourseDetailPage() {
                 <li className="flex gap-3">
                   <BookOpen className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
                   You can move between questions freely. Answers save automatically as you go.
+                </li>
+                <li className="flex gap-3">
+                  <ShieldAlert className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-500" />
+                  Staying on the assessment matters: leaving is recorded, and your third departure
+                  ends the attempt — your saved answers are scored and the attempt cannot resume.
+                  (Detection relies on browser signals, so it cannot catch everything.)
                 </li>
                 <li className="flex gap-3">
                   <Trophy className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-500" />

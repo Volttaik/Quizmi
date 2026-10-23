@@ -56,6 +56,11 @@ async function questionsByIds(courseId: number, ids: number[]): Promise<Question
   return ids.map((id) => found.get(id)).filter((row): row is Question => Boolean(row));
 }
 
+/** Loads a subset of a course's questions by id, in chunked batches. */
+export async function loadQuestionsByIds(courseId: number, ids: number[]): Promise<Question[]> {
+  return questionsByIds(courseId, ids);
+}
+
 /**
  * Questions are loaded by the stable id list stored on the attempt, so a
  * refresh shows the same set in the same order and only the chosen subset is
@@ -185,6 +190,7 @@ function buildResult(
     startedAt: attempt.startedAt,
     submittedAt,
     timeTakenSeconds: timeTakenSeconds(attempt.startedAt, submittedAt),
+    durationMinutes: attempt.durationMinutes ?? null,
     score: scored.score,
     totalMarks: scored.totalMarks,
     percentage: scored.percentage,
@@ -374,20 +380,33 @@ export async function loadAttemptState(
 /**
  * Persists only the answers that changed. The server merges into the stored
  * draft so the runner does not resend a 1,000-answer payload on every click.
+ *
+ * First-time answers are graded here so the runner can show immediate feedback
+ * and streaks. Each question is graded exactly once per attempt: an answer the
+ * learner already gave (even if they later cleared it) is never re-graded, so
+ * changing options cannot be used to probe the answer key. The final score is
+ * still computed from the answer key at submission — instant feedback never
+ * decides the result.
  */
 export async function saveDraftAnswers(
   attemptId: number,
   userId: number,
   input: unknown
 ): Promise<
-  | { ok: true; saved: boolean; status: string; secondsRemaining: number | null }
+  | {
+      ok: true;
+      saved: boolean;
+      status: string;
+      secondsRemaining: number | null;
+      graded: Array<{ questionId: number; correct: boolean }>;
+    }
   | { ok: false; status: number; error: string }
 > {
   const attempt = await getAttemptForUser(attemptId, userId);
   if (!attempt) return { ok: false, status: 404, error: "Attempt not found" };
 
   if (attempt.status !== "in_progress") {
-    return { ok: true, saved: false, status: attempt.status, secondsRemaining: 0 };
+    return { ok: true, saved: false, status: attempt.status, secondsRemaining: 0, graded: [] };
   }
 
   const course = await getCourseById(attempt.courseId);
@@ -395,27 +414,71 @@ export async function saveDraftAnswers(
 
   if (attemptIsExpired(attempt.expiresAt)) {
     await finalizeAttempt(attempt, course);
-    return { ok: true, saved: false, status: "expired", secondsRemaining: 0 };
+    return { ok: true, saved: false, status: "expired", secondsRemaining: 0, graded: [] };
   }
 
   const updates = answersForAttempt(attempt, sanitizeAnswerInput(input));
-  const merged = new Map<number, number | null>();
-  for (const answer of Array.isArray(attempt.answers) ? attempt.answers : []) {
-    if (answer.selectedIndex !== null) merged.set(answer.questionId, answer.selectedIndex);
-  }
+  const stored = Array.isArray(attempt.answers) ? attempt.answers : [];
+  const existingById = new Map<number, StoredAnswer>();
+  for (const answer of stored) existingById.set(answer.questionId, answer);
+
+  // Grade only selections for questions in this attempt that have never been
+  // answered before. A cleared answer keeps its stored entry, so re-answering
+  // the same question never produces a second grading round.
+  const freshIds = updates
+    .filter(
+      (answer) =>
+        answer.selectedIndex !== null &&
+        !existingById.has(answer.questionId)
+    )
+    .map((answer) => answer.questionId);
+  const freshQuestions = await questionsByIds(attempt.courseId, freshIds);
+  const questionById = new Map(freshQuestions.map((question) => [question.id, question] as const));
+
+  const merged = new Map<number, StoredAnswer>();
+  for (const answer of stored) merged.set(answer.questionId, { ...answer });
+
+  const graded: Array<{ questionId: number; correct: boolean }> = [];
+  const freshGradedIds = new Set(freshIds);
+
   for (const answer of updates) {
-    if (answer.selectedIndex === null) merged.delete(answer.questionId);
-    else merged.set(answer.questionId, answer.selectedIndex);
+    const previous = merged.get(answer.questionId);
+
+    if (answer.selectedIndex === null) {
+      // Keep graded entries (with their result) even after clearing, so a
+      // cleared answer cannot unlock another grading round.
+      if (previous) merged.set(answer.questionId, { ...previous, selectedIndex: null });
+      continue;
+    }
+
+    if (freshGradedIds.has(answer.questionId)) {
+      const question = questionById.get(answer.questionId);
+      const options = question && Array.isArray(question.options) ? question.options : [];
+      const correctIndex = question?.correctIndex ?? -1;
+      const correct =
+        Number.isInteger(correctIndex) &&
+        correctIndex >= 0 &&
+        correctIndex < options.length &&
+        answer.selectedIndex === correctIndex;
+
+      merged.set(answer.questionId, {
+        questionId: answer.questionId,
+        selectedIndex: answer.selectedIndex,
+        correct,
+        marksAwarded: 0,
+      });
+      graded.push({ questionId: answer.questionId, correct });
+    } else {
+      merged.set(answer.questionId, {
+        questionId: answer.questionId,
+        selectedIndex: answer.selectedIndex,
+        correct: previous?.correct ?? false,
+        marksAwarded: 0,
+      });
+    }
   }
 
-  const answers: StoredAnswer[] = Array.from(merged.entries()).map(
-    ([questionId, selectedIndex]) => ({
-      questionId,
-      selectedIndex,
-      correct: false,
-      marksAwarded: 0,
-    })
-  );
+  const answers: StoredAnswer[] = Array.from(merged.values());
 
   await db
     .update(attemptsTable)
@@ -427,6 +490,7 @@ export async function saveDraftAnswers(
     saved: true,
     status: "in_progress",
     secondsRemaining: secondsRemaining(attempt.expiresAt),
+    graded,
   };
 }
 
@@ -664,6 +728,7 @@ export async function buildResultFromStored(
       submittedAt: attempt.submittedAt ?? attempt.startedAt,
       timeTakenSeconds:
         attempt.timeTakenSeconds ?? timeTakenSeconds(attempt.startedAt, attempt.submittedAt),
+      durationMinutes: attempt.durationMinutes ?? null,
       score: attempt.score,
       totalMarks: attempt.totalMarks,
       percentage: attempt.percentage,

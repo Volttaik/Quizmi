@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import {
@@ -166,8 +167,8 @@ export default function HomePage({
     <div className="bg-background">
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <section className="border-b border-border bg-card">
-        <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-12 sm:py-16 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14 lg:py-20">
-          <div>
+        <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-12 sm:py-16 lg:grid-cols-[1.1fr_0.9fr] lg:gap-x-14 lg:gap-y-8 lg:py-20">
+          <div className="lg:col-start-1 lg:row-start-1">
             <p className="inline-flex items-center gap-2 rounded-full bg-accent px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-accent-foreground">
               <BookOpen className="h-3.5 w-3.5" />
               Welcome to QUIZIMI
@@ -239,8 +240,22 @@ export default function HomePage({
             </p>
           </div>
 
+          {/* Transparent product showcase — no card, border or backdrop so the
+              PNG's own transparency reads on both themes. */}
+          <div className="flex justify-center lg:col-span-2 lg:row-start-2">
+            <Image
+              src="/hero-mockup.png"
+              alt="QUIZIMI open on a mobile phone, showing the course search screen"
+              width={1536}
+              height={1024}
+              priority
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 640px, 672px"
+              className="h-auto w-full max-w-xl sm:max-w-2xl"
+            />
+          </div>
+
           {/* Rotating centrepiece */}
-          <div className="flex justify-center lg:justify-end">
+          <div className="flex justify-center lg:col-start-2 lg:row-start-1 lg:justify-end">
             <div className="w-full max-w-sm overflow-hidden rounded-3xl border border-border bg-muted px-7 py-8 sm:px-9 sm:py-10">
               <p className="text-center text-[10.5px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
                 A calmer way to practise

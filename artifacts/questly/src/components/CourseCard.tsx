@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Check, Clock, HelpCircle, PlayCircle, Sparkles } from "lucide-react";
 import { difficultyStyle, formatPrice } from "@/lib/format";
@@ -5,6 +6,7 @@ import type { CourseSummary } from "@/lib/types";
 
 export default function CourseCard({ course }: { course: CourseSummary }) {
   const difficulty = difficultyStyle(course.difficulty);
+  const [coverOk, setCoverOk] = useState(true);
   const locked = !course.hasAccess;
   const action = course.inProgressAttemptId
     ? "Resume"
@@ -19,7 +21,27 @@ export default function CourseCard({ course }: { course: CourseSummary }) {
       href={`/courses/${course.slug}`}
       className="group flex h-full flex-col rounded-2xl border border-border/70 bg-card p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
     >
+      {course.coverImageUrl && coverOk && (
+        <div className="mb-3.5 overflow-hidden rounded-xl border border-border/60 bg-muted">
+          {/* Course artwork may be hosted on any origin; a failed load drops
+              the banner instead of showing a broken-image glyph. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={course.coverImageUrl}
+            alt=""
+            loading="lazy"
+            onError={() => setCoverOk(false)}
+            className="aspect-[16/7] w-full object-cover"
+          />
+        </div>
+      )}
+
       <div className="mb-3 flex flex-wrap items-center gap-2">
+        {course.code && (
+          <span className="rounded-full bg-accent px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-accent-foreground">
+            {course.code}
+          </span>
+        )}
         <span
           className={`rounded-full border px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide ${difficulty.className}`}
         >

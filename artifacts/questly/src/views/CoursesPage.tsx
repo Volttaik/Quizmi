@@ -6,13 +6,6 @@ import CourseCard from "@/components/CourseCard";
 import { Button } from "@/components/ui/button";
 import type { CourseSummary } from "@/lib/types";
 
-const DIFFICULTIES = [
-  { value: "all", label: "All levels" },
-  { value: "easy", label: "Easy" },
-  { value: "medium", label: "Medium" },
-  { value: "hard", label: "Hard" },
-];
-
 const SORTS = [
   { value: "featured", label: "Recommended" },
   { value: "newest", label: "Newest" },
@@ -26,7 +19,6 @@ export default function CoursesPage() {
   const [search, setSearch] = useState("");
   const [debounced, setDebounced] = useState("");
   const [subject, setSubject] = useState("all");
-  const [difficulty, setDifficulty] = useState("all");
   const [sort, setSort] = useState("featured");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -68,7 +60,6 @@ export default function CoursesPage() {
     const params = new URLSearchParams({ limit: "100" });
     if (debounced) params.set("q", debounced);
     if (subject !== "all") params.set("subject", subject);
-    if (difficulty !== "all") params.set("difficulty", difficulty);
     params.set("sort", sort);
 
     setLoading(true);
@@ -93,21 +84,19 @@ export default function CoursesPage() {
       });
 
     return () => controller.abort();
-  }, [debounced, subject, difficulty, sort, reloadKey]);
+  }, [debounced, subject, sort, reloadKey]);
 
   const activeFilters = useMemo(() => {
     let count = 0;
     if (subject !== "all") count += 1;
-    if (difficulty !== "all") count += 1;
     if (sort !== "featured") count += 1;
     return count;
-  }, [subject, difficulty, sort]);
+  }, [subject, sort]);
 
   const isFiltering = activeFilters > 0 || debounced.length > 0;
 
   const resetFilters = () => {
     setSubject("all");
-    setDifficulty("all");
     setSort("featured");
   };
 
@@ -145,7 +134,7 @@ export default function CoursesPage() {
               type="search"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search courses by title, subject or description"
+              placeholder="Search by course name or code (e.g. GST 112)"
               aria-label="Search courses"
               className="h-11 w-full rounded-xl border border-border/70 bg-card pl-10 pr-10 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-primary/50 focus:ring-2 focus:ring-primary/15"
             />
@@ -190,24 +179,6 @@ export default function CoursesPage() {
 
         <div className={`${filtersOpen ? "block" : "hidden"} mt-3 space-y-3 sm:block`}>
           <div className="flex flex-wrap items-center gap-2">
-            {DIFFICULTIES.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => setDifficulty(option.value)}
-                aria-pressed={difficulty === option.value}
-                className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
-                  difficulty === option.value
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-border bg-card text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {option.label}
-              </button>
-            ))}
-
-            {subjects.length > 0 && <span className="mx-1 h-5 w-px bg-border" aria-hidden />}
-
             {["all", ...subjects].map((option) => (
               <button
                 key={option}
@@ -280,7 +251,7 @@ export default function CoursesPage() {
               </h2>
               <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
                 {isFiltering
-                  ? "Try a different subject or clear your search to see the full catalogue."
+                  ? "Try a different course name or code, or clear the filters to see the full catalogue."
                   : "Courses will appear here as soon as they are added to the catalogue."}
               </p>
               {isFiltering && (

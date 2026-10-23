@@ -45,6 +45,8 @@ export const coursesTable = sqliteTable(
     id: integer("id").primaryKey({ autoIncrement: true }),
     slug: text("slug").notNull().unique(),
     title: text("title").notNull(),
+    /** Optional course code as assigned by the institution, e.g. "GST 112". */
+    code: text("code"),
     description: text("description").notNull().default(""),
     subject: text("subject"),
     /** "easy" | "medium" | "hard" */

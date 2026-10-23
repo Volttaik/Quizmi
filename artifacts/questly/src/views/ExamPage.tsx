@@ -6,17 +6,21 @@ import { useParams, useRouter } from "next/navigation";
 import {
   AlertTriangle,
   ArrowLeft,
+  BookOpen,
   Check,
+  CheckCircle2,
   ChevronLeft,
   ChevronRight,
   Cloud,
   CloudOff,
   Flag,
+  Flame,
   Loader2,
   Send,
   ShieldAlert,
   Timer,
   X,
+  XCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatCountdown } from "@/lib/format";
@@ -26,6 +30,9 @@ const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 const PALETTE_PAGE_SIZE = 60;
 const AUTOSAVE_DELAY = 650;
 const CLIENT_DEPARTURE_DEDUPE = 5000;
+const AUTO_SUBMIT_RETRY_MS = 5000;
+const AUTO_SUBMIT_MAX_RETRIES = 6;
+const CONFETTI_COLORS = ["#8b5cf6", "#4ade80", "#fbbf24", "#fb7185", "#60a5fa"];
 
 type SaveState = "idle" | "saving" | "saved" | "error";
 
@@ -49,15 +56,30 @@ export default function ExamPage() {
   const [palettePage, setPalettePage] = useState(0);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [saveNonce, setSaveNonce] = useState(0);
+  const [feedback, setFeedback] = useState<{
+    kind: "correct" | "incorrect";
+    message: string;
+    nonce: number;
+    milestone?: boolean;
+  } | null>(null);
+  const [burst, setBurst] = useState(0);
+  const [streak, setStreak] = useState(0);
+  const [showStudyNudge, setShowStudyNudge] = useState(false);
 
   const dirtyRef = useRef<Set<number>>(new Set());
   const savingRef = useRef(false);
   const autoSubmitted = useRef(false);
   const finishedRef = useRef(false);
-  const submitRef = useRef<() => Promise<void>>(async () => {});
+  const submitRef = useRef<(isAuto?: boolean) => Promise<void>>(async () => {});
   const lastDepartureRef = useRef(0);
   const attemptRef = useRef<AttemptState | null>(null);
   const answersRef = useRef(answers);
+  const submittingRef = useRef(false);
+  const autoSubmitRetriesRef = useRef(0);
+  const gradedOnceRef = useRef<Set<number>>(new Set());
+  const streakRef = useRef(0);
+  const incorrectStreakRef = useRef(0);
+  const studyNudgeShownRef = useRef(false);
 
   answersRef.current = answers;
   attemptRef.current = attempt;
@@ -128,6 +150,63 @@ export default function ExamPage() {
   const secondsLeft = deadline === null ? null : Math.max(0, Math.ceil((deadline - now) / 1000));
   const urgent = secondsLeft !== null && secondsLeft <= 60;
 
+  /* ── Instant feedback & streaks ────────────────────────────────────── */
+  /**
+   * The server grades each question the first time it is answered and returns
+   * the verdict with the save response. Correctness never travels back for
+   * re-grading, so animations and streaks cannot be used to probe the key,
+   * and they never affect scoring or the timer.
+   */
+  const handleGraded = useCallback(
+    (graded: Array<{ questionId: number; correct: boolean }>) => {
+      for (const item of graded) {
+        if (!item || typeof item.questionId !== "number") continue;
+        // Never count the same graded answer twice, even if a retried
+        // response delivers it again.
+        if (gradedOnceRef.current.has(item.questionId)) continue;
+        gradedOnceRef.current.add(item.questionId);
+
+        if (item.correct) {
+          streakRef.current += 1;
+          incorrectStreakRef.current = 0;
+          const count = streakRef.current;
+          setStreak(count);
+
+          const milestone = count === 3 || count === 5 || count === 7 || count % 10 === 0;
+          const message =
+            count >= 10 && count % 10 === 0
+              ? `Incredible — ${count} correct in a row!`
+              : count === 7
+                ? "You're on fire! 7 in a row"
+                : count === 5
+                  ? "Very good! 5 in a row"
+                  : count === 3
+                    ? "Nice streak! 3 in a row"
+                    : "Correct!";
+
+          setFeedback({ kind: "correct", message, nonce: Date.now() + Math.random(), milestone });
+          setBurst((value) => value + 1);
+        } else {
+          incorrectStreakRef.current += 1;
+          streakRef.current = 0;
+          setStreak(0);
+          setFeedback({
+            kind: "incorrect",
+            message:
+              "Not quite. The correct answer will be revealed in your review after you submit.",
+            nonce: Date.now() + Math.random(),
+          });
+          // A calm, optional nudge after ten in a row — never a lock-out.
+          if (incorrectStreakRef.current >= 10 && !studyNudgeShownRef.current) {
+            studyNudgeShownRef.current = true;
+            setShowStudyNudge(true);
+          }
+        }
+      }
+    },
+    []
+  );
+
   /* ── Incremental autosave ─────────────────────────────────────────────── */
   const persistDirty = useCallback(async () => {
     const currentAttempt = attemptRef.current;
@@ -160,6 +239,9 @@ export default function ExamPage() {
         router.replace(`/results/${currentAttempt.id}`);
         return;
       }
+      if (Array.isArray(data?.graded) && data.graded.length > 0) {
+        handleGraded(data.graded);
+      }
       setSaveState("saved");
     } catch {
       // Keep the changed answers dirty so the next attempt retries them.
@@ -171,7 +253,7 @@ export default function ExamPage() {
       savingRef.current = false;
       if (dirtyRef.current.size > 0) setSaveNonce((value) => value + 1);
     }
-  }, [router]);
+  }, [handleGraded, router]);
 
   useEffect(() => {
     if (!attempt) return;
@@ -184,43 +266,58 @@ export default function ExamPage() {
   }, [answers, attempt, persistDirty, saveNonce]);
 
   /* ── Submission ───────────────────────────────────────────────────────── */
-  const submit = useCallback(async () => {
-    const currentAttempt = attemptRef.current;
-    if (!currentAttempt || submitting) return;
-    setSubmitting(true);
-    setSubmitError(null);
+  const submit = useCallback(
+    async (isAuto = false) => {
+      const currentAttempt = attemptRef.current;
+      // submittingRef (not state) closes the double-click race before React
+      // re-renders; the server's idempotent close makes retries safe anyway.
+      if (!currentAttempt || submittingRef.current) return;
+      submittingRef.current = true;
+      setSubmitting(true);
+      setSubmitError(null);
 
-    const payload = Object.entries(answersRef.current).map(([questionId, selectedIndex]) => ({
-      questionId: Number(questionId),
-      selectedIndex,
-    }));
+      const payload = Object.entries(answersRef.current).map(([questionId, selectedIndex]) => ({
+        questionId: Number(questionId),
+        selectedIndex,
+      }));
 
-    try {
-      const response = await fetch(`/api/attempts/${currentAttempt.id}/submit`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ answers: payload }),
-      });
-      const data = await response.json().catch(() => null);
-      if (!response.ok) throw new Error(data?.error ?? "Could not submit your assessment");
+      try {
+        const response = await fetch(`/api/attempts/${currentAttempt.id}/submit`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ answers: payload }),
+        });
+        const data = await response.json().catch(() => null);
+        if (!response.ok) throw new Error(data?.error ?? "Could not submit your assessment");
 
-      finishedRef.current = true;
-      router.replace(`/results/${currentAttempt.id}`);
-    } catch (err) {
-      setSubmitError(
-        err instanceof Error ? err.message : "Could not submit your assessment"
-      );
-      setSubmitting(false);
-      setConfirmOpen(false);
-    }
-  }, [router, submitting]);
+        finishedRef.current = true;
+        router.replace(`/results/${currentAttempt.id}`);
+      } catch (err) {
+        setSubmitError(err instanceof Error ? err.message : "Could not submit your assessment");
+        submittingRef.current = false;
+        setSubmitting(false);
+        setConfirmOpen(false);
+
+        if (isAuto && autoSubmitRetriesRef.current < AUTO_SUBMIT_MAX_RETRIES) {
+          // The clock has run out; retry shortly. Even if every attempt fails,
+          // the server scores the last saved draft the next time this attempt
+          // is read, so the result is never lost.
+          autoSubmitRetriesRef.current += 1;
+          setTimeout(() => {
+            if (!finishedRef.current) void submitRef.current(true);
+          }, AUTO_SUBMIT_RETRY_MS);
+        }
+      }
+    },
+    [router]
+  );
 
   submitRef.current = submit;
 
   useEffect(() => {
-    if (secondsLeft === 0 && attempt && !autoSubmitted.current) {
+    if (secondsLeft === 0 && attempt && !autoSubmitted.current && !finishedRef.current) {
       autoSubmitted.current = true;
-      void submitRef.current();
+      void submitRef.current(true);
     }
   }, [secondsLeft, attempt]);
 
@@ -566,6 +663,15 @@ export default function ExamPage() {
             <span className="rounded-full bg-muted px-2.5 py-1 text-muted-foreground">
               {question.marks} mark{question.marks === 1 ? "" : "s"}
             </span>
+            {streak >= 2 && (
+              <span
+                key={streak}
+                aria-label={`${streak} correct answers in a row`}
+                className="animate-pop inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-1 text-emerald-700 dark:text-emerald-400"
+              >
+                <Flame className="h-3 w-3" /> {streak} in a row
+              </span>
+            )}
             <span className="ml-auto inline-flex items-center gap-1.5 text-muted-foreground">
               {saveState === "saving" && (
                 <>
@@ -585,7 +691,32 @@ export default function ExamPage() {
             </span>
           </div>
 
-          <div className="rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-6">
+          <div className="relative overflow-hidden rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-6">
+            {/* Lightweight confetti burst for a correct answer. Purely visual:
+                it never touches scoring, timing or submission. */}
+            {feedback?.kind === "correct" && (
+              <span key={burst} aria-hidden="true" className="pointer-events-none absolute inset-0">
+                {Array.from({ length: 10 }).map((_, index) => {
+                  const angle = (Math.PI * 2 * index) / 10 - Math.PI / 2;
+                  const distance = 80 + (index % 3) * 40;
+                  return (
+                    <span
+                      key={index}
+                      className="confetti-dot"
+                      style={{
+                        left: "50%",
+                        top: "40%",
+                        background: CONFETTI_COLORS[index % CONFETTI_COLORS.length],
+                        animationDelay: `${index * 26}ms`,
+                        "--tx": `${Math.round(Math.cos(angle) * distance)}px`,
+                        "--ty": `${Math.round(Math.sin(angle) * distance)}px`,
+                      } as React.CSSProperties}
+                    />
+                  );
+                })}
+              </span>
+            )}
+
             <h1 className="text-base font-bold leading-relaxed text-card-foreground sm:text-lg">
               {question.prompt}
             </h1>
@@ -637,6 +768,87 @@ export default function ExamPage() {
               })}
             </div>
           </div>
+
+          {/* Instant feedback, shown once per graded answer */}
+          {feedback && (
+            <div
+              key={feedback.nonce}
+              role="status"
+              aria-live="polite"
+              className={`mt-3 flex items-center gap-2 rounded-xl border px-3.5 py-2.5 text-xs font-bold ${
+                feedback.kind === "correct"
+                  ? feedback.milestone
+                    ? "animate-fade-up border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-400"
+                    : "animate-fade-up border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
+                  : "animate-shake-soft border-rose-500/30 bg-rose-500/10 text-rose-700 dark:text-rose-400"
+              }`}
+            >
+              {feedback.kind === "correct" ? (
+                <CheckCircle2 className="h-4 w-4 flex-shrink-0" />
+              ) : (
+                <XCircle className="h-4 w-4 flex-shrink-0" />
+              )}
+              {feedback.message}
+            </div>
+          )}
+
+          {/* Ten consecutive incorrect answers: a calm, dismissable nudge.
+              Answers and the timer are preserved; leaving follows the normal
+              departure policy. */}
+          {showStudyNudge && (
+            <div
+              role="dialog"
+              aria-label="Study suggestion"
+              className="animate-fade-up mt-3 rounded-2xl border border-primary/25 bg-primary/5 p-4"
+            >
+              <div className="flex items-start gap-3">
+                <BookOpen className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-bold text-foreground">
+                    You&apos;re working through a challenging stretch.
+                  </p>
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                    Ten questions in a row have not gone your way — that usually means this
+                    material is still fresh, not that you can&apos;t do it. Would looking over the
+                    course before you continue help?
+                  </p>
+                  <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="rounded-full"
+                      onClick={() => setShowStudyNudge(false)}
+                    >
+                      Continue quiz
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="rounded-full"
+                      onClick={() => {
+                        // Navigation away is recorded as a departure by the
+                        // existing pagehide handler; the draft is already saved.
+                        window.location.assign(`/courses/${attempt.courseSlug}`);
+                      }}
+                    >
+                      Return to course
+                    </Button>
+                  </div>
+                  <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
+                    Your answers are saved and the timer keeps running. Leaving is recorded as a
+                    departure under this assessment&apos;s rules.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowStudyNudge(false)}
+                  aria-label="Dismiss suggestion"
+                  className="rounded-full p-1 text-muted-foreground hover:text-foreground"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          )}
 
           {submitError && (
             <p className="mt-3 flex items-start gap-2 rounded-xl bg-destructive/10 p-3 text-xs font-semibold text-destructive">

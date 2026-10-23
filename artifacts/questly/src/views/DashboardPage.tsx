@@ -142,14 +142,14 @@ export default function DashboardPage() {
             <StatCard
               icon={Target}
               label="Average score"
-              value={hasActivity ? `${data.stats.averagePercentage}%` : "—"}
-              hint={hasActivity ? "Across completed attempts" : "Available after your first result"}
+              value={`${data.stats.averagePercentage}%`}
+              hint={hasActivity ? "Across completed attempts" : "No results yet"}
               tone={hasActivity ? (data.stats.averagePercentage >= 70 ? "good" : "warn") : "default"}
             />
             <StatCard
               icon={Trophy}
               label="Pass rate"
-              value={hasActivity ? `${data.stats.passRate}%` : "—"}
+              value={`${data.stats.passRate}%`}
               hint={hasActivity ? `${data.stats.bestPercentage}% best score` : "No attempts yet"}
               tone={hasActivity ? (data.stats.passRate >= 50 ? "good" : "default") : "default"}
             />
@@ -197,10 +197,10 @@ export default function DashboardPage() {
                 </p>
               </div>
               <Link
-                href="/courses"
+                href="/my-courses"
                 className="text-xs font-bold text-primary underline-offset-4 hover:underline"
               >
-                Course catalogue
+                View my courses
               </Link>
             </div>
 

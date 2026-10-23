@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
-import { Home, Library, History, User } from "lucide-react";
+import { BookMarked, Home, Library, History, User } from "lucide-react";
 
 const TABS = [
   { href: "/dashboard", label: "Home", icon: Home },
+  { href: "/my-courses", label: "My Courses", icon: BookMarked },
   { href: "/courses", label: "Courses", icon: Library },
   { href: "/history", label: "History", icon: History },
   { href: "/profile", label: "Profile", icon: User },
@@ -23,7 +24,7 @@ export default function BottomNav() {
   return (
     <nav
       aria-label="Primary mobile navigation"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card pb-[env(safe-area-inset-bottom)] md:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_rgba(15,23,42,0.06)] md:hidden dark:shadow-[0_-4px_16px_rgba(0,0,0,0.35)]"
     >
       <div className="mx-auto flex max-w-lg items-stretch justify-around px-1.5">
         {TABS.map((tab) => {
@@ -47,7 +48,7 @@ export default function BottomNav() {
                 <tab.icon className="h-[18px] w-[18px]" strokeWidth={active ? 2.2 : 1.9} />
               </span>
               <span
-                className={`text-[10.5px] font-semibold leading-none transition-colors ${
+                className={`whitespace-nowrap text-[10px] font-semibold leading-none transition-colors sm:text-[10.5px] ${
                   active ? "text-foreground" : "text-muted-foreground"
                 }`}
               >

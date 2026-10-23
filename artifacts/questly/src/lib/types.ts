@@ -5,6 +5,8 @@ export type CourseSummary = {
   id: number;
   slug: string;
   title: string;
+  /** Course code as assigned by the institution, e.g. "GST 112". */
+  code: string | null;
   description: string;
   subject: string | null;
   difficulty: Difficulty;
@@ -25,6 +27,8 @@ export type CourseSummary = {
   bestPercentage: number | null;
   lastPercentage: number | null;
   inProgressAttemptId: number | null;
+  /** Set for courses on the My Courses screen, where the purchase is known. */
+  purchasedAt: string | null;
 };
 
 export type CourseDetail = CourseSummary & {
@@ -84,6 +88,8 @@ export type AttemptResult = {
   startedAt: string;
   submittedAt: string | null;
   timeTakenSeconds: number | null;
+  /** Timer chosen for this attempt. null = untimed. */
+  durationMinutes: number | null;
   score: number;
   totalMarks: number;
   percentage: number;
