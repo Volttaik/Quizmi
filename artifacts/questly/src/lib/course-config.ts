@@ -1,5 +1,14 @@
 export const TIMER_OPTIONS = [10, 20, 30, 40, 50, 60] as const;
 
+export type ResultMode = "instant" | "end";
+
+/** Instant results grade each answer on submit; end results grade on finish. */
+export const DEFAULT_RESULT_MODE: ResultMode = "instant";
+
+export function isSupportedResultMode(value: unknown): value is ResultMode {
+  return value === "instant" || value === "end";
+}
+
 /** Supported timer choices in minutes. `null` means unlimited. */
 export const DURATION_OPTIONS: ReadonlyArray<{ minutes: number | null; label: string }> = [
   ...TIMER_OPTIONS.map((minutes) => ({ minutes, label: `${minutes} minutes` })),

@@ -196,6 +196,8 @@ export const attemptsTable = sqliteTable(
     expiresAt: text("expires_at"),
     /** Timer selected at launch. null = unlimited time. */
     durationMinutes: integer("duration_minutes"),
+    /** How answers are graded and revealed: "instant" | "end". */
+    resultMode: text("result_mode").notNull().default("instant"),
     /** Ordered question ids chosen for this attempt. */
     questionIds: text("question_ids", { mode: "json" })
       .notNull()

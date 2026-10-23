@@ -107,6 +107,7 @@ export default function ResultPage() {
           slug: result.courseSlug,
           questionCount: result.totalQuestions > 0 ? result.totalQuestions : undefined,
           durationMinutes: result.durationMinutes,
+          resultMode: result.resultMode,
         }),
       });
       const data = await response.json().catch(() => null);
@@ -227,6 +228,9 @@ export default function ResultPage() {
                 <span className="rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">
                   Pass mark {result.passScore}%
                 </span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> Assessment complete
+                </span>
                 {isExpired && (
                   <span className="rounded-full bg-amber-500/15 px-3 py-1 text-xs font-bold text-amber-700 dark:text-amber-400">
                     Time expired
@@ -303,13 +307,23 @@ export default function ResultPage() {
           </button>
         )}
 
-        <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-          <ShareResultButton result={result} className="w-full flex-1 rounded-full" />
+        <div className="mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+          {result.hasReview && (
+            <Button
+              variant="outline"
+              onClick={() => jumpToReview("all")}
+              className="w-full rounded-full"
+            >
+              <BookOpen className="h-4 w-4" />
+              Review Answers
+            </Button>
+          )}
+          <ShareResultButton result={result} className="w-full rounded-full" />
           <Button
             variant="outline"
             onClick={() => void retake()}
             disabled={retaking}
-            className="w-full flex-1 rounded-full"
+            className="w-full rounded-full"
           >
             {retaking ? (
               <>
@@ -317,14 +331,14 @@ export default function ResultPage() {
               </>
             ) : (
               <>
-                <RotateCcw className="h-4 w-4" /> Retake quiz
+                <RotateCcw className="h-4 w-4" /> Retake Assessment
               </>
             )}
           </Button>
-          <Link href={`/courses/${result.courseSlug}`} className="flex-1">
+          <Link href={`/courses/${result.courseSlug}`} className="w-full">
             <Button variant="outline" className="w-full rounded-full">
               <BookOpen className="h-4 w-4" />
-              Open course
+              Return to Course
             </Button>
           </Link>
         </div>

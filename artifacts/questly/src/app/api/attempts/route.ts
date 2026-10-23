@@ -3,7 +3,7 @@ import { desc, eq } from "drizzle-orm";
 import { db, attemptsTable, coursesTable } from "@/lib/db";
 import { getSessionUser } from "@/lib/auth";
 import { startAttemptForUser } from "@/lib/attempts";
-import { isSupportedDuration } from "@/lib/course-config";
+import { isSupportedDuration, isSupportedResultMode } from "@/lib/course-config";
 import { apiError, apiOk, isNonEmptyString, readJson } from "@/lib/http";
 import type { HistoryItem } from "@/lib/types";
 
@@ -57,6 +57,7 @@ export async function POST(req: NextRequest) {
     slug?: string;
     questionCount?: unknown;
     durationMinutes?: unknown;
+    resultMode?: unknown;
   }>(req);
   if (!body || !isNonEmptyString(body.slug)) return apiError("Course slug is required");
 
@@ -76,10 +77,16 @@ export async function POST(req: NextRequest) {
   const questionCount =
     body.questionCount === undefined ? undefined : Number(body.questionCount);
 
+  if (body.resultMode !== undefined && !isSupportedResultMode(body.resultMode)) {
+    return apiError("Choose Instant Results or Results at the End");
+  }
+  const resultMode = isSupportedResultMode(body.resultMode) ? body.resultMode : undefined;
+
   try {
     const result = await startAttemptForUser(user, body.slug.trim(), {
       questionCount,
       durationMinutes: duration,
+      resultMode,
     });
     if (!result.ok) return apiError(result.error, result.status);
     return apiOk(result.state, 201);

@@ -1,36 +1,27 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import {
-  AlertCircle,
   ArrowLeft,
   ArrowRight,
   BookOpen,
   Check,
-  CheckCircle2,
+  CircleCheck,
+  CircleInfo,
   Clock,
-  HelpCircle,
-  Infinity as InfinityIcon,
-  Loader2,
+  GraduationCap,
+  ListCheck,
   Lock,
-  PlayCircle,
-  ShieldAlert,
-  ShieldCheck,
+  Play,
   ShoppingBag,
-  Timer,
-  Trophy,
-} from "lucide-react";
+  TargetDart,
+  TriangleExclamation,
+} from "@gravity-ui/icons";
 import { Button } from "@/components/ui/button";
-import {
-  DEFAULT_DURATION_MINUTES,
-  DURATION_OPTIONS,
-  MAX_QUESTIONS_PER_ATTEMPT,
-  QUESTION_COUNT_PRESETS,
-} from "@/lib/course-config";
-import { difficultyStyle, formatDuration, formatPrice } from "@/lib/format";
+import { difficultyStyle, formatDate, formatPrice } from "@/lib/format";
 import type { CourseDetail } from "@/lib/types";
 
 type Notice = { tone: "success" | "error"; message: string };
@@ -45,10 +36,7 @@ export default function CourseDetailPage() {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [starting, setStarting] = useState(false);
   const [buying, setBuying] = useState(false);
-  const [questionCount, setQuestionCount] = useState("20");
-  const [duration, setDuration] = useState<number | null>(DEFAULT_DURATION_MINUTES);
   const [notice, setNotice] = useState<Notice | null>(null);
 
   const loadCourse = () => {
@@ -68,15 +56,7 @@ export default function CourseDetailPage() {
         return data as CourseDetail;
       })
       .then((data) => {
-        if (!data) return;
-        setCourse(data);
-        const available = Math.min(data.questionCount, MAX_QUESTIONS_PER_ATTEMPT);
-        setQuestionCount(String(Math.max(1, Math.min(20, available))));
-        setDuration(
-          data.durationMinutes !== null && DURATION_OPTIONS.some((option) => option.minutes === data.durationMinutes)
-            ? data.durationMinutes
-            : DEFAULT_DURATION_MINUTES
-        );
+        if (data) setCourse(data);
       })
       .catch((err: unknown) => {
         setError(err instanceof Error ? err.message : "Could not load this course");
@@ -103,63 +83,6 @@ export default function CourseDetailPage() {
       window.history.replaceState({}, "", window.location.pathname);
     }
   }, []);
-
-  const available = Math.min(course?.questionCount ?? 0, MAX_QUESTIONS_PER_ATTEMPT);
-  const parsedCount = Number(questionCount);
-  const countValid =
-    Number.isInteger(parsedCount) && parsedCount >= 1 && parsedCount <= available;
-
-  const presets = useMemo(() => {
-    if (available <= 0) return [];
-    const values = new Set<number>();
-    for (const value of QUESTION_COUNT_PRESETS) {
-      if (value <= available) values.add(value);
-    }
-    values.add(available);
-    return Array.from(values).sort((a, b) => a - b);
-  }, [available]);
-
-  const beginAssessment = async () => {
-    if (!course) return;
-    if (!isSignedIn) {
-      router.push(`/sign-in?redirect_url=/courses/${course.slug}`);
-      return;
-    }
-    if (!countValid) {
-      setError(`Choose between 1 and ${available} questions.`);
-      return;
-    }
-
-    setStarting(true);
-    setError(null);
-
-    try {
-      const response = await fetch("/api/attempts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          slug: course.slug,
-          questionCount: parsedCount,
-          durationMinutes: duration,
-        }),
-      });
-      const data = await response.json().catch(() => null);
-
-      if (response.status === 401) {
-        router.push(`/sign-in?redirect_url=/courses/${course.slug}`);
-        return;
-      }
-      if (!response.ok) {
-        setError(data?.error ?? "Could not start this assessment");
-        return;
-      }
-      router.push(`/exam/${data.id}`);
-    } catch {
-      setError("Could not start this assessment. Check your connection and try again.");
-    } finally {
-      setStarting(false);
-    }
-  };
 
   const buyCourse = async () => {
     if (!course) return;
@@ -207,50 +130,67 @@ export default function CourseDetailPage() {
   if (loading) {
     return (
       <div className="bg-background">
-        <div className="mx-auto max-w-5xl px-4 py-10">
-          <div className="skeleton h-8 w-40 rounded-lg" />
-          <div className="skeleton mt-6 h-36 rounded-2xl" />
-          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mx-auto max-w-5xl px-4 py-8">
+          <div className="skeleton h-6 w-28 rounded-lg" />
+          <div className="skeleton mt-5 h-48 rounded-2xl sm:h-64" />
+          <div className="skeleton mt-5 h-10 w-64 rounded-lg" />
+          <div className="mt-4 grid gap-0.5 sm:grid-cols-2 lg:grid-cols-4">
             {Array.from({ length: 4 }).map((_, index) => (
-              <div key={index} className="skeleton h-24 rounded-2xl" />
+              <div key={index} className="skeleton h-20 rounded-xl" />
             ))}
-          </div>
-          <div className="mt-6 grid gap-4 lg:grid-cols-[1.4fr_1fr]">
-            <div className="skeleton h-64 rounded-2xl" />
-            <div className="skeleton h-64 rounded-2xl" />
           </div>
         </div>
       </div>
     );
   }
 
-  if (notFound || !course) {
+  if (notFound || (!course && !error)) {
     return (
       <div className="bg-background">
         <div className="mx-auto flex max-w-md flex-col items-center px-4 py-24 text-center">
           <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-muted">
-            <AlertCircle className="h-6 w-6 text-muted-foreground" />
+            <CircleInfo className="h-6 w-6 text-muted-foreground" />
           </div>
           <h1 className="text-xl font-extrabold text-foreground">Course unavailable</h1>
           <p className="mt-2 text-sm text-muted-foreground">
             This course may have been unpublished or the link is incorrect.
           </p>
-          <Link href="/courses" className="mt-6">
-            <Button className="rounded-full">Back to courses</Button>
-          </Link>
+          <Button asChild className="mt-6 rounded-full">
+            <Link href="/courses">Back to courses</Link>
+          </Button>
         </div>
       </div>
     );
   }
 
+  if (error && !course) {
+    return (
+      <div className="bg-background">
+        <div className="mx-auto flex max-w-md flex-col items-center px-4 py-24 text-center">
+          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-destructive/10">
+            <TriangleExclamation className="h-6 w-6 text-destructive" />
+          </div>
+          <h1 className="text-xl font-extrabold text-foreground">Could not load this course</h1>
+          <p className="mt-2 text-sm text-muted-foreground">{error}</p>
+          <Button variant="outline" className="mt-6 rounded-full" onClick={loadCourse}>
+            Try again
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!course) return null;
+
   const difficulty = difficultyStyle(course.difficulty);
+  const locked = !course.hasAccess;
   const exhausted = course.attemptsRemaining !== null && course.attemptsRemaining <= 0;
   const resumeId = course.inProgressAttemptId;
-  const locked = !course.hasAccess;
+  const canBegin = !locked && !exhausted && course.questionCount > 0;
 
   return (
     <div className="bg-background">
-      <main className="mx-auto max-w-5xl px-4 py-8">
+      <main className="mx-auto max-w-5xl px-4 py-6 sm:py-8">
         <Link
           href="/courses"
           className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
@@ -268,61 +208,174 @@ export default function CourseDetailPage() {
             }`}
           >
             {notice.tone === "success" ? (
-              <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0" />
+              <CircleCheck className="mt-0.5 h-4 w-4 flex-shrink-0" />
             ) : (
-              <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" />
+              <TriangleExclamation className="mt-0.5 h-4 w-4 flex-shrink-0" />
             )}
             {notice.message}
           </p>
         )}
 
+        {/* Course banner */}
+        <div className="mt-4 overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm">
+          {course.coverImageUrl ? (
+            <div className="relative h-40 w-full bg-muted sm:h-56">
+              {/* Course artwork may be hosted on any origin, so it is rendered as a plain image. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={course.coverImageUrl}
+                alt={`${course.title} course banner`}
+                className="h-full w-full object-cover"
+              />
+            </div>
+          ) : (
+            <div className="flex h-36 w-full items-end bg-gradient-to-br from-primary/85 via-primary/70 to-brand p-5 sm:h-48 sm:p-6">
+              <div className="flex items-center gap-3 text-primary-foreground">
+                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/15">
+                  <GraduationCap className="h-6 w-6" />
+                </span>
+                <span className="text-sm font-bold uppercase tracking-[0.18em]">
+                  {course.code ?? course.subject ?? "Course"}
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+
         <div className="mt-5 flex flex-wrap items-center gap-2">
           {course.code && (
-            <span className="rounded-full bg-accent px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-accent-foreground">
+            <span className="rounded-md bg-accent px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-accent-foreground">
               {course.code}
             </span>
           )}
           <span
-            className={`rounded-full border px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide ${difficulty.className}`}
+            className={`rounded-md border px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide ${difficulty.className}`}
           >
             {difficulty.label}
           </span>
           {course.subject && (
-            <span className="rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
+            <span className="rounded-md bg-muted px-2.5 py-1 text-[11px] font-semibold text-muted-foreground">
               {course.subject}
             </span>
           )}
           {course.isPurchased && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-400">
+            <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/10 px-2.5 py-1 text-[11px] font-semibold text-emerald-700 dark:text-emerald-400">
               <Check className="h-3 w-3" /> Purchased
             </span>
           )}
           {course.isFree && (
-            <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-semibold text-primary">
+            <span className="rounded-md bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary">
               Free course
             </span>
           )}
           {resumeId && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-semibold text-primary">
-              <PlayCircle className="h-3 w-3" /> In progress
+            <span className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary">
+              <Play className="h-3 w-3" /> In progress
             </span>
           )}
         </div>
 
-        <h1 className="mt-3 text-3xl font-extrabold leading-tight tracking-tight text-foreground sm:text-4xl">
+        <h1 className="mt-3 text-2xl font-extrabold leading-tight tracking-tight text-foreground sm:text-4xl">
           {course.title}
         </h1>
+
+        {/* Primary action sits directly beneath the course heading. */}
+        {locked ? (
+          <div className="mt-6 flex flex-col gap-3 rounded-2xl border border-primary/25 bg-card p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-5">
+            <div className="flex items-start gap-3">
+              <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <Lock className="h-5 w-5" />
+              </span>
+              <div>
+                <p className="text-sm font-bold text-foreground">Unlock this assessment</p>
+                <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
+                  One-time payment of {formatPrice(course.priceKobo, course.currency)}. Access is
+                  granted after the server verifies your payment.
+                </p>
+              </div>
+            </div>
+            <Button
+              onClick={buyCourse}
+              disabled={buying || !isLoaded || course.questionCount === 0}
+              className="h-11 w-full rounded-lg text-sm font-bold sm:w-auto sm:px-6"
+            >
+              {buying ? "Starting checkout…" : isSignedIn ? "Buy this course" : "Sign in to buy"}
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
+        ) : (
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <Button
+              asChild={canBegin}
+              disabled={!canBegin}
+              className="h-12 rounded-lg px-7 text-sm font-bold"
+            >
+              {canBegin ? (
+                <Link href={`/courses/${course.slug}/configure`}>
+                  Next
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              ) : (
+                <span>
+                  {course.questionCount === 0
+                    ? "No questions yet"
+                    : exhausted
+                      ? "No attempts left"
+                      : "Assessment unavailable"}
+                </span>
+              )}
+            </Button>
+
+            {resumeId && (
+              <Button asChild variant="outline" className="h-12 rounded-lg px-6 text-sm font-bold">
+                <Link href={`/exam/${resumeId}`}>
+                  <Play className="h-4 w-4" />
+                  Resume assessment
+                </Link>
+              </Button>
+            )}
+
+            <p className="text-xs font-medium text-muted-foreground sm:ml-2">
+              {exhausted
+                ? `You have used all ${course.maxAttempts} attempts for this course.`
+                : "Choose your duration, question count and result preference next."}
+            </p>
+          </div>
+        )}
+
         {course.description && (
-          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+          <p className="mt-6 max-w-3xl whitespace-pre-line text-sm leading-relaxed text-muted-foreground sm:text-base">
             {course.description}
           </p>
         )}
 
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {error && (
+          <p className="mt-4 flex items-start gap-2 rounded-xl bg-destructive/10 p-3 text-xs font-semibold text-destructive">
+            <TriangleExclamation className="mt-0.5 h-4 w-4 flex-shrink-0" />
+            {error}
+          </p>
+        )}
+
+        {!course.paymentConfigured && locked && course.questionCount > 0 && (
+          <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+            Online checkout is not configured on this deployment yet. Add the Paystack server key to
+            enable purchases.
+          </p>
+        )}
+
+        {/* Course information */}
+        <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {[
-            { icon: HelpCircle, label: "Questions available", value: course.questionCount.toLocaleString() },
-            { icon: Clock, label: "Timer", value: "10–60 min or unlimited" },
-            { icon: Trophy, label: "Pass mark", value: `${course.passScore}%` },
+            { icon: ListCheck, label: "Questions available", value: course.questionCount.toLocaleString() },
+            {
+              icon: Clock,
+              label: "Duration choice",
+              value:
+                course.durationMinutes !== null
+                  ? `${course.durationMinutes} min suggested`
+                  : "10–60 min or unlimited",
+            },
+            { icon: TargetDart, label: "Pass mark", value: `${course.passScore}%` },
             {
               icon: BookOpen,
               label: "Attempts",
@@ -331,329 +384,128 @@ export default function CourseDetailPage() {
                 : `${course.attemptsUsed} taken`,
             },
           ].map((item) => (
-            <div key={item.label} className="rounded-2xl border border-border/70 bg-card p-4">
+            <div
+              key={item.label}
+              className="rounded-xl border border-border/70 bg-card p-3.5 shadow-sm"
+            >
               <item.icon className="h-4 w-4 text-primary" />
-              <p className="mt-3 text-base font-extrabold text-card-foreground">{item.value}</p>
-              <p className="text-xs font-semibold text-muted-foreground">{item.label}</p>
+              <p className="mt-2.5 text-sm font-extrabold leading-tight text-card-foreground">
+                {item.value}
+              </p>
+              <p className="mt-0.5 text-[11px] font-semibold text-muted-foreground">{item.label}</p>
             </div>
           ))}
         </div>
 
-        <div className="mt-8 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-          <section className="space-y-6">
-            <div className="rounded-2xl border border-border/70 bg-card p-6">
-              <h2 className="text-base font-bold text-card-foreground">How this assessment runs</h2>
-              <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
-                <li className="flex gap-3">
-                  <ShieldCheck className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-500" />
-                  Answers are scored on the server. Correct answers are only revealed after you submit.
-                </li>
-                <li className="flex gap-3">
-                  <Timer className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
-                  Choose any number of questions up to {available.toLocaleString()}, then select a
-                  timer from 10 to 60 minutes or take it untimed.
-                </li>
-                <li className="flex gap-3">
-                  <BookOpen className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
-                  You can move between questions freely. Answers save automatically as you go.
-                </li>
-                <li className="flex gap-3">
-                  <ShieldAlert className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-500" />
-                  Staying on the assessment matters: leaving is recorded, and your third departure
-                  ends the attempt — your saved answers are scored and the attempt cannot resume.
-                  (Detection relies on browser signals, so it cannot catch everything.)
-                </li>
-                <li className="flex gap-3">
-                  <Trophy className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-500" />
-                  Pass mark is {course.passScore}%. Your full answer review is available immediately
-                  after submission.
-                </li>
-              </ul>
-
-              {course.attemptsUsed > 0 && (
-                <div className="mt-6 grid grid-cols-3 gap-3 rounded-xl bg-muted/50 p-4 text-center">
-                  <div>
-                    <p className="text-lg font-extrabold text-foreground">{course.bestPercentage ?? 0}%</p>
-                    <p className="text-[11px] font-semibold text-muted-foreground">Your best</p>
-                  </div>
-                  <div>
-                    <p className="text-lg font-extrabold text-foreground">{course.lastPercentage ?? 0}%</p>
-                    <p className="text-[11px] font-semibold text-muted-foreground">Last score</p>
-                  </div>
-                  <div>
-                    <p className="text-lg font-extrabold text-foreground">
-                      {course.averagePercentage ?? 0}%
-                    </p>
-                    <p className="text-[11px] font-semibold text-muted-foreground">All takers</p>
-                  </div>
-                </div>
-              )}
+        {course.attemptsUsed > 0 && (
+          <div className="mt-4 grid grid-cols-3 gap-3 rounded-xl border border-border/70 bg-card p-4 text-center">
+            <div>
+              <p className="text-lg font-extrabold text-foreground">{course.bestPercentage ?? 0}%</p>
+              <p className="text-[11px] font-semibold text-muted-foreground">Your best</p>
             </div>
-
-            <div className="rounded-2xl border border-border/70 bg-card p-6">
-              <h2 className="text-base font-bold text-card-foreground">What you get</h2>
-              <ul className="mt-4 space-y-2.5 text-sm text-muted-foreground">
-                {[
-                  "Access to the full question bank for this course",
-                  "Choose the number of questions for each attempt",
-                  "Timed or unlimited computer-based practice",
-                  "Saved progress if the page refreshes",
-                  "Instant score, pass/fail status and answer review",
-                  "Attempt history and performance analytics",
-                ].map((item) => (
-                  <li key={item} className="flex items-start gap-2.5">
-                    <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-500" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
+            <div>
+              <p className="text-lg font-extrabold text-foreground">{course.lastPercentage ?? 0}%</p>
+              <p className="text-[11px] font-semibold text-muted-foreground">Last score</p>
             </div>
+            <div>
+              <p className="text-lg font-extrabold text-foreground">{course.averagePercentage ?? 0}%</p>
+              <p className="text-[11px] font-semibold text-muted-foreground">All takers</p>
+            </div>
+          </div>
+        )}
+
+        <div className="mt-7 grid gap-4 lg:grid-cols-2">
+          <section className="rounded-2xl border border-border/70 bg-card p-5">
+            <h2 className="text-base font-bold text-card-foreground">How the assessment runs</h2>
+            <ul className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
+              <li className="flex gap-3">
+                <CircleCheck className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-500" />
+                Answers are validated and scored on the server. The browser never sees the answer
+                key for an attempt that has not been submitted.
+              </li>
+              <li className="flex gap-3">
+                <Clock className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
+                Choose 10–60 minutes or unlimited time, then choose how many of the{" "}
+                {course.questionCount.toLocaleString()} questions to attempt.
+              </li>
+              <li className="flex gap-3">
+                <Play className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
+                Instant Results gives feedback after each answer. Results at the End keeps answers
+                hidden until you finish.
+              </li>
+              <li className="flex gap-3">
+                <TriangleExclamation className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-500" />
+                Leaving the assessment is recorded. After three departures the attempt ends and
+                cannot resume; your saved answers are scored.
+              </li>
+            </ul>
           </section>
 
-          <section className="lg:sticky lg:top-24 lg:self-start">
-            {locked ? (
-              <div className="rounded-2xl border border-primary/20 bg-card p-6 shadow-sm">
-                <div className="flex items-center gap-2 text-primary">
-                  <ShoppingBag className="h-4 w-4" />
-                  <p className="text-xs font-bold uppercase tracking-wide">Course access</p>
-                </div>
-                <p className="mt-4 text-3xl font-black tracking-tight text-foreground">
-                  {formatPrice(course.priceKobo, course.currency)}
-                </p>
-                <p className="mt-1 text-xs font-medium text-muted-foreground">One-time payment</p>
-
-                <ul className="mt-5 space-y-2 text-xs text-muted-foreground">
-                  <li className="flex items-center gap-2">
-                    <Check className="h-3.5 w-3.5 text-emerald-500" /> Full question bank
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-3.5 w-3.5 text-emerald-500" />
-                    {course.maxAttempts
-                      ? `${course.maxAttempts} attempt${course.maxAttempts === 1 ? "" : "s"} included`
-                      : "Unlimited practice attempts"}
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-3.5 w-3.5 text-emerald-500" /> Results and history stay in your account
-                  </li>
-                </ul>
-
-                {error && (
-                  <p className="mt-4 flex items-start gap-2 rounded-xl bg-destructive/10 p-3 text-xs font-semibold text-destructive">
-                    <AlertCircle className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
-                    {error}
-                  </p>
-                )}
-
-                <Button
-                  onClick={buyCourse}
-                  disabled={buying || !isLoaded || course.questionCount === 0}
-                  className="mt-5 h-12 w-full rounded-full text-sm font-bold"
-                >
-                  {buying ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" /> Starting checkout…
-                    </>
-                  ) : (
-                    <>
-                      <Lock className="h-4 w-4" />
-                      {course.questionCount === 0
-                        ? "Not open for enrolment yet"
-                        : isSignedIn
-                          ? "Buy this course"
-                          : "Sign in to buy"}
-                    </>
-                  )}
-                </Button>
-
-                {course.questionCount === 0 && (
-                  <p className="mt-3 text-center text-[11px] leading-relaxed text-muted-foreground">
-                    This course has no questions yet. It will open for enrolment once its assessment
-                    is available.
-                  </p>
-                )}
-
-                {!course.paymentConfigured && course.questionCount > 0 && (
-                  <p className="mt-3 text-center text-[11px] leading-relaxed text-muted-foreground">
-                    Online checkout is not configured on this deployment yet. Add the Paystack server
-                    key to enable purchases.
-                  </p>
-                )}
-                <p className="mt-3 text-center text-[11px] text-muted-foreground">
-                  Secure checkout by Paystack. Access is granted after the server verifies payment.
-                </p>
-              </div>
-            ) : (
-              <div className="rounded-2xl border border-border/70 bg-card p-6 shadow-sm">
-                {resumeId ? (
-                  <>
-                    <h2 className="text-base font-bold text-card-foreground">Attempt in progress</h2>
-                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                      Continue where you left off. If you chose a timer, it is still running on the
-                      server.
-                    </p>
-                    <Link href={`/exam/${resumeId}`} className="mt-5 block">
-                      <Button className="h-12 w-full rounded-full text-sm font-bold">
-                        <PlayCircle className="h-4 w-4" /> Resume assessment
-                      </Button>
-                    </Link>
-                  </>
-                ) : exhausted ? (
-                  <div className="rounded-xl bg-muted/60 p-4 text-center">
-                    <p className="text-sm font-bold text-foreground">No attempts left</p>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      You have used all {course.maxAttempts} attempts for this course.
-                    </p>
-                    <Link href="/courses" className="mt-3 inline-block">
-                      <Button variant="outline" size="sm" className="rounded-full">
-                        Find another course
-                      </Button>
-                    </Link>
-                  </div>
-                ) : (
-                  <>
-                    <h2 className="text-base font-bold text-card-foreground">Start an assessment</h2>
-                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                      Set your question count and timer before you begin.
-                    </p>
-
-                    <div className="mt-5">
-                      <label
-                        htmlFor="question-count"
-                        className="text-xs font-bold uppercase tracking-wide text-muted-foreground"
-                      >
-                        Number of questions
-                      </label>
-                      <div className="mt-2 flex items-center gap-2">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          className="h-10 w-10 rounded-xl"
-                          onClick={() =>
-                            setQuestionCount(String(Math.max(1, (parsedCount || 1) - 5)))
-                          }
-                          aria-label="Fewer questions"
-                        >
-                          −
-                        </Button>
-                        <input
-                          id="question-count"
-                          type="number"
-                          inputMode="numeric"
-                          min={1}
-                          max={available}
-                          value={questionCount}
-                          onChange={(event) => setQuestionCount(event.target.value)}
-                          className="h-10 min-w-0 flex-1 rounded-xl border border-border/70 bg-background px-3 text-center text-sm font-bold text-foreground outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/15"
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          className="h-10 w-10 rounded-xl"
-                          onClick={() =>
-                            setQuestionCount(String(Math.min(available, (parsedCount || 0) + 5)))
-                          }
-                          aria-label="More questions"
-                        >
-                          +
-                        </Button>
-                      </div>
-                      <p className="mt-1.5 text-[11px] text-muted-foreground">
-                        Up to {available.toLocaleString()} available for this course.
-                      </p>
-                      {presets.length > 0 && (
-                        <div className="mt-3 flex flex-wrap gap-1.5">
-                          {presets.map((value) => (
-                            <button
-                              key={value}
-                              type="button"
-                              onClick={() => setQuestionCount(String(value))}
-                              aria-pressed={parsedCount === value}
-                              className={`rounded-full border px-2.5 py-1 text-[11px] font-bold transition-colors ${
-                                parsedCount === value
-                                  ? "border-primary bg-primary text-primary-foreground"
-                                  : "border-border text-muted-foreground hover:text-foreground"
-                              }`}
-                            >
-                              {value}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="mt-5">
-                      <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
-                        Timer
-                      </p>
-                      <div className="mt-2 grid grid-cols-2 gap-1.5">
-                        {DURATION_OPTIONS.map((option) => {
-                          const selected = duration === option.minutes;
-                          return (
-                            <button
-                              key={option.label}
-                              type="button"
-                              onClick={() => setDuration(option.minutes)}
-                              aria-pressed={selected}
-                              className={`flex items-center justify-center gap-1.5 rounded-xl border px-2 py-2 text-xs font-bold transition-colors ${
-                                selected
-                                  ? "border-primary bg-primary text-primary-foreground"
-                                  : "border-border text-muted-foreground hover:text-foreground"
-                              }`}
-                            >
-                              {option.minutes === null ? (
-                                <InfinityIcon className="h-3.5 w-3.5" />
-                              ) : (
-                                <Timer className="h-3.5 w-3.5" />
-                              )}
-                              {option.minutes === null ? "Unlimited" : `${option.minutes} min`}
-                            </button>
-                          );
-                        })}
-                      </div>
-                      <p className="mt-1.5 text-[11px] text-muted-foreground">
-                        {duration === null
-                          ? "No deadline. Submit whenever you are ready."
-                          : `Deadline enforced after ${formatDuration(duration)}.`}
-                      </p>
-                    </div>
-
-                    {error && (
-                      <p className="mt-4 flex items-start gap-2 rounded-xl bg-destructive/10 p-3 text-xs font-semibold text-destructive">
-                        <AlertCircle className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
-                        {error}
-                      </p>
-                    )}
-
-                    <Button
-                      onClick={beginAssessment}
-                      disabled={starting || !isLoaded || !countValid || available === 0}
-                      className="mt-5 h-12 w-full rounded-full text-sm font-bold"
-                    >
-                      {starting ? (
-                        <>
-                          <Loader2 className="h-4 w-4 animate-spin" /> Preparing assessment…
-                        </>
-                      ) : (
-                        <>
-                          <PlayCircle className="h-4 w-4" />
-                          {isSignedIn ? "Start assessment" : "Sign in to start"}
-                          <ArrowRight className="h-4 w-4" />
-                        </>
-                      )}
-                    </Button>
-                    <p className="mt-3 text-center text-[11px] text-muted-foreground">
-                      {available === 0
-                        ? "This course does not have questions yet."
-                        : `${parsedCount || 0} questions · ${formatDuration(duration)}`}
-                    </p>
-                  </>
-                )}
-              </div>
-            )}
+          <section className="rounded-2xl border border-border/70 bg-card p-5">
+            <h2 className="text-base font-bold text-card-foreground">
+              {locked ? "What you unlock" : "What you get"}
+            </h2>
+            <ul className="mt-4 space-y-2.5 text-sm text-muted-foreground">
+              {[
+                "Access to the full question bank for this course",
+                "Choose the number of questions for each attempt",
+                "Timed or unlimited computer-based practice",
+                "Saved progress if the page refreshes",
+                "A dedicated exam screen with answer review and explanations",
+                "Attempt history and performance analytics",
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-2.5">
+                  <CircleCheck className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-500" />
+                  {item}
+                </li>
+              ))}
+            </ul>
           </section>
         </div>
+
+        {locked && (
+          <section className="mt-4 rounded-2xl border border-border/70 bg-card p-5">
+            <h2 className="flex items-center gap-2 text-base font-bold text-card-foreground">
+              <ShoppingBag className="h-4 w-4 text-primary" />
+              Course access
+            </h2>
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <p className="text-2xl font-black tracking-tight text-foreground">
+                  {formatPrice(course.priceKobo, course.currency)}
+                </p>
+                <p className="mt-0.5 text-xs font-medium text-muted-foreground">
+                  One-time payment · access verified on the server
+                </p>
+              </div>
+              <ul className="space-y-1.5 text-xs text-muted-foreground">
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-emerald-500" /> Full question bank
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-emerald-500" />
+                  {course.maxAttempts
+                    ? `${course.maxAttempts} attempt${course.maxAttempts === 1 ? "" : "s"} included`
+                    : "Unlimited practice attempts"}
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-3.5 w-3.5 text-emerald-500" /> Results and history stay in your
+                  account
+                </li>
+              </ul>
+            </div>
+          </section>
+        )}
+
+        {!locked && (
+          <p className="mt-4 text-xs text-muted-foreground">
+            {course.isPurchased
+              ? `Purchased${course.purchasedAt ? ` on ${formatDate(course.purchasedAt)}` : ""}.`
+              : "Free course — no purchase required."}{" "}
+            Secure checkout by Paystack when applicable. Access is granted only after server
+            verification.
+          </p>
+        )}
       </main>
     </div>
   );

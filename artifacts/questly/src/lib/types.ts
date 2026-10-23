@@ -1,3 +1,7 @@
+import type { ResultMode } from "@/lib/course-config";
+
+export type { ResultMode };
+
 export type Difficulty = "easy" | "medium" | "hard";
 export type AttemptStatus = "in_progress" | "submitted" | "expired" | "terminated";
 
@@ -48,6 +52,16 @@ export type QuestionView = {
   orderIndex: number;
 };
 
+/** Server-verified verdict for an answer submitted in Instant Results mode. */
+export type AnswerFeedback = {
+  questionId: number;
+  selectedIndex: number | null;
+  correct: boolean;
+  correctIndex: number;
+  explanation: string | null;
+  reference: string | null;
+};
+
 export type AttemptState = {
   id: number;
   courseId: number;
@@ -59,10 +73,14 @@ export type AttemptState = {
   expiresAt: string | null;
   secondsRemaining: number | null;
   durationMinutes: number | null;
+  /** How this attempt submits and reveals answers. */
+  resultMode: ResultMode;
   passScore: number;
   totalMarks: number;
   questions: QuestionView[];
   answers: Array<{ questionId: number; selectedIndex: number | null }>;
+  /** Populated only for Instant Results attempts that have graded answers. */
+  feedback: AnswerFeedback[];
   departures: number;
   lastDepartureAt: string | null;
   maxDepartures: number;
@@ -90,6 +108,8 @@ export type AttemptResult = {
   timeTakenSeconds: number | null;
   /** Timer chosen for this attempt. null = untimed. */
   durationMinutes: number | null;
+  /** How answers were submitted and revealed. */
+  resultMode: ResultMode;
   score: number;
   totalMarks: number;
   percentage: number;

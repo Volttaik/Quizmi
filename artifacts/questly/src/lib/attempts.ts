@@ -10,10 +10,13 @@ import {
   type ViolationEntry,
 } from "@/lib/db";
 import {
+  DEFAULT_RESULT_MODE,
   DEPARTURE_DEDUPE_MS,
   MAX_DEPARTURES,
   MAX_QUESTIONS_PER_ATTEMPT,
   isSupportedDuration,
+  isSupportedResultMode,
+  type ResultMode,
 } from "@/lib/course-config";
 import {
   attemptIsExpired,
@@ -24,7 +27,12 @@ import {
   type AnswerInput,
 } from "@/lib/scoring";
 import { courseHasAccess, getCourseById, getCourseBySlug, isCoursePurchased } from "@/lib/courses";
-import type { AttemptResult, AttemptState, ResultQuestion } from "@/lib/types";
+import type {
+  AnswerFeedback,
+  AttemptResult,
+  AttemptState,
+  ResultQuestion,
+} from "@/lib/types";
 
 const QUESTION_FETCH_CHUNK = 400;
 
@@ -112,6 +120,29 @@ export async function buildAttemptState(
 ): Promise<AttemptState> {
   const questions = await loadAttemptQuestions(attempt);
   const stored = Array.isArray(attempt.answers) ? attempt.answers : [];
+  const resultMode: ResultMode = isSupportedResultMode(attempt.resultMode)
+    ? attempt.resultMode
+    : DEFAULT_RESULT_MODE;
+
+  // Instant Results attempts keep their graded verdicts on return so the
+  // feedback a learner already saw never changes or disappears after a
+  // refresh. End-of-assessment attempts never expose the answer key here.
+  const feedback: AnswerFeedback[] = [];
+  if (resultMode === "instant") {
+    const questionById = new Map(questions.map((question) => [question.id, question] as const));
+    for (const answer of stored) {
+      const question = questionById.get(answer.questionId);
+      if (!question) continue;
+      feedback.push({
+        questionId: answer.questionId,
+        selectedIndex: answer.selectedIndex,
+        correct: answer.selectedIndex === question.correctIndex,
+        correctIndex: question.correctIndex,
+        explanation: question.explanation ?? null,
+        reference: question.reference ?? null,
+      });
+    }
+  }
 
   return {
     id: attempt.id,
@@ -125,6 +156,7 @@ export async function buildAttemptState(
     secondsRemaining:
       attempt.status === "in_progress" ? secondsRemaining(attempt.expiresAt) : 0,
     durationMinutes: attempt.durationMinutes ?? null,
+    resultMode,
     passScore: course.passScore,
     totalMarks: questions.reduce((total, question) => total + (question.marks || 1), 0),
     questions: questions.map((question) => ({
@@ -139,6 +171,7 @@ export async function buildAttemptState(
       questionId: answer.questionId,
       selectedIndex: answer.selectedIndex,
     })),
+    feedback,
     departures: attempt.departures ?? 0,
     lastDepartureAt: attempt.lastDepartureAt,
     maxDepartures: MAX_DEPARTURES,
@@ -191,6 +224,9 @@ function buildResult(
     submittedAt,
     timeTakenSeconds: timeTakenSeconds(attempt.startedAt, submittedAt),
     durationMinutes: attempt.durationMinutes ?? null,
+    resultMode: isSupportedResultMode(attempt.resultMode)
+      ? attempt.resultMode
+      : DEFAULT_RESULT_MODE,
     score: scored.score,
     totalMarks: scored.totalMarks,
     percentage: scored.percentage,
@@ -223,6 +259,7 @@ export type StartAttemptResult =
 export type StartOptions = {
   questionCount?: number;
   durationMinutes?: number | null;
+  resultMode?: ResultMode;
 };
 
 /**
@@ -291,6 +328,14 @@ export async function startAttemptForUser(
     };
   }
 
+  let resultMode: ResultMode = DEFAULT_RESULT_MODE;
+  if (options.resultMode !== undefined) {
+    if (!isSupportedResultMode(options.resultMode)) {
+      return { ok: false, status: 400, error: "Choose Instant Results or Results at the End" };
+    }
+    resultMode = options.resultMode;
+  }
+
   let durationMinutes: number | null;
   if (options.durationMinutes === undefined) {
     durationMinutes = isSupportedDuration(course.durationMinutes)
@@ -336,6 +381,7 @@ export async function startAttemptForUser(
         lastSeenAt: now,
         expiresAt: deadline(durationMinutes, startedAt),
         durationMinutes,
+        resultMode,
         questionIds,
         answers: [],
       })
@@ -398,7 +444,7 @@ export async function saveDraftAnswers(
       saved: boolean;
       status: string;
       secondsRemaining: number | null;
-      graded: Array<{ questionId: number; correct: boolean }>;
+      graded: AnswerFeedback[];
     }
   | { ok: false; status: number; error: string }
 > {
@@ -422,23 +468,33 @@ export async function saveDraftAnswers(
   const existingById = new Map<number, StoredAnswer>();
   for (const answer of stored) existingById.set(answer.questionId, answer);
 
+  // Instant Results grades a question the first time it is submitted. Results
+  // at the End only stores the draft: no correctness ever leaves the server
+  // for that mode, and the score is computed when the attempt is finalized.
+  const resultMode = isSupportedResultMode(attempt.resultMode)
+    ? attempt.resultMode
+    : DEFAULT_RESULT_MODE;
+  const instantMode = resultMode === "instant";
+
   // Grade only selections for questions in this attempt that have never been
   // answered before. A cleared answer keeps its stored entry, so re-answering
   // the same question never produces a second grading round.
-  const freshIds = updates
-    .filter(
-      (answer) =>
-        answer.selectedIndex !== null &&
-        !existingById.has(answer.questionId)
-    )
-    .map((answer) => answer.questionId);
+  const freshIds = instantMode
+    ? updates
+        .filter(
+          (answer) =>
+            answer.selectedIndex !== null &&
+            !existingById.has(answer.questionId)
+        )
+        .map((answer) => answer.questionId)
+    : [];
   const freshQuestions = await questionsByIds(attempt.courseId, freshIds);
   const questionById = new Map(freshQuestions.map((question) => [question.id, question] as const));
 
   const merged = new Map<number, StoredAnswer>();
   for (const answer of stored) merged.set(answer.questionId, { ...answer });
 
-  const graded: Array<{ questionId: number; correct: boolean }> = [];
+  const graded: AnswerFeedback[] = [];
   const freshGradedIds = new Set(freshIds);
 
   for (const answer of updates) {
@@ -446,8 +502,14 @@ export async function saveDraftAnswers(
 
     if (answer.selectedIndex === null) {
       // Keep graded entries (with their result) even after clearing, so a
-      // cleared answer cannot unlock another grading round.
-      if (previous) merged.set(answer.questionId, { ...previous, selectedIndex: null });
+      // cleared answer cannot unlock another grading round. In Instant Results
+      // a graded answer is final: clearing it cannot reset its score.
+      if (previous) {
+        merged.set(
+          answer.questionId,
+          instantMode ? { ...previous } : { ...previous, selectedIndex: null }
+        );
+      }
       continue;
     }
 
@@ -467,13 +529,24 @@ export async function saveDraftAnswers(
         correct,
         marksAwarded: 0,
       });
-      graded.push({ questionId: answer.questionId, correct });
+      graded.push({
+        questionId: answer.questionId,
+        selectedIndex: answer.selectedIndex,
+        correct,
+        correctIndex,
+        explanation: question?.explanation ?? null,
+        reference: question?.reference ?? null,
+      });
+    } else if (instantMode && previous) {
+      // Already graded in Instant Results. Repeated submissions are ignored so
+      // the recorded result cannot be changed by re-answering the question.
+      merged.set(answer.questionId, { ...previous });
     } else {
       merged.set(answer.questionId, {
         questionId: answer.questionId,
         selectedIndex: answer.selectedIndex,
         correct: previous?.correct ?? false,
-        marksAwarded: 0,
+        marksAwarded: previous?.marksAwarded ?? 0,
       });
     }
   }
@@ -508,7 +581,24 @@ export async function finalizeAttempt(
   }
 
   const questions = await loadAttemptQuestions(attempt);
-  const answers = answersForAttempt(attempt, submitted ?? inputFor(attempt));
+  const submittedAnswers = answersForAttempt(attempt, submitted ?? inputFor(attempt));
+
+  // Instant Results answers were graded when each one was submitted. Those
+  // stored answers are authoritative at scoring time, so a modified client
+  // cannot rewrite an already-graded result. Results at the End accepts the
+  // final answer map, which is what the learner reviewed before finishing.
+  const resultMode = isSupportedResultMode(attempt.resultMode)
+    ? attempt.resultMode
+    : DEFAULT_RESULT_MODE;
+  const instantMode = resultMode === "instant";
+  let answers = submittedAnswers;
+  if (instantMode) {
+    // Only answers the server graded when they were submitted can score.
+    const finalAnswers = new Map<number, AnswerInput>();
+    for (const answer of inputFor(attempt)) finalAnswers.set(answer.questionId, answer);
+    answers = Array.from(finalAnswers.values());
+  }
+
   const scored = scoreAttempt(
     questions.map((question) => ({
       id: question.id,
@@ -729,6 +819,9 @@ export async function buildResultFromStored(
       timeTakenSeconds:
         attempt.timeTakenSeconds ?? timeTakenSeconds(attempt.startedAt, attempt.submittedAt),
       durationMinutes: attempt.durationMinutes ?? null,
+      resultMode: isSupportedResultMode(attempt.resultMode)
+        ? attempt.resultMode
+        : DEFAULT_RESULT_MODE,
       score: attempt.score,
       totalMarks: attempt.totalMarks,
       percentage: attempt.percentage,
