@@ -5,8 +5,8 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 /**
- * Quizmi mark, drawn with the same construction as Lumio's: a rounded tile with
- * the glyph inside, followed by a serif wordmark closed with an accent period.
+ * Quizmi's real mark — the shipped `/logo.svg` tile, not a redrawn glyph — so
+ * the header, loader and auth screens all show the same asset.
  */
 export function QuizmiMark({
   className,
@@ -16,53 +16,24 @@ export function QuizmiMark({
   animated?: boolean;
 }) {
   return (
-    <svg viewBox="0 0 40 40" className={cn("h-8 w-8", className)} aria-hidden>
-      <rect width="40" height="40" rx="14" className="fill-primary" />
+    <span className={cn("relative inline-flex h-8 w-8 shrink-0", className)}>
       {animated && (
-        <motion.circle
-          cx="20"
-          cy="17"
-          r="12"
-          fill="hsl(var(--accent))"
-          initial={{ opacity: 0.1 }}
-          animate={{ opacity: [0.1, 0.35, 0.1] }}
+        <motion.span
+          aria-hidden
+          className="absolute inset-0 rounded-[30%] bg-accent/45 blur-md"
+          initial={{ opacity: 0.15 }}
+          animate={{ opacity: [0.15, 0.5, 0.15] }}
           transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
         />
       )}
-      <circle
-        cx="20"
-        cy="17"
-        r="8.4"
-        fill="none"
-        stroke="hsl(var(--accent))"
-        strokeWidth="2.6"
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/logo.svg"
+        alt=""
+        aria-hidden
+        className="relative h-full w-full rounded-[28%] object-contain"
       />
-      <motion.path
-        d="M16.2 17.2 l2.7 2.7 l5.1 -5.4"
-        fill="none"
-        stroke="hsl(var(--accent))"
-        strokeWidth="2.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        initial={animated ? { pathLength: 0 } : false}
-        animate={{ pathLength: 1 }}
-        transition={
-          animated
-            ? { duration: 0.9, repeat: Infinity, repeatType: "reverse", repeatDelay: 0.4 }
-            : undefined
-        }
-      />
-      <rect x="16.4" y="29" width="7.2" height="1.9" rx=".95" fill="hsl(var(--primary-foreground))" />
-      <rect
-        x="17.6"
-        y="32"
-        width="4.8"
-        height="1.9"
-        rx=".95"
-        fill="hsl(var(--primary-foreground))"
-        opacity=".75"
-      />
-    </svg>
+    </span>
   );
 }
 
@@ -83,17 +54,17 @@ export default function Logo({
       <QuizmiMark className={size === "lg" ? "h-10 w-10" : "h-8 w-8"} />
       <span
         className={cn(
-          "font-serif font-semibold tracking-[-0.02em]",
-          size === "lg" ? "text-2xl" : "text-lg"
+          "font-extrabold uppercase leading-none tracking-[0.14em]",
+          size === "lg" ? "text-xl" : "text-[15px]"
         )}
       >
-        quizmi<span className="text-accent">.</span>
+        QUIZMI
       </span>
     </motion.span>
   );
 }
 
-/** Full-screen brand loader, matching Lumio's bulb loader geometry. */
+/** Full-screen brand loader, using the same ring geometry as Lumio's. */
 export function QuizmiLoader({ message }: { message: string }) {
   return (
     <motion.div

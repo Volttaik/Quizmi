@@ -4,7 +4,7 @@ const url = process.env.TURSO_DATABASE_URL;
 const authToken = process.env.TURSO_AUTH_TOKEN;
 
 if (!url) {
-  throw new Error("TURSO_DATABASE_URL must be set. QUIZIMI has no local database fallback.");
+  throw new Error("TURSO_DATABASE_URL must be set. QUIZMI has no local database fallback.");
 }
 
 export default defineConfig({

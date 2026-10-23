@@ -1112,7 +1112,8 @@ export default function ExamPage() {
                     </p>
                   )}
                   {currentFeedback.explanation && (
-                    <p className="mt-1 text-sm leading-relaxed text-foreground/85">
+                    <p className="mt-2 text-sm leading-relaxed text-foreground/85">
+                      <span className="font-semibold">Explanation. </span>
                       {currentFeedback.explanation}
                     </p>
                   )}
@@ -1212,8 +1213,9 @@ export default function ExamPage() {
             </AlertDialogTitle>
             <AlertDialogDescription>
               Leaving is recorded as a departure
-              {departures > 0 ? ` (${departures} of ${attempt.maxDepartures} used)` : ""}. The timer
-              keeps running and you can resume from the course page.
+              {departures > 0 ? ` (${departures} of ${attempt.maxDepartures} used)` : ""}. This
+              attempt will not resume — starting again begins at the first question with a fresh
+              timer.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

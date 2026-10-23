@@ -4,19 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useClerk, useUser } from "@clerk/nextjs";
-import { AnimatePresence, motion } from "framer-motion";
-import {
-  Bookmark,
-  BookOpen,
-  Clock,
-  LayoutDashboard,
-  LogIn,
-  LogOut,
-  Menu,
-  UserPlus,
-  UserRound,
-  X,
-} from "lucide-react";
+import { Bookmark, BookOpen, Clock, LayoutDashboard, LogOut, UserRound } from "lucide-react";
 
 import Avatar from "@/components/Avatar";
 import Logo from "@/components/Brand";
@@ -38,12 +26,19 @@ const NAV = [
   { href: "/history", label: "History", icon: Clock, authOnly: true },
 ];
 
+/**
+ * Lumio-style sticky header: brand on the left, the section links in the
+ * middle, and the account in a single avatar menu on the right.
+ *
+ * There is no hamburger. Primary navigation lives in the bottom bar, and the
+ * avatar menu still carries every account destination (dashboard, library,
+ * profile, sign out), so removing the drawer leaves nothing unreachable.
+ */
 export default function SiteHeader() {
   const pathname = usePathname() ?? "";
   const router = useRouter();
   const { isLoaded, isSignedIn, user } = useUser();
   const { signOut } = useClerk();
-  const [open, setOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
 
   const links = NAV.filter((link) => !link.authOnly || isSignedIn);
@@ -57,7 +52,6 @@ export default function SiteHeader() {
 
   const handleSignOut = async () => {
     if (signingOut) return;
-    setOpen(false);
     setSigningOut(true);
     try {
       await signOut({ redirectUrl: "/" });
@@ -68,8 +62,12 @@ export default function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <Link href={isSignedIn ? "/dashboard" : "/"} aria-label="Quizmi home">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+        <Link
+          href={isSignedIn ? "/dashboard" : "/"}
+          aria-label="QUIZMI home"
+          className="shrink-0 rounded-[5px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
           <Logo />
         </Link>
 
@@ -139,8 +137,8 @@ export default function SiteHeader() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <div className="hidden items-center gap-2 sm:flex">
-              <Button variant="ghost" asChild>
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" asChild className="hidden sm:inline-flex">
                 <Link href="/sign-in">Sign in</Link>
               </Button>
               <Button asChild>
@@ -148,90 +146,8 @@ export default function SiteHeader() {
               </Button>
             </div>
           )}
-
-          <button
-            onClick={() => setOpen(!open)}
-            className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-muted md:hidden"
-            aria-label={open ? "Close menu" : "Open menu"}
-            aria-expanded={open}
-          >
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.span
-                key={open ? "x" : "m"}
-                initial={{ rotate: -90, opacity: 0 }}
-                animate={{ rotate: 0, opacity: 1 }}
-                exit={{ rotate: 90, opacity: 0 }}
-                transition={{ duration: 0.18 }}
-              >
-                {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-              </motion.span>
-            </AnimatePresence>
-          </button>
         </div>
       </div>
-
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="overflow-hidden border-t border-border/60 md:hidden"
-          >
-            <div className="space-y-1 px-4 py-4">
-              {links.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setOpen(false)}
-                  className={`flex items-center gap-3 rounded-full px-4 py-3 text-[15px] font-medium transition-colors ${
-                    isActive(link.href) ? "bg-secondary" : "hover:bg-muted"
-                  }`}
-                >
-                  <link.icon className="h-5 w-5" />
-                  {link.label}
-                </Link>
-              ))}
-              <div className="my-3 h-px bg-border" />
-              {isSignedIn ? (
-                <>
-                  <Link
-                    href="/profile"
-                    onClick={() => setOpen(false)}
-                    className="flex items-center gap-3 rounded-full px-4 py-3 font-medium hover:bg-muted"
-                  >
-                    <Avatar name={displayName} src={user?.imageUrl} size={28} />
-                    <span>Profile</span>
-                  </Link>
-                  <button
-                    onClick={() => void handleSignOut()}
-                    className="flex w-full items-center gap-3 rounded-full px-4 py-3 font-medium hover:bg-muted"
-                  >
-                    <LogOut className="h-5 w-5" />
-                    Sign out
-                  </button>
-                </>
-              ) : (
-                <div className="grid grid-cols-1 gap-2">
-                  <Button variant="outline" asChild className="h-12">
-                    <Link href="/sign-in" onClick={() => setOpen(false)}>
-                      <LogIn className="mr-2 h-4 w-4" />
-                      Sign in
-                    </Link>
-                  </Button>
-                  <Button asChild className="h-12">
-                    <Link href="/sign-up" onClick={() => setOpen(false)}>
-                      <UserPlus className="mr-2 h-4 w-4" />
-                      Get started
-                    </Link>
-                  </Button>
-                </div>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </header>
   );
 }

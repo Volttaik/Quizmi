@@ -1,6 +1,6 @@
 {
-  "name": "QUIZIMI — Course-based CBT practice",
-  "short_name": "QUIZIMI",
+  "name": "QUIZMI — Course-based CBT practice",
+  "short_name": "QUIZMI",
   "description": "Find your courses, practise with computer-based test questions, and track your progress.",
   "start_url": "/",
   "scope": "/",

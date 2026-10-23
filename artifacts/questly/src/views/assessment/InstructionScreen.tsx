@@ -176,7 +176,6 @@ export default function InstructionScreen() {
   const isTimed = preferences.durationMinutes !== null;
   const locked = !course.hasAccess;
   const exhausted = course.attemptsRemaining !== null && course.attemptsRemaining <= 0;
-  const resuming = Boolean(course.inProgressAttemptId);
   const query = preferencesToQuery(preferences);
   const canStart = !locked && !exhausted && course.questionCount > 0;
   const startLabel = starting
@@ -191,9 +190,7 @@ export default function InstructionScreen() {
             ? "No questions yet"
             : !isSignedIn
               ? "Sign in to start"
-              : resuming
-                ? "Resume Assessment"
-                : "Start Assessment";
+              : "Start Assessment";
 
   const items = [
     `This session has ${preferences.questionCount} randomly selected question${
@@ -205,7 +202,7 @@ export default function InstructionScreen() {
     isInstant
       ? "Submit each answer to see immediately whether it was right, then continue."
       : "Your answers are saved as you go. The score and full review are revealed when you finish.",
-    "Leaving is recorded as a departure. A third departure ends the attempt.",
+    "Leaving is recorded as a departure, and a third departure ends the attempt. Unfinished attempts are never resumed: starting again begins at the first question.",
   ];
 
   return (
@@ -228,13 +225,6 @@ export default function InstructionScreen() {
       </div>
       <h1 className="mt-5 text-2xl font-semibold sm:text-3xl">Before you begin</h1>
       <p className="mt-2 text-sm text-muted-foreground">{course.title}</p>
-
-      {resuming && (
-        <p className="mt-5 flex items-start gap-2 rounded-[5px] bg-secondary p-3.5 text-sm">
-          <Play className="mt-0.5 h-4 w-4 shrink-0" />
-          You have an assessment in progress. Starting resumes it.
-        </p>
-      )}
 
       {locked && (
         <div className="mt-5 rounded-[5px] bg-secondary p-4 text-sm">

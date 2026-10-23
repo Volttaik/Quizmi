@@ -74,7 +74,7 @@ export default function ProfilePage() {
       <p className="eyebrow">Account</p>
       <h1 className="mt-2.5 text-display-md text-foreground">Profile & preferences</h1>
       <p className="mt-2 text-[13.5px] text-muted-foreground">
-        Your details, appearance and shortcuts across QUIZIMI.
+        Your details, appearance and shortcuts across QUIZMI.
       </p>
 
       {/* Identity */}

@@ -180,7 +180,6 @@ export default function CourseDetailPage() {
 
   const locked = !course.hasAccess;
   const exhausted = course.attemptsRemaining !== null && course.attemptsRemaining <= 0;
-  const resumeId = course.inProgressAttemptId;
   const canBegin = !locked && !exhausted && course.questionCount > 0;
   const actionLabel = course.questionCount === 0
     ? "No questions yet"
@@ -273,18 +272,13 @@ export default function CourseDetailPage() {
                 </span>
               )}
               {course.isFree && (
-                <span className="rounded-full bg-[var(--brand-mint)] px-3 py-1 text-[11px] font-bold text-[#10231f]">
+                <span className="rounded-full bg-white/15 px-3 py-1 text-[11px] font-bold text-white backdrop-blur">
                   Free course
                 </span>
               )}
               {course.isPurchased && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur">
                   <CircleCheck className="h-3.5 w-3.5" /> In your library
-                </span>
-              )}
-              {resumeId && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur">
-                  <Play className="h-3 w-3" /> Attempt in progress
                 </span>
               )}
             </div>
@@ -352,7 +346,7 @@ export default function CourseDetailPage() {
                   {
                     icon: TriangleExclamation,
                     tone: "text-warning",
-                    body: "Leaving the assessment is recorded. After three departures the attempt ends and cannot resume; your saved answers are scored.",
+                    body: "Leaving the assessment is recorded. After three departures the attempt ends and your answers are scored. Unfinished attempts are never resumed — starting again begins at the first question.",
                   },
                 ].map((item) => (
                   <li key={item.body} className="flex gap-3.5 py-4">
@@ -411,7 +405,7 @@ export default function CourseDetailPage() {
 
           {/* ── Action rail ─────────────────────────────────────────────────── */}
           <aside className="lg:sticky lg:top-24">
-            <div className="rounded-[1.75rem] border border-border/80 bg-surface p-6 shadow-[0_20px_50px_-32px_rgba(35,25,80,0.45)]">
+            <div className="dotted-edge rounded-[1.75rem] border border-border/80 bg-surface p-6 shadow-[0_20px_50px_-32px_rgba(35,25,80,0.45)]">
               <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
                 {locked ? "Course access" : course.isPurchased ? "You own this course" : "Free to start"}
               </p>
@@ -458,17 +452,6 @@ export default function CourseDetailPage() {
                   </Button>
                 )}
 
-                {resumeId && (
-                  <ButtonLink
-                    href={`/exam/${resumeId}`}
-                    variant="outline"
-                    fullWidth
-                    className="rounded-xl"
-                  >
-                    <Play className="h-4 w-4" />
-                    Resume assessment
-                  </ButtonLink>
-                )}
               </div>
 
               <dl className="mt-6 space-y-3 border-t border-border/70 pt-5">
@@ -517,7 +500,7 @@ export default function CourseDetailPage() {
               </Alert>
             )}
 
-            {!locked && !resumeId && course.questionCount === 0 && (
+            {!locked && course.questionCount === 0 && (
               <p className="mt-4 rounded-xl bg-surface-secondary px-4 py-3 text-[11.5px] leading-relaxed text-muted-foreground">
                 Question sets for this course are still being prepared. Check back soon.
               </p>

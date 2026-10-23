@@ -257,7 +257,7 @@ export default function ResultPage() {
       <p className="mt-6 text-sm text-muted-foreground">{result.courseTitle}</p>
       <h1 className="mt-1 text-xl font-semibold sm:text-2xl">Your result</h1>
 
-      <Reveal className="mt-5 flex flex-col items-center rounded-[5px] border border-border bg-card p-6 text-center shadow-md sm:p-8">
+      <Reveal className="dotted-edge mt-5 flex flex-col items-center rounded-[5px] border border-border bg-card p-6 text-center shadow-md sm:p-8">
         <Ring pct={pct} />
         <motion.p
           initial={{ opacity: 0, y: 10 }}
@@ -280,7 +280,7 @@ export default function ResultPage() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 + index * 0.08 }}
-                className="rounded-[5px] bg-muted p-3.5 shadow-2xs"
+                className="dotted-edge dotted-edge-sm rounded-[5px] bg-muted p-3.5 shadow-2xs"
               >
                 <stat.icon className={`mx-auto h-4 w-4 ${stat.tone}`} />
                 <p className="mt-1 font-serif text-xl font-semibold">{stat.value}</p>
@@ -373,7 +373,7 @@ export default function ResultPage() {
                 {filtered.slice(0, visible).map((question, index) => (
                   <li
                     key={question.id}
-                    className="rounded-[5px] border border-border bg-card p-4 shadow-sm transition-shadow duration-200 hover:shadow-md sm:p-5"
+                    className="dotted-edge rounded-[5px] border border-border bg-card p-4 shadow-sm transition-shadow duration-200 hover:shadow-md sm:p-5"
                   >
                     <div className="flex items-start gap-3">
                       <span

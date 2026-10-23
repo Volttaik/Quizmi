@@ -12,7 +12,7 @@ export default function AuthShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-background lg:grid lg:grid-cols-2">
       {/* Brand panel */}
-      <aside className="relative hidden overflow-hidden bg-brand p-12 lg:flex lg:flex-col lg:justify-between">
+      <aside className="brand-gradient relative hidden overflow-hidden p-12 lg:flex lg:flex-col lg:justify-between">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full border border-white/15"
@@ -27,12 +27,12 @@ export default function AuthShell({ children }: { children: React.ReactNode }) {
         </Link>
 
         <div className="relative max-w-md">
-          <h1 className="text-4xl font-black leading-[1.1] tracking-tight text-brand-foreground">
+          <h1 className="text-4xl font-black leading-[1.1] tracking-tight text-white">
             Your courses.
             <br />
             Real exam practice.
           </h1>
-          <p className="mt-4 text-sm leading-relaxed text-brand-foreground/75">
+          <p className="mt-4 text-sm leading-relaxed text-white/75">
             A focused CBT workspace: choose a course, set your question count and timer, and get a
             detailed report on every attempt.
           </p>
@@ -41,17 +41,17 @@ export default function AuthShell({ children }: { children: React.ReactNode }) {
             {POINTS.map((point) => (
               <li
                 key={point}
-                className="flex items-start gap-2.5 text-sm text-brand-foreground/90"
+                className="flex items-start gap-2.5 text-sm text-white/90"
               >
-                <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-brand-foreground" />
+                <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-white" />
                 {point}
               </li>
             ))}
           </ul>
         </div>
 
-        <p className="relative text-xs text-brand-foreground/70">
-          QUIZIMI · Course-based computer-based testing
+        <p className="relative text-xs text-white/70">
+          QUIZMI · Course-based computer-based testing
         </p>
       </aside>
 

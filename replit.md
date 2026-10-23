@@ -1,4 +1,4 @@
-# QUIZIMI
+# QUIZMI
 
 A course-based computer-based testing platform. Learners browse a real course
 catalogue, purchase access through Paystack, choose how many questions to

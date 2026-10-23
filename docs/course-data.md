@@ -1,6 +1,6 @@
 # Course data model
 
-QUIZIMI has **no in-app authoring, upload or admin screens**. Courses, questions
+QUIZMI has **no in-app authoring, upload or admin screens**. Courses, questions
 and answer options are written directly to the Turso database by the content
 ingestion workflow. The application only reads published courses.
 

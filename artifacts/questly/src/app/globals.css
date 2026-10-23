@@ -8,7 +8,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * QUIZIMI design system
+ * QUIZMI design system
  * ---------------------
  * Ported from Lumio: the same token names, the same two radii (a 5px content
  * surface and a 50px pill), the same warm paper canvas, serif display type and
@@ -32,106 +32,106 @@
     calc(max(0px, var(--shadow-blur) * 9 - 8px)) calc(var(--shadow-spread) - 12px)
     color-mix(in srgb, var(--shadow-color) calc(var(--shadow-opacity) * 250%), transparent);
 
-  /* Canvas — warm paper rather than cold grey */
-  --background: 40 33% 97%;
-  --foreground: 224 45% 14%;
-  --muted: 38 25% 92%;
-  --muted-foreground: 224 12% 42%;
-  --popover: 40 40% 99%;
-  --popover-foreground: 224 45% 14%;
-  --border: 36 20% 86%;
-  --input: 36 20% 84%;
-  --card: 40 40% 99%;
-  --card-foreground: 224 45% 14%;
+  /* Canvas — cool lilac paper, the surface Quizmi already used */
+  --background: 258 40% 98%;
+  --foreground: 258 40% 12%;
+  --muted: 258 30% 94%;
+  --muted-foreground: 258 12% 42%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 258 40% 12%;
+  --border: 258 24% 89%;
+  --input: 258 24% 86%;
+  --card: 0 0% 100%;
+  --card-foreground: 258 40% 12%;
 
-  /* Brand — deep ink primary, Quizmi indigo accent */
-  --primary: 224 45% 14%;
-  --primary-foreground: 40 33% 97%;
-  --secondary: 42 60% 92%;
-  --secondary-foreground: 224 45% 14%;
-  --accent: 250 83% 60%;
-  --accent-foreground: 40 33% 99%;
-  --accent-soft: 250 70% 95%;
-  --accent-soft-foreground: 250 60% 38%;
+  /* Brand — Quizmi violet family: deep purple primary, electric violet accent */
+  --primary: 263 70% 34%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 262 60% 95%;
+  --secondary-foreground: 263 65% 30%;
+  --accent: 262 83% 58%;
+  --accent-foreground: 0 0% 100%;
+  --accent-soft: 262 80% 96%;
+  --accent-soft-foreground: 263 65% 42%;
 
-  --success: 152 55% 36%;
-  --success-foreground: 40 33% 97%;
-  --warning: 34 90% 48%;
+  --success: 152 55% 34%;
+  --success-foreground: 0 0% 100%;
+  --warning: 32 92% 46%;
   --warning-foreground: 30 60% 12%;
-  --destructive: 2 72% 52%;
-  --destructive-foreground: 40 33% 97%;
-  --ring: 250 83% 60%;
+  --destructive: 353 72% 48%;
+  --destructive-foreground: 0 0% 100%;
+  --ring: 262 83% 58%;
 
   /* Content surfaces use 5px; buttons/controls use a full pill. */
   --radius: 0.3125rem;
 
-  --sidebar-background: 40 33% 97%;
-  --sidebar-foreground: 224 45% 14%;
-  --sidebar-primary: 224 45% 14%;
-  --sidebar-primary-foreground: 40 33% 97%;
-  --sidebar-accent: 42 60% 92%;
-  --sidebar-accent-foreground: 224 45% 14%;
-  --sidebar-border: 36 20% 86%;
-  --sidebar-ring: 250 83% 60%;
+  --sidebar-background: 258 40% 98%;
+  --sidebar-foreground: 258 40% 12%;
+  --sidebar-primary: 263 70% 34%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 262 60% 95%;
+  --sidebar-accent-foreground: 263 65% 30%;
+  --sidebar-border: 258 24% 89%;
+  --sidebar-ring: 262 83% 58%;
 
-  --chart-1: 250 83% 60%;
-  --chart-2: 224 45% 24%;
+  --chart-1: 262 83% 58%;
+  --chart-2: 263 60% 34%;
   --chart-3: 152 55% 36%;
-  --chart-4: 2 72% 52%;
-  --chart-5: 30 80% 60%;
+  --chart-4: 292 60% 58%;
+  --chart-5: 224 64% 56%;
 
   --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Fraunces", Georgia, serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
-  --shadow-sm: 0 1px 2px hsl(224 45% 14% / 0.06);
-  --shadow: 0 2px 8px hsl(224 45% 14% / 0.06);
-  --shadow-md: 0 6px 20px -6px hsl(224 45% 14% / 0.12);
-  --shadow-lg: 0 18px 40px -16px hsl(224 45% 14% / 0.2);
-  --shadow-xl: 0 30px 60px -24px hsl(224 45% 14% / 0.28);
+  --shadow-sm: 0 1px 2px hsl(258 45% 12% / 0.06);
+  --shadow: 0 2px 8px hsl(258 45% 12% / 0.06);
+  --shadow-md: 0 6px 20px -6px hsl(258 45% 12% / 0.12);
+  --shadow-lg: 0 18px 40px -16px hsl(258 45% 12% / 0.2);
+  --shadow-xl: 0 30px 60px -24px hsl(258 45% 12% / 0.28);
 
-  --scrollbar-thumb: hsl(224 45% 14% / 0.15);
+  --scrollbar-thumb: hsl(258 45% 12% / 0.15);
 }
 
 .dark {
   color-scheme: dark;
 
-  --background: 224 40% 8%;
-  --foreground: 40 33% 96%;
-  --muted: 224 24% 17%;
-  --muted-foreground: 40 12% 72%;
-  --popover: 224 32% 12%;
-  --popover-foreground: 40 33% 96%;
-  --border: 224 20% 22%;
-  --input: 224 20% 26%;
-  --card: 224 32% 12%;
-  --card-foreground: 40 33% 96%;
+  --background: 260 30% 7%;
+  --foreground: 258 30% 96%;
+  --muted: 260 20% 17%;
+  --muted-foreground: 258 14% 72%;
+  --popover: 260 28% 11%;
+  --popover-foreground: 258 30% 96%;
+  --border: 260 18% 22%;
+  --input: 260 18% 26%;
+  --card: 260 26% 11%;
+  --card-foreground: 258 30% 96%;
 
-  --primary: 40 33% 96%;
-  --primary-foreground: 224 45% 12%;
-  --secondary: 224 28% 18%;
-  --secondary-foreground: 40 33% 96%;
-  --accent: 250 85% 68%;
-  --accent-foreground: 224 45% 10%;
-  --accent-soft: 250 40% 22%;
-  --accent-soft-foreground: 250 80% 88%;
+  --primary: 262 80% 70%;
+  --primary-foreground: 260 40% 8%;
+  --secondary: 260 24% 18%;
+  --secondary-foreground: 258 30% 96%;
+  --accent: 263 85% 74%;
+  --accent-foreground: 260 40% 8%;
+  --accent-soft: 262 40% 22%;
+  --accent-soft-foreground: 262 80% 90%;
 
   --success: 152 50% 52%;
-  --success-foreground: 224 45% 10%;
+  --success-foreground: 260 40% 8%;
   --warning: 38 92% 58%;
   --warning-foreground: 30 60% 12%;
-  --destructive: 2 68% 60%;
-  --destructive-foreground: 40 33% 99%;
-  --ring: 250 85% 68%;
+  --destructive: 353 72% 62%;
+  --destructive-foreground: 260 40% 8%;
+  --ring: 263 85% 74%;
 
-  --sidebar-background: 224 40% 8%;
-  --sidebar-foreground: 40 33% 96%;
-  --sidebar-primary: 40 33% 96%;
-  --sidebar-primary-foreground: 224 45% 12%;
-  --sidebar-accent: 224 28% 18%;
-  --sidebar-accent-foreground: 40 33% 96%;
-  --sidebar-border: 224 20% 22%;
-  --sidebar-ring: 250 85% 68%;
+  --sidebar-background: 260 30% 7%;
+  --sidebar-foreground: 258 30% 96%;
+  --sidebar-primary: 262 80% 70%;
+  --sidebar-primary-foreground: 260 40% 8%;
+  --sidebar-accent: 260 24% 18%;
+  --sidebar-accent-foreground: 258 30% 96%;
+  --sidebar-border: 260 18% 22%;
+  --sidebar-ring: 263 85% 74%;
 
   --shadow-sm: 0 1px 2px hsl(0 0% 0% / 0.4);
   --shadow: 0 2px 8px hsl(0 0% 0% / 0.4);
@@ -139,7 +139,7 @@
   --shadow-lg: 0 18px 40px -16px hsl(0 0% 0% / 0.65);
   --shadow-xl: 0 30px 60px -24px hsl(0 0% 0% / 0.75);
 
-  --scrollbar-thumb: hsl(40 33% 96% / 0.16);
+  --scrollbar-thumb: hsl(258 30% 96% / 0.16);
 }
 
 @theme inline {
@@ -295,6 +295,85 @@
 .paper-dots {
   background-image: radial-gradient(hsl(var(--foreground) / 0.07) 1px, transparent 1px);
   background-size: 22px 22px;
+}
+
+/* Quizmi's violet identity, used wherever a gradient was inherited from Lumio. */
+.brand-gradient {
+  background-image: linear-gradient(132deg, #3b0764 0%, #5b21b6 48%, #7c3aed 100%);
+}
+
+.text-gradient {
+  background-image: linear-gradient(100deg, #5b21b6 0%, #7c3aed 55%, #a855f7 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero-mesh {
+  background-color: hsl(var(--background));
+  background-image:
+    radial-gradient(38rem 22rem at 12% -10%, hsl(var(--accent) / 0.16), transparent 70%),
+    radial-gradient(30rem 20rem at 88% 0%, hsl(292 70% 60% / 0.12), transparent 72%),
+    radial-gradient(26rem 18rem at 60% 110%, hsl(224 70% 60% / 0.1), transparent 70%);
+}
+
+/* ─── Dotted-edge card motif ───────────────────────────────────────────────
+   A small staggered dot mesh anchored to one corner of a card, painted with
+   layered radial-gradients so no component carries decorative markup. It is
+   clipped to the card, masked to a soft wedge, and painted above the card's
+   own background but beneath its content, so titles, buttons and progress bars
+   are never covered.
+
+   `.dotted-edge`    → bottom-right corner (default; clears a flush banner)
+   `.dotted-edge-tl` → top-left corner, for surfaces with no banner
+   `.dotted-edge-sm` → tighter grid for short tiles */
+.dotted-edge,
+.dotted-edge-tl {
+  position: relative;
+  isolation: isolate;
+}
+.dotted-edge::before,
+.dotted-edge-tl::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0.5;
+  background-image:
+    radial-gradient(circle, hsl(var(--accent) / 0.55) 1.15px, transparent 1.25px),
+    radial-gradient(circle, hsl(var(--accent) / 0.3) 1.15px, transparent 1.25px);
+  background-size:
+    12px 12px,
+    12px 12px;
+  background-position:
+    0 0,
+    6px 6px;
+  background-repeat: repeat;
+  -webkit-mask-image: linear-gradient(315deg, #000 0 34%, transparent 56%);
+  mask-image: linear-gradient(315deg, #000 0 34%, transparent 56%);
+}
+.dotted-edge-tl::before {
+  -webkit-mask-image: linear-gradient(135deg, #000 0 34%, transparent 56%);
+  mask-image: linear-gradient(135deg, #000 0 34%, transparent 56%);
+}
+.dark .dotted-edge::before,
+.dark .dotted-edge-tl::before {
+  opacity: 0.62;
+}
+.dotted-edge-sm::before {
+  background-size:
+    9px 9px,
+    9px 9px;
+  background-position:
+    0 0,
+    4.5px 4.5px;
+}
+
+/* The mesh should never compete with an image that covers the card. */
+.dotted-edge[data-flat="true"]::before {
+  opacity: 0.35;
 }
 
 /* Decorative background orbs: transform-only motion, disabled under

@@ -11,13 +11,13 @@ const DESCRIPTION =
 
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
-  title: "QUIZIMI — Course-based CBT practice",
+  title: "QUIZMI — Course-based CBT practice",
   description: DESCRIPTION,
-  applicationName: "QUIZIMI",
+  applicationName: "QUIZMI",
   openGraph: {
     type: "website",
-    siteName: "QUIZIMI",
-    title: "QUIZIMI — Course-based CBT practice",
+    siteName: "QUIZMI",
+    title: "QUIZMI — Course-based CBT practice",
     description: DESCRIPTION,
     url: "/",
     images: [
@@ -25,13 +25,13 @@ export const metadata: Metadata = {
         url: "/opengraph.jpg",
         width: 1200,
         height: 630,
-        alt: "QUIZIMI — course-based CBT practice",
+        alt: "QUIZMI — course-based CBT practice",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "QUIZIMI — Course-based CBT practice",
+    title: "QUIZMI — Course-based CBT practice",
     description: DESCRIPTION,
     images: ["/opengraph.jpg"],
   },
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "QUIZIMI",
+    title: "QUIZMI",
   },
   icons: {
     icon: [

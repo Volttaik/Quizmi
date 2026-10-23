@@ -227,13 +227,6 @@ export default function ConfigureScreen() {
         </p>
       </Reveal>
 
-      {course.inProgressAttemptId && (
-        <p className="mt-5 flex items-start gap-2 text-sm text-foreground">
-          <Play className="mt-0.5 h-4 w-4 shrink-0" />
-          You have an assessment in progress. Starting again resumes it.
-        </p>
-      )}
-
       {locked && (
         <div className="mt-5 rounded-[5px] bg-secondary p-4">
           <p className="text-sm font-semibold">This course needs a verified purchase</p>

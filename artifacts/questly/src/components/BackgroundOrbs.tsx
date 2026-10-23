@@ -24,17 +24,19 @@ type Orb = {
 };
 
 const ARRANGEMENTS: Record<OrbVariant, Orb[]> = {
+  // Quizmi's decoration stays inside its violet range — accent, plum and
+  // indigo — rather than Lumio's coral/mint pairing.
   home: [
     { left: "-8%", top: "-14%", size: 480, color: "hsl(var(--accent))", opacity: 0.22, float: "slow", delay: "0s" },
     { left: "64%", top: "4%", size: 340, color: "hsl(var(--chart-5))", opacity: 0.18, float: "slower", delay: "-6s" },
-    { left: "26%", top: "54%", size: 400, color: "hsl(var(--success))", opacity: 0.12, float: "slower", delay: "-12s" },
-    { left: "86%", top: "60%", size: 260, color: "hsl(var(--primary))", opacity: 0.08, float: "slow", delay: "-3s" },
+    { left: "26%", top: "54%", size: 400, color: "hsl(var(--chart-2))", opacity: 0.14, float: "slower", delay: "-12s" },
+    { left: "86%", top: "60%", size: 260, color: "hsl(var(--chart-1))", opacity: 0.1, float: "slow", delay: "-3s" },
   ],
   quiz: [
     { left: "-14%", top: "2%", size: 420, color: "hsl(var(--accent))", opacity: 0.14, float: "slow", delay: "-2s" },
-    { left: "74%", top: "-8%", size: 360, color: "hsl(var(--primary))", opacity: 0.06, float: "slower", delay: "-9s" },
+    { left: "74%", top: "-8%", size: 360, color: "hsl(var(--chart-5))", opacity: 0.1, float: "slower", delay: "-9s" },
     { left: "82%", top: "58%", size: 440, color: "hsl(var(--accent))", opacity: 0.1, float: "slower", delay: "-5s" },
-    { left: "8%", top: "68%", size: 300, color: "hsl(var(--success))", opacity: 0.08, float: "slow", delay: "-14s" },
+    { left: "8%", top: "68%", size: 300, color: "hsl(var(--chart-2))", opacity: 0.1, float: "slow", delay: "-14s" },
   ],
 };
 

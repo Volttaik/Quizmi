@@ -19,14 +19,14 @@ export default function TermsPrivacyPage() {
         </div>
 
         <div className="space-y-4">
-          <Section title="Using QUIZIMI">
+          <Section title="Using QUIZMI">
             <p>
-              QUIZIMI provides course-based computer-based testing practice for educational use.
-              Course content is supplied by QUIZIMI and is intended for revision and self-assessment.
+              QUIZMI provides course-based computer-based testing practice for educational use.
+              Course content is supplied by QUIZMI and is intended for revision and self-assessment.
             </p>
             <p>
               Results are a practice indicator only. We make no guarantee that performance in a
-              QUIZIMI assessment predicts the outcome of any external examination.
+              QUIZMI assessment predicts the outcome of any external examination.
             </p>
           </Section>
 
@@ -39,7 +39,7 @@ export default function TermsPrivacyPage() {
             <p>
               Paid courses are purchased through Paystack. Access is granted only after the server
               verifies the transaction. Card details are handled by Paystack and are never stored by
-              QUIZIMI.
+              QUIZMI.
             </p>
             <p>
               Accounts used to disrupt the service, attempt to extract answer keys, or automate

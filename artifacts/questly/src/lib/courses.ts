@@ -24,7 +24,6 @@ type AttemptStats = {
   used: number;
   best: number | null;
   last: number | null;
-  inProgressId: number | null;
 };
 
 async function loadQuestionStats(courseIds: number[]): Promise<Map<number, QuestionStats>> {
@@ -67,22 +66,15 @@ async function loadAttemptStats(
     .orderBy(desc(attemptsTable.id));
 
   for (const row of rows) {
-    const current = stats.get(row.courseId) ?? {
-      used: 0,
-      best: null,
-      last: null,
-      inProgressId: null,
-    };
+    if (row.status === "in_progress") continue;
+
+    const current = stats.get(row.courseId) ?? { used: 0, best: null, last: null };
     current.used += 1;
 
-    if (row.status === "in_progress") {
-      current.inProgressId = row.id;
-    } else {
-      // Rows are newest first, so the first completed result is the last score.
-      if (current.last === null) current.last = row.percentage;
-      current.best =
-        current.best === null ? row.percentage : Math.max(current.best, row.percentage);
-    }
+    // Rows are newest first, so the first completed result is the last score.
+    if (current.last === null) current.last = row.percentage;
+    current.best =
+      current.best === null ? row.percentage : Math.max(current.best, row.percentage);
     stats.set(row.courseId, current);
   }
 
@@ -132,7 +124,6 @@ function toSummary(
     attemptsRemaining: attemptsRemaining(course.maxAttempts ?? null, attempts?.used ?? 0),
     bestPercentage: attempts?.best ?? null,
     lastPercentage: attempts?.last ?? null,
-    inProgressAttemptId: attempts?.inProgressId ?? null,
     purchasedAt,
   };
 }

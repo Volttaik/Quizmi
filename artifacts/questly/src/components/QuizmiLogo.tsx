@@ -14,7 +14,7 @@ export default function QuizmiLogo({
     >
       <img
         src="/logo.png"
-        alt="QUIZIMI"
+        alt="QUIZMI"
         width={size}
         height={size}
         className="rounded-lg w-full h-full"
@@ -39,7 +39,7 @@ export function QuizmiWordmark({
       <span
         className={`text-base font-extrabold uppercase leading-none tracking-[0.14em] ${textColor}`}
       >
-        QUIZIMI
+        QUIZMI
       </span>
     </div>
   );

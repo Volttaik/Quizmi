@@ -134,25 +134,9 @@ function toHistoryItem(row: CompletedRow): HistoryItem {
 }
 
 export async function buildDashboard(user: User): Promise<DashboardData> {
-  const [completed, openAttempts, purchasedCourses, aggregateRows, purchasedCountRows, discover] =
+  const [completed, purchasedCourses, aggregateRows, purchasedCountRows, discover] =
     await Promise.all([
       loadCompletedAttempts(user.id, 100),
-      db
-        .select({
-          attemptId: attemptsTable.id,
-          courseSlug: coursesTable.slug,
-          courseTitle: coursesTable.title,
-          expiresAt: attemptsTable.expiresAt,
-          answers: attemptsTable.answers,
-          questionIds: attemptsTable.questionIds,
-        })
-        .from(attemptsTable)
-        .innerJoin(coursesTable, eq(attemptsTable.courseId, coursesTable.id))
-        .where(
-          and(eq(attemptsTable.userId, user.id), eq(attemptsTable.status, "in_progress"))
-        )
-        .orderBy(desc(attemptsTable.id))
-        .limit(5),
       listPurchasedCourses(user.id),
       db
         .select({
@@ -179,23 +163,8 @@ export async function buildDashboard(user: User): Promise<DashboardData> {
   const aggregate = aggregateRows[0];
   const total = Number(aggregate?.attempts ?? 0);
 
-  const inProgress = openAttempts
-    .filter((attempt) => (secondsRemaining(attempt.expiresAt) ?? 1) > 0)
-    .map((attempt) => ({
-      attemptId: attempt.attemptId,
-      courseSlug: attempt.courseSlug,
-      courseTitle: attempt.courseTitle,
-      secondsRemaining: secondsRemaining(attempt.expiresAt),
-      answered: Array.isArray(attempt.answers)
-        ? attempt.answers.filter((answer) => answer.selectedIndex !== null).length
-        : 0,
-      questionCount: Array.isArray(attempt.questionIds) ? attempt.questionIds.length : 0,
-    }));
-
   const ownedIds = new Set(purchasedCourses.map((course) => course.id));
-  const recommended = discover
-    .filter((course) => !ownedIds.has(course.id) && !course.inProgressAttemptId)
-    .slice(0, 3);
+  const recommended = discover.filter((course) => !ownedIds.has(course.id)).slice(0, 3);
 
   const subjectMap = new Map<string, { attempts: number; total: number }>();
   for (const row of completed) {
@@ -226,7 +195,6 @@ export async function buildDashboard(user: User): Promise<DashboardData> {
     },
     purchasedCourses,
     subjectPerformance,
-    inProgress,
     recentResults: completed.slice(0, 5).map(toHistoryItem),
     recommended,
   };

@@ -221,7 +221,7 @@ async function main() {
     args: [
       DEMO_SLUG,
       "Demo: English Usage",
-      "A free, 20-question English usage practice paper. No account or payment required — just open it and take a timed or untimed attempt to see how QUIZIMI works.",
+      "A free, 20-question English usage practice paper. No account or payment required — just open it and take a timed or untimed attempt to see how QUIZMI works.",
       "English",
       "easy",
       0,

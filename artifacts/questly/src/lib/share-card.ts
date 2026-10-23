@@ -33,8 +33,8 @@ export function courseUrlFor(slug: string): string {
 export function shareTextFor(result: AttemptResult, courseUrl: string): string {
   const headline =
     result.status === "submitted"
-      ? `I scored ${result.percentage}% on the ${result.courseTitle} assessment on QUIZIMI!`
-      : `I completed the ${result.courseTitle} assessment on QUIZIMI (${result.percentage}%).`;
+      ? `I scored ${result.percentage}% on the ${result.courseTitle} assessment on QUIZMI!`
+      : `I completed the ${result.courseTitle} assessment on QUIZMI (${result.percentage}%).`;
   return `${headline} Think you can do better? Take the same course here: ${courseUrl}`;
 }
 
@@ -160,7 +160,7 @@ export async function renderResultCard(result: AttemptResult): Promise<Blob> {
   ctx.fillStyle = WHITE;
   ctx.font = `800 34px ${FONT_STACK}`;
   ctx.textBaseline = "alphabetic";
-  ctx.fillText("QUIZIMI", pad + (logo ? 96 : 0), pad + 52);
+  ctx.fillText("QUIZMI", pad + (logo ? 96 : 0), pad + 52);
 
   const chip = statusChip(result);
   ctx.font = `800 24px ${FONT_STACK}`;
@@ -282,7 +282,7 @@ export async function renderResultCard(result: AttemptResult): Promise<Blob> {
   const ctaX = pad + qrSize + 48;
   ctx.fillStyle = WHITE;
   ctx.font = `800 40px ${FONT_STACK}`;
-  const ctaLines = wrapLines(ctx, "Try this course on QUIZIMI", size - pad - ctaX, 2);
+  const ctaLines = wrapLines(ctx, "Try this course on QUIZMI", size - pad - ctaX, 2);
   let ctaY = footerY + 54;
   for (const line of ctaLines) {
     ctx.fillText(line, ctaX, ctaY);
@@ -330,5 +330,5 @@ function formatDuration(totalSeconds: number): string {
 /** File name for the downloaded card; contains no private data. */
 export function cardFileName(result: AttemptResult): string {
   const slug = result.courseSlug.replace(/[^a-z0-9-]+/gi, "-").toLowerCase();
-  return `quizimi-result-${slug}-${result.id}.png`;
+  return `quizmi-result-${slug}-${result.id}.png`;
 }

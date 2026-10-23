@@ -22,7 +22,7 @@ const faqs = [
     a: "Your answers save as you go, and a refresh restores them. Leaving an active assessment is recorded as a departure: the first two produce a warning, and the third terminates the attempt. For a timed assessment, the clock keeps running while you are away.",
   },
   {
-    q: "How does QUIZIMI detect leaving an assessment?",
+    q: "How does QUIZMI detect leaving an assessment?",
     a: "The exam page reports when you hide the tab, navigate away or unload the page, and the server records the confirmed departure against your attempt. Browsers cannot detect every possible departure (for example, switching to another device), so this is a reasonable integrity measure rather than perfect proctoring.",
   },
   {

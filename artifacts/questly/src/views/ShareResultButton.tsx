@@ -201,7 +201,7 @@ export default function ShareResultButton({
 
             <p className="mt-3 flex items-center gap-1.5 text-[11px] text-muted-foreground">
               <Check className="h-3.5 w-3.5 text-emerald-500" />
-              The link opens this course on QUIZIMI — recipients can view it and buy access
+              The link opens this course on QUIZMI — recipients can view it and buy access
               themselves.
             </p>
           </div>

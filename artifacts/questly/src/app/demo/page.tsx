@@ -27,7 +27,7 @@ export default async function DemoLanding() {
       </div>
 
       <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-        Try QUIZIMI for free
+        Try QUIZMI for free
       </h1>
 
       <p className="mt-4 text-lg text-muted-foreground">

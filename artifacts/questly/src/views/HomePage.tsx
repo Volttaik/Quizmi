@@ -255,7 +255,7 @@ export default function HomePage({ initialCourses, initialSubjects, initialError
             />
             <Image
               src="/hero-mockup.png"
-              alt="QUIZIMI open on a phone, showing course discovery"
+              alt="QUIZMI open on a phone, showing course discovery"
               width={1536}
               height={1024}
               priority
@@ -378,7 +378,7 @@ export default function HomePage({ initialCourses, initialSubjects, initialError
       {/* ── How it works ─────────────────────────────────────────────────── */}
       <section id="how" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-12 sm:px-6">
         <Reveal>
-          <h2 className="text-xl font-semibold sm:text-2xl">How QUIZIMI works</h2>
+          <h2 className="text-xl font-semibold sm:text-2xl">How QUIZMI works</h2>
         </Reveal>
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {STEPS.map((step, index) => (
@@ -403,7 +403,7 @@ export default function HomePage({ initialCourses, initialSubjects, initialError
             <h2 className="text-xl font-semibold sm:text-2xl">Practice that feels rewarding</h2>
             <p className="mt-3.5 text-[15px] leading-relaxed text-muted-foreground">
               Every answer gets a clear verdict, a spoken cue and a short explanation where the
-              course provides one. Build a streak and QUIZIMI cheers you on.
+              course provides one. Build a streak and QUIZMI cheers you on.
             </p>
             <h3 className="mt-8 text-xl font-semibold">Know where you stand</h3>
             <p className="mt-2.5 text-[15px] leading-relaxed text-muted-foreground">
@@ -477,7 +477,7 @@ export default function HomePage({ initialCourses, initialSubjects, initialError
             </Link>
           </nav>
           <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} QUIZIMI.
+            © {new Date().getFullYear()} QUIZMI.
           </p>
         </div>
       </footer>

@@ -2,16 +2,17 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, BookOpen, CheckCircle2, Clock } from "lucide-react";
+import { ArrowRight, BookOpen, CheckCircle2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import type { CourseSummary } from "@/lib/types";
 
+/** Coverless courses fall back to Quizmi's violet range, never another brand's. */
 const FALLBACK_GRADIENTS = [
-  "linear-gradient(135deg, hsl(250 60% 42%), hsl(268 58% 54%))",
-  "linear-gradient(135deg, hsl(224 45% 26%), hsl(232 40% 45%))",
-  "linear-gradient(135deg, hsl(28 70% 46%), hsl(36 80% 58%))",
-  "linear-gradient(135deg, hsl(168 45% 28%), hsl(160 40% 44%))",
+  "linear-gradient(135deg, #4c1d95, #7c3aed)",
+  "linear-gradient(135deg, #312e81, #6366f1)",
+  "linear-gradient(135deg, #581c87, #a855f7)",
+  "linear-gradient(135deg, #2e1065, #6d28d9)",
 ];
 
 function fallbackFor(course: CourseSummary) {
@@ -27,16 +28,10 @@ function fallbackFor(course: CourseSummary) {
 export default function CourseCard({ course }: { course: CourseSummary }) {
   const [coverOk, setCoverOk] = useState(true);
   const unlocked = course.hasAccess;
-  const action = course.inProgressAttemptId
-    ? "Resume"
-    : unlocked
-      ? "Practise"
-      : course.isFree
-        ? "Start free"
-        : "Preview & unlock";
+  const action = unlocked ? "Practise" : course.isFree ? "Start free" : "Preview & unlock";
 
   return (
-    <div className="group flex h-full flex-col overflow-hidden rounded-[5px] bg-card shadow-sm ring-1 ring-border/60 transition-shadow duration-200 hover:shadow-md">
+    <div className="group dotted-edge flex h-full flex-col overflow-hidden rounded-[5px] bg-card shadow-sm ring-1 ring-border/60 transition-shadow duration-200 hover:shadow-md">
       <Link
         href={`/courses/${course.slug}`}
         className="block shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -79,11 +74,6 @@ export default function CourseCard({ course }: { course: CourseSummary }) {
             <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-success/10 px-2.5 py-1 text-[11px] font-semibold text-success">
               <CheckCircle2 className="h-3.5 w-3.5" />
               {course.isFree ? "Free" : "Unlocked"}
-            </span>
-          ) : course.inProgressAttemptId ? (
-            <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-secondary px-2.5 py-1 text-[11px] font-semibold">
-              <Clock className="h-3.5 w-3.5" />
-              In progress
             </span>
           ) : null}
         </div>

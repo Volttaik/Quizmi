@@ -263,10 +263,31 @@ export type StartOptions = {
 };
 
 /**
- * Starts or resumes an attempt. All launch rules live here so the route, the
- * exam runner and the result page exercise the same code path:
- * publication, entitlement, question availability, resume, attempt limits,
- * selected timer and per-attempt question selection.
+ * Removes every open draft for a course. Quizmi, like Lumio, never resumes an
+ * unfinished quiz, so an open draft is disposable state rather than a record:
+ * completed attempts and their results are untouched.
+ */
+export async function discardOpenAttempts(userId: number, courseId: number): Promise<void> {
+  await db
+    .delete(attemptsTable)
+    .where(
+      and(
+        eq(attemptsTable.userId, userId),
+        eq(attemptsTable.courseId, courseId),
+        eq(attemptsTable.status, "in_progress")
+      )
+    );
+}
+
+/**
+ * Starts a fresh attempt. All launch rules live here so the route, the exam
+ * runner and the result page exercise the same code path: publication,
+ * entitlement, question availability, attempt limits, selected timer and
+ * per-attempt question selection.
+ *
+ * There is deliberately no resume branch. Leaving a quiz ends it, and starting
+ * again begins at the first question with a new timer, a new answer sheet and
+ * no restored position.
  */
 export async function startAttemptForUser(
   user: { id: number },
@@ -283,6 +304,8 @@ export async function startAttemptForUser(
     }
   }
 
+  // An expired draft is scored first so a timed-out attempt is still recorded;
+  // a live draft is simply discarded, because it can no longer be resumed.
   const open = await db.query.attemptsTable.findFirst({
     where: and(
       eq(attemptsTable.userId, user.id),
@@ -292,12 +315,10 @@ export async function startAttemptForUser(
     orderBy: desc(attemptsTable.id),
   });
 
-  if (open) {
-    if (!attemptIsExpired(open.expiresAt)) {
-      return { ok: true, state: await buildAttemptState(open, course) };
-    }
+  if (open && attemptIsExpired(open.expiresAt)) {
     await finalizeAttempt(open, course);
   }
+  await discardOpenAttempts(user.id, course.id);
 
   const [{ count }] = await db
     .select({ count: sql<number>`count(*)` })
@@ -387,18 +408,29 @@ export async function startAttemptForUser(
       })
       .returning();
   } catch (error) {
-    // The partial unique index allows one open attempt per course. If another
-    // request won the race, resume that attempt instead of failing.
-    const existing = await db.query.attemptsTable.findFirst({
-      where: and(
-        eq(attemptsTable.userId, user.id),
-        eq(attemptsTable.courseId, course.id),
-        eq(attemptsTable.status, "in_progress")
-      ),
-      orderBy: desc(attemptsTable.id),
-    });
-    if (!existing) throw error;
-    return { ok: true, state: await buildAttemptState(existing, course) };
+    // The partial unique index allows one open attempt per course. If a
+    // concurrent request won the race, clear it and take the slot ourselves so
+    // the learner still gets a brand-new attempt instead of a resumed one.
+    await discardOpenAttempts(user.id, course.id);
+    try {
+      [attempt] = await db
+        .insert(attemptsTable)
+        .values({
+          userId: user.id,
+          courseId: course.id,
+          status: "in_progress",
+          startedAt: now,
+          lastSeenAt: now,
+          expiresAt: deadline(durationMinutes, startedAt),
+          durationMinutes,
+          resultMode,
+          questionIds,
+          answers: [],
+        })
+        .returning();
+    } catch {
+      throw error;
+    }
   }
 
   return { ok: true, state: await buildAttemptState(attempt, course) };

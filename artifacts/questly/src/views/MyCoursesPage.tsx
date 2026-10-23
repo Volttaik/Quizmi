@@ -18,12 +18,7 @@ import type { CourseSummary } from "@/lib/types";
 
 function CourseRow({ course }: { course: CourseSummary }) {
   const [coverOk, setCoverOk] = useState(true);
-  const resume = Boolean(course.inProgressAttemptId);
-  const actionLabel = resume
-    ? "Resume assessment"
-    : course.attemptsUsed > 0
-      ? "Practise again"
-      : "Start assessment";
+  const actionLabel = course.attemptsUsed > 0 ? "Practise again" : "Start assessment";
 
   return (
     <Card className="group overflow-hidden rounded-[1.65rem] border border-border/70 bg-surface p-0 transition-all duration-300 hover:border-accent/25 hover:shadow-[0_22px_48px_-28px_rgba(35,25,80,0.45)]">
@@ -63,11 +58,6 @@ function CourseRow({ course }: { course: CourseSummary }) {
               {course.subject && (
                 <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
                   {course.subject}
-                </span>
-              )}
-              {resume && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-warning-soft px-2.5 py-1 text-[10.5px] font-semibold text-warning-soft-foreground">
-                  <PlayFill className="h-3 w-3" /> In progress
                 </span>
               )}
             </div>
@@ -110,11 +100,7 @@ function CourseRow({ course }: { course: CourseSummary }) {
         <div className="flex flex-shrink-0 items-center justify-between gap-3 border-t border-border/60 px-5 py-4 sm:border-l sm:border-t-0 sm:px-6">
           <span className="text-[12px] font-semibold text-accent">{actionLabel}</span>
           <span className="flex h-10 w-10 items-center justify-center rounded-full bg-accent-soft text-accent-soft-foreground transition-all duration-300 group-hover:bg-accent group-hover:text-accent-foreground">
-            {resume ? (
-              <PlayFill className="h-4 w-4" />
-            ) : (
-              <ArrowRight className="h-4 w-4" />
-            )}
+            <ArrowRight className="h-4 w-4" />
           </span>
         </div>
       </Link>

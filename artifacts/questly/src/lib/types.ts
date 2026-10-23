@@ -30,7 +30,6 @@ export type CourseSummary = {
   attemptsRemaining: number | null;
   bestPercentage: number | null;
   lastPercentage: number | null;
-  inProgressAttemptId: number | null;
   /** Set for courses on the My Courses screen, where the purchase is known. */
   purchasedAt: string | null;
 };
@@ -167,14 +166,6 @@ export type DashboardData = {
   };
   purchasedCourses: CourseSummary[];
   subjectPerformance: Array<{ subject: string; attempts: number; averagePercentage: number }>;
-  inProgress: Array<{
-    attemptId: number;
-    courseSlug: string;
-    courseTitle: string;
-    secondsRemaining: number | null;
-    answered: number;
-    questionCount: number;
-  }>;
   recentResults: HistoryItem[];
   recommended: CourseSummary[];
 };
