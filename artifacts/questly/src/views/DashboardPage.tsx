@@ -3,46 +3,39 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Button, ProgressBar, SearchField } from "@heroui/react";
 import {
-  ArrowRight,
-  BookOpen,
-  ChartLine,
-  CircleCheck,
-  CircleExclamation,
+  ChevronRight,
   Clock,
   Flame,
-  Magnifier,
-  PlayFill,
-  Sparkles,
+  LayoutDashboard,
+  Play,
+  Search,
   Target,
-} from "@gravity-ui/icons";
+  Trophy,
+  UserRound,
+} from "lucide-react";
+
+import Avatar from "@/components/Avatar";
 import CourseCard from "@/components/CourseCard";
-import ButtonLink from "@/components/ui/ButtonLink";
-import { cn } from "@/lib/utils";
-import { formatCountdown, formatRelative, scoreClasses } from "@/lib/format";
+import { Reveal } from "@/components/Motion";
+import { Button } from "@/components/ui/button";
+import { formatCountdown, formatRelative } from "@/lib/format";
 import type { DashboardData } from "@/lib/types";
 
-function SectionHeading({
-  title,
-  description,
-  action,
+function Stat({
+  icon: Icon,
+  label,
+  value,
 }: {
-  title: string;
-  description?: string;
-  action?: React.ReactNode;
+  icon: typeof Target;
+  label: string;
+  value: string;
 }) {
   return (
-    <div className="flex items-end justify-between gap-4">
-      <div>
-        <h2 className="font-display text-[1.35rem] font-semibold tracking-[-0.02em] text-foreground">
-          {title}
-        </h2>
-        {description && (
-          <p className="mt-1 text-[12.5px] leading-relaxed text-muted-foreground">{description}</p>
-        )}
-      </div>
-      {action}
+    <div className="rounded-[5px] border border-border bg-card p-4 shadow-sm transition-shadow duration-200 hover:shadow-md">
+      <Icon className="h-5 w-5 text-muted-foreground" />
+      <p className="mt-2.5 font-serif text-xl font-semibold">{value}</p>
+      <p className="text-sm text-muted-foreground">{label}</p>
     </div>
   );
 }
@@ -81,25 +74,13 @@ export default function DashboardPage() {
     };
   }, [router]);
 
-  const firstName = data?.user.name?.split(" ")[0] ?? "";
-  const hasActivity = (data?.stats.completedAttempts ?? 0) > 0;
-
-  const explore = (event: React.FormEvent) => {
-    event.preventDefault();
-    const query = exploreQuery.trim();
-    router.push(query ? `/courses?q=${encodeURIComponent(query)}` : "/courses");
-  };
-
   if (loading) {
     return (
-      <main className="mx-auto max-w-6xl px-5 py-10 sm:px-6 lg:px-8">
-        <div className="skeleton h-9 w-64 rounded-xl" />
-        <div className="skeleton mt-3 h-4 w-80 rounded-lg" />
-        <div className="skeleton mt-8 h-32 rounded-[1.75rem]" />
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 3 }).map((_, index) => (
-            <div key={index} className="skeleton h-80 rounded-[1.75rem]" />
-          ))}
+      <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+        <div className="skeleton h-14 w-64" />
+        <div className="mt-8 grid gap-6 lg:grid-cols-3">
+          <div className="skeleton h-80 lg:col-span-2" />
+          <div className="skeleton h-80" />
         </div>
       </main>
     );
@@ -107,15 +88,15 @@ export default function DashboardPage() {
 
   if (error) {
     return (
-      <main className="mx-auto max-w-3xl px-5 py-20 text-center">
-        <span className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-danger-soft text-danger-soft-foreground">
-          <CircleExclamation className="h-6 w-6" />
+      <main className="mx-auto max-w-md px-4 py-24 text-center">
+        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-[5px] bg-destructive/10 text-destructive">
+          <LayoutDashboard className="h-6 w-6" />
         </span>
-        <h1 className="font-display text-2xl font-semibold text-foreground">
+        <h1 className="mt-5 text-xl font-semibold sm:text-2xl">
           We couldn&apos;t load your dashboard
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">{error}</p>
-        <Button className="mt-6 rounded-full" onPress={() => window.location.reload()}>
+        <Button className="mt-6 h-11 px-6" onClick={() => window.location.reload()}>
           Try again
         </Button>
       </main>
@@ -124,100 +105,78 @@ export default function DashboardPage() {
 
   if (!data) return null;
 
-  const stats = [
-    {
-      label: "My courses",
-      value: data.stats.purchasedCourses,
-      hint:
-        data.stats.purchasedCourses === 0
-          ? "Nothing purchased yet"
-          : `${data.stats.coursesTaken} attempted`,
-      icon: BookOpen,
-    },
-    {
-      label: "Completed",
-      value: data.stats.completedAttempts,
-      hint: hasActivity ? "Results saved" : "No results yet",
-      icon: CircleCheck,
-    },
-    {
-      label: "Average score",
-      value: `${data.stats.averagePercentage}%`,
-      hint: hasActivity ? "Across all attempts" : "Start one to see this",
-      icon: Target,
-    },
-    {
-      label: "Pass rate",
-      value: `${data.stats.passRate}%`,
-      hint: hasActivity ? `${data.stats.bestPercentage}% personal best` : "No attempts yet",
-      icon: Flame,
-    },
-  ];
+  const firstName = data.user.name?.split(" ")[0] ?? "";
+  const hasActivity = data.stats.completedAttempts > 0;
+  const hour = new Date().getHours();
+  const greet = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+  const featured = data.purchasedCourses[0] ?? data.recommended[0];
+  const courseHref = featured ? `/courses/${featured.slug}` : "/courses";
+
+  const explore = (event: React.FormEvent) => {
+    event.preventDefault();
+    const query = exploreQuery.trim();
+    router.push(query ? `/courses?q=${encodeURIComponent(query)}` : "/courses");
+  };
 
   return (
-    <main className="mx-auto max-w-6xl px-5 py-10 sm:px-6 sm:py-12 lg:px-8">
-      {/* ── Greeting ──────────────────────────────────────────────────────── */}
-      <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="eyebrow">Your workspace</p>
-          <h1 className="mt-2.5 text-display-md text-foreground">
-            {firstName ? `Welcome back, ${firstName}.` : "Welcome back."}
-          </h1>
-          <p className="mt-2 max-w-xl text-[14px] leading-relaxed text-muted-foreground">
-            {data.inProgress.length > 0
-              ? "You have an assessment open. Pick it back up or start something new."
-              : hasActivity
-                ? "Review how you're doing, then choose your next attempt."
-                : "Pick a course, set your timer and take your first assessment."}
-          </p>
+    <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+      <Reveal className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-3.5">
+          <Avatar name={data.user.name || "You"} src={data.user.avatarUrl} size={52} className="ring-1 ring-border" />
+          <div>
+            <p className="text-sm text-muted-foreground">{greet},</p>
+            <h1 className="text-xl font-semibold sm:text-2xl">{firstName || "there"}</h1>
+          </div>
         </div>
-        <ButtonLink href="/courses" className="rounded-full" size="md">
-          Browse courses
-          <ArrowRight className="h-4 w-4" />
-        </ButtonLink>
+        <Button asChild variant="outline" size="sm" className="h-9 px-4">
+          <Link href="/profile">
+            <UserRound className="mr-1.5 h-4 w-4" />
+            Profile
+          </Link>
+        </Button>
+      </Reveal>
+
+      <div className="mt-8 grid gap-6 lg:grid-cols-3">
+        {featured && (
+          <Reveal className="lg:col-span-2">
+            <CourseCard course={featured} />
+          </Reveal>
+        )}
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-1">
+          <Stat icon={Target} label="Average accuracy" value={`${data.stats.averagePercentage}%`} />
+          <Stat icon={Trophy} label="Completed attempts" value={String(data.stats.completedAttempts)} />
+          <Stat
+            icon={Flame}
+            label={hasActivity ? "Personal best" : "Pass rate"}
+            value={hasActivity ? `${data.stats.bestPercentage}%` : `${data.stats.passRate}%`}
+          />
+        </div>
       </div>
 
-      {/* ── One calm stat strip, not four competing cards ─────────────────── */}
-      <dl className="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-[1.5rem] border border-border/80 bg-border/70 sm:grid-cols-4">
-        {stats.map((stat) => (
-          <div key={stat.label} className="bg-surface px-5 py-5">
-            <dt className="flex items-center gap-2 text-[11.5px] font-semibold text-muted-foreground">
-              <stat.icon className="h-3.5 w-3.5 text-accent" />
-              {stat.label}
-            </dt>
-            <dd className="mt-2.5 font-display text-[1.9rem] font-semibold leading-none tracking-[-0.03em] text-foreground">
-              {stat.value}
-            </dd>
-            <p className="mt-1.5 text-[11px] text-muted-foreground">{stat.hint}</p>
-          </div>
-        ))}
-      </dl>
-
-      {/* ── Continue ─────────────────────────────────────────────────────── */}
       {data.inProgress.length > 0 && (
-        <section className="mt-12">
-          <SectionHeading title="Continue where you stopped" />
+        <section className="mt-10">
+          <h2 className="text-lg font-semibold">Continue where you stopped</h2>
           <div className="mt-4 space-y-3">
             {data.inProgress.map((attempt) => (
               <Link
                 key={attempt.attemptId}
                 href={`/exam/${attempt.attemptId}`}
-                className="brand-gradient group flex items-center gap-4 rounded-[1.5rem] p-5 text-white shadow-[0_22px_50px_-26px_rgba(67,45,160,0.75)] transition-transform duration-300 hover:-translate-y-0.5 sm:p-6"
+                className="group flex items-center gap-4 rounded-[5px] bg-primary p-5 text-primary-foreground shadow-md transition-transform duration-300 hover:-translate-y-0.5"
               >
-                <span className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-white/15 backdrop-blur">
-                  <PlayFill className="h-5 w-5" />
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary-foreground/15">
+                  <Play className="h-5 w-5" />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate font-display text-lg font-semibold">{attempt.courseTitle}</p>
-                  <p className="mt-0.5 text-[12px] text-white/75">
+                  <p className="truncate font-serif text-lg font-semibold">{attempt.courseTitle}</p>
+                  <p className="mt-0.5 text-xs text-primary-foreground/70">
                     {attempt.answered} of {attempt.questionCount} answered
                     {attempt.secondsRemaining !== null &&
                       ` · ${formatCountdown(attempt.secondsRemaining)} remaining`}
                   </p>
                 </div>
-                <span className="flex flex-shrink-0 items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-[12.5px] font-semibold backdrop-blur">
+                <span className="flex shrink-0 items-center gap-2 rounded-full bg-accent px-4 py-2 text-xs font-semibold text-accent-foreground">
                   Resume
-                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                  <ChevronRight className="h-3.5 w-3.5" />
                 </span>
               </Link>
             ))}
@@ -225,231 +184,135 @@ export default function DashboardPage() {
         </section>
       )}
 
-      {/* ── My courses ───────────────────────────────────────────────────── */}
-      <section className="mt-12">
-        <SectionHeading
-          title="My courses"
-          description="Courses you own, with your best score so far."
-          action={
-            data.purchasedCourses.length > 0 ? (
-              <Link
-                href="/my-courses"
-                className="text-[12.5px] font-semibold text-accent underline-offset-4 hover:underline"
-              >
-                View library
-              </Link>
-            ) : undefined
-          }
-        />
-
-        {data.purchasedCourses.length === 0 ? (
-          <div className="mt-4 flex flex-col items-start gap-4 rounded-[1.5rem] border border-dashed border-border bg-surface/50 p-7 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-start gap-4">
-              <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-accent-soft text-accent-soft-foreground">
-                <BookOpen className="h-5 w-5" />
-              </span>
-              <div>
-                <p className="font-display text-[15px] font-semibold text-foreground">
-                  Your library is empty
-                </p>
-                <p className="mt-1 max-w-md text-[12.5px] leading-relaxed text-muted-foreground">
-                  Courses you purchase appear here. Browse the catalogue to find something worth
-                  preparing for.
-                </p>
-              </div>
-            </div>
-            <ButtonLink href="/courses" size="sm" className="flex-shrink-0 rounded-full">
-              Explore courses
-            </ButtonLink>
+      <div className="mt-10 grid gap-6 lg:grid-cols-2">
+        <Reveal className="rounded-[5px] border border-border bg-card p-5 shadow-sm sm:p-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold">Recent sessions</h2>
+            {hasActivity && (
+              <Button asChild size="sm">
+                <Link href="/history">History</Link>
+              </Button>
+            )}
           </div>
-        ) : (
-          <div className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {data.purchasedCourses.slice(0, 3).map((course) => (
-              <CourseCard key={course.id} course={course} />
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* ── Recent results + subject progress ────────────────────────────── */}
-      <div className="mt-12 grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-12">
-        <section>
-          <SectionHeading
-            title="Recent results"
-            action={
-              hasActivity ? (
-                <Link
-                  href="/history"
-                  className="text-[12.5px] font-semibold text-accent underline-offset-4 hover:underline"
-                >
-                  Full history
-                </Link>
-              ) : undefined
-            }
-          />
 
           {data.recentResults.length === 0 ? (
-            <div className="mt-4 rounded-[1.5rem] border border-dashed border-border bg-surface/50 p-7 text-center">
-              <ChartLine className="mx-auto h-5 w-5 text-muted-foreground" />
-              <p className="mt-3 font-display text-[15px] font-semibold text-foreground">
-                No results yet
+            <div className="mt-5 rounded-[5px] border-2 border-dashed border-border p-6 text-center">
+              <p className="text-sm font-semibold">No sessions yet</p>
+              <p className="mx-auto mt-1 max-w-xs text-sm text-muted-foreground">
+                Your first quiz is one click away. Pick a few questions and see how you do.
               </p>
-              <p className="mx-auto mt-1 max-w-xs text-[12.5px] leading-relaxed text-muted-foreground">
-                Complete an assessment and your score, answer review and progress will appear here.
+              <Button asChild className="mt-4">
+                <Link href={courseHref}>Start your first quiz</Link>
+              </Button>
+            </div>
+          ) : (
+            <ul className="mt-4 divide-y divide-border">
+              {data.recentResults.slice(0, 5).map((result) => (
+                <li key={result.attemptId}>
+                  <Link
+                    href={`/results/${result.attemptId}`}
+                    className="flex items-center justify-between gap-3 py-3 transition-colors hover:bg-muted/50"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate font-medium">{result.courseTitle}</p>
+                      <p className="truncate text-xs text-muted-foreground">
+                        {result.status === "terminated" ? "Terminated · " : ""}
+                        {formatRelative(result.submittedAt)}
+                      </p>
+                    </div>
+                    <span className="flex items-center gap-2 font-serif text-lg font-semibold">
+                      {result.score}/{result.totalMarks}
+                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Reveal>
+
+        <Reveal delay={0.05} className="rounded-[5px] border border-border bg-card p-5 shadow-sm sm:p-6">
+          <h2 className="text-lg font-semibold">By subject</h2>
+          {data.subjectPerformance.length === 0 ? (
+            <div className="mt-5 rounded-[5px] border-2 border-dashed border-border p-6 text-center">
+              <Target className="mx-auto h-5 w-5 text-muted-foreground" />
+              <p className="mt-2 text-sm font-semibold">Progress starts with a result</p>
+              <p className="mx-auto mt-1 max-w-xs text-sm text-muted-foreground">
+                Complete an assessment and your average score by subject appears here.
               </p>
             </div>
           ) : (
-            <div className="mt-4 overflow-hidden rounded-[1.5rem] border border-border/80 bg-surface">
-              {data.recentResults.map((result) => {
-                const terminated = result.status === "terminated";
-                return (
-                  <Link
-                    key={result.attemptId}
-                    href={`/results/${result.attemptId}`}
-                    className="group flex items-center gap-4 border-b border-border/60 px-5 py-4 transition-colors last:border-0 hover:bg-surface-secondary"
-                  >
-                    <span
-                      className={cn(
-                        "flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl",
-                        terminated
-                          ? "bg-warning-soft text-warning-soft-foreground"
-                          : result.passed
-                            ? "bg-success-soft text-success-soft-foreground"
-                            : "bg-accent-soft text-accent-soft-foreground",
-                      )}
-                    >
-                      {terminated ? (
-                        <CircleExclamation className="h-4 w-4" />
-                      ) : result.passed ? (
-                        <CircleCheck className="h-4 w-4" />
-                      ) : (
-                        <Target className="h-4 w-4" />
-                      )}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-[13.5px] font-semibold text-foreground">
-                        {result.courseTitle}
-                      </p>
-                      <p className="mt-0.5 truncate text-[11.5px] text-muted-foreground">
-                        {terminated ? "Terminated · " : ""}
-                        {result.score}/{result.totalMarks} marks · {formatRelative(result.submittedAt)}
-                      </p>
-                    </div>
-                    <span
-                      className={cn(
-                        "font-display text-lg font-semibold",
-                        scoreClasses(result.percentage),
-                      )}
-                    >
-                      {result.percentage}%
-                    </span>
-                  </Link>
-                );
-              })}
-            </div>
-          )}
-        </section>
-
-        <section>
-          <SectionHeading title="By subject" description="Average of completed attempts." />
-
-          {data.subjectPerformance.length > 0 ? (
             <div className="mt-5 space-y-5">
               {data.subjectPerformance.map((subject) => (
-                <ProgressBar
-                  key={subject.subject}
-                  value={subject.averagePercentage}
-                  aria-label={`${subject.subject} average score`}
-                  className="w-full"
-                >
+                <div key={subject.subject}>
                   <div className="flex items-baseline justify-between gap-3">
-                    <span className="text-[12.5px] font-semibold text-foreground">
-                      {subject.subject}
-                    </span>
-                    <span className="text-[11.5px] text-muted-foreground">
+                    <span className="text-sm font-medium">{subject.subject}</span>
+                    <span className="text-xs text-muted-foreground">
                       {subject.averagePercentage}% · {subject.attempts} attempt
                       {subject.attempts === 1 ? "" : "s"}
                     </span>
                   </div>
-                  <ProgressBar.Track className="mt-2 h-2">
-                    <ProgressBar.Fill />
-                  </ProgressBar.Track>
-                </ProgressBar>
+                  <div className="mt-2 h-2 overflow-hidden rounded-full bg-muted">
+                    <div
+                      className="h-full rounded-full bg-accent"
+                      style={{ width: `${Math.min(100, subject.averagePercentage)}%` }}
+                    />
+                  </div>
+                </div>
               ))}
             </div>
-          ) : (
-            <div className="mt-4 rounded-[1.5rem] border border-dashed border-border bg-surface/50 p-7 text-center">
-              <Target className="mx-auto h-5 w-5 text-muted-foreground" />
-              <p className="mt-3 font-display text-[15px] font-semibold text-foreground">
-                Progress starts with a result
-              </p>
-              <p className="mx-auto mt-1 max-w-xs text-[12.5px] leading-relaxed text-muted-foreground">
-                Complete an assessment and your average score by subject appears here.
-              </p>
-            </div>
           )}
-        </section>
+        </Reveal>
       </div>
 
-      {/* ── Explore ──────────────────────────────────────────────────────── */}
-      <section className="mt-14 border-t border-border/70 pt-10">
-        <SectionHeading
-          title="Explore something new"
-          description="Search the full catalogue by course name or code."
-          action={
-            <Link
-              href="/courses"
-              className="text-[12.5px] font-semibold text-accent underline-offset-4 hover:underline"
-            >
-              View all
-            </Link>
-          }
-        />
+      <section className="mt-10">
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <h2 className="text-lg font-semibold">Explore something new</h2>
+            <p className="text-sm text-muted-foreground">
+              Search the full catalogue by course name or code.
+            </p>
+          </div>
+          <Link href="/courses" className="text-sm font-medium text-muted-foreground hover:text-foreground">
+            View all
+          </Link>
+        </div>
 
         <form onSubmit={explore} role="search" className="mt-4 flex max-w-xl flex-col gap-2 sm:flex-row">
-          <div className="flex-1">
-            <SearchField aria-label="Search the catalogue" value={exploreQuery} onChange={setExploreQuery}>
-              <SearchField.Group className="h-11 rounded-xl border border-border bg-surface focus-within:border-accent/50">
-                <SearchField.SearchIcon />
-                <SearchField.Input placeholder="Course name or code" />
-                <SearchField.ClearButton />
-              </SearchField.Group>
-            </SearchField>
+          <div className="relative flex-1">
+            <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <input
+              value={exploreQuery}
+              onChange={(event) => setExploreQuery(event.target.value)}
+              aria-label="Search the catalogue"
+              placeholder="Course name or code"
+              className="h-11 w-full rounded-[5px] border border-input bg-card pl-10 pr-3 text-sm shadow-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-accent"
+            />
           </div>
-          <Button type="submit" className="h-11 rounded-xl px-5">
+          <Button type="submit" className="h-11 px-5">
             Search
-            <Magnifier className="h-4 w-4" />
           </Button>
         </form>
 
         {data.recommended.length === 0 ? (
-          <div className="mt-5 rounded-[1.5rem] border border-dashed border-border bg-surface/50 p-7 text-center">
-            <Sparkles className="mx-auto h-5 w-5 text-muted-foreground" />
-            <p className="mt-3 font-display text-[15px] font-semibold text-foreground">
-              Nothing new right now
-            </p>
-            <p className="mx-auto mt-1 max-w-sm text-[12.5px] leading-relaxed text-muted-foreground">
-              Every published course is already in your library, or the catalogue is empty.
-            </p>
-          </div>
+          <p className="mt-5 rounded-[5px] border-2 border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+            Every published course is already in your library, or the catalogue is empty.
+          </p>
         ) : (
-          <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {data.recommended.slice(0, 3).map((course) => (
+          <div className="mt-5 grid gap-5 md:grid-cols-2">
+            {data.recommended.slice(0, 2).map((course) => (
               <CourseCard key={course.id} course={course} />
             ))}
           </div>
         )}
       </section>
 
-      {/* A quiet closing note, only for learners who have nothing open. */}
       {data.inProgress.length === 0 && hasActivity && (
-        <div className="mt-12 flex items-center gap-3 rounded-[1.25rem] bg-surface-secondary px-5 py-4">
-          <Clock className="h-4 w-4 flex-shrink-0 text-accent" />
-          <p className="text-[12px] leading-relaxed text-muted-foreground">
-            Timers are server-enforced. If you close an assessment, the clock keeps running until
-            you submit or it expires.
-          </p>
-        </div>
+        <p className="mt-10 flex items-center gap-3 rounded-[5px] bg-muted px-5 py-4 text-xs text-muted-foreground">
+          <Clock className="h-4 w-4 shrink-0" />
+          Timers are server-enforced. If you close an assessment, the clock keeps running until you
+          submit or it expires.
+        </p>
       )}
     </main>
   );

@@ -4,14 +4,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
-import {
-  ArrowLeft,
-  CircleInfo,
-  Lock,
-  Play,
-  TriangleExclamation,
-} from "@gravity-ui/icons";
+import { motion } from "framer-motion";
+import { ArrowLeft, ArrowRight, Loader2, Lock, Play } from "lucide-react";
+
+import Logo from "@/components/Brand";
+import { ease } from "@/components/Motion";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { MAX_QUESTIONS_PER_ATTEMPT } from "@/lib/course-config";
 import {
   defaultPreferences,
@@ -21,6 +20,7 @@ import {
   savePreferences,
   type AssessmentPreferences,
 } from "@/lib/assessment-preferences";
+import { unlockAudio } from "@/lib/sound";
 import type { CourseDetail } from "@/lib/types";
 
 export default function InstructionScreen() {
@@ -36,6 +36,7 @@ export default function InstructionScreen() {
   const [error, setError] = useState<string | null>(null);
   const [starting, setStarting] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
+  const [understood, setUnderstood] = useState(false);
   const startingRef = useRef(false);
 
   useEffect(() => {
@@ -61,7 +62,8 @@ export default function InstructionScreen() {
         const search = window.location.search;
         const stored = readStoredPreferences(data.slug);
         const hasQuery =
-          search !== "" && ["count", "duration", "mode"].some((key) => new URLSearchParams(search).has(key));
+          search !== "" &&
+          ["count", "duration", "mode"].some((key) => new URLSearchParams(search).has(key));
 
         if (!hasQuery && !stored) {
           setRedirecting(true);
@@ -95,6 +97,7 @@ export default function InstructionScreen() {
       return;
     }
 
+    unlockAudio();
     startingRef.current = true;
     setStarting(true);
     setError(null);
@@ -134,49 +137,37 @@ export default function InstructionScreen() {
 
   if (loading || redirecting) {
     return (
-      <div className="bg-background">
-        <div className="mx-auto max-w-2xl px-4 py-8">
-          <div className="skeleton h-6 w-32 rounded-lg" />
-          <div className="skeleton mt-4 h-9 w-64 rounded-lg" />
-          <div className="skeleton mt-6 h-36 rounded-xl" />
-          <div className="skeleton mt-4 h-64 rounded-xl" />
-        </div>
+      <div className="mx-auto max-w-xl px-4 py-10 sm:py-14">
+        <div className="skeleton h-8 w-40" />
+        <div className="skeleton mt-6 h-8 w-64" />
+        <div className="skeleton mt-6 h-40 w-full" />
+        <div className="skeleton mt-4 h-12 w-full" />
       </div>
     );
   }
 
   if (notFound || (!course && !error)) {
     return (
-      <div className="bg-background">
-        <div className="mx-auto flex max-w-md flex-col items-center px-4 py-24 text-center">
-          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-muted">
-            <CircleInfo className="h-6 w-6 text-muted-foreground" />
-          </div>
-          <h1 className="text-xl font-extrabold text-foreground">Assessment not available</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            This course may have been unpublished or the link is incorrect.
-          </p>
-          <Button asChild className="mt-6 rounded-lg">
-            <Link href="/courses">Back to courses</Link>
-          </Button>
-        </div>
+      <div className="mx-auto max-w-md px-4 py-24 text-center">
+        <h1 className="text-xl font-semibold sm:text-2xl">Assessment not available</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          This course may have been unpublished or the link is incorrect.
+        </p>
+        <Button asChild className="mt-6 h-11 px-6">
+          <Link href="/courses">Back to courses</Link>
+        </Button>
       </div>
     );
   }
 
   if (!course || !preferences) {
     return (
-      <div className="bg-background">
-        <div className="mx-auto flex max-w-md flex-col items-center px-4 py-24 text-center">
-          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-destructive/10">
-            <TriangleExclamation className="h-6 w-6 text-destructive" />
-          </div>
-          <h1 className="text-xl font-extrabold text-foreground">Could not load this assessment</h1>
-          <p className="mt-2 text-sm text-muted-foreground">{error}</p>
-          <Button asChild variant="outline" className="mt-6 rounded-lg">
-            <Link href={`/courses/${slug}/configure`}>Back to configuration</Link>
-          </Button>
-        </div>
+      <div className="mx-auto max-w-md px-4 py-24 text-center">
+        <h1 className="text-xl font-semibold sm:text-2xl">Could not load this assessment</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{error}</p>
+        <Button asChild className="mt-6 h-11 px-6">
+          <Link href={`/courses/${slug}/configure`}>Back to setup</Link>
+        </Button>
       </div>
     );
   }
@@ -187,13 +178,9 @@ export default function InstructionScreen() {
   const exhausted = course.attemptsRemaining !== null && course.attemptsRemaining <= 0;
   const resuming = Boolean(course.inProgressAttemptId);
   const query = preferencesToQuery(preferences);
-  const durationLabel =
-    preferences.durationMinutes === null
-      ? "Unlimited"
-      : `${preferences.durationMinutes} minutes`;
   const canStart = !locked && !exhausted && course.questionCount > 0;
   const startLabel = starting
-    ? "Starting assessment…"
+    ? "Starting…"
     : !isLoaded
       ? "Loading…"
       : locked
@@ -208,153 +195,114 @@ export default function InstructionScreen() {
                 ? "Resume Assessment"
                 : "Start Assessment";
 
+  const items = [
+    `This session has ${preferences.questionCount} randomly selected question${
+      preferences.questionCount === 1 ? "" : "s"
+    }.`,
+    isTimed
+      ? `You have ${preferences.durationMinutes} minutes. When time runs out, the session ends and unanswered questions count as incorrect.`
+      : "There is no timer. Take as long as you need.",
+    isInstant
+      ? "Submit each answer to see immediately whether it was right, then continue."
+      : "Your answers are saved as you go. The score and full review are revealed when you finish.",
+    "Leaving is recorded as a departure. A third departure ends the attempt.",
+  ];
+
   return (
-    <div className="bg-background">
-      <main className="mx-auto max-w-2xl px-4 py-6 sm:py-8">
-        <Link
-          href={`/courses/${course.slug}/configure?${query}`}
-          className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Change settings
-        </Link>
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, ease }}
+      className="mx-auto max-w-xl px-4 py-10 sm:py-14"
+    >
+      <Link
+        href={`/courses/${course.slug}/configure?${query}`}
+        className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Change settings
+      </Link>
 
-        <div className="mt-5 flex flex-wrap items-center gap-2">
-          <span className="eyebrow">Step 2 of 2 · Instructions</span>
-          {course.code && (
-            <span className="rounded-full bg-accent-soft px-3 py-1 text-[10.5px] font-bold uppercase tracking-wider text-accent-soft-foreground">
-              {course.code}
+      <div className="mt-6">
+        <Logo />
+      </div>
+      <h1 className="mt-5 text-2xl font-semibold sm:text-3xl">Before you begin</h1>
+      <p className="mt-2 text-sm text-muted-foreground">{course.title}</p>
+
+      {resuming && (
+        <p className="mt-5 flex items-start gap-2 rounded-[5px] bg-secondary p-3.5 text-sm">
+          <Play className="mt-0.5 h-4 w-4 shrink-0" />
+          You have an assessment in progress. Starting resumes it.
+        </p>
+      )}
+
+      {locked && (
+        <div className="mt-5 rounded-[5px] bg-secondary p-4 text-sm">
+          <p className="flex items-center gap-2 font-semibold">
+            <Lock className="h-4 w-4" />
+            A verified purchase is required
+          </p>
+          <p className="mt-1 text-muted-foreground">
+            Complete payment on the course page to unlock the assessment.
+          </p>
+        </div>
+      )}
+
+      <ul className="mt-6 space-y-3.5">
+        {items.map((text, index) => (
+          <li key={index} className="flex gap-3">
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-secondary text-sm font-bold">
+              {index + 1}
             </span>
-          )}
-        </div>
-
-        <h1 className="mt-3 text-display-lg text-foreground">Before you begin.</h1>
-        <p className="mt-2 text-[14px] text-muted-foreground">{course.title}</p>
-
-        {resuming && (
-          <p className="mt-5 flex items-start gap-2 text-[12.5px] font-medium text-accent-soft-foreground">
-            <Play className="mt-0.5 h-4 w-4 flex-shrink-0" />
-            You have an assessment in progress. Starting resumes it.
-          </p>
-        )}
-
-        {locked && (
-          <div className="mt-5 rounded-2xl border border-warning/25 bg-warning-soft p-4 text-xs leading-relaxed text-warning-soft-foreground">
-            <p className="flex items-center gap-2 font-bold">
-              <Lock className="h-4 w-4" /> A verified purchase is required
+            <p className="pt-0.5 text-sm leading-relaxed text-foreground/90 sm:text-[15px]">
+              {text}
             </p>
-            <p className="mt-1">Complete payment on the course page to unlock the assessment.</p>
-          </div>
-        )}
+          </li>
+        ))}
+      </ul>
 
-        {/* Settings summary */}
-        <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-4 border-y border-border/70 py-4 sm:grid-cols-4">
-          {[
-            { label: "Questions", value: String(preferences.questionCount) },
-            { label: "Time Limit", value: durationLabel },
-            { label: "Results", value: isInstant ? "Instant" : "At the End" },
-            { label: "Pass Mark", value: `${course.passScore}%` },
-          ].map((item) => (
-            <div key={item.label}>
-              <dt className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-                {item.label}
-              </dt>
-              <dd className="mt-1 font-display text-[15px] font-semibold leading-tight text-foreground">
-                {item.value}
-              </dd>
-            </div>
-          ))}
-        </dl>
+      <label className="mt-7 flex cursor-pointer items-start gap-3 rounded-[5px] border border-border bg-card p-4 shadow-sm transition-colors hover:border-foreground/20">
+        <Checkbox
+          checked={understood}
+          onCheckedChange={(value) => setUnderstood(value === true)}
+          className="mt-0.5"
+        />
+        <span className="text-sm">I understand that leaving the quiz may end my attempt.</span>
+      </label>
 
-        {/* Rules */}
-        <section className="mt-8">
-          <h2 className="font-display text-xl font-semibold text-foreground">How it works</h2>
+      {error && (
+        <p className="mt-4 rounded-[5px] bg-destructive/10 px-4 py-3 text-sm text-destructive" role="alert">
+          {error}
+        </p>
+      )}
 
-          <ul className="mt-3 divide-y divide-border/70 border-y border-border/70 text-[13.5px] leading-relaxed text-muted-foreground">
-            {isInstant ? (
-              <>
-                <li className="py-3">
-                  Choose an answer, then tap{" "}
-                  <strong className="font-semibold text-foreground">Submit Answer</strong> to see if
-                  it was right.
-                </li>
-                <li className="py-3">
-                  Submitted answers are locked. Read the explanation if there is one, then tap{" "}
-                  <strong className="font-semibold text-foreground">Next Question</strong>.
-                </li>
-                <li className="py-3">
-                  <strong className="font-semibold text-foreground">View Results</strong> on the last
-                  question shows your score.
-                </li>
-              </>
-            ) : (
-              <>
-                <li className="py-3">
-                  Choose an answer for each question. Your answers save as you go.
-                </li>
-                <li className="py-3">
-                  Use <strong className="font-semibold text-foreground">Previous</strong> and{" "}
-                  <strong className="font-semibold text-foreground">Next</strong> to move around, and
-                  change an answer at any time.
-                </li>
-                <li className="py-3">
-                  <strong className="font-semibold text-foreground">Finish Assessment</strong> on the
-                  last question shows your score.
-                </li>
-              </>
-            )}
-
-            <li className="py-3">
-              {isTimed
-                ? `You have ${durationLabel}. When it runs out, the assessment ends and your saved answers are scored.`
-                : "There is no time limit."}
-            </li>
-
-            <li className="py-3">Unanswered questions score zero.</li>
-
-            <li className="py-3">
-              Leaving is recorded as a departure. The third departure ends the attempt.
-            </li>
-          </ul>
-        </section>
-
-        {error && (
-          <p className="mt-4 flex items-start gap-2 rounded-xl bg-danger-soft p-3 text-xs font-semibold text-danger-soft-foreground">
-            <TriangleExclamation className="mt-0.5 h-4 w-4 flex-shrink-0" />
-            {error}
-          </p>
-        )}
-
-        {/* Start action directly beneath the instructions */}
-        <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <Link
-            href={`/courses/${course.slug}/configure?${query}`}
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Change settings
-          </Link>
-
-          <Button
-            onClick={startAssessment}
-            disabled={starting || !isLoaded || !canStart}
-            className="h-12 rounded-full px-8 text-sm font-semibold shadow-[0_16px_34px_-18px_rgba(91,75,255,0.9)]"
-          >
+      <Button
+        onClick={startAssessment}
+        disabled={starting || !isLoaded || !canStart || !understood}
+        className="mt-5 h-11 w-full text-[15px]"
+      >
+        {starting ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Starting…
+          </>
+        ) : (
+          <>
             {startLabel}
-            {!starting && isLoaded && canStart && <Play className="h-4 w-4" />}
-          </Button>
-        </div>
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </>
+        )}
+      </Button>
 
-        <div className="mt-5 flex items-center justify-center">
-          <Link
-            href={`/courses/${course.slug}`}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" />
-            Back to Course
-          </Link>
-        </div>
-      </main>
-    </div>
+      <div className="mt-6 flex items-center justify-center">
+        <Link
+          href={`/courses/${course.slug}`}
+          className="inline-flex items-center gap-2 text-xs text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          Back to course
+        </Link>
+      </div>
+    </motion.div>
   );
 }

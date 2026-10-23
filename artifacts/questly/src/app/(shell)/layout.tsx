@@ -1,5 +1,6 @@
 import SiteHeader from "@/components/SiteHeader";
 import BottomNav from "@/components/BottomNav";
+import { RouteTransition } from "@/components/Motion";
 
 /**
  * Shared layout for the primary screens (home, course discovery, course
@@ -7,14 +8,16 @@ import BottomNav from "@/components/BottomNav";
  * mobile bottom navigation live here so they stay mounted across route
  * changes instead of being re-declared by each page.
  *
- * The focused examination runner intentionally lives outside this shell and
- * keeps its own dedicated layout.
+ * The bottom bar reserves exactly its own height (`--bottom-nav-h` plus the
+ * device safe area) so the last row of any screen clears it.
  */
 export default function ShellLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <SiteHeader />
-      <div className="flex-1 pb-[calc(5.75rem+env(safe-area-inset-bottom))] md:pb-0">{children}</div>
+      <div className="flex-1 pb-[calc(var(--bottom-nav-h)+var(--safe-bottom)+0.5rem)] md:pb-0">
+        <RouteTransition>{children}</RouteTransition>
+      </div>
       <BottomNav />
     </div>
   );

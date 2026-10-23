@@ -2,24 +2,16 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Card, Chip } from "@heroui/react";
-import {
-  ArrowRight,
-  BookOpen,
-  CircleCheck,
-  Clock,
-  ListCheck,
-  PlayFill,
-  Sparkles,
-} from "@gravity-ui/icons";
-import { formatPrice } from "@/lib/format";
+import { ArrowRight, BookOpen, CheckCircle2, Clock } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 import type { CourseSummary } from "@/lib/types";
 
 const FALLBACK_GRADIENTS = [
-  "linear-gradient(135deg, oklch(0.45 0.18 285), oklch(0.6 0.19 320))",
-  "linear-gradient(135deg, oklch(0.38 0.12 250), oklch(0.58 0.16 200))",
-  "linear-gradient(135deg, oklch(0.47 0.15 30), oklch(0.66 0.16 60))",
-  "linear-gradient(135deg, oklch(0.4 0.14 170), oklch(0.6 0.14 140))",
+  "linear-gradient(135deg, hsl(250 60% 42%), hsl(268 58% 54%))",
+  "linear-gradient(135deg, hsl(224 45% 26%), hsl(232 40% 45%))",
+  "linear-gradient(135deg, hsl(28 70% 46%), hsl(36 80% 58%))",
+  "linear-gradient(135deg, hsl(168 45% 28%), hsl(160 40% 44%))",
 ];
 
 function fallbackFor(course: CourseSummary) {
@@ -27,140 +19,107 @@ function fallbackFor(course: CourseSummary) {
   return FALLBACK_GRADIENTS[seed % FALLBACK_GRADIENTS.length];
 }
 
+/**
+ * A course is one surface: a full-bleed banner across the top of the card, with
+ * the information directly underneath. Payment detail lives on the course page,
+ * one step before checkout — not on the card.
+ */
 export default function CourseCard({ course }: { course: CourseSummary }) {
   const [coverOk, setCoverOk] = useState(true);
-  const locked = !course.hasAccess;
+  const unlocked = course.hasAccess;
   const action = course.inProgressAttemptId
     ? "Resume"
-    : locked
-      ? "View course"
-      : course.attemptsUsed > 0
-        ? "Practise again"
-        : "View course";
+    : unlocked
+      ? "Practise"
+      : course.isFree
+        ? "Start free"
+        : "Preview & unlock";
 
   return (
-    <Card className="group relative flex h-full flex-col gap-0 overflow-hidden rounded-[1.75rem] border border-border/70 bg-surface p-0 shadow-[0_1px_2px_rgba(24,20,45,0.04)] transition-all duration-300 hover:-translate-y-1 hover:border-accent/25 hover:shadow-[0_22px_50px_-24px_rgba(35,25,80,0.45)]">
+    <div className="group flex h-full flex-col overflow-hidden rounded-[5px] bg-card shadow-sm ring-1 ring-border/60 transition-shadow duration-200 hover:shadow-md">
       <Link
         href={`/courses/${course.slug}`}
-        className="flex h-full flex-col focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/40"
+        className="block shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         aria-label={`${course.title}${course.code ? ` (${course.code})` : ""}`}
       >
-        <div className="relative aspect-[16/9] w-full overflow-hidden">
-          {course.coverImageUrl && coverOk ? (
-            // Course artwork may be hosted on any origin; a failed load drops
-            // the banner instead of showing a broken-image glyph.
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={course.coverImageUrl}
-              alt=""
-              loading="lazy"
-              onError={() => setCoverOk(false)}
-              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.035]"
-            />
-          ) : (
-            <div
-              aria-hidden
-              className="flex h-full w-full items-center justify-center"
-              style={{ backgroundImage: fallbackFor(course) }}
-            >
-              <BookOpen className="h-10 w-10 text-white/70" />
-            </div>
-          )}
-
+        {course.coverImageUrl && coverOk ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={course.coverImageUrl}
+            alt={`${course.title} banner`}
+            loading="lazy"
+            onError={() => setCoverOk(false)}
+            className="block aspect-[16/9] w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+          />
+        ) : (
           <div
             aria-hidden
-            className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-black/0"
-          />
+            className="flex aspect-[16/9] w-full items-center justify-center"
+            style={{ backgroundImage: fallbackFor(course) }}
+          >
+            <BookOpen className="h-10 w-10 text-white/70" />
+          </div>
+        )}
+      </Link>
 
-          <div className="absolute inset-x-4 top-4 flex items-start justify-between gap-2">
-            {course.code ? (
-              <span className="rounded-full bg-white/95 px-2.5 py-1 text-[10.5px] font-bold uppercase tracking-[0.08em] text-[#241f33] shadow-sm backdrop-blur">
+      <div className="flex flex-1 flex-col p-5">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            {course.code && (
+              <span className="inline-flex rounded-full bg-secondary px-2.5 py-0.5 text-[11px] font-bold tracking-wide text-secondary-foreground">
                 {course.code}
               </span>
-            ) : (
-              <span />
             )}
-            {course.isFeatured && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-black/35 px-2.5 py-1 text-[10.5px] font-semibold text-white backdrop-blur">
-                <Sparkles className="h-3 w-3" />
-                Featured
-              </span>
+            <h3 className="mt-2 text-lg font-semibold leading-snug">{course.title}</h3>
+            {course.subject && !course.code && (
+              <p className="mt-0.5 text-xs font-medium text-muted-foreground">{course.subject}</p>
             )}
           </div>
-
-          <div className="absolute inset-x-4 bottom-3.5 flex items-center gap-3 text-[11px] font-semibold text-white/90">
-            <span className="inline-flex items-center gap-1.5">
-              <ListCheck className="h-3.5 w-3.5" />
-              {course.questionCount.toLocaleString()} question
-              {course.questionCount === 1 ? "" : "s"}
+          {unlocked ? (
+            <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-success/10 px-2.5 py-1 text-[11px] font-semibold text-success">
+              <CheckCircle2 className="h-3.5 w-3.5" />
+              {course.isFree ? "Free" : "Unlocked"}
             </span>
-            <span className="h-1 w-1 rounded-full bg-white/50" />
-            <span className="inline-flex items-center gap-1.5">
+          ) : course.inProgressAttemptId ? (
+            <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-secondary px-2.5 py-1 text-[11px] font-semibold">
               <Clock className="h-3.5 w-3.5" />
-              {course.inProgressAttemptId
-                ? "In progress"
-                : course.durationMinutes
-                  ? `${course.durationMinutes} min`
-                  : "Your timer"}
+              In progress
             </span>
-          </div>
+          ) : null}
         </div>
 
-        <div className="flex flex-1 flex-col p-5">
-          <div className="flex flex-wrap items-center gap-1.5">
-            {course.subject && (
-              <Chip size="sm" variant="soft" color="accent">
-                {course.subject}
-              </Chip>
-            )}
-            {course.bestPercentage !== null && (
-              <Chip size="sm" variant="soft" color="success">
-                Best {course.bestPercentage}%
-              </Chip>
-            )}
-            {course.isPurchased && (
-              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-success">
-                <CircleCheck className="h-3.5 w-3.5" /> Owned
-              </span>
-            )}
-          </div>
+        {course.description && (
+          <p className="mt-2.5 line-clamp-3 text-sm leading-relaxed text-muted-foreground">
+            {course.description}
+          </p>
+        )}
 
-          <h3 className="mt-2.5 font-display text-[1.2rem] font-semibold leading-[1.25] tracking-[-0.02em] text-foreground transition-colors group-hover:text-accent">
-            {course.title}
-          </h3>
-
-          {course.description && (
-            <p className="mt-2 line-clamp-2 text-[13.5px] leading-relaxed text-muted-foreground">
-              {course.description}
-            </p>
+        <div className="mt-3.5 flex flex-wrap gap-2">
+          {course.subject && course.code && (
+            <span className="rounded-full bg-muted px-3 py-1 text-xs font-medium">
+              {course.subject}
+            </span>
           )}
-
-          <div className="mt-auto flex items-end justify-between gap-3 pt-5">
-            <div>
-              <p className="font-display text-[15px] font-semibold text-foreground">
-                {course.isFree ? "Free" : formatPrice(course.priceKobo, course.currency)}
-              </p>
-              <p className="mt-0.5 text-[11px] font-medium text-muted-foreground">
-                {course.isPurchased
-                  ? "Unlocked for life"
-                  : course.isFree
-                    ? "Open to every learner"
-                    : "One-time purchase"}
-              </p>
-            </div>
-
-            <span className="inline-flex items-center gap-2 text-[12.5px] font-semibold text-accent">
-              {course.inProgressAttemptId ? (
-                <PlayFill className="h-3.5 w-3.5" />
-              ) : null}
-              <span className="hidden sm:inline">{action}</span>
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-soft text-accent-soft-foreground transition-all duration-300 group-hover:bg-accent group-hover:text-accent-foreground">
-                <ArrowRight className="h-3.5 w-3.5" />
-              </span>
+          {course.bestPercentage !== null && (
+            <span className="rounded-full bg-muted px-3 py-1 text-xs font-medium">
+              Best {course.bestPercentage}%
             </span>
-          </div>
+          )}
         </div>
-      </Link>
-    </Card>
+
+        <div className="mt-auto flex items-center justify-between gap-3 pt-5">
+          <span className="text-xs text-muted-foreground">
+            {course.questionCount.toLocaleString()} question{course.questionCount === 1 ? "" : "s"}
+            {course.durationMinutes ? ` · ${course.durationMinutes} min` : " · your timer"}
+          </span>
+          <Button asChild>
+            <Link href={`/courses/${course.slug}`}>
+              {action}
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 }

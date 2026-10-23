@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
@@ -8,12 +8,21 @@ import {
   ArrowLeft,
   ArrowRight,
   Check,
-  CircleInfo,
-  Lock,
+  Clock,
+  Infinity as InfinityIcon,
+  Layers,
+  ListChecks,
+  Loader2,
+  Minus,
   Play,
-  TriangleExclamation,
-} from "@gravity-ui/icons";
+  Plus,
+  RefreshCw,
+  Sparkles,
+} from "lucide-react";
+
 import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
+import { Reveal } from "@/components/Motion";
 import {
   DURATION_OPTIONS,
   MAX_QUESTIONS_PER_ATTEMPT,
@@ -34,16 +43,19 @@ const RESULT_MODES: Array<{
   value: ResultMode;
   label: string;
   summary: string;
+  icon: typeof Sparkles;
 }> = [
   {
     value: "instant",
     label: "Instant Results",
     summary: "Check each answer as you go.",
+    icon: Sparkles,
   },
   {
     value: "end",
     label: "Results at the End",
     summary: "See your score when you finish.",
+    icon: ListChecks,
   },
 ];
 
@@ -59,6 +71,7 @@ export default function ConfigureScreen() {
   const [error, setError] = useState<string | null>(null);
   const [preferences, setPreferences] = useState<AssessmentPreferences | null>(null);
   const [countInput, setCountInput] = useState("20");
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     if (!slug) return;
@@ -108,25 +121,10 @@ export default function ConfigureScreen() {
     savePreferences(slug, preferences);
   }, [slug, preferences]);
 
-  const available = Math.max(
-    0,
-    Math.min(course?.questionCount ?? 0, MAX_QUESTIONS_PER_ATTEMPT)
-  );
-
-  const countPresets = useMemo(() => {
-    if (available <= 0) return [];
-    const values = new Set<number>();
-    for (const value of QUESTION_COUNT_PRESETS) {
-      if (value <= available) values.add(value);
-    }
-    values.add(Math.min(20, available));
-    values.add(available);
-    return Array.from(values).sort((a, b) => a - b);
-  }, [available]);
+  const available = Math.max(0, Math.min(course?.questionCount ?? 0, MAX_QUESTIONS_PER_ATTEMPT));
 
   const parsedCount = Number(countInput);
-  const countValid =
-    Number.isInteger(parsedCount) && parsedCount >= 1 && parsedCount <= available;
+  const countValid = Number.isInteger(parsedCount) && parsedCount >= 1 && parsedCount <= available;
 
   const selectCount = (value: number) => {
     const next = Math.max(1, Math.min(value, available));
@@ -145,6 +143,12 @@ export default function ConfigureScreen() {
   const canContinue =
     Boolean(course) && countValid && !locked && !exhausted && available > 0 && Boolean(preferences);
 
+  const presets = Array.from(
+    new Set(
+      [5, 10, 20, ...QUESTION_COUNT_PRESETS, available].filter((value) => value <= available)
+    )
+  ).sort((a, b) => a - b);
+
   const goNext = useCallback(() => {
     if (!course || !preferences || !countValid) {
       setError(`Choose between 1 and ${available} questions.`);
@@ -161,308 +165,343 @@ export default function ConfigureScreen() {
       router.push(`/sign-in?redirect_url=${encodeURIComponent(nextUrl)}`);
       return;
     }
+    setBusy(true);
     router.push(nextUrl);
   }, [course, preferences, countValid, available, parsedCount, isSignedIn, router]);
 
   if (loading) {
     return (
-      <div className="bg-background">
-        <div className="mx-auto max-w-3xl px-4 py-8">
-          <div className="skeleton h-6 w-28 rounded-lg" />
-          <div className="skeleton mt-4 h-9 w-72 rounded-lg" />
-          <div className="skeleton mt-6 h-40 rounded-xl" />
-          <div className="skeleton mt-4 h-32 rounded-xl" />
-          <div className="skeleton mt-4 h-40 rounded-xl" />
-        </div>
+      <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
+        <div className="skeleton h-4 w-24" />
+        <div className="skeleton mt-4 h-9 w-72" />
+        <div className="skeleton mt-3 h-4 w-full max-w-xl" />
+        <div className="skeleton mt-8 h-56 w-full" />
+        <div className="skeleton mt-5 h-44 w-full" />
       </div>
     );
   }
 
   if (notFound || (!course && !error)) {
     return (
-      <div className="bg-background">
-        <div className="mx-auto flex max-w-md flex-col items-center px-4 py-24 text-center">
-          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-muted">
-            <CircleInfo className="h-6 w-6 text-muted-foreground" />
-          </div>
-          <h1 className="text-xl font-extrabold text-foreground">Course unavailable</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            This course may have been unpublished or the link is incorrect.
-          </p>
-          <Button asChild className="mt-6 rounded-lg">
-            <Link href="/courses">Back to courses</Link>
-          </Button>
-        </div>
+      <div className="mx-auto max-w-md px-4 py-24 text-center">
+        <h1 className="text-xl font-semibold sm:text-2xl">Course unavailable</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          This course may have been unpublished or the link is incorrect.
+        </p>
+        <Button asChild className="mt-6 h-11 px-6">
+          <Link href="/courses">Back to courses</Link>
+        </Button>
       </div>
     );
   }
 
   if (!course || !preferences) {
     return (
-      <div className="bg-background">
-        <div className="mx-auto flex max-w-md flex-col items-center px-4 py-24 text-center">
-          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-destructive/10">
-            <TriangleExclamation className="h-6 w-6 text-destructive" />
-          </div>
-          <h1 className="text-xl font-extrabold text-foreground">Could not load this course</h1>
-          <p className="mt-2 text-sm text-muted-foreground">{error}</p>
-          <Button asChild variant="outline" className="mt-6 rounded-lg">
-            <Link href={`/courses/${slug}`}>Back to course</Link>
-          </Button>
-        </div>
+      <div className="mx-auto max-w-md px-4 py-24 text-center">
+        <h1 className="text-xl font-semibold sm:text-2xl">Could not load this course</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{error}</p>
+        <Button asChild className="mt-6 h-11 px-6">
+          <Link href={`/courses/${slug}/configure`}>Try again</Link>
+        </Button>
       </div>
     );
   }
 
+  const isInstant = preferences.resultMode === "instant";
+
   return (
-    <div className="bg-background">
-      <main className="mx-auto max-w-3xl px-4 py-6 sm:py-8">
-        <Link
-          href={`/courses/${course.slug}`}
-          className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Course details
-        </Link>
+    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10">
+      <Link
+        href={`/courses/${course.slug}`}
+        className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Course
+      </Link>
 
-        <div className="mt-5 flex flex-wrap items-center gap-2">
-          <span className="eyebrow">Step 1 of 2 · Configuration</span>
-          {course.code && (
-            <span className="rounded-full bg-accent-soft px-3 py-1 text-[10.5px] font-bold uppercase tracking-wider text-accent-soft-foreground">
-              {course.code}
-            </span>
-          )}
+      <Reveal className="mt-4">
+        <h1 className="text-xl font-semibold sm:text-2xl">{course.title}</h1>
+        <p className="mt-2.5 max-w-2xl text-sm text-muted-foreground">
+          Each session draws a fresh, random set of questions. Answer, get feedback, and review
+          everything at the end.
+        </p>
+      </Reveal>
+
+      {course.inProgressAttemptId && (
+        <p className="mt-5 flex items-start gap-2 text-sm text-foreground">
+          <Play className="mt-0.5 h-4 w-4 shrink-0" />
+          You have an assessment in progress. Starting again resumes it.
+        </p>
+      )}
+
+      {locked && (
+        <div className="mt-5 rounded-[5px] bg-secondary p-4">
+          <p className="text-sm font-semibold">This course needs a verified purchase</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Complete payment on the course page to unlock the assessment.
+          </p>
+          <Button asChild size="sm" className="mt-3">
+            <Link href={`/courses/${course.slug}`}>
+              Go to course
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
         </div>
+      )}
 
-        <h1 className="mt-3 text-display-lg text-foreground">Set up your assessment.</h1>
-        <p className="mt-2 text-[14px] text-muted-foreground">{course.title}</p>
+      <div className="mt-8 grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="min-w-0 space-y-5">
+          {/* Number of questions */}
+          <Reveal className="rounded-[5px] border border-border bg-card p-5 shadow-sm sm:p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-semibold">Number of questions</h2>
+                <p className="text-sm text-muted-foreground">
+                  {available.toLocaleString()} available in this course
+                </p>
+              </div>
+              <Layers className="h-5 w-5 text-muted-foreground" />
+            </div>
 
-        {course.inProgressAttemptId && (
-          <p className="mt-5 flex items-start gap-2 text-[12.5px] font-medium text-accent-soft-foreground">
-            <Play className="mt-0.5 h-4 w-4 flex-shrink-0" />
-            You have an assessment in progress. Starting again resumes it.
-          </p>
-        )}
+            <div className="mt-5 flex items-center gap-4">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-10 w-10 bg-card"
+                onClick={() => selectCount((countValid ? parsedCount : preferences.questionCount) - 1)}
+                disabled={!countValid || parsedCount <= 1}
+                aria-label="Fewer questions"
+              >
+                <Minus className="h-4 w-4" />
+              </Button>
+              <span className="w-14 text-center font-serif text-3xl font-semibold" aria-live="polite">
+                {countValid ? parsedCount : preferences.questionCount}
+              </span>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-10 w-10 bg-card"
+                onClick={() => selectCount((countValid ? parsedCount : preferences.questionCount) + 1)}
+                disabled={!countValid || parsedCount >= available}
+                aria-label="More questions"
+              >
+                <Plus className="h-4 w-4" />
+              </Button>
+            </div>
 
-        {locked && (
-          <div className="mt-5 rounded-2xl border border-warning/25 bg-warning-soft p-4">
-            <p className="flex items-start gap-2 text-sm font-semibold text-warning-soft-foreground">
-              <Lock className="mt-0.5 h-4 w-4 flex-shrink-0" />
-              This course needs a verified purchase
-            </p>
-            <p className="mt-1 text-xs leading-relaxed text-warning-soft-foreground/85">
-              Complete payment on the course page to unlock the assessment.
-            </p>
-            <Button asChild size="sm" className="mt-3 rounded-lg">
-              <Link href={`/courses/${course.slug}`}>
-                Go to course
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </Button>
-          </div>
-        )}
-
-        <div className="mt-8 divide-y divide-border/70 border-y border-border/70">
-        {/* A. Duration */}
-        <section className="py-6 sm:py-7">
-          <h2 className="font-display text-lg font-semibold text-foreground">Time Limit</h2>
-          <p className="mt-1 text-[13px] text-muted-foreground">
-            The countdown starts when you begin.
-          </p>
-
-          <div
-            className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4"
-            role="radiogroup"
-            aria-label="Assessment duration"
-          >
-            {DURATION_OPTIONS.map((option) => {
-              const selected = preferences.durationMinutes === option.minutes;
-              return (
-                <button
-                  key={option.label}
-                  type="button"
-                  role="radio"
-                  aria-checked={selected}
-                  onClick={() => updatePreferences({ durationMinutes: option.minutes })}
-                  className={`flex min-h-[4.25rem] flex-col items-start justify-center rounded-2xl border px-3.5 py-2.5 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/40 ${
-                    selected
-                      ? "border-accent bg-accent-soft shadow-[0_10px_24px_-20px_rgba(91,75,255,0.8)]"
-                      : "border-border bg-background text-foreground hover:border-accent/40"
-                  }`}
-                >
-                  <span className={`text-[13.5px] font-semibold ${selected ? "text-accent-soft-foreground" : "text-foreground"}`}>
-                    {option.minutes === null ? "Unlimited" : `${option.minutes} minutes`}
-                  </span>
-                  <span
-                    className={`mt-0.5 text-[11px] font-medium ${
-                      selected ? "text-accent-soft-foreground/80" : "text-muted-foreground"
-                    }`}
-                  >
-                    {option.minutes === null ? "No deadline" : "Timed"}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-
-        </section>
-
-        {/* B. Question count */}
-        <section className="py-6 sm:py-7">
-          <h2 className="font-display text-lg font-semibold text-foreground">Questions</h2>
-          <p className="mt-1 text-[13px] text-muted-foreground">
-            {available.toLocaleString()} available. A random set is picked when you start.
-          </p>
-
-          <div className="mt-4 flex items-center gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              className="h-11 w-11 rounded-xl"
-              onClick={() => selectCount((countValid ? parsedCount : preferences.questionCount) - 5)}
-              disabled={!countValid || parsedCount <= 1}
-              aria-label="Fewer questions"
-            >
-              −
-            </Button>
-            <input
-              type="number"
-              inputMode="numeric"
+            <Slider
+              className="mt-5"
               min={1}
-              max={available}
-              value={countInput}
-              onChange={(event) => {
-                const value = event.target.value;
-                setCountInput(value);
-                const parsed = Number(value);
-                if (Number.isInteger(parsed) && parsed >= 1 && parsed <= available) {
-                  updatePreferences({ questionCount: parsed });
-                }
-              }}
-              onBlur={() => {
-                if (!countValid) selectCount(preferences.questionCount);
-              }}
-              aria-label="Number of questions"
-              className="h-11 min-w-0 flex-1 rounded-xl border border-border bg-background px-3 text-center font-display text-lg font-semibold text-foreground outline-none transition-colors focus:border-accent focus:ring-2 focus:ring-accent/15"
+              max={Math.max(1, available)}
+              step={1}
+              value={[countValid ? parsedCount : preferences.questionCount]}
+              onValueChange={([value]) => selectCount(value)}
+              aria-label="Question count"
             />
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              className="h-11 w-11 rounded-xl"
-              onClick={() => selectCount((countValid ? parsedCount : preferences.questionCount) + 5)}
-              disabled={!countValid || parsedCount >= available}
-              aria-label="More questions"
-            >
-              +
-            </Button>
-          </div>
 
-          {!countValid && (
-            <p className="mt-2 text-xs font-semibold text-destructive">
-              {available === 0
-                ? "This course has no questions yet."
-                : `Enter a whole number from 1 to ${available}.`}
-            </p>
-          )}
+            {presets.length > 0 && (
+              <div className="mt-4 flex flex-wrap gap-2">
+                {presets.map((value) => {
+                  const selected = countValid && parsedCount === value;
+                  return (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => selectCount(value)}
+                      className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
+                        selected ? "bg-primary text-primary-foreground" : "bg-muted hover:bg-secondary"
+                      }`}
+                    >
+                      {value === available ? `All ${value}` : value}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
 
-          {countPresets.length > 0 && (
-            <div className="mt-3 flex flex-wrap gap-1.5">
-              {countPresets.map((value) => {
-                const selected = countValid && parsedCount === value;
+            {!countValid && (
+              <p className="mt-3 text-sm text-destructive">
+                {available === 0
+                  ? "This course has no questions yet."
+                  : `Enter a whole number from 1 to ${available}.`}
+              </p>
+            )}
+          </Reveal>
+
+          {/* Timer */}
+          <Reveal
+            delay={0.05}
+            className="rounded-[5px] border border-border bg-card p-5 shadow-sm sm:p-6"
+          >
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold">Timer</h2>
+              <Clock className="h-5 w-5 text-muted-foreground" />
+            </div>
+
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              {[
+                { value: true, label: "Timed", detail: "Race the clock", icon: Clock },
+                { value: false, label: "Untimed", detail: "Take your time", icon: InfinityIcon },
+              ].map((option) => {
+                const selected = (preferences.durationMinutes !== null) === option.value;
                 return (
                   <button
-                    key={value}
+                    key={option.label}
                     type="button"
-                    onClick={() => selectCount(value)}
                     aria-pressed={selected}
-                    className={`min-h-9 rounded-full border px-3.5 py-1.5 text-[12px] font-semibold transition-colors ${
+                    onClick={() =>
+                      updatePreferences({
+                        durationMinutes: option.value
+                          ? preferences.durationMinutes ?? 30
+                          : null,
+                      })
+                    }
+                    className={`rounded-[5px] border-2 p-3.5 text-left transition-colors ${
                       selected
-                        ? "border-accent bg-accent-soft text-accent-soft-foreground"
-                        : "border-border text-muted-foreground hover:border-accent/40 hover:text-foreground"
+                        ? "border-accent bg-secondary"
+                        : "border-border hover:border-foreground/30"
                     }`}
                   >
-                    {value}
+                    <option.icon className="h-5 w-5" />
+                    <p className="mt-2 font-semibold">{option.label}</p>
+                    <p className="text-xs text-muted-foreground">{option.detail}</p>
                   </button>
                 );
               })}
             </div>
-          )}
-        </section>
 
-        {/* C. Result preference */}
-        <section className="py-6 sm:py-7">
-          <h2 className="font-display text-lg font-semibold text-foreground">Results</h2>
-          <p className="mt-1 text-[13px] text-muted-foreground">Choose when you see your score.</p>
-
-          <div className="mt-4 grid gap-2.5 sm:grid-cols-2" role="radiogroup" aria-label="Result preference">
-            {RESULT_MODES.map((mode) => {
-              const selected = preferences.resultMode === mode.value;
-              return (
-                <button
-                  key={mode.value}
-                  type="button"
-                  role="radio"
-                  aria-checked={selected}
-                  onClick={() => updatePreferences({ resultMode: mode.value })}
-                  className={`flex flex-col rounded-2xl border p-4 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/40 ${
-                    selected
-                      ? "border-accent bg-accent-soft"
-                      : "border-border bg-background hover:border-accent/40"
-                  }`}
-                >
-                  <span className="flex items-center gap-2">
-                    <span
-                      className={`flex h-6 w-6 items-center justify-center rounded-lg ${
-                        selected ? "bg-accent text-accent-foreground" : "bg-surface-secondary text-muted-foreground"
+            {preferences.durationMinutes !== null && (
+              <div className="mt-5 flex flex-wrap gap-2">
+                {DURATION_OPTIONS.filter((option) => option.minutes !== null).map((option) => {
+                  const selected = preferences.durationMinutes === option.minutes;
+                  return (
+                    <button
+                      key={option.label}
+                      type="button"
+                      onClick={() => updatePreferences({ durationMinutes: option.minutes })}
+                      className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
+                        selected ? "bg-primary text-primary-foreground" : "bg-muted hover:bg-secondary"
                       }`}
                     >
-                      {selected ? <Check className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
-                    </span>
-                    <span className="font-display text-[15px] font-semibold text-foreground">{mode.label}</span>
-                  </span>
-                  <span className="mt-2 text-[12.5px] leading-relaxed text-muted-foreground">
-                    {mode.summary}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </section>
+                      {option.minutes} min
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </Reveal>
 
+          {/* Result preference */}
+          <Reveal
+            delay={0.1}
+            className="rounded-[5px] border border-border bg-card p-5 shadow-sm sm:p-6"
+          >
+            <h2 className="text-lg font-semibold">Results</h2>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              {RESULT_MODES.map((option) => {
+                const selected = preferences.resultMode === option.value;
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    aria-pressed={selected}
+                    onClick={() => updatePreferences({ resultMode: option.value })}
+                    className={`rounded-[5px] border-2 p-3.5 text-left transition-colors ${
+                      selected
+                        ? "border-accent bg-secondary"
+                        : "border-border hover:border-foreground/30"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <option.icon className="h-5 w-5" />
+                      {selected && <Check className="h-4 w-4 text-accent" />}
+                    </div>
+                    <p className="mt-2 font-semibold">{option.label}</p>
+                    <p className="text-xs text-muted-foreground">{option.summary}</p>
+                  </button>
+                );
+              })}
+            </div>
+          </Reveal>
         </div>
 
-        {error && (
-          <p className="mt-4 flex items-start gap-2 rounded-xl bg-danger-soft p-3 text-xs font-semibold text-danger-soft-foreground">
-            <TriangleExclamation className="mt-0.5 h-4 w-4 flex-shrink-0" />
-            {error}
+        {/* Session summary — Lumio's dark panel with the accent action. */}
+        <Reveal
+          delay={0.15}
+          className="h-fit rounded-[5px] bg-primary p-5 text-primary-foreground shadow-md sm:p-6 lg:sticky lg:top-24"
+        >
+          <h2 className="text-lg font-semibold">Session summary</h2>
+          <dl className="mt-4 space-y-2.5 text-sm">
+            <div className="flex justify-between gap-3">
+              <dt className="text-primary-foreground/70">Course</dt>
+              <dd className="text-right font-semibold">{course.title}</dd>
+            </div>
+            <div className="flex justify-between gap-3">
+              <dt className="text-primary-foreground/70">Questions</dt>
+              <dd className="font-semibold">{countValid ? parsedCount : preferences.questionCount} random</dd>
+            </div>
+            <div className="flex justify-between gap-3">
+              <dt className="text-primary-foreground/70">Timer</dt>
+              <dd className="font-semibold">
+                {preferences.durationMinutes === null ? "Off" : `${preferences.durationMinutes} minutes`}
+              </dd>
+            </div>
+            <div className="flex justify-between gap-3">
+              <dt className="text-primary-foreground/70">Results</dt>
+              <dd className="text-right font-semibold">{isInstant ? "Instant" : "At the end"}</dd>
+            </div>
+            <div className="flex justify-between gap-3">
+              <dt className="text-primary-foreground/70">Pass mark</dt>
+              <dd className="font-semibold">{course.passScore}%</dd>
+            </div>
+          </dl>
+          <p className="mt-4 text-xs leading-relaxed text-primary-foreground/70">
+            Stay on the quiz page once you begin. Leaving may end your attempt.
           </p>
-        )}
 
-        {/* D. Navigation directly beneath the configuration */}
-        <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
+          {error && (
+            <p className="mt-3 rounded-[5px] bg-destructive/20 px-3.5 py-2.5 text-xs" role="alert">
+              {error}
+            </p>
+          )}
+
           <Button
             onClick={goNext}
-            disabled={!canContinue || !isLoaded}
-            className="h-12 rounded-full px-8 text-sm font-semibold shadow-[0_14px_30px_-18px_rgba(91,75,255,0.9)]"
+            disabled={!canContinue || !isLoaded || busy}
+            className="mt-5 h-11 w-full bg-accent text-[15px] text-accent-foreground hover:bg-accent/90"
           >
-            {!isLoaded
-              ? "Loading…"
-              : locked
-                ? "Purchase required"
-                : exhausted
-                  ? "No attempts left"
-                  : available === 0
-                    ? "No questions yet"
-                    : !isSignedIn
-                      ? "Sign in to continue"
-                      : "Next"}
-            {canContinue && isLoaded && isSignedIn && <ArrowRight className="h-4 w-4" />}
+            {busy ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Preparing…
+              </>
+            ) : !isLoaded ? (
+              "Loading…"
+            ) : locked ? (
+              "Purchase required"
+            ) : exhausted ? (
+              "No attempts left"
+            ) : available === 0 ? (
+              "No questions yet"
+            ) : !isSignedIn ? (
+              "Sign in to continue"
+            ) : (
+              <>
+                Continue
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </>
+            )}
           </Button>
-        </div>
 
-      </main>
+          <Link
+            href={`/courses/${course.slug}`}
+            className="mt-3 flex items-center justify-center gap-2 text-xs text-primary-foreground/70 transition-colors hover:text-primary-foreground"
+          >
+            <RefreshCw className="h-3.5 w-3.5" />
+            Back to course
+          </Link>
+        </Reveal>
+      </div>
     </div>
   );
 }

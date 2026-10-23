@@ -3,16 +3,26 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
-import { Bookmark, Clock, BookOpen, House, Person } from "@gravity-ui/icons";
+import { Bookmark, BookOpen, Clock, House, UserRound } from "lucide-react";
 
-import { cn } from "@/lib/utils";
-
+/**
+ * Mobile navigation.
+ *
+ * Lumio keeps its only navigation in a single, full-width bar anchored to the
+ * viewport edge (`sticky top-0` with a hairline border). The mobile tab bar
+ * copies that construction at the bottom: `fixed inset-x-0 bottom-0`, full
+ * width, solid background, one hairline border, and no transforms, margins or
+ * height changes of its own — so scrolling content can never make it drift.
+ *
+ * Safe-area padding lives on an inner wrapper and the shell reserves exactly
+ * the same height, so the bar can never cover a button or an answer option.
+ */
 const TABS = [
   { href: "/dashboard", label: "Home", icon: House },
   { href: "/my-courses", label: "Library", icon: Bookmark },
   { href: "/courses", label: "Courses", icon: BookOpen },
   { href: "/history", label: "History", icon: Clock },
-  { href: "/profile", label: "Profile", icon: Person },
+  { href: "/profile", label: "Profile", icon: UserRound },
 ];
 
 export default function BottomNav() {
@@ -20,45 +30,32 @@ export default function BottomNav() {
   const { isLoaded, isSignedIn } = useUser();
 
   // Primary navigation is for signed-in learners; public pages keep the
-  // compact header actions instead of offering links to private screens.
+  // header actions instead of offering links to private screens.
   if (!isLoaded || !isSignedIn) return null;
 
   return (
     <nav
       aria-label="Primary mobile navigation"
-      className="pointer-events-none fixed inset-x-0 bottom-0 z-50 px-3 pb-[max(0.65rem,env(safe-area-inset-bottom))] md:hidden"
+      className="fixed inset-x-0 bottom-0 z-50 border-t border-border/60 bg-background md:hidden"
+      style={{ paddingBottom: "var(--safe-bottom)" }}
     >
-      <div className="pointer-events-auto mx-auto flex max-w-md items-stretch gap-0.5 rounded-[1.6rem] border border-border/80 bg-surface/92 p-1.5 shadow-[0_16px_40px_-16px_rgba(20,16,40,0.35)] backdrop-blur-xl dark:shadow-[0_18px_44px_-14px_rgba(0,0,0,0.75)]">
+      <div className="mx-auto flex h-[4.5rem] max-w-md items-center justify-around px-2">
         {TABS.map((tab) => {
           const active =
             pathname === tab.href ||
             pathname.startsWith(`${tab.href}/`) ||
-            (tab.href === "/history" && pathname.startsWith("/results")) ||
-            (tab.href === "/profile" && pathname.startsWith("/settings"));
+            (tab.href === "/history" && pathname.startsWith("/results"));
           return (
             <Link
               key={tab.href}
               href={tab.href}
               aria-current={active ? "page" : undefined}
-              className={cn(
-                "group relative flex min-h-[52px] flex-1 flex-col items-center justify-center gap-1 rounded-[1.2rem] px-0.5 py-1.5 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/40",
-                active ? "bg-accent-soft text-accent-soft-foreground" : "text-muted-foreground",
-              )}
+              className={`flex h-14 w-16 flex-col items-center justify-center gap-1 rounded-full transition-colors ${
+                active ? "bg-secondary text-foreground" : "text-muted-foreground"
+              }`}
             >
-              <tab.icon
-                className={cn(
-                  "h-[19px] w-[19px] transition-transform duration-200",
-                  active ? "scale-105" : "group-hover:scale-105",
-                )}
-              />
-              <span
-                className={cn(
-                  "text-[10px] font-semibold leading-none tracking-tight",
-                  active ? "text-accent-soft-foreground" : "text-muted-foreground",
-                )}
-              >
-                {tab.label}
-              </span>
+              <tab.icon className="h-5 w-5" />
+              <span className="text-[10.5px] font-semibold leading-none">{tab.label}</span>
             </Link>
           );
         })}

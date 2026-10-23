@@ -1,28 +1,28 @@
 import Link from "next/link";
 import type { ComponentProps, ReactNode } from "react";
-import { buttonVariants, type ButtonVariants } from "@heroui/react";
+import { buttonVariants } from "@/components/ui/button";
+import type { VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 type ButtonLinkProps = {
   href: string;
   children: ReactNode;
   className?: string;
-  variant?: ButtonVariants["variant"];
-  size?: ButtonVariants["size"];
+  variant?: VariantProps<typeof buttonVariants>["variant"];
+  size?: VariantProps<typeof buttonVariants>["size"];
   fullWidth?: boolean;
 } & Omit<ComponentProps<typeof Link>, "href" | "className" | "children">;
 
 /**
- * Navigation styled with HeroUI's own button classes. Links stay real anchors
- * (history, middle-click and prefetch all keep working) while matching the
- * HeroUI buttons used for in-page actions.
+ * Navigation styled with the same button system as in-page actions. Links stay
+ * real anchors (history, middle-click and prefetch all keep working).
  */
 export default function ButtonLink({
   href,
   children,
   className,
-  variant = "primary",
-  size = "md",
+  variant = "default",
+  size = "default",
   fullWidth = false,
   ...rest
 }: ButtonLinkProps) {

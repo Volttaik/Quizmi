@@ -4,73 +4,48 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
-import { Button, SearchField } from "@heroui/react";
+import { motion } from "framer-motion";
 import {
   ArrowRight,
   BookOpen,
-  ChartLine,
-  CircleCheck,
+  CheckCircle2,
   Clock,
-  GraduationCap,
-  Keyboard,
-  ListCheck,
+  ListChecks,
+  Search,
   ShieldCheck,
   Sparkles,
-} from "@gravity-ui/icons";
+  Target,
+  X,
+} from "lucide-react";
+
+import BackgroundOrbs from "@/components/BackgroundOrbs";
+import Logo from "@/components/Brand";
 import CourseCard from "@/components/CourseCard";
-import { QuizmiWordmark } from "@/components/QuizmiLogo";
-import ButtonLink from "@/components/ui/ButtonLink";
+import { Reveal, ease } from "@/components/Motion";
+import { Button } from "@/components/ui/button";
 import type { CourseSummary } from "@/lib/types";
 
 const STEPS = [
   {
-    step: "01",
     title: "Choose a course",
-    body: "Search the catalogue by course title or code, then read exactly what the assessment covers before you commit.",
+    body: "Search by course title or code, then read exactly what the assessment covers.",
     icon: BookOpen,
   },
   {
-    step: "02",
     title: "Set the conditions",
-    body: "Pick how many questions to answer, choose a timer from 10 to 60 minutes or go untimed, and decide when results are revealed.",
-    icon: ListCheck,
+    body: "Pick how many questions to answer, choose a timer, and decide when results appear.",
+    icon: ListChecks,
   },
   {
-    step: "03",
-    title: "Review every answer",
-    body: "Submit, get a server-scored result, and work through the full answer review. Every attempt is saved to your history.",
-    icon: ChartLine,
+    title: "Answer & learn",
+    body: "Get feedback on every question and a short explanation where the course provides one.",
+    icon: Target,
   },
-];
-
-const FEATURES = [
   {
+    title: "Track progress",
+    body: "See your accuracy and previous attempts at a glance, and retake whenever you like.",
     icon: Clock,
-    title: "Timed like exam day",
-    body: "Deadlines are enforced on the server, so the clock keeps running even if you refresh or leave the page.",
   },
-  {
-    icon: Keyboard,
-    title: "Built for flow",
-    body: "Move between questions with the map or keyboard shortcuts while answers save quietly as you work.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Honest scoring",
-    body: "Correct answers stay hidden until submission. Your score is calculated by the server, never the browser.",
-  },
-  {
-    icon: GraduationCap,
-    title: "Made for long sessions",
-    body: "Question sets are drawn per attempt, so courses with hundreds of questions stay fast and focused.",
-  },
-];
-
-const CUBE_PHRASES = [
-  "Search your course",
-  "Choose a timer",
-  "Answer with focus",
-  "Review every answer",
 ];
 
 type HomePageProps = {
@@ -79,11 +54,7 @@ type HomePageProps = {
   initialError: string | null;
 };
 
-export default function HomePage({
-  initialCourses,
-  initialSubjects,
-  initialError,
-}: HomePageProps) {
+export default function HomePage({ initialCourses, initialSubjects, initialError }: HomePageProps) {
   const { isSignedIn } = useUser();
   const [courses, setCourses] = useState<CourseSummary[]>(initialCourses);
   const [subjects, setSubjects] = useState<string[]>(initialSubjects);
@@ -105,12 +76,7 @@ export default function HomePage({
   useEffect(() => {
     // The server already provided the first page of courses. If it failed, the
     // client retries immediately so the page can recover without a reload.
-    if (
-      !skippedInitialFetch.current &&
-      reloadKey === 0 &&
-      debounced === "" &&
-      subject === "all"
-    ) {
+    if (!skippedInitialFetch.current && reloadKey === 0 && debounced === "" && subject === "all") {
       skippedInitialFetch.current = true;
       if (!initialError) return;
     }
@@ -129,9 +95,7 @@ export default function HomePage({
     fetch(`/api/courses?${params.toString()}`, { signal: controller.signal })
       .then(async (response) => {
         const payload = await response.json().catch(() => null);
-        if (!response.ok) {
-          throw new Error(payload?.error ?? "Course search failed");
-        }
+        if (!response.ok) throw new Error(payload?.error ?? "Course search failed");
         return payload as { courses: CourseSummary[]; subjects: string[] };
       })
       .then((data) => {
@@ -159,7 +123,7 @@ export default function HomePage({
   };
 
   const courseCountLabel = useMemo(() => {
-    if (loading) return "Searching the catalogue…";
+    if (loading) return "Searching…";
     const count = courses.length;
     return `${count} course${count === 1 ? "" : "s"}${debounced ? " found" : " published"}`;
   }, [courses.length, debounced, loading]);
@@ -167,128 +131,138 @@ export default function HomePage({
   return (
     <div className="overflow-x-clip">
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
-      <section className="hero-mesh relative overflow-hidden">
-        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -left-24 top-0 h-[26rem] w-[26rem] rounded-full bg-accent/20 blur-[90px] animate-aurora" />
-          <div className="absolute -right-20 top-24 h-[22rem] w-[22rem] rounded-full bg-[var(--brand-coral)]/15 blur-[100px] animate-aurora [animation-delay:-8s]" />
-          <div className="absolute bottom-0 left-1/3 h-[18rem] w-[18rem] rounded-full bg-[var(--brand-mint)]/15 blur-[90px]" />
-        </div>
-
-        <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 pb-16 pt-12 sm:px-6 sm:pt-16 lg:grid-cols-[1.02fr_0.98fr] lg:gap-14 lg:px-8 lg:pb-24 lg:pt-20">
-          <div className="max-w-2xl animate-fade-up">
-            <span className="inline-flex items-center gap-2 rounded-full border border-accent/20 bg-surface/80 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-accent shadow-sm backdrop-blur">
-              <Sparkles className="h-3.5 w-3.5" />
+      <section className="relative overflow-hidden paper-dots">
+        <BackgroundOrbs variant="home" />
+        <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-10 px-4 py-12 sm:px-6 md:py-14 lg:grid-cols-2">
+          <div>
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ ease }}
+              className="inline-flex items-center gap-2 rounded-full bg-secondary px-3 py-1 text-xs font-semibold"
+            >
+              <Sparkles className="h-3.5 w-3.5 text-accent" />
               Course-based CBT practice
-            </span>
+            </motion.span>
 
-            <h1 className="mt-6 text-display-xl text-foreground">
+            <motion.h1
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.08, duration: 0.5, ease }}
+              className="mt-4 text-[2rem] font-semibold leading-[1.08] sm:text-4xl lg:text-[2.75rem]"
+            >
               Practise like it&apos;s
-              <span className="block text-gradient">the real thing.</span>
-            </h1>
+              <br />
+              <span className="relative">
+                the real thing.
+                <svg
+                  className="absolute -bottom-2 left-0 w-full"
+                  viewBox="0 0 300 12"
+                  preserveAspectRatio="none"
+                  aria-hidden
+                >
+                  <motion.path
+                    d="M2 9 C 80 2, 200 2, 298 7"
+                    stroke="hsl(var(--accent))"
+                    strokeWidth="5"
+                    fill="none"
+                    strokeLinecap="round"
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ delay: 0.6, duration: 0.8 }}
+                  />
+                </svg>
+              </span>
+            </motion.h1>
 
-            <p className="mt-6 max-w-xl lede">
-              Real course questions, real timing, real feedback. Choose a course, set the
-              conditions for this attempt, and walk into the exam having already done the work.
-            </p>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.16, duration: 0.5, ease }}
+              className="mt-5 max-w-md text-[15px] leading-relaxed text-muted-foreground"
+            >
+              Real course questions, real timing, real feedback. Choose a course, set the conditions
+              for this attempt, and walk into the exam having already done the work.
+            </motion.p>
 
-            <form
-              className="mt-9 flex max-w-xl flex-col gap-2.5 sm:flex-row sm:items-center"
+            <motion.form
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.24, duration: 0.5, ease }}
               role="search"
               onSubmit={(event) => {
                 event.preventDefault();
                 setDebounced(search.trim());
                 scrollToCourses();
               }}
+              className="mt-7 flex max-w-lg flex-col gap-2 sm:flex-row"
             >
-              <div className="flex-1">
-                <SearchField
-                  aria-label="Search courses by name or code"
+              <div className="relative flex-1">
+                <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <input
                   value={search}
-                  onChange={setSearch}
-                  className="w-full"
-                >
-                  <SearchField.Group className="h-[3.25rem] rounded-2xl border border-border bg-surface shadow-[0_10px_30px_-22px_rgba(35,25,80,0.5)] transition-colors focus-within:border-accent/60">
-                    <SearchField.SearchIcon className="ml-1.5 text-muted-foreground" />
-                    <SearchField.Input
-                      placeholder="Course name or code, e.g. GST 112"
-                      className="text-[15px]"
-                    />
-                    <SearchField.ClearButton />
-                  </SearchField.Group>
-                </SearchField>
+                  onChange={(event) => setSearch(event.target.value)}
+                  aria-label="Search courses by name or code"
+                  placeholder="Course name or code, e.g. GST 112"
+                  className="h-12 w-full rounded-[5px] border border-input bg-card pl-10 pr-9 text-sm shadow-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-accent"
+                />
+                {search && (
+                  <button
+                    type="button"
+                    onClick={() => setSearch("")}
+                    aria-label="Clear search"
+                    className="absolute right-2.5 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground hover:bg-muted"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
               </div>
-              <Button
-                type="submit"
-                size="lg"
-                className="h-[3.25rem] flex-shrink-0 rounded-2xl px-6 text-[14px] font-semibold shadow-[0_16px_34px_-18px_rgba(91,75,255,0.9)]"
-              >
+              <Button type="submit" className="h-12 px-6">
                 Find a course
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
-            </form>
+            </motion.form>
 
-            <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2.5 text-[12px] font-medium text-muted-foreground">
-              <span className="inline-flex items-center gap-1.5">
-                <CircleCheck className="h-4 w-4 text-success" />
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3, duration: 0.5, ease }}
+              className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground"
+            >
+              <span className="inline-flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-success" />
                 Choose your question count
               </span>
-              <span className="inline-flex items-center gap-1.5">
-                <CircleCheck className="h-4 w-4 text-success" />
+              <span className="inline-flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-success" />
                 Results saved automatically
               </span>
-              <a
-                href="#how-it-works"
-                className="font-semibold text-foreground underline decoration-accent/35 decoration-2 underline-offset-4 transition-colors hover:text-accent"
-              >
+              <a href="#how" className="font-semibold text-foreground hover:underline">
                 How it works
               </a>
-            </div>
+            </motion.div>
           </div>
 
-          {/* Product showcase — the PNG's transparency is the composition. */}
-          <div className="relative mx-auto w-full max-w-[34rem] lg:max-w-none">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.1, duration: 0.8, ease }}
+            className="relative"
+          >
             <div
               aria-hidden
-              className="absolute inset-x-6 bottom-4 top-16 rounded-[3.25rem] brand-gradient opacity-[0.16] blur-3xl"
+              className="absolute -right-6 -top-6 h-40 w-40 rounded-full bg-accent/30 blur-3xl"
             />
-            <div className="relative animate-float">
-              <Image
-                src="/hero-mockup.png"
-                alt="QUIZIMI open on a phone, showing course discovery"
-                width={1536}
-                height={1024}
-                priority
-                sizes="(max-width: 640px) 92vw, (max-width: 1024px) 620px, 640px"
-                className="h-auto w-full drop-shadow-[0_32px_60px_rgba(35,25,90,0.18)]"
-              />
-            </div>
-
-            <div className="absolute left-0 top-10 hidden items-center gap-2.5 rounded-2xl border border-border/80 bg-surface/90 px-3.5 py-2.5 shadow-card backdrop-blur sm:flex">
-              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-accent-soft text-accent-soft-foreground">
-                <Clock className="h-4 w-4" />
-              </span>
-              <div>
-                <p className="text-[12px] font-semibold leading-none text-foreground">Server-timed</p>
-                <p className="mt-1 text-[10.5px] leading-none text-muted-foreground">
-                  Refresh-proof sessions
-                </p>
-              </div>
-            </div>
-
-            <div className="absolute -right-1 bottom-14 hidden items-center gap-2.5 rounded-2xl border border-border/80 bg-surface/90 px-3.5 py-2.5 shadow-card backdrop-blur sm:flex lg:-right-4">
-              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-success-soft text-success-soft-foreground">
-                <ShieldCheck className="h-4 w-4" />
-              </span>
-              <div>
-                <p className="text-[12px] font-semibold leading-none text-foreground">
-                  Scored on submit
-                </p>
-                <p className="mt-1 text-[10.5px] leading-none text-muted-foreground">
-                  Answers stay hidden
-                </p>
-              </div>
-            </div>
-          </div>
+            <Image
+              src="/hero-mockup.png"
+              alt="QUIZIMI open on a phone, showing course discovery"
+              width={1536}
+              height={1024}
+              priority
+              sizes="(max-width: 640px) 92vw, (max-width: 1024px) 620px, 560px"
+              className="relative mx-auto h-auto w-full max-w-[34rem] drop-shadow-[0_32px_60px_rgba(35,25,90,0.18)]"
+            />
+          </motion.div>
         </div>
       </section>
 
@@ -296,39 +270,35 @@ export default function HomePage({
       <section
         ref={resultsRef}
         id="courses"
-        className="mx-auto max-w-7xl scroll-mt-24 px-5 py-16 sm:px-6 sm:py-20 lg:px-8"
+        className="mx-auto max-w-6xl scroll-mt-20 px-4 py-12 sm:px-6"
       >
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl">
-            <p className="eyebrow">{isFiltering ? "Search results" : "The catalogue"}</p>
-            <h2 className="mt-3 text-display-lg text-foreground">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 className="text-xl font-semibold sm:text-2xl">
               {isFiltering && debounced
                 ? `Courses matching “${debounced}”`
                 : "Find the course you're preparing for"}
             </h2>
-            <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
-              {isFiltering
-                ? "Every result is pulled live from the course catalogue."
-                : "Each course is built from real questions, with its own timer, question pool and pass mark."}
+            <p className="mt-2 max-w-xl text-sm text-muted-foreground">
+              Each course is built from real questions, with its own timer, question pool and pass
+              mark.
             </p>
           </div>
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-            {courseCountLabel}
-          </p>
+          <p className="text-xs font-medium text-muted-foreground">{courseCountLabel}</p>
         </div>
 
         {subjects.length > 0 && (
-          <div className="mt-8 flex flex-wrap items-center gap-2">
+          <div className="mt-5 flex flex-wrap gap-2">
             {["all", ...subjects].map((option) => (
               <button
                 key={option}
                 type="button"
                 onClick={() => setSubject(option)}
                 aria-pressed={subject === option}
-                className={`rounded-full border px-4 py-2 text-[12.5px] font-semibold transition-all ${
+                className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
                   subject === option
-                    ? "border-foreground bg-foreground text-background shadow-sm"
-                    : "border-border bg-surface text-muted-foreground hover:border-accent/30 hover:text-foreground"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted hover:bg-secondary"
                 }`}
               >
                 {option === "all" ? "All subjects" : option}
@@ -337,34 +307,31 @@ export default function HomePage({
           </div>
         )}
 
-        <div className="mt-10">
+        <div className="mt-7">
           {error ? (
-            <div className="rounded-3xl border border-danger/25 bg-danger-soft px-6 py-12 text-center">
-              <p className="text-sm font-semibold text-danger-soft-foreground">{error}</p>
+            <div className="rounded-[5px] border border-destructive/30 bg-destructive/10 px-6 py-12 text-center">
+              <p className="text-sm font-semibold text-destructive">{error}</p>
               <Button
                 variant="outline"
                 size="sm"
-                className="mt-5 rounded-full"
-                onPress={() => setReloadKey((key) => key + 1)}
+                className="mt-5"
+                onClick={() => setReloadKey((key) => key + 1)}
               >
                 Try again
               </Button>
             </div>
           ) : loading ? (
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {Array.from({ length: 6 }).map((_, index) => (
-                <div key={index} className="skeleton h-[23rem] rounded-[1.75rem]" />
+            <div className="grid gap-5 md:grid-cols-2">
+              {Array.from({ length: 4 }).map((_, index) => (
+                <div key={index} className="skeleton h-80" />
               ))}
             </div>
           ) : courses.length === 0 ? (
-            <div className="rounded-[2rem] border border-border/80 bg-surface px-6 py-16 text-center">
-              <span className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-accent-soft text-accent-soft-foreground">
-                <BookOpen className="h-6 w-6" />
-              </span>
-              <h3 className="font-display text-xl font-semibold text-foreground">
+            <div className="rounded-[5px] border-2 border-dashed border-border p-8 text-center sm:p-10">
+              <h3 className="text-xl font-semibold">
                 {isFiltering ? "No courses match that search" : "No courses published yet"}
               </h3>
-              <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
+              <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
                 {isFiltering
                   ? "Try a different course name or code, or clear the filters to see everything."
                   : "Courses will appear here as soon as they are added to the catalogue."}
@@ -372,9 +339,8 @@ export default function HomePage({
               {isFiltering && (
                 <Button
                   variant="outline"
-                  size="sm"
-                  className="mt-6 rounded-full"
-                  onPress={() => {
+                  className="mt-6"
+                  onClick={() => {
                     setSearch("");
                     setDebounced("");
                     setSubject("all");
@@ -386,20 +352,22 @@ export default function HomePage({
             </div>
           ) : (
             <>
-              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-5 md:grid-cols-2">
                 {courses.map((course) => (
                   <CourseCard key={course.id} course={course} />
                 ))}
               </div>
-              <div className="mt-12 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-                <ButtonLink href="/courses" variant="outline" size="lg" className="rounded-full">
-                  Browse the full catalogue
-                  <ArrowRight className="h-4 w-4" />
-                </ButtonLink>
+              <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+                <Button asChild variant="outline" className="h-11 px-6">
+                  <Link href="/courses">
+                    Browse the full catalogue
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
                 {!isSignedIn && (
-                  <ButtonLink href="/sign-up" size="lg" className="rounded-full">
-                    Create a free account
-                  </ButtonLink>
+                  <Button asChild className="h-11 px-6">
+                    <Link href="/sign-up">Create a free account</Link>
+                  </Button>
                 )}
               </div>
             </>
@@ -408,182 +376,109 @@ export default function HomePage({
       </section>
 
       {/* ── How it works ─────────────────────────────────────────────────── */}
-      <section
-        id="how-it-works"
-        className="scroll-mt-24 border-y border-border/70 bg-[var(--surface-secondary)]"
-      >
-        <div className="mx-auto grid max-w-7xl gap-12 px-5 py-16 sm:px-6 sm:py-20 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20 lg:px-8">
-          <div className="lg:sticky lg:top-28 lg:self-start">
-            <p className="eyebrow">How QUIZIMI works</p>
-            <h2 className="mt-3 text-display-lg text-foreground">
-              Three steps.
-              <br />
-              One focused loop.
-            </h2>
-            <p className="mt-4 max-w-md text-[15px] leading-relaxed text-muted-foreground">
-              No setup marathon. Open a course, choose the conditions for this attempt, and let the
-              assessment take over.
-            </p>
-
-            <div className="mt-8 hidden w-fit rounded-[2rem] border border-border/70 bg-surface p-7 lg:block">
-              <p className="text-center text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
-                Practice, in motion
-              </p>
-              <div className="flex justify-center py-8">
-                <div className="cube-stage" aria-hidden="true">
-                  <div className="cube">
-                    <div className="cube-face cube-face-front">
-                      <span>{CUBE_PHRASES[0]}</span>
-                    </div>
-                    <div className="cube-face cube-face-right">
-                      <span>{CUBE_PHRASES[1]}</span>
-                    </div>
-                    <div className="cube-face cube-face-back">
-                      <span>{CUBE_PHRASES[2]}</span>
-                    </div>
-                    <div className="cube-face cube-face-left">
-                      <span>{CUBE_PHRASES[3]}</span>
-                    </div>
-                    <div className="cube-face cube-face-top">
-                      <span className="text-[10px] uppercase tracking-[0.2em]">QUIZIMI</span>
-                    </div>
-                    <div className="cube-face cube-face-bottom">
-                      <span className="text-[10px] uppercase tracking-[0.2em]">CBT</span>
-                    </div>
-                  </div>
-                </div>
-                <span className="sr-only">
-                  QUIZIMI: search your course, choose a timer, answer with focus, and review every
-                  answer.
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <ol className="space-y-0">
-            {STEPS.map((step, index) => (
-              <li
-                key={step.step}
-                className="grid grid-cols-[2.6rem_1fr] gap-5 border-t border-border/80 py-8 first:border-t-0 first:pt-0 last:pb-0 sm:grid-cols-[3.5rem_1fr] sm:gap-7"
-              >
-                <div className="flex flex-col items-center gap-2">
-                  <span className="font-display text-2xl font-semibold leading-none text-accent/45 sm:text-3xl">
-                    {step.step}
-                  </span>
-                  {index < STEPS.length - 1 && (
-                    <span aria-hidden className="h-full w-px flex-1 bg-border/80" />
-                  )}
-                </div>
-                <div>
-                  <div className="flex items-center gap-2.5">
-                    <step.icon className="h-4 w-4 text-accent" />
-                    <h3 className="font-display text-xl font-semibold text-foreground">
-                      {step.title}
-                    </h3>
-                  </div>
-                  <p className="mt-2.5 max-w-lg text-[14px] leading-relaxed text-muted-foreground">
-                    {step.body}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      {/* ── Exam-day details ─────────────────────────────────────────────── */}
-      <section className="mx-auto max-w-7xl px-5 py-16 sm:px-6 sm:py-20 lg:px-8">
-        <div className="max-w-2xl">
-          <p className="eyebrow">The details that matter</p>
-          <h2 className="mt-3 text-display-lg text-foreground">
-            Closer to the exam than a quiz.
-          </h2>
-          <p className="mt-3 text-[15px] leading-relaxed text-muted-foreground">
-            The small mechanics are the ones that decide how prepared you feel on the day.
-          </p>
-        </div>
-
-        <div className="mt-12 grid gap-x-14 gap-y-10 sm:grid-cols-2">
-          {FEATURES.map((feature) => (
-            <div key={feature.title} className="border-t border-border pt-6">
-              <div className="flex items-center gap-3">
-                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-soft text-accent-soft-foreground">
-                  <feature.icon className="h-4 w-4" />
-                </span>
-                <h3 className="font-display text-lg font-semibold text-foreground">
-                  {feature.title}
-                </h3>
-              </div>
-              <p className="mt-3 text-[13.5px] leading-relaxed text-muted-foreground">
-                {feature.body}
-              </p>
-            </div>
+      <section id="how" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-12 sm:px-6">
+        <Reveal>
+          <h2 className="text-xl font-semibold sm:text-2xl">How QUIZIMI works</h2>
+        </Reveal>
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {STEPS.map((step, index) => (
+            <Reveal
+              key={step.title}
+              delay={index * 0.08}
+              className="rounded-[5px] border border-border bg-card p-5 shadow-sm"
+            >
+              <span className="text-xs font-bold text-muted-foreground">0{index + 1}</span>
+              <step.icon className="mt-3 h-6 w-6 text-accent" />
+              <h3 className="mt-3.5 text-base font-semibold">{step.title}</h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{step.body}</p>
+            </Reveal>
           ))}
         </div>
       </section>
 
-      {/* ── Closing call to action ───────────────────────────────────────── */}
-      <section className="mx-auto max-w-7xl px-5 pb-20 sm:px-6 lg:px-8">
-        <div className="brand-gradient relative overflow-hidden rounded-[2.25rem] px-6 py-14 text-center shadow-[0_30px_70px_-30px_rgba(67,45,160,0.65)] sm:px-12 sm:py-20">
-          <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-            <div className="absolute -right-10 -top-16 h-64 w-64 rounded-full border border-white/15" />
-            <div className="absolute -bottom-24 -left-12 h-72 w-72 rounded-full border border-white/10" />
-            <span className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/4 select-none font-display text-[8rem] font-bold uppercase leading-none tracking-tighter text-white/10 sm:text-[12rem]">
-              QUIZIMI
-            </span>
-          </div>
-          <div className="relative mx-auto max-w-2xl">
-            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/70">
-              Ready when you are
+      {/* ── Exam-day details ─────────────────────────────────────────────── */}
+      <section className="bg-card">
+        <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-2">
+          <Reveal>
+            <h2 className="text-xl font-semibold sm:text-2xl">Practice that feels rewarding</h2>
+            <p className="mt-3.5 text-[15px] leading-relaxed text-muted-foreground">
+              Every answer gets a clear verdict, a spoken cue and a short explanation where the
+              course provides one. Build a streak and QUIZIMI cheers you on.
             </p>
-            <h2 className="mt-4 text-display-lg text-white">
-              Pick a course. Start the clock.
-            </h2>
-            <p className="mx-auto mt-4 max-w-lg text-[14.5px] leading-relaxed text-white/80">
-              Open a course, set your question count and timer, and take a computer-based
-              assessment with a full result report at the end.
+            <h3 className="mt-8 text-xl font-semibold">Know where you stand</h3>
+            <p className="mt-2.5 text-[15px] leading-relaxed text-muted-foreground">
+              After each session you get your score, accuracy, time taken and a question-by-question
+              review. Your history tracks how you improve over time.
             </p>
-            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <ButtonLink
-                href="/courses"
-                size="lg"
-                className="rounded-full bg-white px-7 text-[#2a2150] hover:bg-white/90"
+          </Reveal>
+
+          <Reveal delay={0.1} className="space-y-4">
+            {[
+              {
+                icon: Clock,
+                title: "Timed like exam day",
+                body: "Deadlines are enforced on the server, so the clock keeps running even if you refresh.",
+              },
+              {
+                icon: ShieldCheck,
+                title: "Honest scoring",
+                body: "Correct answers stay hidden until submission. Your score is calculated by the server.",
+              },
+            ].map((item) => (
+              <div
+                key={item.title}
+                className="flex items-start gap-4 rounded-[5px] border border-border bg-background p-5 shadow-sm"
               >
-                Explore courses
-                <ArrowRight className="h-4 w-4" />
-              </ButtonLink>
-              {!isSignedIn && (
-                <Link
-                  href="/sign-up"
-                  className="rounded-full border border-white/30 px-7 py-3 text-[13.5px] font-semibold text-white transition-colors hover:bg-white/10"
-                >
-                  Create an account
-                </Link>
-              )}
-            </div>
-          </div>
+                <item.icon className="mt-0.5 h-5 w-5 shrink-0 text-accent" />
+                <div>
+                  <p className="font-semibold">{item.title}</p>
+                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{item.body}</p>
+                </div>
+              </div>
+            ))}
+          </Reveal>
         </div>
       </section>
 
-      <footer className="border-t border-border/70 bg-surface">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-5 px-5 py-10 sm:px-6 lg:flex-row lg:px-8">
-          <div className="flex flex-col items-center gap-2 lg:items-start">
-            <QuizmiWordmark size={26} />
-            <p className="text-[11.5px] text-muted-foreground">
+      {/* ── Closing call to action ───────────────────────────────────────── */}
+      <section className="px-4 py-12 sm:px-6">
+        <Reveal className="mx-auto max-w-6xl overflow-hidden rounded-[5px] bg-primary px-6 py-11 text-center text-primary-foreground sm:px-12">
+          <h2 className="text-xl font-semibold sm:text-3xl">Your first answer is waiting.</h2>
+          <p className="mx-auto mt-3.5 max-w-lg text-[15px] leading-relaxed text-primary-foreground/70">
+            Open a course, set your question count and timer, and take a computer-based assessment
+            with a full result report at the end.
+          </p>
+          <Button asChild className="mt-7 h-11 bg-accent px-6 text-accent-foreground hover:bg-accent/90">
+            <Link href={isSignedIn ? "/courses" : "/sign-up"}>
+              {isSignedIn ? "Explore courses" : "Create your account"}
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
+        </Reveal>
+      </section>
+
+      <footer className="border-t border-border/60 bg-card">
+        <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-10 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+          <div>
+            <Logo />
+            <p className="mt-2 text-sm text-muted-foreground">
               Course-based computer-based testing
             </p>
           </div>
-          <div className="flex items-center gap-6 text-[12.5px] font-semibold text-muted-foreground">
-            <Link href="/courses" className="transition-colors hover:text-foreground">
+          <nav className="flex flex-wrap gap-6 text-sm text-muted-foreground">
+            <Link href="/courses" className="hover:text-foreground">
               Courses
             </Link>
-            <Link href="/demo" className="transition-colors hover:text-foreground">
+            <Link href="/demo" className="hover:text-foreground">
               Free demo
             </Link>
-            <Link href="/sign-in" className="transition-colors hover:text-foreground">
+            <Link href="/sign-in" className="hover:text-foreground">
               Sign in
             </Link>
-          </div>
+          </nav>
+          <p className="text-xs text-muted-foreground">
+            © {new Date().getFullYear()} QUIZIMI.
+          </p>
         </div>
       </footer>
     </div>
