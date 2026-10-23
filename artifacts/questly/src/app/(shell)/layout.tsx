@@ -14,7 +14,7 @@ export default function ShellLayout({ children }: { children: React.ReactNode })
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <SiteHeader />
-      <div className="flex-1 pb-[calc(4rem+env(safe-area-inset-bottom))] md:pb-0">{children}</div>
+      <div className="flex-1 pb-[calc(3.5rem+env(safe-area-inset-bottom))] md:pb-0">{children}</div>
       <BottomNav />
     </div>
   );
