@@ -3,6 +3,8 @@ import "./env";
 
 const DEMO_SLUG = "demo-english-usage";
 const DEMO_QUESTION_COUNT = 20;
+/** Served from the Next.js app's public directory. */
+const DEMO_BANNER = "/demo/banner.webp";
 
 const NULL = null;
 
@@ -207,7 +209,16 @@ async function main() {
   });
 
   if (existing.rows.length > 0) {
-    console.log(`demo course already exists (slug=${DEMO_SLUG})`);
+    // Never duplicate the demo course; just keep its banner current.
+    const existingId = Number((existing.rows[0] as unknown as { id: number }).id);
+    await client.execute({
+      sql: "UPDATE courses SET cover_image_url = ?, updated_at = (strftime('%Y-%m-%dT%H:%M:%fZ','now')) WHERE id = ?",
+      args: [DEMO_BANNER, existingId],
+    });
+    console.log(
+      `demo course already exists (slug=${DEMO_SLUG}, id=${existingId}); banner set to ${DEMO_BANNER}`
+    );
+    client.close();
     return;
   }
 
@@ -216,8 +227,8 @@ async function main() {
     sql: `INSERT INTO courses (
       slug, title, description, subject, difficulty,
       price_kobo, currency, pass_score, max_attempts,
-      duration_minutes, question_count, is_published, featured
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      duration_minutes, question_count, is_published, featured, cover_image_url
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     args: [
       DEMO_SLUG,
       "Demo: English Usage",
@@ -232,6 +243,7 @@ async function main() {
       DEMO_QUESTION_COUNT,
       1,
       0,
+      DEMO_BANNER,
     ],
   });
 
@@ -240,14 +252,11 @@ async function main() {
   const courseId = (row as unknown as { id: number }).id;
   console.log(`course inserted, id=${courseId}`);
 
-  const insertOpts = JSON.stringify((q: (typeof QUESTIONS)[number]) => q.options);
-  const insertCorrect = JSON.stringify((q: (typeof QUESTIONS)[number]) => q.correct_index);
-
   console.log("inserting questions…");
   for (let i = 0; i < QUESTIONS.length; i++) {
     const q = QUESTIONS[i];
     await client.execute({
-      sql: `INSERT INTO questions (course_id, prompt, options, correct_index, explanation, marks, "order") VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      sql: `INSERT INTO questions (course_id, prompt, options, correct_index, explanation, marks, order_index) VALUES (?, ?, ?, ?, ?, ?, ?)`,
       args: [
         courseId,
         q.prompt,

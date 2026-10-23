@@ -1,0 +1,6134 @@
+MATHEMATICS FOR ECONOMICS
+UNIVERSITY-LEVEL MULTIPLE-CHOICE QUESTION BANK
+500 QUESTIONS WITH ANSWERS AND EXPLANATIONS
+
+TABLE OF CONTENTS
+
+Chapter 1: Mathematical Concepts in the Social Sciences and Set Theory (Questions 001-100)
+Chapter 2: Factors, Exponents and Logarithmic Functions (Questions 101-200)
+Chapter 3: Trigonometric Functions (Questions 201-300)
+Chapter 4: Types of Equations and Functions (Questions 301-400)
+Chapter 5: Progressions and Inequalities (Questions 401-500)
+
+
+========================================================================
+CHAPTER 1: MATHEMATICAL CONCEPTS IN THE SOCIAL SCIENCES AND SET THEORY
+Syllabus areas: Role of mathematics in economics, variables, parameters,
+equations and identities, number systems, sets, notation, operations,
+Venn diagrams, laws of sets, Cartesian products, relations and functions.
+Questions 001-100
+========================================================================
+
+Question 001. The main reason economists use mathematics is to:
+
+A. Replace economic reasoning entirely
+B. Avoid using data
+C. State relationships precisely and derive conclusions logically
+D. Make economics purely normative
+
+Correct Answer: C
+
+Explanation: Mathematics is a tool for precision; economic content comes from assumptions.
+
+
+Question 002. In the function Qd = 50 - 2P, P is the:
+
+A. Constant
+B. Independent variable
+C. Dependent variable
+D. Parameter only
+
+Correct Answer: B
+
+Explanation: Qd depends on P.
+
+
+Question 003. In Qd = 50 - 2P, the number 50 is called:
+
+A. The intercept (constant term)
+B. The slope
+C. The exponent
+D. The dependent variable
+
+Correct Answer: A
+
+Explanation: It is Qd when P = 0.
+
+
+Question 004. In Qd = 50 - 2P, the coefficient -2 represents:
+
+A. The intercept
+B. The price
+C. The quantity at zero price
+D. The slope, the change in Qd per unit change in P
+
+Correct Answer: D
+
+Explanation: Each N1 rise in P reduces Qd by 2.
+
+
+Question 005. A parameter in an economic model is:
+
+A. A variable that changes constantly
+B. The dependent variable
+C. Always zero
+D. A constant that may change between situations but is fixed within one analysis
+
+Correct Answer: D
+
+Explanation: E.g. a and b in Q = a - bP.
+
+
+Question 006. An endogenous variable is one:
+
+A. That never changes
+B. Whose value is determined within the model
+C. Fixed from outside the model
+D. That is always price
+
+Correct Answer: B
+
+Explanation: Exogenous variables are given from outside.
+
+
+Question 007. An identity differs from an equation in that an identity:
+
+A. Is always false
+B. Has no variables
+C. Holds for only one value
+D. Holds true for all values of the variables
+
+Correct Answer: D
+
+Explanation: E.g. Y ≡ C + I + G in national accounts, by definition.
+
+
+Question 008. Which is a behavioural equation?
+
+A. TR ≡ P x Q
+B. Y ≡ C + I
+C. C = 100 + 0.8Y
+D. Profit ≡ TR - TC
+
+Correct Answer: C
+
+Explanation: It describes how consumers behave; the others are definitions.
+
+
+Question 009. An equilibrium condition in a market model is:
+
+A. Qd = 100 - P
+B. TR = PQ
+C. Qd = Qs
+D. Profit = TR - TC
+
+Correct Answer: C
+
+Explanation: It states the condition under which the market clears.
+
+
+Question 010. If Y = C + I, C = 50 + 0.5Y and I = 30, equilibrium Y is:
+
+A. 160
+B. 130
+C. 110
+D. 80
+
+Correct Answer: A
+
+Explanation: Y = 50 + 0.5Y + 30, so 0.5Y = 80, Y = 160.
+
+
+Question 011. A variable that can take any value within a range is:
+
+A. Continuous
+B. Qualitative
+C. Discrete
+D. Constant
+
+Correct Answer: A
+
+Explanation: E.g. price; discrete variables take separate values like number of cars.
+
+
+Question 012. The number of workers in a firm is best described as:
+
+A. An identity
+B. A discrete variable
+C. A parameter
+D. A continuous variable
+
+Correct Answer: B
+
+Explanation: Workers are counted in whole numbers.
+
+
+Question 013. A rational number is one that:
+
+A. Is always negative
+B. Can be expressed as a ratio of two integers with non-zero denominator
+C. Is always a whole number
+D. Cannot be written as a fraction
+
+Correct Answer: B
+
+Explanation: E.g. 3/4, -5, 0.25.
+
+
+Question 014. Which of these is irrational?
+
+A. 22/7
+B. √2
+C. 0.75
+D. -3
+
+Correct Answer: B
+
+Explanation: √2 cannot be written as a fraction of integers; 22/7 is only an approximation of π.
+
+
+Question 015. Real numbers consist of:
+
+A. Only positive numbers
+B. Only integers
+C. Rational and irrational numbers
+D. Only fractions
+
+Correct Answer: C
+
+Explanation: All numbers on the number line.
+
+
+Question 016. A set is best defined as:
+
+A. A well-defined collection of distinct objects
+B. Any group of numbers that repeat
+C. An equation
+D. A function
+
+Correct Answer: A
+
+Explanation: Membership must be clearly determinable.
+
+
+Question 017. The symbol ∈ means:
+
+A. "intersection"
+B. "is an element of"
+C. "union"
+D. "is a subset of"
+
+Correct Answer: B
+
+Explanation: E.g. 3 ∈ {1, 2, 3}.
+
+
+Question 018. If A = {2, 4, 6, 8}, then which is true?
+
+A. 6 ∈ A
+B. 2 ∉ A
+C. 5 ∈ A
+D. 8 ∉ A
+
+Correct Answer: A
+
+Explanation: 6 is a member of A.
+
+
+Question 019. The set {x : x is a positive even number less than 10} in roster form is:
+
+A. {0, 2, 4, 6, 8, 10}
+B. {2, 4, 6, 8, 10}
+C. {1, 3, 5, 7, 9}
+D. {2, 4, 6, 8}
+
+Correct Answer: D
+
+Explanation: Positive even numbers below 10.
+
+
+Question 020. The empty (null) set is:
+
+A. A set containing zero
+B. A set with one element
+C. A set with no elements
+D. The universal set
+
+Correct Answer: C
+
+Explanation: Written ∅ or { }. {0} is not empty.
+
+
+Question 021. Which set is empty?
+
+A. {1}
+B. {0}
+C. {x : x² = 4}
+D. {x : x is a natural number and x < 1}
+
+Correct Answer: D
+
+Explanation: No natural number (1, 2, 3...) is less than 1.
+
+
+Question 022. The universal set is:
+
+A. The empty set
+B. A set with one element
+C. The intersection of all sets
+D. The set containing all elements under consideration
+
+Correct Answer: D
+
+Explanation: Usually denoted U or ξ.
+
+
+Question 023. A is a subset of B (A ⊆ B) if:
+
+A. A and B have no common elements
+B. Every element of A is also in B
+C. Some elements of A are in B
+D. B is in A
+
+Correct Answer: B
+
+Explanation: E.g. {1, 2} ⊆ {1, 2, 3}.
+
+
+Question 024. The number of subsets of a set with n elements is:
+
+A. 2n
+B. 2^n
+C. n²
+D. n!
+
+Correct Answer: B
+
+Explanation: Each element is either in or out of a subset.
+
+
+Question 025. The number of subsets of {a, b, c} is:
+
+A. 8
+B. 9
+C. 3
+D. 6
+
+Correct Answer: A
+
+Explanation: 2³ = 8, including ∅ and the set itself.
+
+
+Question 026. The number of proper subsets of {a, b, c, d} is:
+
+A. 15
+B. 16
+C. 4
+D. 8
+
+Correct Answer: A
+
+Explanation: 2⁴ - 1 = 15 (excluding the set itself).
+
+
+Question 027. The union A ∪ B consists of:
+
+A. Elements in A but not B
+B. Only elements in both A and B
+C. Elements in A, in B, or in both
+D. Elements in neither
+
+Correct Answer: C
+
+Explanation: Union combines all elements.
+
+
+Question 028. The intersection A ∩ B consists of:
+
+A. Elements in neither
+B. Elements in A only
+C. All elements in A or B
+D. Elements common to both A and B
+
+Correct Answer: D
+
+Explanation: Intersection keeps only shared elements.
+
+
+Question 029. A = {1, 2, 3, 4}, B = {3, 4, 5, 6}. A ∪ B is:
+
+A. {5, 6}
+B. {3, 4}
+C. {1, 2}
+D. {1, 2, 3, 4, 5, 6}
+
+Correct Answer: D
+
+Explanation: Combine all distinct elements.
+
+
+Question 030. A = {1, 2, 3, 4}, B = {3, 4, 5, 6}. A ∩ B is:
+
+A. {1, 2, 5, 6}
+B. ∅
+C. {1, 2, 3, 4, 5, 6}
+D. {3, 4}
+
+Correct Answer: D
+
+Explanation: Common elements.
+
+
+Question 031. A = {1, 2, 3, 4}, B = {3, 4, 5, 6}. A - B (A minus B) is:
+
+A. {1, 2, 5, 6}
+B. {5, 6}
+C. {1, 2}
+D. {3, 4}
+
+Correct Answer: C
+
+Explanation: Elements of A not in B.
+
+
+Question 032. Two sets are disjoint if:
+
+A. Their intersection is empty
+B. One is a subset of the other
+C. They are equal
+D. Their union is empty
+
+Correct Answer: A
+
+Explanation: They share no elements.
+
+
+Question 033. The complement of A, written A', contains:
+
+A. Elements common to A and U
+B. All elements of U not in A
+C. The empty set
+D. All elements of A
+
+Correct Answer: B
+
+Explanation: A' = U - A.
+
+
+Question 034. U = {1, 2, ..., 10}, A = {2, 4, 6, 8, 10}. A' is:
+
+A. {1, 2, ..., 10}
+B. ∅
+C. {1, 3, 5, 7, 9}
+D. {2, 4, 6, 8, 10}
+
+Correct Answer: C
+
+Explanation: Odd numbers from 1 to 10.
+
+
+Question 035. De Morgan's law states that (A ∪ B)' equals:
+
+A. A ∩ B
+B. A ∪ B
+C. A' ∪ B'
+D. A' ∩ B'
+
+Correct Answer: D
+
+Explanation: The complement of a union is the intersection of complements.
+
+
+Question 036. De Morgan's law states that (A ∩ B)' equals:
+
+A. A ∪ B
+B. A' ∩ B'
+C. A' ∪ B'
+D. A ∩ B
+
+Correct Answer: C
+
+Explanation: The complement of an intersection is the union of complements.
+
+
+Question 037. The formula n(A ∪ B) equals:
+
+A. n(A) x n(B)
+B. n(A) - n(B)
+C. n(A) + n(B) - n(A ∩ B)
+D. n(A) + n(B)
+
+Correct Answer: C
+
+Explanation: Subtracting the overlap avoids double counting.
+
+
+Question 038. n(A) = 20, n(B) = 15, n(A ∩ B) = 5. n(A ∪ B) is:
+
+A. 25
+B. 35
+C. 40
+D. 30
+
+Correct Answer: D
+
+Explanation: 20 + 15 - 5 = 30.
+
+
+Question 039. In a class of 50, 30 study Economics, 25 study Accounting and 10 study both. How many study neither?
+
+A. 0
+B. 10
+C. 15
+D. 5
+
+Correct Answer: D
+
+Explanation: n(E ∪ A) = 30 + 25 - 10 = 45; neither = 50 - 45 = 5.
+
+
+Question 040. Of 100 traders, 60 sell rice, 50 sell beans, and 20 sell both. How many sell only rice?
+
+A. 40
+B. 30
+C. 60
+D. 20
+
+Correct Answer: A
+
+Explanation: Only rice = 60 - 20 = 40.
+
+
+Question 041. Of 100 traders, 60 sell rice, 50 sell beans, 20 sell both. How many sell exactly one of the two?
+
+A. 70
+B. 90
+C. 80
+D. 110
+
+Correct Answer: A
+
+Explanation: Only rice 40 + only beans 30 = 70.
+
+
+Question 042. In a survey of 80 consumers, 45 buy brand X, 40 buy brand Y and 15 buy neither. How many buy both?
+
+A. 15
+B. 20
+C. 10
+D. 25
+
+Correct Answer: B
+
+Explanation: n(X ∪ Y) = 80 - 15 = 65; both = 45 + 40 - 65 = 20.
+
+
+Question 043. n(A ∪ B ∪ C) equals:
+
+A. n(A)+n(B)+n(C)-n(A∩B∩C)
+B. n(A)n(B)n(C)
+C. n(A)+n(B)+n(C)
+D. n(A)+n(B)+n(C)-n(A∩B)-n(A∩C)-n(B∩C)+n(A∩B∩C)
+
+Correct Answer: D
+
+Explanation: Inclusion-exclusion for three sets.
+
+
+Question 044. n(A)=20, n(B)=25, n(C)=30, n(A∩B)=8, n(A∩C)=10, n(B∩C)=12, n(A∩B∩C)=5. n(A∪B∪C) is:
+
+A. 75
+B. 50
+C. 55
+D. 45
+
+Correct Answer: B
+
+Explanation: 20+25+30-8-10-12+5 = 50.
+
+
+Question 045. A Venn diagram is used to:
+
+A. Calculate logarithms
+B. Represent sets and their relationships visually
+C. Solve quadratic equations
+D. Plot demand curves
+
+Correct Answer: B
+
+Explanation: John Venn introduced it in 1880.
+
+
+Question 046. Equal sets are sets that:
+
+A. Have the same number of elements
+B. Are disjoint
+C. Contain exactly the same elements
+D. Are both empty only
+
+Correct Answer: C
+
+Explanation: {1, 2} = {2, 1}; order does not matter.
+
+
+Question 047. Equivalent sets are sets that:
+
+A. Are disjoint
+B. Contain the same elements
+C. Have the same number of elements
+D. Have no elements
+
+Correct Answer: C
+
+Explanation: {a, b} and {1, 2} are equivalent, not equal.
+
+
+Question 048. The cardinality of {a, e, i, o, u} is:
+
+A. 1
+B. 6
+C. 4
+D. 5
+
+Correct Answer: D
+
+Explanation: Cardinality is the number of elements.
+
+
+Question 049. A finite set is one that:
+
+A. Contains only numbers
+B. Has a countable, limited number of elements
+C. Is always empty
+D. Has infinitely many elements
+
+Correct Answer: B
+
+Explanation: {x : x is a day of the week} has 7 elements.
+
+
+Question 050. Which set is infinite?
+
+A. ∅
+B. {x : x is a natural number}
+C. {x : x is a month of the year}
+D. {1, 2, 3}
+
+Correct Answer: B
+
+Explanation: Natural numbers never end.
+
+
+Question 051. The Cartesian product A x B is:
+
+A. The set of all ordered pairs (a, b) with a ∈ A and b ∈ B
+B. The intersection of A and B
+C. The complement of A
+D. The union of A and B
+
+Correct Answer: A
+
+Explanation: Used to define relations and functions.
+
+
+Question 052. If n(A) = 3 and n(B) = 4, n(A x B) is:
+
+A. 7
+B. 12
+C. 64
+D. 81
+
+Correct Answer: B
+
+Explanation: 3 x 4 = 12 ordered pairs.
+
+
+Question 053. A = {1, 2}, B = {x, y}. A x B is:
+
+A. {(x,1), (y,2)}
+B. {(1,x), (1,y), (2,x), (2,y)}
+C. {1, 2, x, y}
+D. {(1,2), (x,y)}
+
+Correct Answer: B
+
+Explanation: All ordered pairs with first element from A.
+
+
+Question 054. The commutative law of sets states that:
+
+A. A ∪ (B ∩ C) = (A ∪ B) ∩ C
+B. A ∪ B = B ∪ A
+C. A ∪ ∅ = ∅
+D. A ∩ A' = U
+
+Correct Answer: B
+
+Explanation: Order does not matter for union and intersection.
+
+
+Question 055. The distributive law states that A ∩ (B ∪ C) equals:
+
+A. A ∪ B ∪ C
+B. A ∩ B ∩ C
+C. (A ∩ B) ∪ (A ∩ C)
+D. (A ∪ B) ∩ C
+
+Correct Answer: C
+
+Explanation: Intersection distributes over union.
+
+
+Question 056. A ∪ A' equals:
+
+A. U
+B. A'
+C. ∅
+D. A
+
+Correct Answer: A
+
+Explanation: A set and its complement make up the universal set.
+
+
+Question 057. A ∩ A' equals:
+
+A. A
+B. ∅
+C. A'
+D. U
+
+Correct Answer: B
+
+Explanation: Nothing is in both A and not-A.
+
+
+Question 058. A ∪ ∅ equals:
+
+A. A'
+B. ∅
+C. U
+D. A
+
+Correct Answer: D
+
+Explanation: Union with the empty set adds nothing.
+
+
+Question 059. A ∩ U equals:
+
+A. U
+B. ∅
+C. A'
+D. A
+
+Correct Answer: D
+
+Explanation: Intersection with the universal set leaves A.
+
+
+Question 060. If A ⊆ B, then A ∩ B equals:
+
+A. B
+B. A
+C. U
+D. ∅
+
+Correct Answer: B
+
+Explanation: All of A is already in B.
+
+
+Question 061. If A ⊆ B, then A ∪ B equals:
+
+A. B
+B. U
+C. ∅
+D. A
+
+Correct Answer: A
+
+Explanation: B already contains A.
+
+
+Question 062. (A')' equals:
+
+A. A
+B. A'
+C. ∅
+D. U
+
+Correct Answer: A
+
+Explanation: Complement of a complement returns the set.
+
+
+Question 063. The power set of A is:
+
+A. The complement of A
+B. The set of all subsets of A
+C. The largest element of A
+D. A x A
+
+Correct Answer: B
+
+Explanation: For {1, 2}: {∅, {1}, {2}, {1, 2}}.
+
+
+Question 064. The power set of {1, 2} has how many elements?
+
+A. 2
+B. 8
+C. 4
+D. 3
+
+Correct Answer: C
+
+Explanation: 2² = 4.
+
+
+Question 065. Set theory is used in economics to:
+
+A. Replace statistics
+B. Measure inflation directly
+C. Calculate exact prices only
+D. Define consumption sets, budget sets and preference relations
+
+Correct Answer: D
+
+Explanation: Modern consumer theory is built on sets.
+
+
+Question 066. A consumer's budget set is:
+
+A. The empty set
+B. All goods in the economy
+C. All bundles affordable given income and prices
+D. Bundles giving equal utility
+
+Correct Answer: C
+
+Explanation: Budget set: {(x, y): Pₓx + Pᵧy ≤ M}.
+
+
+Question 067. If income is N100, Pₓ = N10 and Pᵧ = N20, which bundle is in the budget set?
+
+A. (8, 2)
+B. (10, 1)
+C. (4, 3)
+D. (6, 3)
+
+Correct Answer: C
+
+Explanation: 4(10) + 3(20) = 100 ≤ 100; others exceed 100.
+
+
+Question 068. In set-builder notation, {x : 2 < x ≤ 5, x ∈ Z} is:
+
+A. {3, 4}
+B. {2, 3, 4}
+C. {2, 3, 4, 5}
+D. {3, 4, 5}
+
+Correct Answer: D
+
+Explanation: Integers greater than 2 and up to 5.
+
+
+Question 069. Z denotes the set of:
+
+A. Natural numbers
+B. Real numbers
+C. Integers
+D. Rational numbers
+
+Correct Answer: C
+
+Explanation: Z = {..., -2, -1, 0, 1, 2, ...}.
+
+
+Question 070. N denotes the set of:
+
+A. Real numbers
+B. Irrational numbers
+C. Natural numbers
+D. Integers
+
+Correct Answer: C
+
+Explanation: N = {1, 2, 3, ...}.
+
+
+Question 071. Q denotes the set of:
+
+A. Integers
+B. Complex numbers
+C. Real numbers
+D. Rational numbers
+
+Correct Answer: D
+
+Explanation: From "quotient".
+
+
+Question 072. Which statement is TRUE?
+
+A. Q ⊆ Z
+B. N ⊆ Z ⊆ Q ⊆ R
+C. Z ⊆ N
+D. R ⊆ Q ⊆ Z ⊆ N
+
+Correct Answer: B
+
+Explanation: Each number system contains the previous.
+
+
+Question 073. A relation from A to B is:
+
+A. The union of A and B
+B. A subset of A x B
+C. The empty set only
+D. Always a function
+
+Correct Answer: B
+
+Explanation: A relation pairs elements of A with elements of B.
+
+
+Question 074. A function is a relation in which:
+
+A. Inputs may have several outputs
+B. Each output has one input
+C. Each input is paired with exactly one output
+D. There are no inputs
+
+Correct Answer: C
+
+Explanation: E.g. each price gives one quantity demanded.
+
+
+Question 075. The domain of a function is:
+
+A. The set of permissible input values
+B. The set of outputs
+C. The slope
+D. The graph
+
+Correct Answer: A
+
+Explanation: The range is the set of outputs.
+
+
+Question 076. The range of f(x) = x², x ∈ R, is:
+
+A. y ≤ 0
+B. y > 1
+C. y ≥ 0
+D. All real numbers
+
+Correct Answer: C
+
+Explanation: Squares are never negative.
+
+
+Question 077. The domain of f(x) = 1/(x - 3) is:
+
+A. x > 3 only
+B. All real numbers
+C. x = 3
+D. All real numbers except 3
+
+Correct Answer: D
+
+Explanation: Division by zero is undefined.
+
+
+Question 078. For a demand function Q = 100 - 5P, the economically meaningful domain is:
+
+A. P ≥ 20
+B. P < 0
+C. 0 ≤ P ≤ 20
+D. All real P
+
+Correct Answer: C
+
+Explanation: Both P and Q must be non-negative.
+
+
+Question 079. Using the Venn diagram method, if n(U) = 60, n(A) = 35, n(B) = 30 and n(A' ∩ B') = 10, then n(A ∩ B) is:
+
+A. 15
+B. 5
+C. 25
+D. 20
+
+Correct Answer: A
+
+Explanation: n(A ∪ B) = 50; 35 + 30 - 50 = 15.
+
+
+Question 080. 40 students took Maths or Economics or both. 25 took Maths and 22 took Economics. How many took only Economics?
+
+A. 22
+B. 7
+C. 15
+D. 18
+
+Correct Answer: C
+
+Explanation: Both = 25 + 22 - 40 = 7; only Economics = 22 - 7 = 15.
+
+
+Question 081. Which correctly shades A ∩ B'?
+
+A. Elements in both
+B. Elements in neither
+C. Elements in A but not in B
+D. Elements in B only
+
+Correct Answer: C
+
+Explanation: A ∩ B' = A - B.
+
+
+Question 082. The symmetric difference A Δ B consists of elements:
+
+A. In both A and B
+B. In neither
+C. In A or B but not both
+D. In A only
+
+Correct Answer: C
+
+Explanation: A Δ B = (A - B) ∪ (B - A).
+
+
+Question 083. A = {1, 2, 3}, B = {2, 3, 4}. A Δ B is:
+
+A. {1, 2, 3, 4}
+B. {1, 4}
+C. ∅
+D. {2, 3}
+
+Correct Answer: B
+
+Explanation: Elements in exactly one set.
+
+
+Question 084. A mathematical model in economics typically consists of:
+
+A. Only numbers without relationships
+B. Variables, parameters and equations representing relationships
+C. Moral statements
+D. Only graphs
+
+Correct Answer: B
+
+Explanation: Equations link variables via parameters.
+
+
+Question 085. The use of Greek letters like α and β in economic models usually denotes:
+
+A. Sets
+B. Units of currency
+C. Parameters
+D. Dependent variables only
+
+Correct Answer: C
+
+Explanation: E.g. Q = α - βP.
+
+
+Question 086. A static model differs from a dynamic model in that a static model:
+
+A. Has no equations
+B. Does not involve time explicitly
+C. Has no equilibrium
+D. Always involves time lags
+
+Correct Answer: B
+
+Explanation: Dynamic models track variables over time.
+
+
+Question 087. Which equation is linear?
+
+A. y = 2^x
+B. y = log x
+C. y = x² + 1
+D. y = 3x + 7
+
+Correct Answer: D
+
+Explanation: Linear equations have variables to the first power only.
+
+
+Question 088. Which is a non-linear function?
+
+A. Q = 50 - 2P
+B. C = 30 + 0.6Y
+C. TR = 20Q
+D. TC = 100 + 5Q + Q²
+
+Correct Answer: D
+
+Explanation: It contains a squared term.
+
+
+Question 089. Optimisation in economics means:
+
+A. Ignoring constraints
+B. Finding the maximum or minimum of an objective function
+C. Avoiding equations
+D. Finding any solution
+
+Correct Answer: B
+
+Explanation: E.g. maximising profit or minimising cost.
+
+
+Question 090. Constrained optimisation involves:
+
+A. Maximising or minimising subject to a restriction
+B. Only graphs
+C. Only sets
+D. Ignoring all limits
+
+Correct Answer: A
+
+Explanation: E.g. maximise utility subject to a budget constraint.
+
+
+Question 091. The process of analysing how equilibrium changes when a parameter changes is:
+
+A. Set theory
+B. Dynamic programming
+C. Trigonometry
+D. Comparative statics
+
+Correct Answer: D
+
+Explanation: E.g. effect of a demand shift on equilibrium.
+
+
+Question 092. A simultaneous equations model in economics is one where:
+
+A. Variables are all exogenous
+B. There is only one equation
+C. No equilibrium exists
+D. Several equations must be solved together
+
+Correct Answer: D
+
+Explanation: E.g. demand and supply solved together.
+
+
+Question 093. Solving Qd = 60 - 3P and Qs = 2P together gives P =
+
+A. 20
+B. 12
+C. 30
+D. 10
+
+Correct Answer: B
+
+Explanation: 60 = 5P.
+
+
+Question 094. In the expression y = f(x), f represents:
+
+A. A constant
+B. The value of y
+C. The rule linking x to y
+D. An element
+
+Correct Answer: C
+
+Explanation: Read "y is a function of x".
+
+
+Question 095. If f(x) = 2x + 5, then f(3) is:
+
+A. 10
+B. 8
+C. 11
+D. 16
+
+Correct Answer: C
+
+Explanation: 2(3) + 5 = 11.
+
+
+Question 096. If g(x) = x² - 4, then g(-2) is:
+
+A. 8
+B. -8
+C. 4
+D. 0
+
+Correct Answer: D
+
+Explanation: (-2)² - 4 = 0.
+
+
+Question 097. If f(x) = 3x - 1 and g(x) = x + 2, then f(g(1)) is:
+
+A. 4
+B. 8
+C. 10
+D. 5
+
+Correct Answer: B
+
+Explanation: g(1) = 3; f(3) = 8.
+
+
+Question 098. If A ⊆ B and n(B) = 10, n(A) = 4, then n(B - A) is:
+
+A. 10
+B. 4
+C. 6
+D. 14
+
+Correct Answer: C
+
+Explanation: All 4 elements of A are in B.
+
+
+Question 099. (Revision) In a market survey, U = 200 consumers; 120 use product P, 90 use product Q, and 50 use both. Using set operations, the number using neither is:
+
+A. 60
+B. 40
+C. 10
+D. 30
+
+Correct Answer: B
+
+Explanation: n(P ∪ Q) = 120 + 90 - 50 = 160; neither = 200 - 160 = 40.
+
+
+Question 100. (Revision) Which statement best links set theory and functions in economics?
+
+A. Every set is a function
+B. A demand function maps a set of prices (domain) to a set of quantities (range)
+C. Functions are unrelated to sets
+D. Sets cannot describe economic variables
+
+Correct Answer: B
+
+Explanation: Functions are special relations between sets.
+
+
+
+========================================================================
+CHAPTER 2: FACTORS, EXPONENTS AND LOGARITHMIC FUNCTIONS
+Syllabus areas: Factors, HCF/LCM, algebraic factorisation, laws of indices,
+fractional and negative exponents, surds, exponential equations and growth,
+laws of logarithms, change of base, natural logs, applications.
+Questions 101-200
+========================================================================
+
+Question 101. The factors of 12 are:
+
+A. 2, 4, 6, 8, 12
+B. 1, 12
+C. 1, 2, 3, 4, 6, 12
+D. 2, 3, 4, 6
+
+Correct Answer: C
+
+Explanation: A factor divides 12 exactly.
+
+
+Question 102. The prime factorisation of 60 is:
+
+A. 4 x 15
+B. 2³ x 5
+C. 2 x 3 x 10
+D. 2² x 3 x 5
+
+Correct Answer: D
+
+Explanation: 60 = 4 x 15 = 2² x 3 x 5.
+
+
+Question 103. The highest common factor (HCF) of 24 and 36 is:
+
+A. 72
+B. 4
+C. 6
+D. 12
+
+Correct Answer: D
+
+Explanation: 24 = 2³x3, 36 = 2²x3²; HCF = 2²x3 = 12.
+
+
+Question 104. The lowest common multiple (LCM) of 6 and 8 is:
+
+A. 12
+B. 2
+C. 24
+D. 48
+
+Correct Answer: C
+
+Explanation: 6 = 2x3, 8 = 2³; LCM = 2³x3 = 24.
+
+
+Question 105. Factorise 6x + 9:
+
+A. 3(2x + 3)
+B. 9(x + 1)
+C. 6(x + 9)
+D. 3(2x + 9)
+
+Correct Answer: A
+
+Explanation: Common factor 3.
+
+
+Question 106. Factorise x² - 9:
+
+A. (x - 3)²
+B. (x + 3)²
+C. (x - 3)(x + 3)
+D. (x - 9)(x + 1)
+
+Correct Answer: C
+
+Explanation: Difference of two squares: a² - b² = (a - b)(a + b).
+
+
+Question 107. Factorise x² + 5x + 6:
+
+A. (x + 5)(x + 1)
+B. (x + 1)(x + 6)
+C. (x + 2)(x + 3)
+D. (x - 2)(x - 3)
+
+Correct Answer: C
+
+Explanation: 2 x 3 = 6 and 2 + 3 = 5.
+
+
+Question 108. Factorise x² - x - 12:
+
+A. (x - 6)(x + 2)
+B. (x + 4)(x - 3)
+C. (x - 12)(x + 1)
+D. (x - 4)(x + 3)
+
+Correct Answer: D
+
+Explanation: -4 x 3 = -12; -4 + 3 = -1.
+
+
+Question 109. Factorise 2x² + 7x + 3:
+
+A. (2x - 1)(x - 3)
+B. (x + 7)(2x + 3)
+C. (2x + 3)(x + 1)
+D. (2x + 1)(x + 3)
+
+Correct Answer: D
+
+Explanation: Expand: 2x² + 6x + x + 3 = 2x² + 7x + 3.
+
+
+Question 110. Factorise ax + ay + bx + by:
+
+A. (a + x)(b + y)
+B. ab(x + y)
+C. (a + b)(x + y)
+D. (ax + by)²
+
+Correct Answer: C
+
+Explanation: Group: a(x + y) + b(x + y).
+
+
+Question 111. Factorise 4x² - 25:
+
+A. (2x - 5)²
+B. (4x - 25)(x + 1)
+C. (2x - 5)(2x + 5)
+D. (4x - 5)(x + 5)
+
+Correct Answer: C
+
+Explanation: (2x)² - 5².
+
+
+Question 112. Factorise x² - 6x + 9:
+
+A. (x - 3)(x + 3)
+B. (x - 9)(x + 1)
+C. (x + 3)²
+D. (x - 3)²
+
+Correct Answer: D
+
+Explanation: Perfect square: (a - b)² = a² - 2ab + b².
+
+
+Question 113. Factorise 3x² - 12:
+
+A. 3(x - 4)(x + 4)
+B. 3(x² - 12)
+C. 3(x - 2)(x + 2)
+D. (3x - 2)(x + 6)
+
+Correct Answer: C
+
+Explanation: 3(x² - 4) = 3(x - 2)(x + 2).
+
+
+Question 114. Simplify (x² - 4)/(x - 2), x ≠ 2:
+
+A. x + 2
+B. x² - 2
+C. 2
+D. x - 2
+
+Correct Answer: A
+
+Explanation: (x - 2)(x + 2)/(x - 2).
+
+
+Question 115. Expand (x + 4)(x - 2):
+
+A. x² + 2x + 8
+B. x² + 2x - 8
+C. x² + 6x - 8
+D. x² - 2x - 8
+
+Correct Answer: B
+
+Explanation: x² - 2x + 4x - 8.
+
+
+Question 116. Expand (2x - 3)²:
+
+A. 4x² + 9
+B. 4x² - 12x + 9
+C. 2x² - 12x + 9
+D. 4x² - 6x + 9
+
+Correct Answer: B
+
+Explanation: (2x)² - 2(2x)(3) + 9.
+
+
+Question 117. In aⁿ, n is called:
+
+A. The base
+B. The coefficient
+C. The exponent (index or power)
+D. The logarithm
+
+Correct Answer: C
+
+Explanation: a is the base.
+
+
+Question 118. The law aᵐ x aⁿ equals:
+
+A. aᵐ⁻ⁿ
+B. aᵐⁿ
+C. (2a)ᵐ⁺ⁿ
+D. aᵐ⁺ⁿ
+
+Correct Answer: D
+
+Explanation: Add exponents when multiplying the same base.
+
+
+Question 119. The law aᵐ ÷ aⁿ equals:
+
+A. aᵐⁿ
+B. aᵐ⁺ⁿ
+C. aᵐ/ⁿ
+D. aᵐ⁻ⁿ
+
+Correct Answer: D
+
+Explanation: Subtract exponents when dividing.
+
+
+Question 120. (aᵐ)ⁿ equals:
+
+A. aᵐ⁺ⁿ
+B. aᵐ⁻ⁿ
+C. aᵐⁿ
+D. aⁿ/ᵐ
+
+Correct Answer: C
+
+Explanation: Multiply exponents.
+
+
+Question 121. a⁰ (a ≠ 0) equals:
+
+A. 0
+B. 1
+C. a
+D. Undefined
+
+Correct Answer: B
+
+Explanation: aⁿ/aⁿ = a⁰ = 1.
+
+
+Question 122. a⁻ⁿ equals:
+
+A. 1/aⁿ
+B. aⁿ
+C. -1/aⁿ
+D. -aⁿ
+
+Correct Answer: A
+
+Explanation: A negative exponent means reciprocal.
+
+
+Question 123. a^(1/n) equals:
+
+A. a/n
+B. aⁿ
+C. The nth root of a
+D. 1/(an)
+
+Correct Answer: C
+
+Explanation: E.g. 8^(1/3) = 2.
+
+
+Question 124. a^(m/n) equals:
+
+A. aᵐⁿ
+B. (nth root of a)ᵐ
+C. a^m - a^n
+D. m/n x a
+
+Correct Answer: B
+
+Explanation: E.g. 8^(2/3) = 2² = 4.
+
+
+Question 125. Evaluate 2³ x 2⁴:
+
+A. 128
+B. 64
+C. 256
+D. 4096
+
+Correct Answer: A
+
+Explanation: 2⁷ = 128.
+
+
+Question 126. Evaluate 3⁵ ÷ 3³:
+
+A. 27
+B. 9
+C. 3
+D. 243
+
+Correct Answer: B
+
+Explanation: 3² = 9.
+
+
+Question 127. Evaluate (5²)³:
+
+A. 125
+B. 3,125
+C. 15,625
+D. 625
+
+Correct Answer: C
+
+Explanation: 5⁶ = 15,625.
+
+
+Question 128. Evaluate 7⁰:
+
+A. 7
+B. 0
+C. 1
+D. Undefined
+
+Correct Answer: C
+
+Explanation: Any non-zero number to the power 0 is 1.
+
+
+Question 129. Evaluate 2⁻³:
+
+A. 8
+B. -8
+C. 1/8
+D. -6
+
+Correct Answer: C
+
+Explanation: 1/2³ = 1/8.
+
+
+Question 130. Evaluate 16^(1/2):
+
+A. 256
+B. 4
+C. 8
+D. 2
+
+Correct Answer: B
+
+Explanation: √16 = 4.
+
+
+Question 131. Evaluate 27^(2/3):
+
+A. 81
+B. 9
+C. 3
+D. 18
+
+Correct Answer: B
+
+Explanation: Cube root 3, squared = 9.
+
+
+Question 132. Evaluate 81^(3/4):
+
+A. 3
+B. 9
+C. 243
+D. 27
+
+Correct Answer: D
+
+Explanation: Fourth root 3, cubed = 27.
+
+
+Question 133. Evaluate 32^(-2/5):
+
+A. 1/4
+B. -4
+C. 4
+D. 1/16
+
+Correct Answer: A
+
+Explanation: Fifth root 2, squared 4, reciprocal 1/4.
+
+
+Question 134. Evaluate (1/4)^(-2):
+
+A. 1/16
+B. 16
+C. 8
+D. -16
+
+Correct Answer: B
+
+Explanation: (4)² = 16.
+
+
+Question 135. Simplify x³ · x⁵ / x²:
+
+A. x⁸
+B. x¹⁰
+C. x⁴
+D. x⁶
+
+Correct Answer: D
+
+Explanation: x^(3+5-2).
+
+
+Question 136. Simplify (2x²)³:
+
+A. 2x⁶
+B. 6x⁶
+C. 8x⁵
+D. 8x⁶
+
+Correct Answer: D
+
+Explanation: 2³ x (x²)³.
+
+
+Question 137. Simplify (x²y³)² ÷ (xy):
+
+A. x³y⁶
+B. x²y³
+C. x³y⁵
+D. x⁴y⁶
+
+Correct Answer: C
+
+Explanation: x⁴y⁶ / (xy) = x³y⁵.
+
+
+Question 138. Solve 2ˣ = 32:
+
+A. 16
+B. 4
+C. 5
+D. 6
+
+Correct Answer: C
+
+Explanation: 2⁵ = 32.
+
+
+Question 139. Solve 3ˣ = 1/9:
+
+A. -3
+B. 2
+C. -2
+D. 1/2
+
+Correct Answer: C
+
+Explanation: 3⁻² = 1/9.
+
+
+Question 140. Solve 4ˣ = 8:
+
+A. 2/3
+B. 3
+C. 2
+D. 3/2
+
+Correct Answer: D
+
+Explanation: (2²)ˣ = 2³ gives 2x = 3.
+
+
+Question 141. Solve 9^(x+1) = 27:
+
+A. 2
+B. 1/2
+C. 1
+D. 3/2
+
+Correct Answer: B
+
+Explanation: 3^(2x+2) = 3³ gives 2x = 1.
+
+
+Question 142. Solve 5^(2x-1) = 125:
+
+A. 3
+B. 3/2
+C. 2
+D. 1
+
+Correct Answer: C
+
+Explanation: 2x - 1 = 3 gives x = 2.
+
+
+Question 143. In the Cobb-Douglas function Q = AL^α K^β, α and β are:
+
+A. Constants added to output
+B. Prices of inputs
+C. Logarithms
+D. Exponents showing output elasticities of inputs
+
+Correct Answer: D
+
+Explanation: A 1% rise in L raises Q by about α%.
+
+
+Question 144. Q = 10L^0.5K^0.5. If L = 16 and K = 25, Q is:
+
+A. 200
+B. 20
+C. 100
+D. 410
+
+Correct Answer: A
+
+Explanation: 10 x 4 x 5 = 200.
+
+
+Question 145. Q = 4L^0.5K^0.5. If L = 9 and K = 4, Q is:
+
+A. 36
+B. 24
+C. 52
+D. 12
+
+Correct Answer: B
+
+Explanation: 4 x 3 x 2 = 24.
+
+
+Question 146. Simplify √50:
+
+A. 10√5
+B. 2√5
+C. 5√2
+D. 25√2
+
+Correct Answer: C
+
+Explanation: √(25 x 2).
+
+
+Question 147. Simplify √12 + √27:
+
+A. √39
+B. 5√3
+C. 6√3
+D. 3√5
+
+Correct Answer: B
+
+Explanation: 2√3 + 3√3.
+
+
+Question 148. Rationalise 1/√2:
+
+A. 2/√2
+B. 1/2
+C. √2/2
+D. √2
+
+Correct Answer: C
+
+Explanation: Multiply top and bottom by √2.
+
+
+Question 149. Rationalise 6/√3:
+
+A. 3√2
+B. 2√3
+C. 6√3
+D. √3/6
+
+Correct Answer: B
+
+Explanation: 6√3/3 = 2√3.
+
+
+Question 150. Compound interest A = P(1 + r)ⁿ with P = N10,000, r = 10%, n = 2. A is:
+
+A. N12,100
+B. N12,210
+C. N11,000
+D. N12,000
+
+Correct Answer: A
+
+Explanation: 10,000 x 1.21.
+
+
+Question 151. N5,000 invested at 20% compound interest for 3 years grows to:
+
+A. N6,000
+B. N8,640
+C. N7,200
+D. N8,000
+
+Correct Answer: B
+
+Explanation: 5,000 x 1.2³ = 5,000 x 1.728.
+
+
+Question 152. Exponential growth means a variable grows:
+
+A. By decreasing amounts always
+B. By a constant amount per period
+C. Not at all
+D. By a constant percentage per period
+
+Correct Answer: D
+
+Explanation: E.g. population growing at 3% a year.
+
+
+Question 153. A logarithm answers the question:
+
+A. To what power must the base be raised to give a number?
+B. What is the base times the number?
+C. What is the square of the number?
+D. What is the reciprocal?
+
+Correct Answer: A
+
+Explanation: If bʸ = x, then log_b x = y.
+
+
+Question 154. log₂ 8 equals:
+
+A. 4
+B. 2
+C. 16
+D. 3
+
+Correct Answer: D
+
+Explanation: 2³ = 8.
+
+
+Question 155. log₁₀ 1000 equals:
+
+A. 100
+B. 10
+C. 3
+D. 4
+
+Correct Answer: C
+
+Explanation: 10³ = 1000.
+
+
+Question 156. log₃ 81 equals:
+
+A. 3
+B. 9
+C. 4
+D. 27
+
+Correct Answer: C
+
+Explanation: 3⁴ = 81.
+
+
+Question 157. log₅ 1 equals:
+
+A. 0
+B. Undefined
+C. 1
+D. 5
+
+Correct Answer: A
+
+Explanation: 5⁰ = 1.
+
+
+Question 158. log_b b equals:
+
+A. b
+B. 1
+C. Undefined
+D. 0
+
+Correct Answer: B
+
+Explanation: b¹ = b.
+
+
+Question 159. log₂ (1/16) equals:
+
+A. -4
+B. 4
+C. 1/4
+D. -1/4
+
+Correct Answer: A
+
+Explanation: 2⁻⁴ = 1/16.
+
+
+Question 160. log₄ 2 equals:
+
+A. 1/2
+B. 2
+C. 4
+D. 1/4
+
+Correct Answer: A
+
+Explanation: 4^(1/2) = 2.
+
+
+Question 161. log (xy) equals:
+
+A. log x + log y
+B. log x x log y
+C. y log x
+D. log x - log y
+
+Correct Answer: A
+
+Explanation: Product law of logarithms.
+
+
+Question 162. log (x/y) equals:
+
+A. log (x - y)
+B. log x + log y
+C. log x / log y
+D. log x - log y
+
+Correct Answer: D
+
+Explanation: Quotient law.
+
+
+Question 163. log (xⁿ) equals:
+
+A. (log x)ⁿ
+B. log x / n
+C. n log x
+D. log n + log x
+
+Correct Answer: C
+
+Explanation: Power law.
+
+
+Question 164. Express log 6 in terms of log 2 and log 3:
+
+A. 3 log 2
+B. log 2 + log 3
+C. log 2 x log 3
+D. log 3 - log 2
+
+Correct Answer: B
+
+Explanation: 6 = 2 x 3.
+
+
+Question 165. Given log 2 = 0.3010, log 8 is:
+
+A. 0.3010
+B. 2.408
+C. 0.9030
+D. 0.6020
+
+Correct Answer: C
+
+Explanation: log 2³ = 3 x 0.3010.
+
+
+Question 166. Given log 2 = 0.3010 and log 3 = 0.4771, log 12 is:
+
+A. 0.9542
+B. 0.7781
+C. 1.2041
+D. 1.0791
+
+Correct Answer: D
+
+Explanation: log(4 x 3) = 2(0.3010) + 0.4771.
+
+
+Question 167. Given log 2 = 0.3010, log 5 is:
+
+A. 0.3010
+B. 0.6990
+C. 0.6020
+D. 1.5050
+
+Correct Answer: B
+
+Explanation: log 5 = log(10/2) = 1 - 0.3010.
+
+
+Question 168. Simplify log 40 + log 25:
+
+A. 2
+B. 65
+C. 3
+D. log 65
+
+Correct Answer: C
+
+Explanation: log(40 x 25) = log 1000 = 3.
+
+
+Question 169. Simplify log₂ 48 - log₂ 3:
+
+A. 16
+B. log₂ 45
+C. 4
+D. 45
+
+Correct Answer: C
+
+Explanation: log₂(48/3) = log₂ 16 = 4.
+
+
+Question 170. Simplify 2 log 5 + log 4:
+
+A. 1
+B. log 14
+C. 2
+D. log 29
+
+Correct Answer: C
+
+Explanation: log 25 + log 4 = log 100 = 2.
+
+
+Question 171. Solve log₂ x = 5:
+
+A. 7
+B. 25
+C. 32
+D. 10
+
+Correct Answer: C
+
+Explanation: x = 2⁵.
+
+
+Question 172. Solve log₃ (x - 1) = 2:
+
+A. 10
+B. 9
+C. 7
+D. 8
+
+Correct Answer: A
+
+Explanation: x - 1 = 9.
+
+
+Question 173. Solve log x + log 4 = log 20:
+
+A. 5
+B. 24
+C. 80
+D. 16
+
+Correct Answer: A
+
+Explanation: log 4x = log 20 gives x = 5.
+
+
+Question 174. Solve log₂ x + log₂ (x - 2) = 3:
+
+A. 8
+B. -2
+C. 4
+D. 2
+
+Correct Answer: C
+
+Explanation: x(x - 2) = 8 gives x² - 2x - 8 = 0, x = 4 or -2; logs require x > 2.
+
+
+Question 175. The change of base formula is log_b x =
+
+A. log (x/b)
+B. log b / log x
+C. log x / log b
+D. log x x log b
+
+Correct Answer: C
+
+Explanation: Any common base can be used.
+
+
+Question 176. log₈ 32 equals:
+
+A. 4
+B. 3/5
+C. 5/3
+D. 2
+
+Correct Answer: C
+
+Explanation: log₂32/log₂8 = 5/3.
+
+
+Question 177. The natural logarithm ln x has base:
+
+A. e ≈ 2.718
+B. 10
+C. 1
+D. 2
+
+Correct Answer: A
+
+Explanation: Used for continuous growth.
+
+
+Question 178. ln e equals:
+
+A. 1
+B. 10
+C. 0
+D. e
+
+Correct Answer: A
+
+Explanation: e¹ = e.
+
+
+Question 179. ln 1 equals:
+
+A. 1
+B. Undefined
+C. e
+D. 0
+
+Correct Answer: D
+
+Explanation: e⁰ = 1.
+
+
+Question 180. e^(ln 5) equals:
+
+A. 5
+B. ln 5
+C. 1
+D. e⁵
+
+Correct Answer: A
+
+Explanation: Exponential and log are inverses.
+
+
+Question 181. ln(e³) equals:
+
+A. e³
+B. 3e
+C. 3
+D. 1/3
+
+Correct Answer: C
+
+Explanation: Power law.
+
+
+Question 182. The logarithmic function y = log_b x is defined only for:
+
+A. x = 0
+B. x > 0
+C. All real x
+D. x < 0
+
+Correct Answer: B
+
+Explanation: No power of a positive base gives zero or a negative number.
+
+
+Question 183. The graph of y = log x (base > 1) is:
+
+A. Decreasing through (0, 1)
+B. A straight line
+C. Increasing, passing through (1, 0)
+D. Defined for negative x
+
+Correct Answer: C
+
+Explanation: It rises slowly for large x.
+
+
+Question 184. The graph of y = 2ˣ passes through:
+
+A. (0, 1)
+B. (1, 0)
+C. (0, 0)
+D. (0, 2)
+
+Correct Answer: A
+
+Explanation: 2⁰ = 1.
+
+
+Question 185. The exponential and logarithmic functions are:
+
+A. Both linear
+B. Inverses of each other
+C. Unrelated
+D. Identical
+
+Correct Answer: B
+
+Explanation: y = bˣ ⟺ x = log_b y.
+
+
+Question 186. Solve 2ˣ = 10 using logs (log 2 = 0.3010):
+
+A. 5
+B. 20
+C. 0.30
+D. 3.32
+
+Correct Answer: D
+
+Explanation: x = 1/0.3010 ≈ 3.32.
+
+
+Question 187. How many years for money to double at 10% compound interest? (log 2 = 0.3010, log 1.1 = 0.0414)
+
+A. About 10 years
+B. About 5 years
+C. About 7.3 years
+D. About 20 years
+
+Correct Answer: C
+
+Explanation: 1.1ⁿ = 2 gives n = 0.3010/0.0414 ≈ 7.27.
+
+
+Question 188. Taking logs of Q = AL^αK^β gives:
+
+A. ln Q = A + αL + βK
+B. ln Q = ln A x ln L x ln K
+C. ln Q = ln A + α ln L + β ln K
+D. ln Q = αβ ln(LK)
+
+Correct Answer: C
+
+Explanation: Logs turn a multiplicative function into a linear one for estimation.
+
+
+Question 189. In ln Q = 2 + 0.6 ln L + 0.4 ln K, a 10% rise in labour raises output by about:
+
+A. 0.6%
+B. 6%
+C. 10%
+D. 4%
+
+Correct Answer: B
+
+Explanation: Coefficients in log-log form are elasticities.
+
+
+Question 190. Population P = 1000e^(0.05t). P at t = 0 is:
+
+A. 1050
+B. 1000
+C. 0
+D. e
+
+Correct Answer: B
+
+Explanation: e⁰ = 1.
+
+
+Question 191. Continuous growth A = Pe^(rt). With P = 100, r = 0.1, t = 10, A is approximately:
+
+A. 110
+B. 200
+C. 271.8
+D. 1000
+
+Correct Answer: C
+
+Explanation: 100 x e¹ ≈ 271.8.
+
+
+Question 192. Express 3 log x - 2 log y as a single logarithm:
+
+A. log(x³y²)
+B. log(x/y)⁶
+C. log(x³/y²)
+D. log(3x - 2y)
+
+Correct Answer: C
+
+Explanation: Power then quotient law.
+
+
+Question 193. Simplify log₉ 27:
+
+A. 3
+B. 1/3
+C. 3/2
+D. 2/3
+
+Correct Answer: C
+
+Explanation: 9 = 3², 27 = 3³: log₉27 = 3/2.
+
+
+Question 194. If log a = 2 and log b = 3 (base 10), log(a²b) is:
+
+A. 5
+B. 12
+C. 8
+D. 7
+
+Correct Answer: D
+
+Explanation: 2(2) + 3.
+
+
+Question 195. The characteristic of log 4567 (base 10) is:
+
+A. 2
+B. 4
+C. 3
+D. 0
+
+Correct Answer: C
+
+Explanation: 4567 lies between 10³ and 10⁴.
+
+
+Question 196. (Revision) A firm's sales grow from N2m to N2m x 1.08ⁿ. After how many years do sales exceed N4m? (log 2 = 0.3010, log 1.08 = 0.0334)
+
+A. About 5 years
+B. About 12 years
+C. About 9 years
+D. About 25 years
+
+Correct Answer: C
+
+Explanation: n = 0.3010/0.0334 ≈ 9.0.
+
+
+Question 197. (Revision) Which statement correctly connects exponents and logarithms?
+
+A. log 1000 = 10³
+B. log 3 = 1000
+C. 10 = log 3
+D. If 10³ = 1000 then log 1000 = 3
+
+Correct Answer: D
+
+Explanation: A logarithm is an exponent.
+
+
+Question 198. Factorise x³ - 4x:
+
+A. x(x - 2)(x + 2)
+B. x(x - 4)
+C. x²(x - 4)
+D. (x - 2)³
+
+Correct Answer: A
+
+Explanation: x(x² - 4).
+
+
+Question 199. Evaluate 125^(-1/3):
+
+A. 5
+B. 1/25
+C. 1/5
+D. -5
+
+Correct Answer: C
+
+Explanation: Cube root 5, reciprocal.
+
+
+Question 200. Solve 10ˣ = 0.01:
+
+A. 0.2
+B. 2
+C. -1
+D. -2
+
+Correct Answer: D
+
+Explanation: 0.01 = 10⁻².
+
+
+
+========================================================================
+CHAPTER 3: TRIGONOMETRIC FUNCTIONS
+Syllabus areas: Trigonometric ratios, Pythagoras, standard angles, radians,
+quadrants and signs, identities, graphs, amplitude and period, compound and
+double angles, equations, sine and cosine rules, economic applications.
+Questions 201-300
+========================================================================
+
+Question 201. In a right-angled triangle, sin θ equals:
+
+A. Opposite / Hypotenuse
+B. Hypotenuse / Opposite
+C. Adjacent / Hypotenuse
+D. Opposite / Adjacent
+
+Correct Answer: A
+
+Explanation: SOH: sine = opposite over hypotenuse.
+
+
+Question 202. cos θ equals:
+
+A. Opposite / Hypotenuse
+B. Opposite / Adjacent
+C. Adjacent / Opposite
+D. Adjacent / Hypotenuse
+
+Correct Answer: D
+
+Explanation: CAH.
+
+
+Question 203. tan θ equals:
+
+A. Opposite / Hypotenuse
+B. Hypotenuse / Adjacent
+C. Adjacent / Opposite
+D. Opposite / Adjacent
+
+Correct Answer: D
+
+Explanation: TOA.
+
+
+Question 204. tan θ can also be written as:
+
+A. 1/sin θ
+B. sin θ / cos θ
+C. sin θ x cos θ
+D. cos θ / sin θ
+
+Correct Answer: B
+
+Explanation: (O/H)/(A/H) = O/A.
+
+
+Question 205. In a right triangle with opposite 3 and hypotenuse 5, sin θ is:
+
+A. 1.67
+B. 0.8
+C. 0.6
+D. 0.75
+
+Correct Answer: C
+
+Explanation: 3/5.
+
+
+Question 206. In a 3-4-5 triangle, with adjacent 4 and hypotenuse 5, cos θ is:
+
+A. 1.25
+B. 0.75
+C. 0.6
+D. 0.8
+
+Correct Answer: D
+
+Explanation: 4/5.
+
+
+Question 207. In a 3-4-5 triangle with opposite 3 and adjacent 4, tan θ is:
+
+A. 0.6
+B. 1.33
+C. 0.8
+D. 0.75
+
+Correct Answer: D
+
+Explanation: 3/4.
+
+
+Question 208. Pythagoras' theorem states that in a right triangle:
+
+A. All sides are equal
+B. Hypotenuse = sum of other sides
+C. Hypotenuse² = sum of squares of the other two sides
+D. Angles add to 90°
+
+Correct Answer: C
+
+Explanation: c² = a² + b².
+
+
+Question 209. A right triangle has legs 6 and 8. The hypotenuse is:
+
+A. 10
+B. 12
+C. 48
+D. 14
+
+Correct Answer: A
+
+Explanation: √(36 + 64) = 10.
+
+
+Question 210. A right triangle has hypotenuse 13 and one leg 5. The other leg is:
+
+A. 8
+B. 12
+C. √194
+D. 18
+
+Correct Answer: B
+
+Explanation: √(169 - 25) = 12.
+
+
+Question 211. sin 30° equals:
+
+A. √3/2
+B. √2/2
+C. 1/2
+D. 1
+
+Correct Answer: C
+
+Explanation: Standard angle.
+
+
+Question 212. cos 60° equals:
+
+A. 0
+B. 1
+C. 1/2
+D. √3/2
+
+Correct Answer: C
+
+Explanation: cos 60° = sin 30°.
+
+
+Question 213. sin 60° equals:
+
+A. 1
+B. √3/2
+C. 1/2
+D. √2/2
+
+Correct Answer: B
+
+Explanation: Standard angle.
+
+
+Question 214. cos 30° equals:
+
+A. √3/2
+B. 1/2
+C. 0
+D. √2/2
+
+Correct Answer: A
+
+Explanation: cos 30° = sin 60°.
+
+
+Question 215. tan 45° equals:
+
+A. 1/√3
+B. √3
+C. 0
+D. 1
+
+Correct Answer: D
+
+Explanation: Opposite = adjacent in a 45° triangle.
+
+
+Question 216. sin 45° equals:
+
+A. 1/2
+B. √3/2
+C. 1
+D. √2/2
+
+Correct Answer: D
+
+Explanation: 1/√2 = √2/2.
+
+
+Question 217. tan 60° equals:
+
+A. √3/2
+B. 1
+C. √3
+D. 1/√3
+
+Correct Answer: C
+
+Explanation: sin60/cos60 = (√3/2)/(1/2).
+
+
+Question 218. tan 30° equals:
+
+A. 1/2
+B. 1/√3
+C. √3
+D. 1
+
+Correct Answer: B
+
+Explanation: (1/2)/(√3/2).
+
+
+Question 219. sin 90° equals:
+
+A. 0
+B. 1/2
+C. Undefined
+D. 1
+
+Correct Answer: D
+
+Explanation: Maximum value of sine.
+
+
+Question 220. cos 90° equals:
+
+A. 0
+B. 1/2
+C. 1
+D. -1
+
+Correct Answer: A
+
+Explanation: Cosine is zero at 90°.
+
+
+Question 221. cos 0° equals:
+
+A. 1/2
+B. 1
+C. 0
+D. -1
+
+Correct Answer: B
+
+Explanation: Maximum value of cosine.
+
+
+Question 222. sin 0° equals:
+
+A. 1/2
+B. -1
+C. 1
+D. 0
+
+Correct Answer: D
+
+Explanation: Sine starts at zero.
+
+
+Question 223. tan 90° is:
+
+A. √3
+B. 0
+C. Undefined
+D. 1
+
+Correct Answer: C
+
+Explanation: cos 90° = 0, so division by zero.
+
+
+Question 224. sin²θ + cos²θ equals:
+
+A. 0
+B. 1
+C. tan²θ
+D. 2
+
+Correct Answer: B
+
+Explanation: The fundamental Pythagorean identity.
+
+
+Question 225. 1 + tan²θ equals:
+
+A. sec²θ
+B. cos²θ
+C. cosec²θ
+D. 1
+
+Correct Answer: A
+
+Explanation: Divide sin² + cos² = 1 by cos²θ.
+
+
+Question 226. 1 + cot²θ equals:
+
+A. tan²θ
+B. sec²θ
+C. cosec²θ
+D. sin²θ
+
+Correct Answer: C
+
+Explanation: Divide by sin²θ.
+
+
+Question 227. sec θ equals:
+
+A. 1/sin θ
+B. cos θ/sin θ
+C. 1/cos θ
+D. 1/tan θ
+
+Correct Answer: C
+
+Explanation: Reciprocal of cosine.
+
+
+Question 228. cosec θ equals:
+
+A. 1/sin θ
+B. 1/tan θ
+C. sin θ/cos θ
+D. 1/cos θ
+
+Correct Answer: A
+
+Explanation: Reciprocal of sine.
+
+
+Question 229. cot θ equals:
+
+A. cos θ / sin θ
+B. 1/sin θ
+C. 1/cos θ
+D. sin θ / cos θ
+
+Correct Answer: A
+
+Explanation: Reciprocal of tangent.
+
+
+Question 230. If sin θ = 3/5 and θ is acute, cos θ is:
+
+A. 4/5
+B. 3/4
+C. 5/4
+D. 5/3
+
+Correct Answer: A
+
+Explanation: cos²θ = 1 - 9/25 = 16/25.
+
+
+Question 231. If cos θ = 5/13 and θ is acute, tan θ is:
+
+A. 12/13
+B. 5/12
+C. 12/5
+D. 13/12
+
+Correct Answer: C
+
+Explanation: Opposite = 12; tan = 12/5.
+
+
+Question 232. If tan θ = 1 and θ is acute, θ is:
+
+A. 45°
+B. 60°
+C. 90°
+D. 30°
+
+Correct Answer: A
+
+Explanation: tan 45° = 1.
+
+
+Question 233. If sin θ = 1/2 and θ is acute, θ is:
+
+A. 60°
+B. 30°
+C. 45°
+D. 90°
+
+Correct Answer: B
+
+Explanation: Standard angle.
+
+
+Question 234. 180° in radians equals:
+
+A. 2π
+B. π/2
+C. π
+D. 1
+
+Correct Answer: C
+
+Explanation: π radians = 180°.
+
+
+Question 235. 90° in radians is:
+
+A. π/2
+B. 2π
+C. π/4
+D. π
+
+Correct Answer: A
+
+Explanation: 180/2.
+
+
+Question 236. 60° in radians is:
+
+A. π/4
+B. π/3
+C. 2π/3
+D. π/6
+
+Correct Answer: B
+
+Explanation: 180/3.
+
+
+Question 237. π/4 radians in degrees is:
+
+A. 90°
+B. 45°
+C. 60°
+D. 30°
+
+Correct Answer: B
+
+Explanation: 180/4.
+
+
+Question 238. 3π/2 radians in degrees is:
+
+A. 300°
+B. 135°
+C. 180°
+D. 270°
+
+Correct Answer: D
+
+Explanation: 3 x 90.
+
+
+Question 239. One radian is approximately:
+
+A. 90°
+B. 180°
+C. 1°
+D. 57.3°
+
+Correct Answer: D
+
+Explanation: 180/π ≈ 57.3.
+
+
+Question 240. The sine function is positive in quadrants:
+
+A. First and second
+B. Third and fourth
+C. Second and third
+D. First and fourth
+
+Correct Answer: A
+
+Explanation: "All Students Take Calculus": All, Sin, Tan, Cos.
+
+
+Question 241. The cosine function is positive in quadrants:
+
+A. Second and third
+B. Third only
+C. First and second
+D. First and fourth
+
+Correct Answer: D
+
+Explanation: Cos is positive in Q1 and Q4.
+
+
+Question 242. The tangent function is positive in quadrants:
+
+A. Second and fourth
+B. Fourth only
+C. First and third
+D. First and second
+
+Correct Answer: C
+
+Explanation: Tan positive where sin and cos share signs.
+
+
+Question 243. sin 150° equals:
+
+A. √3/2
+B. 1/2
+C. -1/2
+D. -√3/2
+
+Correct Answer: B
+
+Explanation: sin(180 - 30) = sin 30.
+
+
+Question 244. cos 120° equals:
+
+A. -1/2
+B. 1/2
+C. √3/2
+D. -√3/2
+
+Correct Answer: A
+
+Explanation: cos(180 - 60) = -cos 60.
+
+
+Question 245. tan 135° equals:
+
+A. -1
+B. √3
+C. 1
+D. 0
+
+Correct Answer: A
+
+Explanation: tan(180 - 45) = -tan 45.
+
+
+Question 246. sin 210° equals:
+
+A. 1/2
+B. √3/2
+C. -1/2
+D. -√3/2
+
+Correct Answer: C
+
+Explanation: sin(180 + 30) = -sin 30.
+
+
+Question 247. cos 300° equals:
+
+A. -1/2
+B. √3/2
+C. -√3/2
+D. 1/2
+
+Correct Answer: D
+
+Explanation: cos(360 - 60) = cos 60.
+
+
+Question 248. sin(-θ) equals:
+
+A. sin θ
+B. cos θ
+C. -sin θ
+D. -cos θ
+
+Correct Answer: C
+
+Explanation: Sine is an odd function.
+
+
+Question 249. cos(-θ) equals:
+
+A. -cos θ
+B. cos θ
+C. -sin θ
+D. sin θ
+
+Correct Answer: B
+
+Explanation: Cosine is an even function.
+
+
+Question 250. The period of y = sin x is:
+
+A. 2π (360°)
+B. 4π
+C. π/2
+D. π
+
+Correct Answer: A
+
+Explanation: The graph repeats every 360°.
+
+
+Question 251. The period of y = tan x is:
+
+A. π/2
+B. 360°
+C. π (180°)
+D. 2π
+
+Correct Answer: C
+
+Explanation: Tangent repeats every 180°.
+
+
+Question 252. The amplitude of y = 3 sin x is:
+
+A. 1
+B. 3
+C. 1/3
+D. 6
+
+Correct Answer: B
+
+Explanation: Amplitude is the coefficient of sin.
+
+
+Question 253. The range of y = sin x is:
+
+A. y ≥ 0
+B. 0 ≤ y ≤ 1
+C. All real numbers
+D. -1 ≤ y ≤ 1
+
+Correct Answer: D
+
+Explanation: Sine oscillates between -1 and 1.
+
+
+Question 254. The range of y = 4 cos x is:
+
+A. -4 ≤ y ≤ 4
+B. -1 ≤ y ≤ 1
+C. All reals
+D. 0 ≤ y ≤ 4
+
+Correct Answer: A
+
+Explanation: Amplitude 4.
+
+
+Question 255. The period of y = sin 2x is:
+
+A. π
+B. π/2
+C. 2π
+D. 4π
+
+Correct Answer: A
+
+Explanation: Period = 2π/2.
+
+
+Question 256. The period of y = cos(x/2) is:
+
+A. 2π
+B. 4π
+C. π/2
+D. π
+
+Correct Answer: B
+
+Explanation: Period = 2π/(1/2).
+
+
+Question 257. The maximum value of y = 5 + 2 sin x is:
+
+A. 5
+B. 3
+C. 7
+D. 2
+
+Correct Answer: C
+
+Explanation: 5 + 2(1).
+
+
+Question 258. The minimum value of y = 10 - 3 cos x is:
+
+A. -3
+B. 7
+C. 10
+D. 13
+
+Correct Answer: B
+
+Explanation: 10 - 3(1) = 7 when cos x = 1.
+
+
+Question 259. sin(A + B) equals:
+
+A. sin A cos B + cos A sin B
+B. sin A sin B + cos A cos B
+C. sin A + sin B
+D. cos A cos B - sin A sin B
+
+Correct Answer: A
+
+Explanation: Compound angle formula.
+
+
+Question 260. cos(A + B) equals:
+
+A. cos A + cos B
+B. sin A cos B + cos A sin B
+C. cos A cos B + sin A sin B
+D. cos A cos B - sin A sin B
+
+Correct Answer: D
+
+Explanation: Compound angle formula.
+
+
+Question 261. sin 2A equals:
+
+A. 2 sin A
+B. sin²A - cos²A
+C. 2 sin A cos A
+D. 1 - 2sinA
+
+Correct Answer: C
+
+Explanation: Double angle formula.
+
+
+Question 262. cos 2A equals:
+
+A. 2 sin A cos A
+B. sin²A - cos²A
+C. cos²A - sin²A
+D. 2 cos A
+
+Correct Answer: C
+
+Explanation: Also 1 - 2sin²A or 2cos²A - 1.
+
+
+Question 263. Using compound angles, sin 75° equals:
+
+A. (√6 - √2)/4
+B. (√6 + √2)/4
+C. 1/2
+D. √3/2
+
+Correct Answer: B
+
+Explanation: sin(45+30) = (√2/2)(√3/2) + (√2/2)(1/2).
+
+
+Question 264. cos 15° equals:
+
+A. (√6 + √2)/4
+B. (√6 - √2)/4
+C. 1/2
+D. √3/2
+
+Correct Answer: A
+
+Explanation: cos(45 - 30) = cos45cos30 + sin45sin30.
+
+
+Question 265. If sin A = 3/5 (A acute), sin 2A is:
+
+A. 24/25
+B. 7/25
+C. 12/25
+D. 6/5
+
+Correct Answer: A
+
+Explanation: 2 x 3/5 x 4/5.
+
+
+Question 266. If cos A = 4/5 (A acute), cos 2A is:
+
+A. 1/25
+B. 24/25
+C. 7/25
+D. 8/5
+
+Correct Answer: C
+
+Explanation: cos²A - sin²A = 16/25 - 9/25.
+
+
+Question 267. Solve sin x = 0.5 for 0° ≤ x ≤ 360°:
+
+A. 30° only
+B. 30° and 150°
+C. 30° and 210°
+D. 60° and 120°
+
+Correct Answer: B
+
+Explanation: Sine positive in Q1 and Q2.
+
+
+Question 268. Solve cos x = 0 for 0° ≤ x ≤ 360°:
+
+A. 90° and 270°
+B. 90° only
+C. 180° and 360°
+D. 0° and 180°
+
+Correct Answer: A
+
+Explanation: Cosine is zero at these angles.
+
+
+Question 269. Solve tan x = 1 for 0° ≤ x ≤ 360°:
+
+A. 45° only
+B. 45° and 135°
+C. 135° and 315°
+D. 45° and 225°
+
+Correct Answer: D
+
+Explanation: Tan positive in Q1 and Q3.
+
+
+Question 270. Solve 2 sin x - 1 = 0 for 0° ≤ x ≤ 180°:
+
+A. 30° and 150°
+B. 90°
+C. 30° only
+D. 60° and 120°
+
+Correct Answer: A
+
+Explanation: sin x = 1/2.
+
+
+Question 271. Solve cos x = -1/2 for 0° ≤ x ≤ 360°:
+
+A. 120° and 240°
+B. 60° and 240°
+C. 60° and 300°
+D. 120° and 300°
+
+Correct Answer: A
+
+Explanation: Cos negative in Q2 and Q3.
+
+
+Question 272. A ladder 10 m long leans against a wall at 60° to the ground. Its foot is from the wall:
+
+A. 17.3 m
+B. 5 m
+C. 10 m
+D. 8.66 m
+
+Correct Answer: B
+
+Explanation: 10 cos 60 = 5.
+
+
+Question 273. From a point 20 m from a building, the angle of elevation of its top is 45°. Its height is:
+
+A. 20 m
+B. 40 m
+C. 28.3 m
+D. 10 m
+
+Correct Answer: A
+
+Explanation: tan 45 = h/20.
+
+
+Question 274. The sine rule states:
+
+A. a/sin A = b/sin B = c/sin C
+B. a² = b² + c² - 2bc cos A
+C. a sin A = b sin B
+D. a + b + c = 180
+
+Correct Answer: A
+
+Explanation: Used in non-right triangles.
+
+
+Question 275. The cosine rule states:
+
+A. a² = b² + c²
+B. a² = b² + c² - 2bc cos A
+C. a = b cos C + c
+D. a/sin A = b/sin B
+
+Correct Answer: B
+
+Explanation: Generalises Pythagoras.
+
+
+Question 276. In a triangle, b = 5, c = 8 and A = 60°. a² equals:
+
+A. 49
+B. 129
+C. 39
+D. 89
+
+Correct Answer: A
+
+Explanation: 25 + 64 - 2(5)(8)(0.5) = 49, so a = 7.
+
+
+Question 277. The area of a triangle with sides a, b and included angle C is:
+
+A. ab sin C
+B. ½ab cos C
+C. ab/2
+D. ½ab sin C
+
+Correct Answer: D
+
+Explanation: E.g. sides 6, 10 at 30°: ½(60)(0.5) = 15.
+
+
+Question 278. Triangle with sides 8 and 10 and included angle 90° has area:
+
+A. 40
+B. 20
+C. 80
+D. 18
+
+Correct Answer: A
+
+Explanation: ½ x 8 x 10 x 1.
+
+
+Question 279. The angles of a triangle sum to:
+
+A. 270°
+B. 180°
+C. 90°
+D. 360°
+
+Correct Answer: B
+
+Explanation: A basic geometric fact used in the sine rule.
+
+
+Question 280. Trigonometric functions are useful in economics mainly for modelling:
+
+A. Linear demand only
+B. Cyclical or seasonal fluctuations, such as business cycles
+C. Set membership
+D. Logarithmic growth only
+
+Correct Answer: B
+
+Explanation: Periodic patterns repeat like sine waves.
+
+
+Question 281. Seasonal sales S = 100 + 20 sin(πt/6), t in months. The period of the sales cycle is:
+
+A. 24 months
+B. 12 months
+C. 6 months
+D. 20 months
+
+Correct Answer: B
+
+Explanation: 2π/(π/6) = 12.
+
+
+Question 282. In S = 100 + 20 sin(πt/6), maximum sales are:
+
+A. 100
+B. 120
+C. 20
+D. 140
+
+Correct Answer: B
+
+Explanation: 100 + 20.
+
+
+Question 283. In S = 100 + 20 sin(πt/6), minimum sales are:
+
+A. 0
+B. 80
+C. 100
+D. 60
+
+Correct Answer: B
+
+Explanation: 100 - 20.
+
+
+Question 284. In S = 100 + 20 sin(πt/6), sales at t = 3 are:
+
+A. 80
+B. 100
+C. 110
+D. 120
+
+Correct Answer: D
+
+Explanation: sin(π/2) = 1.
+
+
+Question 285. A business cycle modelled by Y = 500 + 50 cos(πt/4) has a period of:
+
+A. 16 years
+B. 8 years
+C. 2 years
+D. 4 years
+
+Correct Answer: B
+
+Explanation: 2π/(π/4) = 8.
+
+
+Question 286. The slope of a straight line making angle θ with the x-axis equals:
+
+A. tan θ
+B. sec θ
+C. sin θ
+D. cos θ
+
+Correct Answer: A
+
+Explanation: Gradient = rise/run = tan θ.
+
+
+Question 287. A demand line makes an angle of 135° with the positive quantity axis. Its slope is:
+
+A. 1
+B. -1
+C. √3
+D. 0
+
+Correct Answer: B
+
+Explanation: tan 135° = -1.
+
+
+Question 288. A straight line with slope √3 makes an angle with the x-axis of:
+
+A. 45°
+B. 60°
+C. 30°
+D. 90°
+
+Correct Answer: B
+
+Explanation: tan 60 = √3.
+
+
+Question 289. Simplify (1 - cos²θ)/sin θ:
+
+A. sin θ
+B. cos θ
+C. 1
+D. tan θ
+
+Correct Answer: A
+
+Explanation: sin²θ / sin θ.
+
+
+Question 290. Simplify sin θ / tan θ:
+
+A. cos θ
+B. sin θ
+C. 1
+D. sec θ
+
+Correct Answer: A
+
+Explanation: sin θ x cos θ/sin θ.
+
+
+Question 291. Simplify sec²θ - tan²θ:
+
+A. sec θ
+B. 1
+C. 0
+D. 2
+
+Correct Answer: B
+
+Explanation: From 1 + tan² = sec².
+
+
+Question 292. Simplify (sin θ + cos θ)² - 2 sin θ cos θ:
+
+A. sin 2θ
+B. 0
+C. 1
+D. 2
+
+Correct Answer: C
+
+Explanation: sin² + cos² + 2sc - 2sc.
+
+
+Question 293. If sin θ = cos θ for 0° < θ < 90°, θ is:
+
+A. 0°
+B. 60°
+C. 45°
+D. 30°
+
+Correct Answer: C
+
+Explanation: tan θ = 1.
+
+
+Question 294. The inverse sine function sin⁻¹(1) equals:
+
+A. 0°
+B. 90°
+C. 45°
+D. 180°
+
+Correct Answer: B
+
+Explanation: sin 90° = 1.
+
+
+Question 295. cos⁻¹(√3/2) equals:
+
+A. 45°
+B. 90°
+C. 60°
+D. 30°
+
+Correct Answer: D
+
+Explanation: cos 30° = √3/2.
+
+
+Question 296. tan⁻¹(0) equals:
+
+A. 90°
+B. 0°
+C. 180°
+D. 45°
+
+Correct Answer: B
+
+Explanation: tan 0 = 0.
+
+
+Question 297. (Revision) For 0° ≤ θ ≤ 360°, how many solutions does 2cos²θ - 1 = 0 have?
+
+A. 4
+B. 2
+C. 1
+D. 0
+
+Correct Answer: A
+
+Explanation: cos θ = ±1/√2 gives 45°, 135°, 225°, 315°.
+
+
+Question 298. (Revision) Monthly demand D = 200 + 40 sin(πt/6). The range of demand values over a year is:
+
+A. 200 to 240
+B. 160 to 240
+C. 0 to 240
+D. 160 to 200
+
+Correct Answer: B
+
+Explanation: 200 ± 40.
+
+
+Question 299. sin 240° equals:
+
+A. 1/2
+B. √3/2
+C. -√3/2
+D. -1/2
+
+Correct Answer: C
+
+Explanation: sin(180 + 60) = -sin 60.
+
+
+Question 300. A kite string 50 m long makes 30° with the ground. The kite's height is:
+
+A. 43.3 m
+B. 50 m
+C. 28.9 m
+D. 25 m
+
+Correct Answer: D
+
+Explanation: 50 sin 30 = 25.
+
+
+
+========================================================================
+CHAPTER 4: TYPES OF EQUATIONS AND FUNCTIONS
+Syllabus areas: Linear equations and lines, simultaneous equations,
+quadratic and cubic equations, discriminant, roots, types of functions,
+inverse and composite functions, economic functions (demand, supply, cost,
+revenue, profit, consumption, national income), determinants.
+Questions 301-400
+========================================================================
+
+Question 301. Solve 3x + 7 = 22:
+
+A. 5
+B. 15
+C. 7
+D. 29/3
+
+Correct Answer: A
+
+Explanation: 3x = 15.
+
+
+Question 302. Solve 5(x - 2) = 3x + 4:
+
+A. 2
+B. 3
+C. -7
+D. 7
+
+Correct Answer: D
+
+Explanation: 5x - 10 = 3x + 4 gives 2x = 14.
+
+
+Question 303. Solve x/4 + 3 = 8:
+
+A. 5
+B. 20
+C. 2
+D. 44
+
+Correct Answer: B
+
+Explanation: x/4 = 5.
+
+
+Question 304. Solve (2x + 1)/3 = (x + 4)/2:
+
+A. 10
+B. 5
+C. -10
+D. 7
+
+Correct Answer: A
+
+Explanation: 4x + 2 = 3x + 12.
+
+
+Question 305. A linear equation in one variable has:
+
+A. Two solutions always
+B. No solution always
+C. At most one solution (unless it is an identity or contradiction)
+D. Infinitely many always
+
+Correct Answer: C
+
+Explanation: ax + b = 0 gives x = -b/a.
+
+
+Question 306. The slope of the line through (2, 3) and (6, 11) is:
+
+A. 8
+B. 2
+C. 1/2
+D. 4
+
+Correct Answer: B
+
+Explanation: (11 - 3)/(6 - 2) = 2.
+
+
+Question 307. The equation of the line with slope 3 through (0, -2) is:
+
+A. y = x - 2
+B. y = -2x + 3
+C. y = 3x - 2
+D. y = 3x + 2
+
+Correct Answer: C
+
+Explanation: y = mx + c.
+
+
+Question 308. The line through (1, 4) with slope -2 is:
+
+A. y = 2x + 2
+B. y = -2x + 4
+C. y = -2x + 6
+D. y = -2x - 6
+
+Correct Answer: C
+
+Explanation: 4 = -2(1) + c gives c = 6.
+
+
+Question 309. The line 2y = 4x + 6 has slope and y-intercept:
+
+A. 2 and 3
+B. 4 and 6
+C. 2 and 6
+D. 4 and 3
+
+Correct Answer: A
+
+Explanation: y = 2x + 3.
+
+
+Question 310. The x-intercept of y = 3x - 12 is:
+
+A. 12
+B. 4
+C. -12
+D. -4
+
+Correct Answer: B
+
+Explanation: 0 = 3x - 12.
+
+
+Question 311. Parallel lines have:
+
+A. Slopes multiplying to -1
+B. Equal slopes
+C. Equal intercepts
+D. Zero slope
+
+Correct Answer: B
+
+Explanation: E.g. y = 2x + 1 and y = 2x - 5.
+
+
+Question 312. Perpendicular lines have slopes whose product is:
+
+A. 0
+B. Undefined
+C. -1
+D. 1
+
+Correct Answer: C
+
+Explanation: E.g. slopes 2 and -1/2.
+
+
+Question 313. A line perpendicular to y = 4x + 1 has slope:
+
+A. 1/4
+B. -1/4
+C. -4
+D. 4
+
+Correct Answer: B
+
+Explanation: Negative reciprocal.
+
+
+Question 314. Solve simultaneously x + y = 10 and x - y = 4:
+
+A. x = 3, y = 7
+B. x = 7, y = 3
+C. x = 5, y = 5
+D. x = 6, y = 4
+
+Correct Answer: B
+
+Explanation: Add: 2x = 14.
+
+
+Question 315. Solve 2x + y = 11 and x + 3y = 13:
+
+A. x = 3, y = 5
+B. x = 4, y = 3
+C. x = 2, y = 7
+D. x = 5, y = 1
+
+Correct Answer: B
+
+Explanation: From first y = 11 - 2x; x + 33 - 6x = 13 gives x = 4.
+
+
+Question 316. Solve 3x - 2y = 4 and x + y = 8:
+
+A. x = 5, y = 3
+B. x = 4, y = 4
+C. x = 6, y = 2
+D. x = 2, y = 6
+
+Correct Answer: B
+
+Explanation: x = 8 - y; 24 - 3y - 2y = 4 gives y = 4.
+
+
+Question 317. A pair of simultaneous linear equations with no solution represents:
+
+A. Parallel lines
+B. Intersecting lines
+C. Identical lines
+D. Perpendicular lines
+
+Correct Answer: A
+
+Explanation: Same slope, different intercepts.
+
+
+Question 318. Equations x + 2y = 4 and 2x + 4y = 8 have:
+
+A. Infinitely many solutions
+B. Exactly one solution
+C. No solution
+D. Two solutions
+
+Correct Answer: A
+
+Explanation: The second is twice the first.
+
+
+Question 319. A quadratic equation has the general form:
+
+A. ax³ + b = 0
+B. ax² + bx + c = 0, a ≠ 0
+C. ax + b = 0
+D. a/x + b = 0
+
+Correct Answer: B
+
+Explanation: Highest power is 2.
+
+
+Question 320. Solve x² - 5x + 6 = 0:
+
+A. x = 1 or 6
+B. x = 2 or 3
+C. x = -1 or 6
+D. x = -2 or -3
+
+Correct Answer: B
+
+Explanation: (x - 2)(x - 3) = 0.
+
+
+Question 321. Solve x² - 16 = 0:
+
+A. x = 16
+B. x = 4 only
+C. x = ±8
+D. x = ±4
+
+Correct Answer: D
+
+Explanation: x² = 16.
+
+
+Question 322. Solve x² + 2x - 15 = 0:
+
+A. x = 3 or -5
+B. x = -3 or 5
+C. x = -15 or 1
+D. x = 5 or 3
+
+Correct Answer: A
+
+Explanation: (x + 5)(x - 3) = 0.
+
+
+Question 323. Solve 2x² - 7x + 3 = 0:
+
+A. x = 3 or 1/2
+B. x = -3 or -1/2
+C. x = 1 or 3/2
+D. x = 3 or 2
+
+Correct Answer: A
+
+Explanation: (2x - 1)(x - 3) = 0.
+
+
+Question 324. The quadratic formula gives x =
+
+A. [-b ± √(b² + 4ac)] / 2a
+B. [b ± √(b² - 4ac)] / 2a
+C. -b / 2a only
+D. [-b ± √(b² - 4ac)] / 2a
+
+Correct Answer: D
+
+Explanation: Derived by completing the square.
+
+
+Question 325. Using the formula, the roots of x² - 4x + 1 = 0 are:
+
+A. -2 ± √3
+B. 2 ± √3
+C. 2 ± √5
+D. 4 ± √3
+
+Correct Answer: B
+
+Explanation: [4 ± √12]/2 = 2 ± √3.
+
+
+Question 326. The discriminant of ax² + bx + c is:
+
+A. 4ac - b
+B. -b/2a
+C. b² - 4ac
+D. b² + 4ac
+
+Correct Answer: C
+
+Explanation: It determines the nature of the roots.
+
+
+Question 327. If the discriminant is positive, the quadratic has:
+
+A. No real roots
+B. Infinitely many roots
+C. One repeated root
+D. Two distinct real roots
+
+Correct Answer: D
+
+Explanation: b² - 4ac > 0.
+
+
+Question 328. If the discriminant is zero, the quadratic has:
+
+A. No real roots
+B. One repeated real root
+C. Two distinct roots
+D. Three roots
+
+Correct Answer: B
+
+Explanation: The parabola touches the x-axis.
+
+
+Question 329. If the discriminant is negative, the quadratic has:
+
+A. No real roots
+B. Infinitely many roots
+C. Two real roots
+D. One real root
+
+Correct Answer: A
+
+Explanation: Parabola does not meet the x-axis.
+
+
+Question 330. The discriminant of x² + 4x + 5 is:
+
+A. -4
+B. 4
+C. -36
+D. 36
+
+Correct Answer: A
+
+Explanation: 16 - 20 = -4.
+
+
+Question 331. For what value of k does x² + 6x + k = 0 have equal roots?
+
+A. 6
+B. 36
+C. 9
+D. 3
+
+Correct Answer: C
+
+Explanation: 36 - 4k = 0.
+
+
+Question 332. The sum of the roots of ax² + bx + c = 0 is:
+
+A. -c/a
+B. -b/a
+C. c/a
+D. b/a
+
+Correct Answer: B
+
+Explanation: Vieta's formulas.
+
+
+Question 333. The product of the roots of ax² + bx + c = 0 is:
+
+A. a/c
+B. b/a
+C. -b/a
+D. c/a
+
+Correct Answer: D
+
+Explanation: Vieta's formulas.
+
+
+Question 334. For 2x² - 8x + 6 = 0, the sum and product of roots are:
+
+A. 4 and -3
+B. 4 and 3
+C. -4 and 3
+D. 8 and 6
+
+Correct Answer: B
+
+Explanation: Sum = 8/2, product = 6/2.
+
+
+Question 335. The vertex of y = x² - 6x + 5 occurs at x =
+
+A. 5
+B. 3
+C. -3
+D. 6
+
+Correct Answer: B
+
+Explanation: x = -b/2a = 6/2.
+
+
+Question 336. The minimum value of y = x² - 6x + 5 is:
+
+A. -4
+B. 5
+C. 3
+D. 0
+
+Correct Answer: A
+
+Explanation: y(3) = 9 - 18 + 5.
+
+
+Question 337. A parabola y = ax² + bx + c opens downward when:
+
+A. a > 0
+B. c < 0
+C. b < 0
+D. a < 0
+
+Correct Answer: D
+
+Explanation: Negative leading coefficient.
+
+
+Question 338. Profit π = -Q² + 20Q - 36. Profit-maximising output is:
+
+A. 20
+B. 18
+C. 36
+D. 10
+
+Correct Answer: D
+
+Explanation: Q = -b/2a = -20/(-2) = 10.
+
+
+Question 339. With π = -Q² + 20Q - 36, maximum profit is:
+
+A. 64
+B. 136
+C. 100
+D. 36
+
+Correct Answer: A
+
+Explanation: -100 + 200 - 36 = 64.
+
+
+Question 340. With π = -Q² + 20Q - 36, break-even outputs (π = 0) are:
+
+A. Q = 2 and Q = 18
+B. Q = 6 and Q = 6
+C. Q = 4 and Q = 9
+D. Q = 0 and Q = 20
+
+Correct Answer: A
+
+Explanation: Q² - 20Q + 36 = 0 gives (Q - 2)(Q - 18).
+
+
+Question 341. TR = 50Q - 2Q². Revenue is maximised at Q =
+
+A. 12.5
+B. 10
+C. 50
+D. 25
+
+Correct Answer: A
+
+Explanation: -b/2a = -50/(-4).
+
+
+Question 342. A cubic equation has degree:
+
+A. 1
+B. 3
+C. 2
+D. 4
+
+Correct Answer: B
+
+Explanation: Highest power is 3.
+
+
+Question 343. x = 1 is a root of x³ - 6x² + 11x - 6 = 0. The other roots are:
+
+A. 2 and 3
+B. 1 and 6
+C. 3 and 4
+D. -2 and -3
+
+Correct Answer: A
+
+Explanation: Divide: x² - 5x + 6 = (x - 2)(x - 3).
+
+
+Question 344. The factor theorem states that (x - a) is a factor of f(x) if:
+
+A. f(0) = a
+B. f(a) = 0
+C. f(-a) = 0
+D. f(a) = 1
+
+Correct Answer: B
+
+Explanation: E.g. f(1) = 0 above.
+
+
+Question 345. The remainder when x³ + 2x - 5 is divided by (x - 2) is:
+
+A. -5
+B. 3
+C. 11
+D. 7
+
+Correct Answer: D
+
+Explanation: Remainder theorem: f(2) = 8 + 4 - 5.
+
+
+Question 346. A function is linear if its graph is:
+
+A. A straight line
+B. A parabola
+C. A curve that repeats
+D. A hyperbola
+
+Correct Answer: A
+
+Explanation: y = mx + c.
+
+
+Question 347. A quadratic function's graph is:
+
+A. A parabola
+B. A hyperbola
+C. A straight line
+D. A circle
+
+Correct Answer: A
+
+Explanation: y = ax² + bx + c.
+
+
+Question 348. A rectangular hyperbola y = k/x is often used to represent:
+
+A. A linear cost function
+B. A tax schedule
+C. A production possibility line
+D. A demand curve with unit elasticity
+
+Correct Answer: D
+
+Explanation: PQ = k means constant total spending.
+
+
+Question 349. If P x Q = 1200 along a demand curve, quantity at P = 40 is:
+
+A. 30
+B. 40
+C. 1160
+D. 48000
+
+Correct Answer: A
+
+Explanation: Q = 1200/40.
+
+
+Question 350. A constant function is of the form:
+
+A. y = mx
+B. y = c
+C. y = 1/x
+D. y = x²
+
+Correct Answer: B
+
+Explanation: Its graph is horizontal; e.g. fixed cost.
+
+
+Question 351. An exponential function has the form:
+
+A. y = a/x
+B. y = ax + b
+C. y = abˣ
+D. y = ax²
+
+Correct Answer: C
+
+Explanation: Variable in the exponent.
+
+
+Question 352. A polynomial function of degree n has:
+
+A. No roots
+B. At least n + 1 roots
+C. At most n real roots
+D. Exactly 2n roots
+
+Correct Answer: C
+
+Explanation: E.g. a cubic has at most 3.
+
+
+Question 353. A function f is one-to-one if:
+
+A. It is constant
+B. It has no inverse
+C. Every output has several inputs
+D. Different inputs always give different outputs
+
+Correct Answer: D
+
+Explanation: One-to-one functions have inverses.
+
+
+Question 354. The inverse of f(x) = 2x + 3 is:
+
+A. f⁻¹(x) = (x + 3)/2
+B. f⁻¹(x) = 2x - 3
+C. f⁻¹(x) = (x - 3)/2
+D. f⁻¹(x) = 1/(2x + 3)
+
+Correct Answer: C
+
+Explanation: Swap and solve: x = 2y + 3.
+
+
+Question 355. The inverse demand function of Q = 100 - 4P is:
+
+A. P = 4Q - 100
+B. P = 25 - Q/4
+C. P = 100 - 4Q
+D. P = 25 + Q/4
+
+Correct Answer: B
+
+Explanation: Solve for P.
+
+
+Question 356. If f(x) = x² + 1 and g(x) = 2x, then (f ∘ g)(x) is:
+
+A. 2x² + 2
+B. 4x² + 2
+C. 4x² + 1
+D. 2x² + 1
+
+Correct Answer: C
+
+Explanation: f(2x) = (2x)² + 1.
+
+
+Question 357. If f(x) = x² + 1 and g(x) = 2x, then (g ∘ f)(x) is:
+
+A. x² + 2x
+B. 2x² + 1
+C. 2x² + 2
+D. 4x² + 1
+
+Correct Answer: C
+
+Explanation: g(x² + 1) = 2x² + 2.
+
+
+Question 358. An even function satisfies:
+
+A. f(-x) = -f(x)
+B. f(x) = x
+C. f(-x) = f(x)
+D. f(x) = 0
+
+Correct Answer: C
+
+Explanation: E.g. x², cos x.
+
+
+Question 359. An odd function satisfies:
+
+A. f(x) = x²
+B. f(-x) = -f(x)
+C. f(x) = 1
+D. f(-x) = f(x)
+
+Correct Answer: B
+
+Explanation: E.g. x³, sin x.
+
+
+Question 360. A cost function TC = 500 + 20Q has fixed cost of:
+
+A. 0
+B. 500
+C. 520
+D. 20
+
+Correct Answer: B
+
+Explanation: Cost when Q = 0.
+
+
+Question 361. TC = 500 + 20Q. Average cost at Q = 50 is:
+
+A. 30
+B. 20
+C. 520
+D. 1500
+
+Correct Answer: A
+
+Explanation: (500 + 1000)/50.
+
+
+Question 362. TC = 200 + 10Q and TR = 30Q. Break-even output is:
+
+A. 20
+B. 10
+C. 200
+D. 5
+
+Correct Answer: B
+
+Explanation: 30Q = 200 + 10Q.
+
+
+Question 363. A consumption function C = 100 + 0.75Y has marginal propensity to consume:
+
+A. 1.75
+B. 100
+C. 0.25
+D. 0.75
+
+Correct Answer: D
+
+Explanation: The slope of C with respect to Y.
+
+
+Question 364. In C = 100 + 0.75Y, consumption when Y = 400 is:
+
+A. 400
+B. 300
+C. 100
+D. 475
+
+Correct Answer: A
+
+Explanation: 100 + 300.
+
+
+Question 365. Saving S = Y - C. If C = 100 + 0.75Y, saving function is:
+
+A. S = -100 + 0.25Y
+B. S = 0.25Y
+C. S = -100 + 0.75Y
+D. S = 100 + 0.25Y
+
+Correct Answer: A
+
+Explanation: Y - 100 - 0.75Y.
+
+
+Question 366. National income model Y = C + I, C = 40 + 0.8Y, I = 60. Equilibrium Y is:
+
+A. 100
+B. 80
+C. 125
+D. 500
+
+Correct Answer: D
+
+Explanation: 0.2Y = 100.
+
+
+Question 367. In the above model, the investment multiplier 1/(1 - MPC) is:
+
+A. 4
+B. 1.25
+C. 5
+D. 0.8
+
+Correct Answer: C
+
+Explanation: 1/0.2.
+
+
+Question 368. Demand Qd = 40 - P, supply Qs = -8 + 2P. Equilibrium P and Q are:
+
+A. P = 16, Q = 24
+B. P = 8, Q = 32
+C. P = 12, Q = 28
+D. P = 24, Q = 16
+
+Correct Answer: A
+
+Explanation: 48 = 3P.
+
+
+Question 369. Demand P = 100 - Q² and supply P = 20 + 2Q. Equilibrium quantity is:
+
+A. 10
+B. 4
+C. -10
+D. 8
+
+Correct Answer: D
+
+Explanation: 100 - Q² = 20 + 2Q gives Q² + 2Q - 80 = 0 = (Q + 10)(Q - 8); Q must be positive, so Q = 8 and P = 36.
+
+
+Question 370. Supply P = Q² + 4 and demand P = 40 - 5Q. Equilibrium quantity is:
+
+A. 4
+B. -9
+C. 9
+D. 5
+
+Correct Answer: A
+
+Explanation: Q² + 5Q - 36 = 0 = (Q + 9)(Q - 4); Q = 4, P = 20.
+
+
+Question 371. Solve the absolute-value equation abs(x - 3) = 5:
+
+A. x = -2 only
+B. x = 8 only
+C. x = 8 or x = -2
+D. x = 2 or -8
+
+Correct Answer: C
+
+Explanation: x - 3 = 5 or x - 3 = -5.
+
+
+Question 372. Solve √(x + 5) = 4:
+
+A. 11
+B. 21
+C. -1
+D. 3
+
+Correct Answer: A
+
+Explanation: x + 5 = 16.
+
+
+Question 373. Solve 1/x + 1/2 = 1:
+
+A. 1
+B. 2
+C. -2
+D. 1/2
+
+Correct Answer: B
+
+Explanation: 1/x = 1/2.
+
+
+Question 374. Solve x² = 5x:
+
+A. x = 5 only
+B. x = 0 only
+C. x = 0 or 5
+D. x = ±√5
+
+Correct Answer: C
+
+Explanation: x(x - 5) = 0; do not divide by x and lose a root.
+
+
+Question 375. Solve the simultaneous equations y = x² and y = x + 2:
+
+A. (2, 4) and (-1, 1)
+B. (-2, 4) and (1, 1)
+C. (2, 4) only
+D. (1, 1) and (4, 16)
+
+Correct Answer: A
+
+Explanation: x² - x - 2 = 0 gives x = 2 or -1.
+
+
+Question 376. Completing the square, x² + 6x + 2 equals:
+
+A. (x + 6)² - 34
+B. (x + 3)² + 2
+C. (x + 3)² - 11
+D. (x + 3)² - 7
+
+Correct Answer: D
+
+Explanation: (x + 3)² = x² + 6x + 9.
+
+
+Question 377. A function's domain where f(x) = √(x - 4) is defined is:
+
+A. x ≤ 4
+B. All real x
+C. x ≥ 4
+D. x > 0
+
+Correct Answer: C
+
+Explanation: Square root of a negative is not real.
+
+
+Question 378. A function has a vertical asymptote at x = 2 if it is of the form:
+
+A. f(x) = 2x
+B. f(x) = x - 2
+C. f(x) = (x - 2)²
+D. f(x) = 1/(x - 2)
+
+Correct Answer: D
+
+Explanation: The function grows without bound near x = 2.
+
+
+Question 379. Average fixed cost AFC = 1000/Q is an example of:
+
+A. An exponential function
+B. A linear function
+C. A quadratic function
+D. A rectangular hyperbola
+
+Correct Answer: D
+
+Explanation: AFC x Q is constant.
+
+
+Question 380. The slope of TR = 40Q (constant price) is:
+
+A. 0
+B. Q
+C. 40
+D. 40Q
+
+Correct Answer: C
+
+Explanation: Marginal revenue equals price here.
+
+
+Question 381. A step function would best model:
+
+A. Sine waves
+B. Exponential growth
+C. Postage rates that jump at weight thresholds
+D. Smooth demand curves
+
+Correct Answer: C
+
+Explanation: Value is constant on intervals then jumps.
+
+
+Question 382. For a linear demand P = a - bQ, the TR function is:
+
+A. TR = aQ - bQ²
+B. TR = a/Q
+C. TR = a - bQ
+D. TR = aQ + bQ²
+
+Correct Answer: A
+
+Explanation: TR = P x Q.
+
+
+Question 383. P = 60 - 3Q. TR at Q = 5 is:
+
+A. 75
+B. 300
+C. 225
+D. 45
+
+Correct Answer: C
+
+Explanation: P = 45; TR = 45 x 5.
+
+
+Question 384. Profit function π = TR - TC with TR = 100Q - Q² and TC = 20Q + 300. π is:
+
+A. 80Q - 300
+B. -Q² + 80Q - 300
+C. Q² + 80Q - 300
+D. -Q² + 120Q + 300
+
+Correct Answer: B
+
+Explanation: 100Q - Q² - 20Q - 300.
+
+
+Question 385. The profit function π = -Q² + 80Q - 300 is maximised at Q =
+
+A. 40
+B. 300
+C. 20
+D. 80
+
+Correct Answer: A
+
+Explanation: -80/(-2).
+
+
+Question 386. The equation of a line through (0, 50) and (25, 0) is:
+
+A. y = 50 - 0.5x
+B. y = 50 - 2x
+C. y = 2x + 50
+D. y = 25 - 2x
+
+Correct Answer: B
+
+Explanation: Slope = -50/25 = -2.
+
+
+Question 387. Budget line 4x + 5y = 100 has x-intercept and y-intercept:
+
+A. 100 and 100
+B. 4 and 5
+C. 20 and 25
+D. 25 and 20
+
+Correct Answer: D
+
+Explanation: x = 100/4, y = 100/5.
+
+
+Question 388. Solve the three equations x + y + z = 6, x - y = 1, y - z = 1:
+
+A. x = 2, y = 1, z = 3
+B. x = 3, y = 2, z = 1
+C. x = 2, y = 2, z = 2
+D. x = 1, y = 2, z = 3
+
+Correct Answer: B
+
+Explanation: x = y + 1, z = y - 1; 3y = 6.
+
+
+Question 389. Cramer's rule for solving linear systems uses:
+
+A. Logarithms
+B. Sets
+C. Trigonometry
+D. Determinants
+
+Correct Answer: D
+
+Explanation: x = Dx/D etc.
+
+
+Question 390. The determinant of the matrix [[2, 3], [1, 4]] is:
+
+A. 8
+B. 11
+C. -5
+D. 5
+
+Correct Answer: D
+
+Explanation: 2(4) - 3(1).
+
+
+Question 391. For 2x + 3y = 13 and x + 4y = 14, Cramer's rule gives x = Dx/D with D = 5 and Dx =
+
+A. 28
+B. 10
+C. 42
+D. 13
+
+Correct Answer: B
+
+Explanation: Dx = 13(4) - 3(14) = 52 - 42 = 10; x = 2.
+
+
+Question 392. A function is increasing on an interval if:
+
+A. y is constant
+B. y rises as x rises
+C. y is undefined
+D. y falls as x rises
+
+Correct Answer: B
+
+Explanation: Positive slope.
+
+
+Question 393. A linear supply function Q = -10 + 5P is:
+
+A. Increasing
+B. Undefined
+C. Decreasing
+D. Constant
+
+Correct Answer: A
+
+Explanation: Slope is positive.
+
+
+Question 394. The point where two functions are equal is found by:
+
+A. Multiplying them
+B. Adding them
+C. Differentiating them
+D. Setting them equal and solving
+
+Correct Answer: D
+
+Explanation: E.g. Qd = Qs.
+
+
+Question 395. A firm's TC = Q³ - 6Q² + 15Q + 10. Fixed cost is:
+
+A. 10
+B. 1
+C. 15
+D. 6
+
+Correct Answer: A
+
+Explanation: Constant term.
+
+
+Question 396. A linear equation in two variables represents graphically:
+
+A. A straight line
+B. A circle
+C. A point
+D. A parabola
+
+Correct Answer: A
+
+Explanation: All solutions lie on a line.
+
+
+Question 397. (Revision) Qd = 120 - 2P and Qs = 3P - 30. A tax of 10 per unit on sellers changes supply to Qs = 3(P - 10) - 30. New equilibrium price is:
+
+A. 26
+B. 36
+C. 40
+D. 30
+
+Correct Answer: B
+
+Explanation: 120 - 2P = 3P - 60 gives 5P = 180.
+
+
+Question 398. (Revision) A monopolist faces P = 80 - 2Q and TC = 20Q. Profit-maximising Q (vertex of the profit parabola) is:
+
+A. 30
+B. 20
+C. 40
+D. 15
+
+Correct Answer: D
+
+Explanation: π = 80Q - 2Q² - 20Q = -2Q² + 60Q; Q = 60/4 = 15.
+
+
+Question 399. Solve 4x - 3 = 2x + 9:
+
+A. 6
+B. 3
+C. 12
+D. -6
+
+Correct Answer: A
+
+Explanation: 2x = 12.
+
+
+Question 400. The y-intercept of 3x + 2y = 12 is:
+
+A. 12
+B. 6
+C. 4
+D. 3
+
+Correct Answer: B
+
+Explanation: Set x = 0: 2y = 12.
+
+
+
+========================================================================
+CHAPTER 5: PROGRESSIONS AND INEQUALITIES
+Syllabus areas: Sequences and series, arithmetic and geometric
+progressions, nth terms and sums, sum to infinity, means, sigma notation,
+economic applications (interest, growth, depreciation, multiplier), linear
+and quadratic inequalities, absolute values, regions, linear programming.
+Questions 401-500
+========================================================================
+
+Question 401. An arithmetic progression (AP) is a sequence in which:
+
+A. Consecutive terms have a constant ratio
+B. Consecutive terms differ by a constant
+C. Terms are all equal
+D. Terms are random
+
+Correct Answer: B
+
+Explanation: The constant is the common difference d.
+
+
+Question 402. A geometric progression (GP) is a sequence in which:
+
+A. Terms alternate
+B. Terms differ by a constant
+C. Each term is the previous term multiplied by a constant
+D. Terms are squares
+
+Correct Answer: C
+
+Explanation: The constant is the common ratio r.
+
+
+Question 403. The common difference of 5, 9, 13, 17, ... is:
+
+A. 5
+B. 4
+C. 13
+D. 9
+
+Correct Answer: B
+
+Explanation: 9 - 5.
+
+
+Question 404. The common ratio of 3, 6, 12, 24, ... is:
+
+A. 1/2
+B. 2
+C. 3
+D. 6
+
+Correct Answer: B
+
+Explanation: 6/3.
+
+
+Question 405. The nth term of an AP is:
+
+A. a + (n - 1)d
+B. a(n - 1)
+C. arⁿ⁻¹
+D. a + nd
+
+Correct Answer: A
+
+Explanation: First term plus (n - 1) differences.
+
+
+Question 406. The 10th term of the AP 2, 5, 8, ... is:
+
+A. 27
+B. 32
+C. 29
+D. 30
+
+Correct Answer: C
+
+Explanation: 2 + 9(3).
+
+
+Question 407. The 20th term of the AP 100, 95, 90, ... is:
+
+A. 5
+B. 0
+C. -5
+D. 10
+
+Correct Answer: A
+
+Explanation: 100 + 19(-5).
+
+
+Question 408. Which term of the AP 3, 7, 11, ... is 83?
+
+A. 22nd
+B. 20th
+C. 21st
+D. 83rd
+
+Correct Answer: C
+
+Explanation: 3 + (n - 1)4 = 83 gives n = 21.
+
+
+Question 409. The sum of the first n terms of an AP is:
+
+A. n/2 (a + d)
+B. n/2 [2a + (n - 1)d]
+C. n(a + d)
+D. a(1 - rⁿ)/(1 - r)
+
+Correct Answer: B
+
+Explanation: Also n/2 (first + last).
+
+
+Question 410. The sum of the first 10 terms of 2, 5, 8, ... is:
+
+A. 145
+B. 155
+C. 290
+D. 165
+
+Correct Answer: B
+
+Explanation: 5[4 + 27] = 155.
+
+
+Question 411. The sum of the first 100 natural numbers is:
+
+A. 10100
+B. 5050
+C. 4950
+D. 5000
+
+Correct Answer: B
+
+Explanation: 100/2 x 101.
+
+
+Question 412. The sum 1 + 3 + 5 + ... + 19 (first 10 odd numbers) is:
+
+A. 90
+B. 100
+C. 110
+D. 200
+
+Correct Answer: B
+
+Explanation: Sum of first n odd numbers = n².
+
+
+Question 413. The sum of an AP with first term 4, last term 40 and 10 terms is:
+
+A. 220
+B. 200
+C. 440
+D. 44
+
+Correct Answer: A
+
+Explanation: 10/2 x (4 + 40).
+
+
+Question 414. The arithmetic mean of 8 and 20 is:
+
+A. 12
+B. 14
+C. 28
+D. 160
+
+Correct Answer: B
+
+Explanation: (8 + 20)/2.
+
+
+Question 415. If x, 10, 16 are in AP, then x is:
+
+A. 8
+B. 2
+C. 4
+D. 6
+
+Correct Answer: C
+
+Explanation: 10 - x = 16 - 10.
+
+
+Question 416. The nth term of a GP is:
+
+A. arⁿ⁻¹
+B. arⁿ
+C. a(n - 1)r
+D. a + (n - 1)r
+
+Correct Answer: A
+
+Explanation: First term times (n - 1) ratios.
+
+
+Question 417. The 6th term of the GP 2, 6, 18, ... is:
+
+A. 486
+B. 162
+C. 54
+D. 1458
+
+Correct Answer: A
+
+Explanation: 2 x 3⁵ = 486.
+
+
+Question 418. The 5th term of 64, 32, 16, ... is:
+
+A. 8
+B. 0
+C. 2
+D. 4
+
+Correct Answer: D
+
+Explanation: 64 x (1/2)⁴.
+
+
+Question 419. The sum of the first n terms of a GP (r ≠ 1) is:
+
+A. n/2 [2a + (n - 1)r]
+B. a(rⁿ - 1)/(r - 1)
+C. arⁿ
+D. a/(1 - r) always
+
+Correct Answer: B
+
+Explanation: Equivalent form a(1 - rⁿ)/(1 - r).
+
+
+Question 420. The sum of the first 5 terms of 1, 2, 4, ... is:
+
+A. 15
+B. 31
+C. 32
+D. 16
+
+Correct Answer: B
+
+Explanation: (2⁵ - 1)/(2 - 1).
+
+
+Question 421. The sum of the first 4 terms of 3, 9, 27, ... is:
+
+A. 243
+B. 117
+C. 81
+D. 120
+
+Correct Answer: D
+
+Explanation: 3(3⁴ - 1)/2 = 3 x 80/2.
+
+
+Question 422. The sum to infinity of a GP exists only when:
+
+A. r > 1
+B. r = 1
+C. The absolute value of r is less than 1
+D. r is negative only
+
+Correct Answer: C
+
+Explanation: Terms must shrink towards zero.
+
+
+Question 423. The sum to infinity of a GP is:
+
+A. a(1 - r)
+B. a/(r - 1)
+C. ar/(1 - r)
+D. a/(1 - r)
+
+Correct Answer: D
+
+Explanation: For -1 < r < 1.
+
+
+Question 424. The sum to infinity of 8 + 4 + 2 + 1 + ... is:
+
+A. 8
+B. 15
+C. Infinite
+D. 16
+
+Correct Answer: D
+
+Explanation: 8/(1 - 1/2).
+
+
+Question 425. The sum to infinity of 9 + 3 + 1 + ... is:
+
+A. 27
+B. 13.5
+C. 12
+D. 13
+
+Correct Answer: B
+
+Explanation: 9/(1 - 1/3).
+
+
+Question 426. The recurring decimal 0.333... equals:
+
+A. 3/10
+B. 1/3
+C. 33/100
+D. 3/9 + 1
+
+Correct Answer: B
+
+Explanation: GP 0.3 + 0.03 + ... = 0.3/0.9.
+
+
+Question 427. The geometric mean of 4 and 16 is:
+
+A. 20
+B. 8
+C. 64
+D. 10
+
+Correct Answer: B
+
+Explanation: √(4 x 16).
+
+
+Question 428. If 2, x, 18 are in GP, x (positive) is:
+
+A. 9
+B. 10
+C. 16
+D. 6
+
+Correct Answer: D
+
+Explanation: x² = 36.
+
+
+Question 429. A worker's salary starts at N50,000 a month and rises by N5,000 each year. Monthly salary in year 8 is:
+
+A. N90,000
+B. N85,000
+C. N40,000
+D. N80,000
+
+Correct Answer: B
+
+Explanation: AP: 50,000 + 7(5,000).
+
+
+Question 430. A firm's output grows by 10% a year from 1,000 units. Output in year 4 (with year 1 = 1,000) is:
+
+A. 1,331
+B. 1,300
+C. 1,400
+D. 1,464
+
+Correct Answer: A
+
+Explanation: 1,000 x 1.1³.
+
+
+Question 431. N1,000 is saved each year in an account that pays no interest. Total after 12 years is:
+
+A. N13,000
+B. N1,200
+C. N12,000
+D. N11,000
+
+Correct Answer: C
+
+Explanation: AP with d = 0: 12 x 1,000.
+
+
+Question 432. A machine worth N800,000 depreciates by 25% of its value each year. Its value after 2 years is:
+
+A. N600,000
+B. N400,000
+C. N450,000
+D. N200,000
+
+Correct Answer: C
+
+Explanation: 800,000 x 0.75².
+
+
+Question 433. Under simple interest, the amounts at the end of successive years form:
+
+A. An arithmetic progression
+B. A random sequence
+C. A constant sequence
+D. A geometric progression
+
+Correct Answer: A
+
+Explanation: A constant interest amount is added each year.
+
+
+Question 434. Under compound interest, the amounts at the end of successive years form:
+
+A. A constant sequence
+B. A decreasing AP
+C. An arithmetic progression
+D. A geometric progression
+
+Correct Answer: D
+
+Explanation: Each year multiplies by (1 + r).
+
+
+Question 435. The Keynesian multiplier process 1 + c + c² + ... (0 < c < 1) sums to:
+
+A. 1/c
+B. 1 - c
+C. c/(1 - c)
+D. 1/(1 - c)
+
+Correct Answer: D
+
+Explanation: Infinite GP; with c = 0.8 the multiplier is 5.
+
+
+Question 436. If the MPC is 0.75, an initial spending injection of N100m eventually raises income by:
+
+A. N75m
+B. N400m
+C. N175m
+D. N133m
+
+Correct Answer: B
+
+Explanation: 100/(1 - 0.75).
+
+
+Question 437. Malthus described food supply as growing in:
+
+A. Arithmetic progression
+B. Harmonic progression
+C. Random fashion
+D. Geometric progression
+
+Correct Answer: A
+
+Explanation: Population was said to grow geometrically.
+
+
+Question 438. Population of 2m growing geometrically at 3% a year: after 2 years it is approximately:
+
+A. 2,180,000
+B. 2,121,800
+C. 2,120,000
+D. 2,060,000
+
+Correct Answer: B
+
+Explanation: 2,000,000 x 1.03² = 2,121,800.
+
+
+Question 439. A loan of N100,000 is repaid N10,000 in month 1, N11,000 in month 2, N12,000 in month 3, and so on. Total repaid after 5 months is:
+
+A. N70,000
+B. N55,000
+C. N60,000
+D. N50,000
+
+Correct Answer: C
+
+Explanation: 5/2 x (20,000 + 4,000) = 60,000.
+
+
+Question 440. The 8th term of 1, -2, 4, -8, ... is:
+
+A. -128
+B. 128
+C. 64
+D. -256
+
+Correct Answer: A
+
+Explanation: r = -2; 1 x (-2)⁷.
+
+
+Question 441. A sequence defined by uₙ = 3n + 1 has first three terms:
+
+A. 3, 6, 9
+B. 4, 8, 12
+C. 4, 7, 10
+D. 1, 4, 7
+
+Correct Answer: C
+
+Explanation: n = 1, 2, 3.
+
+
+Question 442. A sequence defined by uₙ = 2ⁿ has its 5th term equal to:
+
+A. 10
+B. 32
+C. 25
+D. 16
+
+Correct Answer: B
+
+Explanation: 2⁵.
+
+
+Question 443. A series differs from a sequence in that a series is:
+
+A. Always infinite
+B. Always arithmetic
+C. The sum of the terms of a sequence
+D. A list of terms
+
+Correct Answer: C
+
+Explanation: E.g. 1 + 2 + 3 is a series.
+
+
+Question 444. The sigma notation Σ (from k = 1 to 4) of k² equals:
+
+A. 30
+B. 16
+C. 10
+D. 100
+
+Correct Answer: A
+
+Explanation: 1 + 4 + 9 + 16.
+
+
+Question 445. Σ (from k = 1 to 5) of (2k + 1) equals:
+
+A. 35
+B. 30
+C. 11
+D. 25
+
+Correct Answer: A
+
+Explanation: 3 + 5 + 7 + 9 + 11.
+
+
+Question 446. An inequality expresses that:
+
+A. A variable is a set
+B. A function has no domain
+C. Two quantities are equal
+D. One quantity is greater or less than another
+
+Correct Answer: D
+
+Explanation: Uses symbols <, >, ≤, ≥.
+
+
+Question 447. Solve 3x - 5 > 7:
+
+A. x < 4
+B. x > 2/3
+C. x > 4
+D. x ≥ 4
+
+Correct Answer: C
+
+Explanation: 3x > 12.
+
+
+Question 448. Solve 2x + 3 ≤ 11:
+
+A. x ≥ 4
+B. x ≤ 7
+C. x < 4
+D. x ≤ 4
+
+Correct Answer: D
+
+Explanation: 2x ≤ 8.
+
+
+Question 449. Solve -2x > 8:
+
+A. x < -4
+B. x > 4
+C. x < 4
+D. x > -4
+
+Correct Answer: A
+
+Explanation: Dividing by a negative reverses the inequality.
+
+
+Question 450. Solve 5 - 3x ≥ -10:
+
+A. x ≥ 5
+B. x ≤ -5
+C. x ≥ -5
+D. x ≤ 5
+
+Correct Answer: D
+
+Explanation: -3x ≥ -15, reverse to x ≤ 5.
+
+
+Question 451. Solve (x/2) - 1 < 3:
+
+A. x < 2
+B. x < 4
+C. x < 8
+D. x > 8
+
+Correct Answer: C
+
+Explanation: x/2 < 4.
+
+
+Question 452. Solve the double inequality -3 < 2x + 1 < 9:
+
+A. -2 < x < 4
+B. -1 < x < 5
+C. -4 < x < 8
+D. -2 < x < 5
+
+Correct Answer: A
+
+Explanation: Subtract 1: -4 < 2x < 8, divide by 2.
+
+
+Question 453. Solve 1 ≤ 3x - 2 ≤ 10:
+
+A. 1 ≤ x ≤ 12
+B. -1 ≤ x ≤ 8
+C. 3 ≤ x ≤ 12
+D. 1 ≤ x ≤ 4
+
+Correct Answer: D
+
+Explanation: Add 2: 3 ≤ 3x ≤ 12.
+
+
+Question 454. The integer values satisfying -2 < x ≤ 3 are:
+
+A. -1, 0, 1, 2, 3
+B. 0, 1, 2, 3
+C. -2, -1, 0, 1, 2, 3
+D. -1, 0, 1, 2
+
+Correct Answer: A
+
+Explanation: -2 is excluded, 3 included.
+
+
+Question 455. The inequality x ≥ 2 on a number line is shown with:
+
+A. An open dot at 2 and arrow to the right
+B. A solid (closed) dot at 2 and an arrow to the right
+C. A solid dot and arrow to the left
+D. An open dot and arrow to the left
+
+Correct Answer: B
+
+Explanation: Solid means 2 is included.
+
+
+Question 456. Which rule about inequalities is correct?
+
+A. Adding a negative number reverses the sign
+B. Multiplying both sides by a negative number reverses the sign
+C. Dividing by a positive number reverses the sign
+D. Squaring both sides always preserves the sign
+
+Correct Answer: B
+
+Explanation: Only multiplication/division by negatives flips it.
+
+
+Question 457. If a > b, which is necessarily true?
+
+A. 1/a > 1/b
+B. -a > -b
+C. a + 5 > b + 5
+D. a² > b²
+
+Correct Answer: C
+
+Explanation: Adding the same number preserves order; others can fail.
+
+
+Question 458. Solve x² < 9:
+
+A. -3 < x < 3
+B. x > 3
+C. x < 3
+D. x < -3 or x > 3
+
+Correct Answer: A
+
+Explanation: Squares less than 9 lie between -3 and 3.
+
+
+Question 459. Solve x² - 5x + 6 > 0:
+
+A. x < 2 or x > 3
+B. x < 3
+C. x > 2
+D. 2 < x < 3
+
+Correct Answer: A
+
+Explanation: Roots 2 and 3; positive outside the roots for an upward parabola.
+
+
+Question 460. Solve x² - 4x - 5 ≤ 0:
+
+A. x ≤ 5
+B. x ≤ -1 or x ≥ 5
+C. -5 ≤ x ≤ 1
+D. -1 ≤ x ≤ 5
+
+Correct Answer: D
+
+Explanation: (x - 5)(x + 1) ≤ 0 between roots.
+
+
+Question 461. Solve (x - 1)(x + 4) < 0:
+
+A. -4 < x < 1
+B. x < -4
+C. x > 1
+D. x < -4 or x > 1
+
+Correct Answer: A
+
+Explanation: Product negative between the roots.
+
+
+Question 462. Solve x² ≥ 16:
+
+A. x ≥ 16
+B. x ≤ -4 or x ≥ 4
+C. x ≥ 4
+D. -4 ≤ x ≤ 4
+
+Correct Answer: B
+
+Explanation: Outside the roots ±4.
+
+
+Question 463. Solve the absolute-value inequality abs(x) < 5:
+
+A. x < 5
+B. x < -5 or x > 5
+C. -5 < x < 5
+D. x > -5
+
+Correct Answer: C
+
+Explanation: Distance from zero less than 5.
+
+
+Question 464. Solve abs(x - 2) ≤ 3:
+
+A. x ≤ 5
+B. -5 ≤ x ≤ 1
+C. x ≤ -1 or x ≥ 5
+D. -1 ≤ x ≤ 5
+
+Correct Answer: D
+
+Explanation: -3 ≤ x - 2 ≤ 3.
+
+
+Question 465. Solve abs(2x + 1) > 7:
+
+A. x < -4 or x > 3
+B. -4 < x < 3
+C. x > 3
+D. x < -4
+
+Correct Answer: A
+
+Explanation: 2x + 1 > 7 or 2x + 1 < -7.
+
+
+Question 466. The region satisfying y ≥ 2x + 1 lies:
+
+A. Below the line
+B. On the y-axis only
+C. On or above the line y = 2x + 1
+D. To the left only
+
+Correct Answer: C
+
+Explanation: Test a point such as (0, 5).
+
+
+Question 467. A budget constraint 10x + 20y ≤ 200 means the consumer:
+
+A. Cannot buy anything
+B. Can choose bundles on or below the budget line
+C. Must buy only x
+D. Must spend exactly 200
+
+Correct Answer: B
+
+Explanation: Spending cannot exceed income.
+
+
+Question 468. Which point satisfies 2x + y ≤ 10, x ≥ 0, y ≥ 0?
+
+A. (4, 3)
+B. (6, 0)
+C. (3, 4)
+D. (5, 1)
+
+Correct Answer: C
+
+Explanation: 2(3) + 4 = 10 ≤ 10; others give 11, 11, 12.
+
+
+Question 469. In linear programming, the feasible region is:
+
+A. The area outside constraints
+B. The objective function
+C. The set of points satisfying all constraints
+D. The optimal point only
+
+Correct Answer: C
+
+Explanation: Optimal solutions occur at its corners.
+
+
+Question 470. In linear programming, the optimum of a linear objective function occurs:
+
+A. Anywhere on the axes
+B. At the centre of the region
+C. At a corner (vertex) of the feasible region
+D. Outside the region
+
+Correct Answer: C
+
+Explanation: Corner point theorem.
+
+
+Question 471. Maximise P = 3x + 2y subject to x + y ≤ 4, x ≥ 0, y ≥ 0. The maximum is:
+
+A. 12
+B. 14
+C. 10
+D. 8
+
+Correct Answer: A
+
+Explanation: Corners (0,0)=0, (4,0)=12, (0,4)=8.
+
+
+Question 472. Minimise C = 2x + 5y subject to x + y ≥ 6, x ≥ 0, y ≥ 0. The minimum is:
+
+A. 6
+B. 17
+C. 12
+D. 30
+
+Correct Answer: C
+
+Explanation: Corners (6,0)=12, (0,6)=30.
+
+
+Question 473. A firm makes chairs (x) and tables (y). Labour: x + 2y ≤ 40 hours; non-negativity holds. Which combination is feasible?
+
+A. (30, 10)
+B. (10, 20)
+C. (20, 10)
+D. (40, 1)
+
+Correct Answer: C
+
+Explanation: 20 + 20 = 40 ≤ 40; others exceed 40.
+
+
+Question 474. Non-negativity constraints in economic problems state that:
+
+A. Prices must be zero
+B. Profit must be positive
+C. Quantities cannot be negative
+D. Costs must be equal
+
+Correct Answer: C
+
+Explanation: E.g. x ≥ 0, y ≥ 0.
+
+
+Question 475. A firm needs revenue R = 50Q to exceed cost C = 2000 + 30Q. The required output is:
+
+A. Q > 40
+B. Q > 2000
+C. Q < 100
+D. Q > 100
+
+Correct Answer: D
+
+Explanation: 50Q > 2000 + 30Q gives 20Q > 2000.
+
+
+Question 476. A student needs an average of at least 60 over three tests. With scores 55 and 58, the third score x must satisfy:
+
+A. x > 70
+B. x ≥ 67
+C. x ≥ 57
+D. x ≥ 60
+
+Correct Answer: B
+
+Explanation: (55 + 58 + x)/3 ≥ 60 gives x ≥ 67.
+
+
+Question 477. Demand Q = 100 - 2P must be at least 40. Price must satisfy:
+
+A. P ≤ 30
+B. P ≤ 20
+C. P ≥ 70
+D. P ≥ 30
+
+Correct Answer: A
+
+Explanation: 100 - 2P ≥ 40.
+
+
+Question 478. Profit π = -Q² + 20Q - 64 is positive when:
+
+A. Q < 4 or Q > 16
+B. Q > 16
+C. Q < 4
+D. 4 < Q < 16
+
+Correct Answer: D
+
+Explanation: -(Q - 4)(Q - 16) > 0 between roots.
+
+
+Question 479. If 0 < a < b, then which is true?
+
+A. a² > b²
+B. 1/a > 1/b
+C. -a < -b
+D. 1/a < 1/b
+
+Correct Answer: B
+
+Explanation: Taking reciprocals of positives reverses order.
+
+
+Question 480. The inequality symbol ≠ means:
+
+A. Not equal to
+B. Greater than
+C. Approximately equal
+D. Less than or equal to
+
+Correct Answer: A
+
+Explanation: E.g. x ≠ 0.
+
+
+Question 481. The interval notation [2, 5) represents:
+
+A. 2 ≤ x ≤ 5
+B. 2 < x < 5
+C. 2 < x ≤ 5
+D. 2 ≤ x < 5
+
+Correct Answer: D
+
+Explanation: Square bracket includes, round excludes.
+
+
+Question 482. The interval (-∞, 3] represents:
+
+A. x ≥ 3
+B. x ≤ 3
+C. x > 3
+D. x < 3
+
+Correct Answer: B
+
+Explanation: Includes 3.
+
+
+Question 483. The triangle inequality states that for real numbers a and b, abs(a + b) is:
+
+A. Equal to abs(a) - abs(b)
+B. Always equal to abs(a) + abs(b)
+C. Greater than abs(a) + abs(b)
+D. Less than or equal to abs(a) + abs(b)
+
+Correct Answer: D
+
+Explanation: Equality holds when a and b have the same sign.
+
+
+Question 484. Solve 3(x - 2) ≥ 2(x + 1):
+
+A. x ≥ 8
+B. x ≤ 8
+C. x ≥ 4
+D. x ≥ -8
+
+Correct Answer: A
+
+Explanation: 3x - 6 ≥ 2x + 2.
+
+
+Question 485. Solve (2x - 1)/3 > (x + 2)/4:
+
+A. x > 5
+B. x > 2
+C. x > 10/11
+D. x < 2
+
+Correct Answer: B
+
+Explanation: 8x - 4 > 3x + 6 gives 5x > 10.
+
+
+Question 486. The number of terms in the AP 7, 10, 13, ..., 100 is:
+
+A. 31
+B. 33
+C. 93
+D. 32
+
+Correct Answer: D
+
+Explanation: (100 - 7)/3 + 1 = 32.
+
+
+Question 487. The sum of all multiples of 5 from 5 to 100 is:
+
+A. 2,100
+B. 525
+C. 1,000
+D. 1,050
+
+Correct Answer: D
+
+Explanation: 20 terms: 20/2 x (5 + 100).
+
+
+Question 488. The first term of an AP is 6 and the sum of the first 10 terms is 195. The common difference is:
+
+A. 5
+B. 2
+C. 4
+D. 3
+
+Correct Answer: D
+
+Explanation: 195 = 5[12 + 9d] gives 39 = 12 + 9d.
+
+
+Question 489. A GP has first term 5 and 4th term 135. The common ratio is:
+
+A. 9
+B. 3
+C. 4
+D. 27
+
+Correct Answer: B
+
+Explanation: 5r³ = 135 gives r³ = 27.
+
+
+Question 490. The sum of a GP is 1 + 3 + 9 + ... + 729. The number of terms is:
+
+A. 7
+B. 243
+C. 6
+D. 8
+
+Correct Answer: A
+
+Explanation: 3⁶ = 729, so terms are 3⁰ to 3⁶.
+
+
+Question 491. Total sales double every year starting at 10 units. Total units sold over the first 6 years is:
+
+A. 640
+B. 320
+C. 310
+D. 630
+
+Correct Answer: D
+
+Explanation: 10(2⁶ - 1) = 630.
+
+
+Question 492. (Revision) A firm's profits form a GP: N2m, N2.4m, N2.88m, ... The ratio and the 4th year's profit are:
+
+A. 1.2 and N3.456m
+B. 0.4 and N3.28m
+C. 1.2 and N3.36m
+D. 1.4 and N3.84m
+
+Correct Answer: A
+
+Explanation: r = 2.4/2 = 1.2; 2.88 x 1.2 = 3.456.
+
+
+Question 493. (Revision) A consumer has N600 to spend on x (N20 each) and y (N30 each) and must buy at least 6 units of x. Which bundle satisfies 20x + 30y ≤ 600 and x ≥ 6?
+
+A. (20, 8)
+B. (5, 15)
+C. (12, 13)
+D. (15, 10)
+
+Correct Answer: D
+
+Explanation: 300 + 300 = 600 ≤ 600; (5,15) fails x ≥ 6; (20,8) costs 640; (12,13) costs 630.
+
+
+Question 494. The 15th term of the AP -4, -1, 2, ... is:
+
+A. 35
+B. -46
+C. 38
+D. 41
+
+Correct Answer: C
+
+Explanation: -4 + 14(3).
+
+
+Question 495. The sum of the first 8 terms of 2, 4, 8, ... is:
+
+A. 512
+B. 510
+C. 256
+D. 254
+
+Correct Answer: B
+
+Explanation: 2(2⁸ - 1) = 510.
+
+
+Question 496. The sum to infinity of 1 - 1/2 + 1/4 - 1/8 + ... is:
+
+A. Infinite
+B. 1/2
+C. 2
+D. 2/3
+
+Correct Answer: D
+
+Explanation: 1/(1 - (-1/2)) = 2/3.
+
+
+Question 497. Solve 4 - x < 2x + 1:
+
+A. x > 5/3
+B. x < 1
+C. x > 1
+D. x < -1
+
+Correct Answer: C
+
+Explanation: 3 < 3x.
+
+
+Question 498. Solve 7 - 2x ≤ 3x - 8:
+
+A. x ≥ 1
+B. x ≤ 3
+C. x ≥ -3
+D. x ≥ 3
+
+Correct Answer: D
+
+Explanation: 15 ≤ 5x.
+
+
+Question 499. Solve x² + x - 12 < 0:
+
+A. -3 < x < 4
+B. x < -4 or x > 3
+C. x < 3
+D. -4 < x < 3
+
+Correct Answer: D
+
+Explanation: (x + 4)(x - 3) < 0.
+
+
+Question 500. N10,000 is deposited each year at the start of the year with no interest. If the target is at least N85,000, the minimum number of years is:
+
+A. 85
+B. 10
+C. 9
+D. 8
+
+Correct Answer: C
+
+Explanation: 10,000n ≥ 85,000 gives n ≥ 8.5, so 9 years.
+
+
+
+========================================================================
+ANSWER INDEX (Questions 001-500)
+========================================================================
+
+Chapter 1
+001-C  002-B  003-A  004-D  005-D  006-B  007-D  008-C  009-C  010-A
+011-A  012-B  013-B  014-B  015-C  016-A  017-B  018-A  019-D  020-C
+021-D  022-D  023-B  024-B  025-A  026-A  027-C  028-D  029-D  030-D
+031-C  032-A  033-B  034-C  035-D  036-C  037-C  038-D  039-D  040-A
+041-A  042-B  043-D  044-B  045-B  046-C  047-C  048-D  049-B  050-B
+051-A  052-B  053-B  054-B  055-C  056-A  057-B  058-D  059-D  060-B
+061-A  062-A  063-B  064-C  065-D  066-C  067-C  068-D  069-C  070-C
+071-D  072-B  073-B  074-C  075-A  076-C  077-D  078-C  079-A  080-C
+081-C  082-C  083-B  084-B  085-C  086-B  087-D  088-D  089-B  090-A
+091-D  092-D  093-B  094-C  095-C  096-D  097-B  098-C  099-B  100-B
+
+Chapter 2
+101-C  102-D  103-D  104-C  105-A  106-C  107-C  108-D  109-D  110-C
+111-C  112-D  113-C  114-A  115-B  116-B  117-C  118-D  119-D  120-C
+121-B  122-A  123-C  124-B  125-A  126-B  127-C  128-C  129-C  130-B
+131-B  132-D  133-A  134-B  135-D  136-D  137-C  138-C  139-C  140-D
+141-B  142-C  143-D  144-A  145-B  146-C  147-B  148-C  149-B  150-A
+151-B  152-D  153-A  154-D  155-C  156-C  157-A  158-B  159-A  160-A
+161-A  162-D  163-C  164-B  165-C  166-D  167-B  168-C  169-C  170-C
+171-C  172-A  173-A  174-C  175-C  176-C  177-A  178-A  179-D  180-A
+181-C  182-B  183-C  184-A  185-B  186-D  187-C  188-C  189-B  190-B
+191-C  192-C  193-C  194-D  195-C  196-C  197-D  198-A  199-C  200-D
+
+Chapter 3
+201-A  202-D  203-D  204-B  205-C  206-D  207-D  208-C  209-A  210-B
+211-C  212-C  213-B  214-A  215-D  216-D  217-C  218-B  219-D  220-A
+221-B  222-D  223-C  224-B  225-A  226-C  227-C  228-A  229-A  230-A
+231-C  232-A  233-B  234-C  235-A  236-B  237-B  238-D  239-D  240-A
+241-D  242-C  243-B  244-A  245-A  246-C  247-D  248-C  249-B  250-A
+251-C  252-B  253-D  254-A  255-A  256-B  257-C  258-B  259-A  260-D
+261-C  262-C  263-B  264-A  265-A  266-C  267-B  268-A  269-D  270-A
+271-A  272-B  273-A  274-A  275-B  276-A  277-D  278-A  279-B  280-B
+281-B  282-B  283-B  284-D  285-B  286-A  287-B  288-B  289-A  290-A
+291-B  292-C  293-C  294-B  295-D  296-B  297-A  298-B  299-C  300-D
+
+Chapter 4
+301-A  302-D  303-B  304-A  305-C  306-B  307-C  308-C  309-A  310-B
+311-B  312-C  313-B  314-B  315-B  316-B  317-A  318-A  319-B  320-B
+321-D  322-A  323-A  324-D  325-B  326-C  327-D  328-B  329-A  330-A
+331-C  332-B  333-D  334-B  335-B  336-A  337-D  338-D  339-A  340-A
+341-A  342-B  343-A  344-B  345-D  346-A  347-A  348-D  349-A  350-B
+351-C  352-C  353-D  354-C  355-B  356-C  357-C  358-C  359-B  360-B
+361-A  362-B  363-D  364-A  365-A  366-D  367-C  368-A  369-D  370-A
+371-C  372-A  373-B  374-C  375-A  376-D  377-C  378-D  379-D  380-C
+381-C  382-A  383-C  384-B  385-A  386-B  387-D  388-B  389-D  390-D
+391-B  392-B  393-A  394-D  395-A  396-A  397-B  398-D  399-A  400-B
+
+Chapter 5
+401-B  402-C  403-B  404-B  405-A  406-C  407-A  408-C  409-B  410-B
+411-B  412-B  413-A  414-B  415-C  416-A  417-A  418-D  419-B  420-B
+421-D  422-C  423-D  424-D  425-B  426-B  427-B  428-D  429-B  430-A
+431-C  432-C  433-A  434-D  435-D  436-B  437-A  438-B  439-C  440-A
+441-C  442-B  443-C  444-A  445-A  446-D  447-C  448-D  449-A  450-D
+451-C  452-A  453-D  454-A  455-B  456-B  457-C  458-A  459-A  460-D
+461-A  462-B  463-C  464-D  465-A  466-C  467-B  468-C  469-C  470-C
+471-A  472-C  473-C  474-C  475-D  476-B  477-A  478-D  479-B  480-A
+481-D  482-B  483-D  484-A  485-B  486-D  487-D  488-D  489-B  490-A
+491-D  492-A  493-D  494-C  495-B  496-D  497-C  498-D  499-D  500-C
+
+========================================================================
+MAJOR SOURCES CONSULTED
+========================================================================
+
+Chiang, A. C. and Wainwright, K. Fundamental Methods of Mathematical Economics (McGraw-Hill).
+Dowling, E. T. Introduction to Mathematical Economics, Schaum's Outline Series (McGraw-Hill).
+Jacques, I. Mathematics for Economics and Business (Pearson).
+Dowling, E. T. Mathematical Methods for Business and Economics, Schaum's Outline Series (McGraw-Hill).
+Sydsaeter, K. and Hammond, P. Essential Mathematics for Economic Analysis (Pearson).
+Stroud, K. A. Engineering Mathematics (Palgrave Macmillan) - for trigonometry and progressions.

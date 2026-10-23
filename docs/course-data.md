@@ -86,6 +86,16 @@ writes the course and its bank idempotently. Run
 `pnpm --filter @workspace/scripts run ingest:decn101 -- --parse-only` to
 validate without writing.
 
+`scripts/src/ingest-ecn102.ts` follows the same contract for ECN 102 –
+Mathematical Economics: `scripts/content/ecn102-questions.txt` holds 500
+questions in 5 chapters, the script validates every question against the
+printed answer index and requires all 500 explanations, then upserts the course
+(₦500, banner at `/ecn102/banner.webp`) and replaces its questions in one
+batch. Re-running it updates course id in place — it never creates a second
+course or duplicate questions. Use
+`pnpm --filter @workspace/scripts run ingest:ecn102 -- --parse-only` to validate
+without writing.
+
 ## Example ingestion
 
 ```sql

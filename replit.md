@@ -22,6 +22,12 @@ app. Course and question content is inserted directly into Turso — see
 - `pnpm --filter @workspace/scripts run ingest:decn101` — parse and ingest the
   DECN 101 course and its 1,000-question chapter bank (add `-- --parse-only` to
   validate the source file without writing, `-- --price-kobo N` to reprice)
+- `pnpm --filter @workspace/scripts run ingest:ecn102` — parse and ingest the
+  ECN 102 course and its 500-question, 5-chapter bank (same flags; ₦500 by
+  default, re-runs update the course in place and replace its questions)
+- `pnpm --filter @workspace/scripts run repair:attempts` — re-derive stored
+  attempt results from their own answer sheets and move answer-less closed
+  attempts to `not_submitted` (idempotent; `-- --dry-run` previews)
 
 ### Required environment
 
@@ -66,7 +72,10 @@ SQLite, in-memory or mock fallback.
   - `src/lib/purchases.ts` — idempotent payment intents and fulfilment
   - `src/lib/paystack.ts` — Paystack API and webhook signature verification
   - `src/lib/scoring.ts` — pure scoring, timer and answer sanitising helpers
-  - `src/lib/stats.ts` — dashboard and analytics queries
+  - `src/lib/attempt-status.ts` — the canonical attempt statuses and their rules
+  - `src/lib/attempt-summary.ts` — pure answer counts, per-course attempt
+    numbering/grouping and analytics, shared by history, results and dashboard
+  - `src/lib/stats.ts` — history, dashboard and analytics queries
 - `lib/db/src/schema/index.ts` — Drizzle schema
 - `lib/db/migrations/` — versioned SQL migrations
 - `scripts/src/migrate.ts` — checksummed migration runner
@@ -94,6 +103,20 @@ SQLite, in-memory or mock fallback.
   attempt and becomes `expires_at`; unlimited attempts have no deadline.
   Loading, saving or submitting after the deadline closes the attempt as
   `expired` and scores the last saved draft.
+- **One attempt-status model.** `in_progress`, `submitted`, `expired`,
+  `terminated` and `not_submitted` are defined once in
+  `src/lib/attempt-status.ts`. Only `submitted`, `expired` and `terminated` are
+  graded: they are the only statuses with a score, a percentage and a pass
+  verdict, and the only ones analytics, course attempt counts and attempt
+  limits use. `not_submitted` records an attempt that was opened but never
+  produced a result; it stays in history (and keeps its saved answers) without
+  ever being shown as 0/0 or counted as completed.
+- **Closed attempts are never deleted or fabricated.** Starting a new attempt
+  for a course abandons the open draft instead of deleting it, and a timed-out
+  attempt with no recorded answer becomes `not_submitted` rather than a 0-mark
+  "expired" result. A submit payload that arrives empty is ignored in favour of
+  the saved draft, so a repeated or truncated request cannot wipe an answer
+  sheet.
 - **Drafts autosave incrementally.** The runner sends only changed answers, so
   large attempts do not resend the full answer map on every click. A refresh
   restores saved answers.
@@ -111,10 +134,10 @@ SQLite, in-memory or mock fallback.
 
 ## Product notes
 
-- Homepage: split hero with a functional course search, a transparent product
-  showcase image (served via `next/image`) between the hero copy and the
-  lightweight rotating cube centrepiece, subject filters, real course cards, and
-  empty/error/loading states — no simulated exams or invented statistics.
+- Homepage: a "marked paper" hero — headline, hall-ticket search slip, a
+  CSS-only answer-sheet motif (`AnswerSheetStage`) and real catalogue counts —
+  followed by subject filters, real course cards and empty/error/loading states.
+  No device mockups and no invented statistics.
 - Navigation: the `(shell)` layout keeps one header and one bottom navigation
   mounted across home, my-courses, courses, course details, dashboard, history,
   profile, results and settings. The exam runner keeps its dedicated layout.
@@ -131,7 +154,19 @@ SQLite, in-memory or mock fallback.
   server (once per question, never re-graded, final score still computed at
   submission) so the runner can show correct/incorrect feedback, streaks at
   3/5/7/10 and a dismissable study nudge after ten consecutive wrong answers.
-  All motion respects `prefers-reduced-motion`.
+  The reveal is QUIZMI's own marked-paper motif (`AnswerReveal`): an ink stamp
+  with tick shards for a correct answer, an eraser swipe and revise tag for a
+  wrong one. All motion respects `prefers-reduced-motion`.
+- Session resilience: quiz API calls go through `requestWithSession`, which
+  force-refreshes the Clerk token and retries once on 401, retries the
+  retryable `session_unavailable` 503, and only then reports a sign-out. The
+  runner keeps the token warm, never auto-navigates away from an attempt, and
+  shows `SessionRecovery` so a recovered session resumes the same quiz.
+  Refreshing the tab no longer records a departure.
+- Course sharing: every course card and the course page expose a share action
+  (`ShareCourseButton`) using the Web Share API where available and a clipboard
+  fallback otherwise. Links point at `/courses/<slug>`, which is public and
+  still enforces the purchase check, and course pages emit share metadata.
 - Course page: description, price, purchase state, question count, timer choice
   (10–60 minutes or unlimited) and start/resume. Course cards and the detail
   page show the optional institution course code (e.g. "GST 112") and banner
@@ -150,10 +185,21 @@ SQLite, in-memory or mock fallback.
 - Exam runner: question map with pagination, keyboard shortcuts, incremental
   autosave, answer progress, server countdown, submission confirmation and
   termination handling.
-- Results: score, pass/fail, time taken, termination/expiry reason, paginated
-  answer review with explanations only after submission.
-- Dashboard/history: purchased courses, in-progress attempts, recent results and
-  analytics derived from persisted records only.
+- Results: score, pass/fail, time taken, termination/expiry reason, then a
+  per-question review of that exact attempt — the question, every option, the
+  learner's choice, the correct answer, whether it was correct, incorrect or
+  left blank, the chapter, and the explanation. Filters separate incorrect
+  from unanswered questions. Attempts that were never submitted show an
+  explicit "not submitted" panel with no score, never 0/0.
+- History (`/history` + `/api/attempts`): attempts are grouped by course and
+  numbered in the order they were taken, each with its status, date, score,
+  correct/incorrect/unanswered counts, answered count, time taken and a link to
+  that attempt's own result. Stat tiles, the score trend and subject averages
+  come from graded attempts only; a learner with no attempts gets an empty
+  state rather than zeros.
+- Dashboard: purchased courses, in-progress attempts, recent results and
+  analytics derived from persisted records only. Graded attempts drive the
+  score tiles; unfinished attempts are counted separately.
 - Light/dark themes are applied across public pages, auth, dashboard, exam,
   dialogs and results.
 
