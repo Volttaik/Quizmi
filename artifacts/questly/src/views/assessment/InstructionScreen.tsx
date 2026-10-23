@@ -63,7 +63,9 @@ export default function InstructionScreen() {
         const stored = readStoredPreferences(data.slug);
         const hasQuery =
           search !== "" &&
-          ["count", "duration", "mode"].some((key) => new URLSearchParams(search).has(key));
+          ["count", "duration", "mode", "chapter"].some((key) =>
+            new URLSearchParams(search).has(key)
+          );
 
         if (!hasQuery && !stored) {
           setRedirecting(true);
@@ -80,8 +82,28 @@ export default function InstructionScreen() {
         }
 
         const resolved = hasQuery ? preferencesFromSearch(search, cap, base) : base;
-        setPreferences(resolved);
-        savePreferences(data.slug, resolved);
+
+        // A chapter link only counts when the course really has that chapter,
+        // and the count is clamped to the pool the attempt draws from.
+        const chapterNumbers = new Set(data.chapters.map((chapter) => chapter.number));
+        const chapterNumber =
+          resolved.chapterNumber !== null && chapterNumbers.has(resolved.chapterNumber)
+            ? resolved.chapterNumber
+            : null;
+        const chapterPool =
+          chapterNumber === null
+            ? data.questionCount
+            : (data.chapters.find((chapter) => chapter.number === chapterNumber)?.questionCount ??
+              data.questionCount);
+        const poolCap = Math.max(1, Math.min(chapterPool, MAX_QUESTIONS_PER_ATTEMPT));
+
+        const finalPreferences = {
+          ...resolved,
+          chapterNumber,
+          questionCount: Math.max(1, Math.min(resolved.questionCount, poolCap)),
+        };
+        setPreferences(finalPreferences);
+        savePreferences(data.slug, finalPreferences);
       })
       .catch((err) => setError(err instanceof Error ? err.message : "Could not load this course"))
       .finally(() => setLoading(false));
@@ -111,6 +133,7 @@ export default function InstructionScreen() {
           questionCount: preferences.questionCount,
           durationMinutes: preferences.durationMinutes,
           resultMode: preferences.resultMode,
+          chapterNumber: preferences.chapterNumber,
         }),
       });
       const data = await response.json().catch(() => null);
@@ -178,6 +201,10 @@ export default function InstructionScreen() {
   const exhausted = course.attemptsRemaining !== null && course.attemptsRemaining <= 0;
   const query = preferencesToQuery(preferences);
   const canStart = !locked && !exhausted && course.questionCount > 0;
+  const selectedChapter =
+    preferences.chapterNumber === null
+      ? null
+      : (course.chapters.find((chapter) => chapter.number === preferences.chapterNumber) ?? null);
   const startLabel = starting
     ? "Starting…"
     : !isLoaded
@@ -195,6 +222,10 @@ export default function InstructionScreen() {
   const items = [
     `This session has ${preferences.questionCount} randomly selected question${
       preferences.questionCount === 1 ? "" : "s"
+    }${
+      selectedChapter
+        ? ` from Chapter ${selectedChapter.number} — ${selectedChapter.title}`
+        : " from across the course"
     }.`,
     isTimed
       ? `You have ${preferences.durationMinutes} minutes. When time runs out, the session ends and unanswered questions count as incorrect.`

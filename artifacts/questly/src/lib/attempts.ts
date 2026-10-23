@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, inArray, isNull, lt, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gt, inArray, isNull, lt, or, sql } from "drizzle-orm";
 import {
   db,
   attemptsTable,
@@ -38,11 +38,22 @@ const QUESTION_FETCH_CHUNK = 400;
 
 /* ── Question sets ────────────────────────────────────────────────────────── */
 
-async function randomQuestionIds(courseId: number, count: number): Promise<number[]> {
+async function randomQuestionIds(
+  courseId: number,
+  count: number,
+  chapterNumber: number | null = null
+): Promise<number[]> {
   const rows = await db
     .select({ id: questionsTable.id })
     .from(questionsTable)
-    .where(eq(questionsTable.courseId, courseId))
+    .where(
+      chapterNumber === null
+        ? eq(questionsTable.courseId, courseId)
+        : and(
+            eq(questionsTable.courseId, courseId),
+            eq(questionsTable.chapterNumber, chapterNumber)
+          )
+    )
     .orderBy(sql`random()`)
     .limit(count);
   return rows.map((row) => row.id);
@@ -156,6 +167,7 @@ export async function buildAttemptState(
     secondsRemaining:
       attempt.status === "in_progress" ? secondsRemaining(attempt.expiresAt) : 0,
     durationMinutes: attempt.durationMinutes ?? null,
+    chapterNumber: attempt.chapterNumber ?? null,
     resultMode,
     passScore: course.passScore,
     totalMarks: questions.reduce((total, question) => total + (question.marks || 1), 0),
@@ -224,6 +236,7 @@ function buildResult(
     submittedAt,
     timeTakenSeconds: timeTakenSeconds(attempt.startedAt, submittedAt),
     durationMinutes: attempt.durationMinutes ?? null,
+    chapterNumber: attempt.chapterNumber ?? null,
     resultMode: isSupportedResultMode(attempt.resultMode)
       ? attempt.resultMode
       : DEFAULT_RESULT_MODE,
@@ -260,6 +273,8 @@ export type StartOptions = {
   questionCount?: number;
   durationMinutes?: number | null;
   resultMode?: ResultMode;
+  /** Practise a single chapter; null/omitted draws from the whole course. */
+  chapterNumber?: number | null;
 };
 
 /**
@@ -330,7 +345,46 @@ export async function startAttemptForUser(
     return { ok: false, status: 409, error: "This course has no questions yet" };
   }
 
-  const requested = options.questionCount ?? Math.min(20, available);
+  // A chapter attempt draws only from that chapter. The chapter must exist in
+  // this course's bank — the client never narrows the pool on its own.
+  let chapterNumber: number | null = null;
+  if (options.chapterNumber !== undefined && options.chapterNumber !== null) {
+    if (!Number.isInteger(options.chapterNumber) || options.chapterNumber < 1) {
+      return { ok: false, status: 400, error: "Choose a chapter or practise the whole course" };
+    }
+    const [{ count: chapterCount }] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(questionsTable)
+      .where(
+        and(
+          eq(questionsTable.courseId, course.id),
+          eq(questionsTable.chapterNumber, options.chapterNumber)
+        )
+      );
+    if (Number(chapterCount) === 0) {
+      return {
+        ok: false,
+        status: 400,
+        error: `This course has no chapter ${options.chapterNumber}`,
+      };
+    }
+    chapterNumber = options.chapterNumber;
+  }
+
+  const [{ count: poolCount }] = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(questionsTable)
+    .where(
+      chapterNumber === null
+        ? eq(questionsTable.courseId, course.id)
+        : and(
+            eq(questionsTable.courseId, course.id),
+            eq(questionsTable.chapterNumber, chapterNumber)
+          )
+    );
+  const poolSize = Number(poolCount);
+
+  const requested = options.questionCount ?? Math.min(20, poolSize);
   if (!Number.isInteger(requested) || requested < 1) {
     return { ok: false, status: 400, error: "Choose how many questions you want to attempt" };
   }
@@ -341,11 +395,14 @@ export async function startAttemptForUser(
       error: `An attempt can include at most ${MAX_QUESTIONS_PER_ATTEMPT} questions`,
     };
   }
-  if (requested > available) {
+  if (requested > poolSize) {
     return {
       ok: false,
       status: 400,
-      error: `This course has ${available} questions. Choose ${available} or fewer.`,
+      error:
+        chapterNumber === null
+          ? `This course has ${available} questions. Choose ${available} or fewer.`
+          : `Chapter ${chapterNumber} has ${poolSize} questions. Choose ${poolSize} or fewer.`,
     };
   }
 
@@ -386,7 +443,7 @@ export async function startAttemptForUser(
     };
   }
 
-  const questionIds = await randomQuestionIds(course.id, requested);
+  const questionIds = await randomQuestionIds(course.id, requested, chapterNumber);
   const startedAt = new Date();
   const now = startedAt.toISOString();
 
@@ -402,6 +459,7 @@ export async function startAttemptForUser(
         lastSeenAt: now,
         expiresAt: deadline(durationMinutes, startedAt),
         durationMinutes,
+        chapterNumber,
         resultMode,
         questionIds,
         answers: [],
@@ -423,6 +481,7 @@ export async function startAttemptForUser(
           lastSeenAt: now,
           expiresAt: deadline(durationMinutes, startedAt),
           durationMinutes,
+          chapterNumber,
           resultMode,
           questionIds,
           answers: [],
@@ -851,6 +910,7 @@ export async function buildResultFromStored(
       timeTakenSeconds:
         attempt.timeTakenSeconds ?? timeTakenSeconds(attempt.startedAt, attempt.submittedAt),
       durationMinutes: attempt.durationMinutes ?? null,
+      chapterNumber: attempt.chapterNumber ?? null,
       resultMode: isSupportedResultMode(attempt.resultMode)
         ? attempt.resultMode
         : DEFAULT_RESULT_MODE,

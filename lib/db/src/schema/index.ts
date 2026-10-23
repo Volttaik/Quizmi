@@ -92,8 +92,15 @@ export const questionsTable = sqliteTable(
     imageUrl: text("image_url"),
     marks: integer("marks").notNull().default(1),
     orderIndex: integer("order_index").notNull().default(0),
+    /** Printed chapter number from the source bank (1, 2, 3 …). 0 = none. */
+    chapterNumber: integer("chapter_number").notNull().default(0),
+    /** Printed chapter heading, e.g. "Demand - Meaning, Law, Determinants". */
+    chapterTitle: text("chapter_title").notNull().default(""),
   },
-  (t) => [index("questions_course_idx").on(t.courseId, t.orderIndex)]
+  (t) => [
+    index("questions_course_idx").on(t.courseId, t.orderIndex),
+    index("questions_chapter_idx").on(t.courseId, t.chapterNumber),
+  ]
 );
 
 export type Question = typeof questionsTable.$inferSelect;
@@ -196,6 +203,8 @@ export const attemptsTable = sqliteTable(
     expiresAt: text("expires_at"),
     /** Timer selected at launch. null = unlimited time. */
     durationMinutes: integer("duration_minutes"),
+    /** Chapter this attempt draws from. null = the whole course. */
+    chapterNumber: integer("chapter_number"),
     /** How answers are graded and revealed: "instant" | "end". */
     resultMode: text("result_mode").notNull().default("instant"),
     /** Ordered question ids chosen for this attempt. */

@@ -34,12 +34,21 @@ export type CourseSummary = {
   purchasedAt: string | null;
 };
 
+/** One chapter of a course's question bank, as printed in the source bank. */
+export type CourseChapter = {
+  number: number;
+  title: string;
+  questionCount: number;
+};
+
 export type CourseDetail = CourseSummary & {
   totalMarks: number;
   averagePercentage: number | null;
   createdAt: string;
   /** False until Paystack server credentials are configured. */
   paymentConfigured: boolean;
+  /** Chapters in printed order; empty when the bank is unchaptered. */
+  chapters: CourseChapter[];
 };
 
 export type QuestionView = {
@@ -72,6 +81,8 @@ export type AttemptState = {
   expiresAt: string | null;
   secondsRemaining: number | null;
   durationMinutes: number | null;
+  /** Chapter this attempt draws from; null = the whole course. */
+  chapterNumber: number | null;
   /** How this attempt submits and reveals answers. */
   resultMode: ResultMode;
   passScore: number;
@@ -107,6 +118,8 @@ export type AttemptResult = {
   timeTakenSeconds: number | null;
   /** Timer chosen for this attempt. null = untimed. */
   durationMinutes: number | null;
+  /** Chapter this attempt drew from; null = the whole course. */
+  chapterNumber: number | null;
   /** How answers were submitted and revealed. */
   resultMode: ResultMode;
   score: number;

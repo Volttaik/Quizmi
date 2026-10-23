@@ -7,6 +7,7 @@ import { useUser } from "@clerk/nextjs";
 import {
   ArrowLeft,
   ArrowRight,
+  BookMarked,
   Check,
   Clock,
   Infinity as InfinityIcon,
@@ -59,6 +60,15 @@ const RESULT_MODES: Array<{
   },
 ];
 
+/** Questions the learner can draw from: one chapter, or the whole course. */
+function poolSizeFor(course: CourseDetail, chapterNumber: number | null): number {
+  if (chapterNumber === null) return course.questionCount;
+  return (
+    course.chapters.find((chapter) => chapter.number === chapterNumber)?.questionCount ??
+    course.questionCount
+  );
+}
+
 export default function ConfigureScreen() {
   const params = useParams() as { slug?: string };
   const slug = params?.slug ?? "";
@@ -105,9 +115,29 @@ export default function ConfigureScreen() {
         }
 
         const search = window.location.search;
-        if (search && ["count", "duration", "mode"].some((key) => new URLSearchParams(search).has(key))) {
+        if (
+          search &&
+          ["count", "duration", "mode", "chapter"].some((key) => new URLSearchParams(search).has(key))
+        ) {
           initial = preferencesFromSearch(search, cap, initial);
         }
+
+        // The chapter must exist in this course's bank; a stale link falls
+        // back to the whole course. The question count is then clamped to the
+        // pool the learner will actually draw from.
+        const chapterNumbers = new Set(data.chapters.map((chapter) => chapter.number));
+        const chapterNumber =
+          initial.chapterNumber !== null && chapterNumbers.has(initial.chapterNumber)
+            ? initial.chapterNumber
+            : null;
+        const pool = poolSizeFor(data, chapterNumber);
+        const poolCap = Math.max(1, Math.min(pool, MAX_QUESTIONS_PER_ATTEMPT));
+
+        initial = {
+          ...initial,
+          chapterNumber,
+          questionCount: Math.max(1, Math.min(initial.questionCount, poolCap)),
+        };
 
         setPreferences(initial);
         setCountInput(String(initial.questionCount));
@@ -121,10 +151,27 @@ export default function ConfigureScreen() {
     savePreferences(slug, preferences);
   }, [slug, preferences]);
 
-  const available = Math.max(0, Math.min(course?.questionCount ?? 0, MAX_QUESTIONS_PER_ATTEMPT));
+  const chapters = course?.chapters ?? [];
+  const hasChapters = chapters.length > 0;
+  const chapterNumber = preferences?.chapterNumber ?? null;
+  const selectedChapter =
+    chapterNumber === null ? null : (chapters.find((chapter) => chapter.number === chapterNumber) ?? null);
+  const available = Math.max(
+    0,
+    Math.min(course ? poolSizeFor(course, chapterNumber) : 0, MAX_QUESTIONS_PER_ATTEMPT)
+  );
 
   const parsedCount = Number(countInput);
   const countValid = Number.isInteger(parsedCount) && parsedCount >= 1 && parsedCount <= available;
+
+  /** Narrow the attempt to one chapter, re-clamping the question count to it. */
+  const selectChapter = (next: number | null) => {
+    if (!course || !preferences) return;
+    const cap = Math.max(1, Math.min(poolSizeFor(course, next), MAX_QUESTIONS_PER_ATTEMPT));
+    const clamped = Math.max(1, Math.min(preferences.questionCount, cap));
+    setPreferences({ ...preferences, chapterNumber: next, questionCount: clamped });
+    setCountInput(String(clamped));
+  };
 
   const selectCount = (value: number) => {
     const next = Math.max(1, Math.min(value, available));
@@ -158,6 +205,7 @@ export default function ConfigureScreen() {
       questionCount: parsedCount,
       durationMinutes: preferences.durationMinutes,
       resultMode: preferences.resultMode,
+      chapterNumber: preferences.chapterNumber,
     };
     savePreferences(course.slug, next);
     const nextUrl = `/courses/${course.slug}/instructions?${preferencesToQuery(next)}`;
@@ -244,13 +292,83 @@ export default function ConfigureScreen() {
 
       <div className="mt-8 grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="min-w-0 space-y-5">
+          {/* Chapter — practise one chapter or the whole course */}
+          {hasChapters && (
+            <Reveal className="rounded-[5px] border border-border bg-card p-5 shadow-sm sm:p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold">Chapter</h2>
+                  <p className="text-sm text-muted-foreground">
+                    Practise a single chapter or the whole course.
+                  </p>
+                </div>
+                <BookMarked className="h-5 w-5 text-muted-foreground" />
+              </div>
+
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <button
+                  type="button"
+                  aria-pressed={chapterNumber === null}
+                  onClick={() => selectChapter(null)}
+                  className={`rounded-[5px] border-2 p-3.5 text-left transition-colors ${
+                    chapterNumber === null
+                      ? "border-accent bg-secondary"
+                      : "border-border hover:border-foreground/30"
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <Layers className="h-5 w-5" />
+                    {chapterNumber === null && <Check className="h-4 w-4 text-accent" />}
+                  </div>
+                  <p className="mt-2 font-semibold">All chapters</p>
+                  <p className="text-xs text-muted-foreground">
+                    {course.questionCount.toLocaleString()} questions
+                  </p>
+                </button>
+
+                {chapters.map((chapter) => {
+                  const selected = chapterNumber === chapter.number;
+                  return (
+                    <button
+                      key={chapter.number}
+                      type="button"
+                      aria-pressed={selected}
+                      onClick={() => selectChapter(chapter.number)}
+                      className={`rounded-[5px] border-2 p-3.5 text-left transition-colors ${
+                        selected
+                          ? "border-accent bg-secondary"
+                          : "border-border hover:border-foreground/30"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+                          Chapter {chapter.number}
+                        </span>
+                        {selected && <Check className="h-4 w-4 text-accent" />}
+                      </div>
+                      <p className="mt-1 line-clamp-2 text-sm font-medium leading-snug">
+                        {chapter.title}
+                      </p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {chapter.questionCount} question{chapter.questionCount === 1 ? "" : "s"}
+                      </p>
+                    </button>
+                  );
+                })}
+              </div>
+            </Reveal>
+          )}
+
           {/* Number of questions */}
           <Reveal className="rounded-[5px] border border-border bg-card p-5 shadow-sm sm:p-6">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-semibold">Number of questions</h2>
                 <p className="text-sm text-muted-foreground">
-                  {available.toLocaleString()} available in this course
+                  {available.toLocaleString()} available in{" "}
+                  {selectedChapter
+                    ? `chapter ${selectedChapter.number}`
+                    : "this course"}
                 </p>
               </div>
               <Layers className="h-5 w-5 text-muted-foreground" />
@@ -429,9 +547,20 @@ export default function ConfigureScreen() {
               <dt className="text-primary-foreground/70">Course</dt>
               <dd className="text-right font-semibold">{course.title}</dd>
             </div>
+            {hasChapters && (
+              <div className="flex justify-between gap-3">
+                <dt className="text-primary-foreground/70">Chapter</dt>
+                <dd className="text-right font-semibold">
+                  {selectedChapter ? `Chapter ${selectedChapter.number}` : "All chapters"}
+                </dd>
+              </div>
+            )}
             <div className="flex justify-between gap-3">
               <dt className="text-primary-foreground/70">Questions</dt>
-              <dd className="font-semibold">{countValid ? parsedCount : preferences.questionCount} random</dd>
+              <dd className="font-semibold">
+                {countValid ? parsedCount : preferences.questionCount}{" "}
+                {selectedChapter ? `from chapter ${selectedChapter.number}` : "random"}
+              </dd>
             </div>
             <div className="flex justify-between gap-3">
               <dt className="text-primary-foreground/70">Timer</dt>

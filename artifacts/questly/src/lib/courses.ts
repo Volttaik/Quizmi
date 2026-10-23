@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, inArray, like, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gt, inArray, like, or, sql } from "drizzle-orm";
 import {
   db,
   attemptsTable,
@@ -9,7 +9,7 @@ import {
 } from "@/lib/db";
 import { attemptsRemaining } from "@/lib/scoring";
 import { paystackConfigured } from "@/lib/paystack";
-import type { CourseDetail, CourseSummary, Difficulty } from "@/lib/types";
+import type { CourseChapter, CourseDetail, CourseSummary, Difficulty } from "@/lib/types";
 
 export type CourseFilters = {
   search?: string;
@@ -233,6 +233,30 @@ export async function isCoursePurchased(userId: number, courseId: number): Promi
   return Boolean(row);
 }
 
+/**
+ * The course's chapters in printed order, aggregated from the question bank.
+ * Courses ingested without chapters (every question on chapter 0) return an
+ * empty list, and the app hides its chapter controls for them.
+ */
+export async function listCourseChapters(courseId: number): Promise<CourseChapter[]> {
+  const rows = await db
+    .select({
+      number: questionsTable.chapterNumber,
+      title: questionsTable.chapterTitle,
+      questionCount: sql<number>`count(*)`,
+    })
+    .from(questionsTable)
+    .where(and(eq(questionsTable.courseId, courseId), gt(questionsTable.chapterNumber, 0)))
+    .groupBy(questionsTable.chapterNumber, questionsTable.chapterTitle)
+    .orderBy(asc(questionsTable.chapterNumber));
+
+  return rows.map((row) => ({
+    number: Number(row.number),
+    title: row.title,
+    questionCount: Number(row.questionCount),
+  }));
+}
+
 export function courseHasAccess(course: Pick<Course, "priceKobo">, purchased: boolean): boolean {
   return course.priceKobo <= 0 || purchased;
 }
@@ -241,7 +265,7 @@ export async function buildCourseDetail(
   course: Course,
   userId: number | null
 ): Promise<CourseDetail> {
-  const [questionStats, attemptStats, averageRows, purchased] = await Promise.all([
+  const [questionStats, attemptStats, averageRows, purchased, chapters] = await Promise.all([
     loadQuestionStats([course.id]),
     loadAttemptStats(userId, [course.id]),
     db
@@ -254,6 +278,7 @@ export async function buildCourseDetail(
         )
       ),
     userId ? isCoursePurchased(userId, course.id) : Promise.resolve(false),
+    listCourseChapters(course.id),
   ]);
 
   const questions = questionStats.get(course.id);
@@ -266,6 +291,7 @@ export async function buildCourseDetail(
     averagePercentage: Number.isFinite(average) && average > 0 ? Math.round(average) : null,
     createdAt: course.createdAt,
     paymentConfigured: paystackConfigured(),
+    chapters,
   };
 }
 

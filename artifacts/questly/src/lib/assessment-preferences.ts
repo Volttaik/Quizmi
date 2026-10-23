@@ -17,6 +17,8 @@ export type AssessmentPreferences = {
   questionCount: number;
   durationMinutes: number | null;
   resultMode: ResultMode;
+  /** null = the whole course; a number = one chapter to practise. */
+  chapterNumber: number | null;
 };
 
 const STORAGE_PREFIX = "quizmi:assessment-preferences:";
@@ -37,6 +39,7 @@ export function defaultPreferences(
     questionCount: Math.max(1, Math.min(20, available || 1)),
     durationMinutes: duration,
     resultMode: DEFAULT_RESULT_MODE,
+    chapterNumber: null,
   };
 }
 
@@ -65,7 +68,22 @@ export function preferencesFromSearch(
   const rawMode = params.get("mode");
   const resultMode = isSupportedResultMode(rawMode) ? rawMode : fallback.resultMode;
 
-  return { questionCount, durationMinutes, resultMode };
+  // "chapter=3" narrows the attempt to one chapter; "chapter=all", an empty
+  // value or an absent key means the whole course. Callers that know the
+  // course's chapters re-validate the number and re-clamp the count.
+  const rawChapter = params.get("chapter");
+  let chapterNumber: number | null = fallback.chapterNumber ?? null;
+  if (rawChapter === "all" || rawChapter === "") {
+    chapterNumber = null;
+  } else if (rawChapter !== null) {
+    const parsedChapter = Number(rawChapter);
+    chapterNumber =
+      Number.isInteger(parsedChapter) && parsedChapter >= 1
+        ? parsedChapter
+        : (fallback.chapterNumber ?? null);
+  }
+
+  return { questionCount, durationMinutes, resultMode, chapterNumber };
 }
 
 export function preferencesToQuery(preferences: AssessmentPreferences): string {
@@ -73,6 +91,7 @@ export function preferencesToQuery(preferences: AssessmentPreferences): string {
     count: String(preferences.questionCount),
     duration: preferences.durationMinutes === null ? "unlimited" : String(preferences.durationMinutes),
     mode: preferences.resultMode,
+    chapter: preferences.chapterNumber === null ? "all" : String(preferences.chapterNumber),
   });
   return params.toString();
 }
@@ -86,7 +105,9 @@ export function readStoredPreferences(slug: string): AssessmentPreferences | nul
     if (
       !Number.isInteger(parsed.questionCount) ||
       !(parsed.durationMinutes === null || isSupportedDuration(parsed.durationMinutes)) ||
-      !isSupportedResultMode(parsed.resultMode)
+      !isSupportedResultMode(parsed.resultMode) ||
+      !(parsed.chapterNumber === null ||
+        (Number.isInteger(parsed.chapterNumber) && (parsed.chapterNumber as number) >= 1))
     ) {
       return null;
     }
@@ -94,6 +115,7 @@ export function readStoredPreferences(slug: string): AssessmentPreferences | nul
       questionCount: Number(parsed.questionCount),
       durationMinutes: parsed.durationMinutes ?? null,
       resultMode: parsed.resultMode,
+      chapterNumber: parsed.chapterNumber ?? null,
     };
   } catch {
     return null;

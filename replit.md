@@ -19,6 +19,9 @@ app. Course and question content is inserted directly into Turso — see
 - `pnpm --filter @workspace/scripts run db:verify -- --write` — also test a real write
   (inserts, reads and deletes a temporary course row; opt-in so it is not run
   against production by accident)
+- `pnpm --filter @workspace/scripts run ingest:decn101` — parse and ingest the
+  DECN 101 course and its 1,000-question chapter bank (add `-- --parse-only` to
+  validate the source file without writing, `-- --price-kobo N` to reprice)
 
 ### Required environment
 
@@ -133,6 +136,13 @@ SQLite, in-memory or mock fallback.
   (10–60 minutes or unlimited) and start/resume. Course cards and the detail
   page show the optional institution course code (e.g. "GST 112") and banner
   when the ingested row provides them.
+- Chapters: banks ingested with `chapter_number`/`chapter_title` (see
+  `docs/course-data.md`) get a chapter picker on the configure screen and a
+  chapters list on the course page, so a learner can practise one chapter or
+  the whole course. The chapter is chosen client-side but validated and applied
+  server-side when the attempt starts; results record which chapter was
+  practised. DECN 101 (1,000 questions in 10 chapters) is ingested this way by
+  `scripts/src/ingest-decn101.ts`.
 - Discovery: catalogue search matches the stored course name, subject,
   description and course code (case-insensitive; code matching ignores spaces,
   so "GST112" finds "GST 112"). There is intentionally no difficulty filter —

@@ -14,6 +14,7 @@ import {
   CircleInfo,
   Clock,
   GraduationCap,
+  Layers,
   ListCheck,
   Lock,
   Play,
@@ -193,6 +194,15 @@ export default function CourseDetailPage() {
       label: "Question bank",
       value: `${course.questionCount.toLocaleString()} question${course.questionCount === 1 ? "" : "s"}`,
     },
+    ...(course.chapters.length > 0
+      ? [
+          {
+            icon: Layers,
+            label: "Chapters",
+            value: `${course.chapters.length} chapters`,
+          },
+        ]
+      : []),
     {
       icon: Clock,
       label: "Timing",
@@ -322,6 +332,51 @@ export default function CourseDetailPage() {
               </section>
             )}
 
+            {course.chapters.length > 0 && (
+              <section className="mt-10">
+                <h2 className="font-display text-[1.35rem] font-semibold text-foreground">
+                  Chapters
+                </h2>
+                <p className="mt-2 text-[13.5px] leading-relaxed text-muted-foreground">
+                  The bank is organised the way the course is taught. Practise a single chapter,
+                  or take a random mix from the whole course.
+                </p>
+                <ul className="mt-4 divide-y divide-border/70 border-y border-border/70">
+                  {course.chapters.map((chapter) => (
+                    <li
+                      key={chapter.number}
+                      className="flex items-center justify-between gap-4 py-3.5"
+                    >
+                      <div className="min-w-0">
+                        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-muted-foreground">
+                          Chapter {chapter.number}
+                        </p>
+                        <p className="mt-0.5 text-[13.5px] font-medium leading-snug text-foreground">
+                          {chapter.title}
+                        </p>
+                      </div>
+                      <div className="flex shrink-0 items-center gap-3">
+                        <span className="rounded-full bg-secondary px-2.5 py-1 text-[11px] font-semibold text-secondary-foreground">
+                          {chapter.questionCount} Qs
+                        </span>
+                        {canBegin && (
+                          <ButtonLink
+                            href={`/courses/${course.slug}/configure?chapter=${chapter.number}`}
+                            variant="outline"
+                            size="sm"
+                            className="rounded-full"
+                            aria-label={`Practise chapter ${chapter.number}`}
+                          >
+                            Practise
+                          </ButtonLink>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
             <section className="mt-10">
               <h2 className="font-display text-[1.35rem] font-semibold text-foreground">
                 How the assessment runs
@@ -363,7 +418,8 @@ export default function CourseDetailPage() {
               </h2>
               <ul className="mt-4 grid gap-x-8 gap-y-3 sm:grid-cols-2">
                 {[
-                  "The full question bank for this course",
+                  "The full question bank, organised chapter by chapter",
+                  "Practise a single chapter or the whole course",
                   "Choose the number of questions each attempt",
                   "Timed or untimed computer-based practice",
                   "Progress saved if the page refreshes",

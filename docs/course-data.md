@@ -46,10 +46,45 @@ integers in the currency subunit (kobo for NGN); never store a formatted string.
 | `image_url`     | text    | Optional absolute URL for a question image.                   |
 | `marks`         | integer | Marks awarded for a correct answer. Defaults to 1.            |
 | `order_index`   | integer | Presentation order (ascending).                               |
+| `chapter_number`| integer | Chapter this question belongs to, as printed in the source    |
+|                 |         | bank (1, 2, 3 …). `0` = unchaptered; the app hides its chapter |
+|                 |         | controls for a bank with no chapters.                         |
+| `chapter_title` | text    | Printed chapter heading, e.g. `Demand - Meaning, Law, …`.     |
 
 The engine supports 1,000+ questions per course. It selects a random, unique
 subset per attempt, stores the selected ids on the attempt, and only loads the
 chosen questions in the browser.
+
+## Chapters
+
+Chapters live on `questions` (following Lumio's chapter model) — there is no
+separate chapters table. `attempts.chapter_number` records what the attempt
+practised (`NULL` = the whole course). Learners pick a chapter on the configure
+screen or from the course page; the server then draws the attempt's questions
+from that chapter only and validates that the chapter exists. The catalogue
+course detail aggregates chapters with their question counts, and a course
+whose questions all sit on chapter `0` simply shows no chapter controls.
+
+Example ingestion with chapters:
+
+```sql
+INSERT INTO questions (
+  course_id, prompt, options, correct_index, explanation,
+  marks, order_index, chapter_number, chapter_title
+) VALUES (
+  :course_id, 'The law of demand states that…',
+  '["Price and quantity move together","Price up, quantity down","Price down, quantity down","No relationship"]',
+  1, 'Ceteris paribus, a higher price reduces quantity demanded.',
+  1, 500, 6, 'Demand - Meaning, Law, Determinants, Types and Applications'
+);
+```
+
+`scripts/src/ingest-decn101.ts` is a worked example: it parses
+`scripts/content/decn101-questions.txt` (DECN 101, 1,000 questions in 10
+chapters), validates every question against the printed answer index, and
+writes the course and its bank idempotently. Run
+`pnpm --filter @workspace/scripts run ingest:decn101 -- --parse-only` to
+validate without writing.
 
 ## Example ingestion
 

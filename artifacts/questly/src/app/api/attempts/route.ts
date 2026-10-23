@@ -58,8 +58,24 @@ export async function POST(req: NextRequest) {
     questionCount?: unknown;
     durationMinutes?: unknown;
     resultMode?: unknown;
+    chapterNumber?: unknown;
   }>(req);
   if (!body || !isNonEmptyString(body.slug)) return apiError("Course slug is required");
+
+  // null/omitted practises the whole course; a number must be a whole,
+  // positive chapter number (the server verifies the chapter exists).
+  let chapterNumber: number | null | undefined;
+  if (body.chapterNumber === undefined) {
+    chapterNumber = undefined;
+  } else if (body.chapterNumber === null) {
+    chapterNumber = null;
+  } else {
+    const parsedChapter = Number(body.chapterNumber);
+    if (!Number.isInteger(parsedChapter) || parsedChapter < 1) {
+      return apiError("Choose a chapter or practise the whole course");
+    }
+    chapterNumber = parsedChapter;
+  }
 
   let duration: number | null | undefined;
   if (body.durationMinutes === undefined) {
@@ -87,6 +103,7 @@ export async function POST(req: NextRequest) {
       questionCount,
       durationMinutes: duration,
       resultMode,
+      chapterNumber,
     });
     if (!result.ok) return apiError(result.error, result.status);
     return apiOk(result.state, 201);
