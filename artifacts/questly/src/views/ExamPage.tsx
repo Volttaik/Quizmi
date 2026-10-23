@@ -485,7 +485,7 @@ export default function ExamPage() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-30 border-b border-border/70 bg-background/90 backdrop-blur-xl">
+      <header className="sticky top-0 z-30 border-b border-border bg-card">
         <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4">
           <button
             type="button"
@@ -766,7 +766,7 @@ export default function ExamPage() {
       </div>
 
       {/* Mobile submit bar */}
-      <div className="sticky bottom-0 border-t border-border/70 bg-background/95 px-4 py-3 backdrop-blur sm:hidden">
+      <div className="sticky bottom-0 border-t border-border bg-card px-4 py-3 sm:hidden">
         <Button onClick={() => setConfirmOpen(true)} className="w-full rounded-full">
           <Send className="h-4 w-4" />
           Submit ({answeredCount}/{questions.length})
@@ -780,7 +780,7 @@ export default function ExamPage() {
           onClick={() => setPaletteOpen(false)}
         >
           <div
-            className="max-h-[75vh] w-full overflow-y-auto rounded-t-3xl bg-background p-5"
+            className="max-h-[75vh] w-full overflow-y-auto rounded-t-3xl border-t border-border bg-card p-5"
             onClick={(event) => event.stopPropagation()}
             role="dialog"
             aria-modal="true"
@@ -859,7 +859,7 @@ export default function ExamPage() {
       {confirmOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
           <div
-            className="w-full max-w-md rounded-2xl border border-border/70 bg-background p-6 shadow-xl"
+            className="w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-lg"
             role="dialog"
             aria-modal="true"
             aria-labelledby="submit-title"

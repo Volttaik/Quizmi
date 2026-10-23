@@ -19,6 +19,8 @@
   --color-card-foreground: hsl(var(--card-foreground));
   --color-primary: hsl(var(--primary));
   --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-brand: hsl(var(--brand));
+  --color-brand-foreground: hsl(var(--brand-foreground));
   --color-secondary: hsl(var(--secondary));
   --color-secondary-foreground: hsl(var(--secondary-foreground));
   --color-accent: hsl(var(--accent));
@@ -54,6 +56,8 @@
   --primary: 262 72% 55%;
   --primary-foreground: 0 0% 100%;
   --primary-border: 262 72% 48%;
+  --brand: 262 60% 30%;
+  --brand-foreground: 0 0% 100%;
   --secondary: 220 18% 93%;
   --secondary-foreground: 222 47% 11%;
   --secondary-border: 220 18% 86%;
@@ -89,6 +93,8 @@
   --primary: 262 72% 62%;
   --primary-foreground: 0 0% 100%;
   --primary-border: 262 72% 66%;
+  --brand: 262 50% 24%;
+  --brand-foreground: 0 0% 100%;
   --secondary: 222 26% 15%;
   --secondary-foreground: 220 20% 90%;
   --secondary-border: 222 26% 22%;
@@ -158,7 +164,6 @@
 .no-theme-transition *::before,
 .no-theme-transition *::after {
   transition: none !important;
-  animation: none !important;
 }
 
 /* ─── Motion ──────────────────────────────────────────────────────────────── */
@@ -184,6 +189,82 @@
     background-position: 400px 0;
   }
 }
+
+/* ─── Rotating cube centrepiece ───────────────────────────────────────────── */
+.cube-stage {
+  --cube-size: 168px;
+  width: var(--cube-size);
+  height: var(--cube-size);
+  perspective: 900px;
+}
+
+@media (min-width: 640px) {
+  .cube-stage {
+    --cube-size: 184px;
+  }
+}
+
+.cube {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  animation: cube-spin 30s linear infinite;
+}
+
+.cube:hover {
+  animation-play-state: paused;
+}
+
+@keyframes cube-spin {
+  from {
+    transform: rotateX(-16deg) rotateY(0deg);
+  }
+  to {
+    transform: rotateX(-16deg) rotateY(360deg);
+  }
+}
+
+.cube-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  border: 1px solid hsl(var(--border));
+  border-radius: 1rem;
+  background: hsl(var(--card));
+  color: hsl(var(--card-foreground));
+  text-align: center;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.35;
+  backface-visibility: hidden;
+}
+
+.cube-face-front {
+  transform: translateZ(calc(var(--cube-size) / 2));
+}
+.cube-face-right {
+  transform: rotateY(90deg) translateZ(calc(var(--cube-size) / 2));
+}
+.cube-face-back {
+  transform: rotateY(180deg) translateZ(calc(var(--cube-size) / 2));
+}
+.cube-face-left {
+  transform: rotateY(-90deg) translateZ(calc(var(--cube-size) / 2));
+}
+.cube-face-top {
+  background: hsl(var(--accent));
+  color: hsl(var(--accent-foreground));
+  transform: rotateX(90deg) translateZ(calc(var(--cube-size) / 2));
+}
+.cube-face-bottom {
+  background: hsl(var(--accent));
+  color: hsl(var(--accent-foreground));
+  transform: rotateX(-90deg) translateZ(calc(var(--cube-size) / 2));
+}
 .skeleton {
   background: linear-gradient(
     90deg,
@@ -203,6 +284,12 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  /* Show a stable, readable face instead of an infinitely rotating cube. */
+  .cube {
+    animation: none;
+    transform: rotateX(-12deg) rotateY(-18deg);
   }
 }
 

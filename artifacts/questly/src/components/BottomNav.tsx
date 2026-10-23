@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 import { Home, Library, History, User } from "lucide-react";
 
 const TABS = [
@@ -13,29 +14,41 @@ const TABS = [
 
 export default function BottomNav() {
   const pathname = usePathname() ?? "";
+  const { isLoaded, isSignedIn } = useUser();
+
+  // Primary navigation is for signed-in learners; public pages keep the
+  // compact header actions instead of offering links to private screens.
+  if (!isLoaded || !isSignedIn) return null;
 
   return (
     <nav
-      aria-label="Mobile navigation"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-background/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden"
+      aria-label="Primary mobile navigation"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card pb-[env(safe-area-inset-bottom)] md:hidden"
     >
-      <div className="mx-auto flex max-w-lg items-stretch justify-around px-2">
+      <div className="mx-auto flex max-w-lg items-stretch justify-around px-1.5">
         {TABS.map((tab) => {
-          const active = pathname === tab.href || pathname.startsWith(`${tab.href}/`);
+          const active =
+            pathname === tab.href ||
+            pathname.startsWith(`${tab.href}/`) ||
+            (tab.href === "/history" && pathname.startsWith("/results")) ||
+            (tab.href === "/profile" && pathname.startsWith("/settings"));
           return (
             <Link
               key={tab.href}
               href={tab.href}
               aria-current={active ? "page" : undefined}
-              className="flex flex-1 flex-col items-center gap-1 py-2.5"
+              className="flex min-h-14 flex-1 flex-col items-center justify-center gap-0.5 py-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring/40"
             >
-              <tab.icon
-                className={`h-5 w-5 transition-colors ${active ? "text-primary" : "text-muted-foreground"}`}
-                strokeWidth={active ? 2.2 : 1.8}
-              />
               <span
-                className={`text-[11px] font-semibold transition-colors ${
-                  active ? "text-primary" : "text-muted-foreground"
+                className={`flex h-7 w-12 items-center justify-center rounded-full transition-colors ${
+                  active ? "bg-primary text-primary-foreground" : "text-muted-foreground"
+                }`}
+              >
+                <tab.icon className="h-[18px] w-[18px]" strokeWidth={active ? 2.2 : 1.9} />
+              </span>
+              <span
+                className={`text-[10.5px] font-semibold leading-none transition-colors ${
+                  active ? "text-foreground" : "text-muted-foreground"
                 }`}
               >
                 {tab.label}

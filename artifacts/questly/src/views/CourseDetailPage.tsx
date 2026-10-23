@@ -22,7 +22,6 @@ import {
   Timer,
   Trophy,
 } from "lucide-react";
-import SiteHeader from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import {
   DEFAULT_DURATION_MINUTES,
@@ -206,8 +205,7 @@ export default function CourseDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <SiteHeader />
+      <div className="bg-background">
         <div className="mx-auto max-w-5xl px-4 py-10">
           <div className="skeleton h-8 w-40 rounded-lg" />
           <div className="skeleton mt-6 h-36 rounded-2xl" />
@@ -227,8 +225,7 @@ export default function CourseDetailPage() {
 
   if (notFound || !course) {
     return (
-      <div className="min-h-screen bg-background">
-        <SiteHeader />
+      <div className="bg-background">
         <div className="mx-auto flex max-w-md flex-col items-center px-4 py-24 text-center">
           <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-muted">
             <AlertCircle className="h-6 w-6 text-muted-foreground" />
@@ -251,9 +248,7 @@ export default function CourseDetailPage() {
   const locked = !course.hasAccess;
 
   return (
-    <div className="min-h-screen bg-background pb-24 md:pb-12">
-      <SiteHeader />
-
+    <div className="bg-background">
       <main className="mx-auto max-w-5xl px-4 py-8">
         <Link
           href="/courses"
@@ -565,8 +560,8 @@ export default function CourseDetailPage() {
                               aria-pressed={parsedCount === value}
                               className={`rounded-full border px-2.5 py-1 text-[11px] font-bold transition-colors ${
                                 parsedCount === value
-                                  ? "border-primary bg-primary/10 text-primary"
-                                  : "border-border/70 text-muted-foreground hover:text-foreground"
+                                  ? "border-primary bg-primary text-primary-foreground"
+                                  : "border-border text-muted-foreground hover:text-foreground"
                               }`}
                             >
                               {value}
@@ -591,8 +586,8 @@ export default function CourseDetailPage() {
                               aria-pressed={selected}
                               className={`flex items-center justify-center gap-1.5 rounded-xl border px-2 py-2 text-xs font-bold transition-colors ${
                                 selected
-                                  ? "border-primary bg-primary/10 text-primary"
-                                  : "border-border/70 text-muted-foreground hover:text-foreground"
+                                  ? "border-primary bg-primary text-primary-foreground"
+                                  : "border-border text-muted-foreground hover:text-foreground"
                               }`}
                             >
                               {option.minutes === null ? (

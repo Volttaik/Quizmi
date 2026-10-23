@@ -7,7 +7,7 @@ const authToken = process.env.TURSO_AUTH_TOKEN;
 
 if (!url) {
   throw new Error(
-    "TURSO_DATABASE_URL must be set. Quizme uses Turso as its only database; there is no local fallback.",
+    "TURSO_DATABASE_URL must be set. QUIZIMI uses Turso as its only database; there is no local fallback.",
   );
 }
 

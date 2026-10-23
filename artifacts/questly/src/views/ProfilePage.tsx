@@ -148,8 +148,8 @@ export default function ProfilePage() {
                 aria-pressed={active}
                 className={`flex items-center justify-center gap-2 rounded-xl border px-3 py-2.5 text-xs font-bold transition-colors ${
                   active
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-border/70 text-muted-foreground hover:text-foreground"
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border text-muted-foreground hover:text-foreground"
                 }`}
               >
                 <option.icon className="h-4 w-4" />

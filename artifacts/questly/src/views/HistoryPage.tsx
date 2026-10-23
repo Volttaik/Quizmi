@@ -94,7 +94,7 @@ export default function HistoryPage() {
   );
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background">
       <main className="mx-auto max-w-4xl px-4 py-8">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.16em] text-primary">Progress</p>

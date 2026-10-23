@@ -12,6 +12,7 @@ import {
   CheckCircle2,
   Clock,
   PlayCircle,
+  Search,
   Target,
   Trophy,
 } from "lucide-react";
@@ -26,6 +27,7 @@ export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [exploreQuery, setExploreQuery] = useState("");
 
   useEffect(() => {
     let active = true;
@@ -57,6 +59,12 @@ export default function DashboardPage() {
   const firstName = data?.user.name?.split(" ")[0] ?? "";
   const hasActivity = (data?.stats.completedAttempts ?? 0) > 0;
 
+  const explore = (event: React.FormEvent) => {
+    event.preventDefault();
+    const query = exploreQuery.trim();
+    router.push(query ? `/courses?q=${encodeURIComponent(query)}` : "/courses");
+  };
+
   return (
     <main className="mx-auto max-w-5xl px-4 py-8">
       {loading ? (
@@ -71,12 +79,12 @@ export default function DashboardPage() {
           <div className="skeleton h-64 rounded-2xl" />
         </div>
       ) : error ? (
-        <div className="rounded-2xl border border-destructive/30 bg-destructive/5 p-8 text-center">
+        <div className="rounded-2xl border border-destructive/30 bg-card p-8 text-center">
           <p className="text-sm font-semibold text-destructive">{error}</p>
           <Button
             variant="outline"
             size="sm"
-            className="mt-4 rounded-full"
+            className="mt-4 rounded-lg"
             onClick={() => window.location.reload()}
           >
             Retry
@@ -84,9 +92,12 @@ export default function DashboardPage() {
         </div>
       ) : data ? (
         <>
+          {/* Welcome */}
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.16em] text-primary">Dashboard</p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-primary">
+                QUIZIMI dashboard
+              </p>
               <h1 className="mt-1.5 text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
                 {firstName ? `Welcome back, ${firstName}` : "Welcome back"}
               </h1>
@@ -98,41 +109,53 @@ export default function DashboardPage() {
                     : "Choose a course to begin your first assessment."}
               </p>
             </div>
-            <Link href="/courses">
-              <Button className="w-full rounded-full sm:w-auto">
+            <Button asChild className="w-full rounded-lg sm:w-auto">
+              <Link href="/courses">
                 Browse courses
                 <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
 
+          {/* Real aggregate figures */}
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
             <StatCard
               icon={BookOpenCheck}
               label="My courses"
               value={data.stats.purchasedCourses}
-              hint={`${data.stats.coursesTaken} course${data.stats.coursesTaken === 1 ? "" : "s"} attempted`}
+              hint={
+                data.stats.purchasedCourses === 0
+                  ? "No purchases yet"
+                  : `${data.stats.coursesTaken} course${data.stats.coursesTaken === 1 ? "" : "s"} attempted`
+              }
             />
             <StatCard
               icon={BarChart3}
               label="Completed attempts"
               value={data.stats.completedAttempts}
-              hint={data.stats.completedAttempts === 1 ? "1 result saved" : "Results saved"}
+              hint={
+                hasActivity
+                  ? `${data.stats.completedAttempts === 1 ? "1 result" : "Results"} saved`
+                  : "No results yet"
+              }
             />
             <StatCard
               icon={Target}
               label="Average score"
-              value={`${data.stats.averagePercentage}%`}
+              value={hasActivity ? `${data.stats.averagePercentage}%` : "—"}
+              hint={hasActivity ? "Across completed attempts" : "Available after your first result"}
               tone={hasActivity ? (data.stats.averagePercentage >= 70 ? "good" : "warn") : "default"}
             />
             <StatCard
               icon={Trophy}
               label="Pass rate"
-              value={`${data.stats.passRate}%`}
+              value={hasActivity ? `${data.stats.passRate}%` : "—"}
+              hint={hasActivity ? `${data.stats.bestPercentage}% best score` : "No attempts yet"}
               tone={hasActivity ? (data.stats.passRate >= 50 ? "good" : "default") : "default"}
             />
           </div>
 
+          {/* In progress */}
           {data.inProgress.length > 0 && (
             <section className="mt-8">
               <h2 className="flex items-center gap-2 text-sm font-extrabold text-foreground">
@@ -144,9 +167,9 @@ export default function DashboardPage() {
                   <Link
                     key={attempt.attemptId}
                     href={`/exam/${attempt.attemptId}`}
-                    className="flex items-center gap-4 rounded-2xl border border-primary/25 bg-primary/5 p-4 transition-colors hover:bg-primary/10"
+                    className="flex items-center gap-4 rounded-2xl border border-primary/30 bg-card p-4 transition-colors hover:border-primary/60"
                   >
-                    <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
+                    <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-accent text-accent-foreground">
                       <PlayCircle className="h-5 w-5" />
                     </div>
                     <div className="min-w-0 flex-1">
@@ -164,9 +187,15 @@ export default function DashboardPage() {
             </section>
           )}
 
+          {/* My courses */}
           <section className="mt-8">
-            <div className="flex items-center justify-between">
-              <h2 className="text-sm font-extrabold text-foreground">Your courses</h2>
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h2 className="text-sm font-extrabold text-foreground">My courses</h2>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  Courses you have purchased or claimed.
+                </p>
+              </div>
               <Link
                 href="/courses"
                 className="text-xs font-bold text-primary underline-offset-4 hover:underline"
@@ -176,20 +205,18 @@ export default function DashboardPage() {
             </div>
 
             {data.purchasedCourses.length === 0 ? (
-              <div className="mt-3 rounded-2xl border border-border/70 bg-card p-8 text-center">
-                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-muted">
+              <div className="mt-3 rounded-2xl border border-border bg-card p-8 text-center">
+                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-muted">
                   <BookOpen className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <p className="text-sm font-bold text-foreground">You have not added a course yet</p>
-                <p className="mx-auto mt-1 max-w-xs text-xs text-muted-foreground">
+                <p className="mx-auto mt-1 max-w-xs text-xs leading-relaxed text-muted-foreground">
                   Purchased courses appear here. Browse the catalogue to find one that fits what you
                   are preparing for.
                 </p>
-                <Link href="/courses" className="mt-4 inline-block">
-                  <Button size="sm" className="rounded-full">
-                    Browse courses
-                  </Button>
-                </Link>
+                <Button asChild size="sm" className="mt-4 rounded-lg">
+                  <Link href="/courses">Browse courses</Link>
+                </Button>
               </div>
             ) : (
               <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -200,9 +227,69 @@ export default function DashboardPage() {
             )}
           </section>
 
+          {/* Explore */}
+          <section className="mt-8">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h2 className="text-sm font-extrabold text-foreground">Explore courses</h2>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  Search the full catalogue for another subject to practise.
+                </p>
+              </div>
+              <Link
+                href="/courses"
+                className="text-xs font-bold text-primary underline-offset-4 hover:underline"
+              >
+                View all
+              </Link>
+            </div>
+
+            <form onSubmit={explore} className="mt-3 flex flex-col gap-2 sm:flex-row" role="search">
+              <div className="relative flex-1">
+                <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  type="search"
+                  value={exploreQuery}
+                  onChange={(event) => setExploreQuery(event.target.value)}
+                  placeholder="Search by course, subject or topic"
+                  aria-label="Search the course catalogue"
+                  className="h-11 w-full rounded-xl border border-border bg-card pl-10 pr-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-primary/60 focus:ring-2 focus:ring-primary/15"
+                />
+              </div>
+              <Button type="submit" className="h-11 rounded-xl px-5 font-bold">
+                Search
+              </Button>
+            </form>
+
+            {data.recommended.length === 0 ? (
+              <div className="mt-3 rounded-2xl border border-border bg-card p-6 text-center">
+                <p className="text-sm font-bold text-foreground">Nothing new to recommend</p>
+                <p className="mx-auto mt-1 max-w-sm text-xs leading-relaxed text-muted-foreground">
+                  Every published course is already in your account, or the catalogue is empty
+                  right now.
+                </p>
+                <Button asChild variant="outline" size="sm" className="mt-4 rounded-lg">
+                  <Link href="/courses">Open the catalogue</Link>
+                </Button>
+              </div>
+            ) : (
+              <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {data.recommended.map((course) => (
+                  <CourseCard key={course.id} course={course} />
+                ))}
+              </div>
+            )}
+          </section>
+
+          {/* Recent activity */}
           <section className="mt-8">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-extrabold text-foreground">Recent results</h2>
+              <div>
+                <h2 className="text-sm font-extrabold text-foreground">Recent activity</h2>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  The latest attempts saved to your account.
+                </p>
+              </div>
               {hasActivity && (
                 <Link
                   href="/history"
@@ -214,25 +301,25 @@ export default function DashboardPage() {
             </div>
 
             {data.recentResults.length === 0 ? (
-              <div className="mt-3 rounded-2xl border border-border/70 bg-card p-8 text-center">
-                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-muted">
+              <div className="mt-3 rounded-2xl border border-border bg-card p-8 text-center">
+                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-muted">
                   <BarChart3 className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <p className="text-sm font-bold text-foreground">No attempts yet</p>
-                <p className="mx-auto mt-1 max-w-xs text-xs text-muted-foreground">
+                <p className="mx-auto mt-1 max-w-xs text-xs leading-relaxed text-muted-foreground">
                   Open one of your courses and start an assessment. Your score and answer review will
                   appear here.
                 </p>
               </div>
             ) : (
-              <div className="mt-3 divide-y divide-border/60 overflow-hidden rounded-2xl border border-border/70 bg-card">
+              <div className="mt-3 divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card">
                 {data.recentResults.map((result) => {
                   const terminated = result.status === "terminated";
                   return (
                     <Link
                       key={result.attemptId}
                       href={`/results/${result.attemptId}`}
-                      className="flex items-center gap-3 p-4 transition-colors hover:bg-muted/40"
+                      className="flex items-center gap-3 p-4 transition-colors hover:bg-muted"
                     >
                       <div
                         className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl ${
@@ -271,18 +358,27 @@ export default function DashboardPage() {
             )}
           </section>
 
-          {data.subjectPerformance.length > 0 && (
-            <section className="mt-8">
-              <div className="flex items-center justify-between">
-                <h2 className="text-sm font-extrabold text-foreground">Performance by subject</h2>
+          {/* Learning progress */}
+          <section className="mt-8">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-sm font-extrabold text-foreground">Learning progress</h2>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  Average score by subject, from completed attempts only.
+                </p>
+              </div>
+              {hasActivity && (
                 <Link
                   href="/history"
                   className="text-xs font-bold text-primary underline-offset-4 hover:underline"
                 >
                   Full analytics
                 </Link>
-              </div>
-              <div className="mt-3 space-y-4 rounded-2xl border border-border/70 bg-card p-5">
+              )}
+            </div>
+
+            {data.subjectPerformance.length > 0 ? (
+              <div className="mt-3 space-y-4 rounded-2xl border border-border bg-card p-5">
                 {data.subjectPerformance.map((subject) => (
                   <div key={subject.subject}>
                     <div className="flex items-center justify-between text-xs font-semibold">
@@ -301,19 +397,22 @@ export default function DashboardPage() {
                   </div>
                 ))}
               </div>
-            </section>
-          )}
-
-          {data.recommended.length > 0 && (
-            <section className="mt-8">
-              <h2 className="text-sm font-extrabold text-foreground">Explore more courses</h2>
-              <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {data.recommended.map((course) => (
-                  <CourseCard key={course.id} course={course} />
-                ))}
+            ) : (
+              <div className="mt-3 rounded-2xl border border-border bg-card p-8 text-center">
+                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-muted">
+                  <Target className="h-5 w-5 text-muted-foreground" />
+                </div>
+                <p className="text-sm font-bold text-foreground">Progress starts with a result</p>
+                <p className="mx-auto mt-1 max-w-xs text-xs leading-relaxed text-muted-foreground">
+                  Complete an assessment and your average score by subject will be calculated from
+                  your saved results.
+                </p>
+                <Button asChild size="sm" className="mt-4 rounded-lg">
+                  <Link href="/courses">Start an assessment</Link>
+                </Button>
               </div>
-            </section>
-          )}
+            )}
+          </section>
         </>
       ) : null}
     </main>

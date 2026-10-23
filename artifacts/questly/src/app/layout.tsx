@@ -1,18 +1,45 @@
 import type { Metadata } from "next";
-import { Toaster } from "sonner";
 import { Providers } from "./providers";
+import AppToaster from "@/components/AppToaster";
 import ClerkThemeProvider from "@/components/ClerkThemeProvider";
 import "./globals.css";
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+
+const DESCRIPTION =
+  "Find your courses, practise with computer-based test questions, and track your progress with saved results and performance reports.";
+
 export const metadata: Metadata = {
-  title: "Quizme — Course-based CBT practice",
-  description:
-    "Find your courses, practise with computer-based test questions, and track your progress with saved results and performance reports.",
+  metadataBase: new URL(APP_URL),
+  title: "QUIZIMI — Course-based CBT practice",
+  description: DESCRIPTION,
+  applicationName: "QUIZIMI",
+  openGraph: {
+    type: "website",
+    siteName: "QUIZIMI",
+    title: "QUIZIMI — Course-based CBT practice",
+    description: DESCRIPTION,
+    url: "/",
+    images: [
+      {
+        url: "/opengraph.jpg",
+        width: 1200,
+        height: 630,
+        alt: "QUIZIMI — course-based CBT practice",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "QUIZIMI — Course-based CBT practice",
+    description: DESCRIPTION,
+    images: ["/opengraph.jpg"],
+  },
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Quizme",
+    title: "QUIZIMI",
   },
   icons: {
     icon: [
@@ -57,7 +84,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Providers>
           <ClerkThemeProvider>
             {children}
-            <Toaster position="bottom-center" richColors />
+            <AppToaster />
           </ClerkThemeProvider>
         </Providers>
         <script

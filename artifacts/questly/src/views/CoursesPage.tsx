@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AlertCircle, Search, SlidersHorizontal, X } from "lucide-react";
-import SiteHeader from "@/components/SiteHeader";
 import CourseCard from "@/components/CourseCard";
 import { Button } from "@/components/ui/button";
 import type { CourseSummary } from "@/lib/types";
@@ -35,6 +34,15 @@ export default function CoursesPage() {
   const [reloadKey, setReloadKey] = useState(0);
   const [paymentNotice, setPaymentNotice] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const readQueryParam = useRef(false);
+
+  // Dashboard deep links land here with ?q= already set.
+  useEffect(() => {
+    if (readQueryParam.current) return;
+    readQueryParam.current = true;
+    const query = new URLSearchParams(window.location.search).get("q");
+    if (query) setSearch(query);
+  }, []);
 
   useEffect(() => {
     const status = new URLSearchParams(window.location.search).get("payment");
@@ -104,9 +112,7 @@ export default function CoursesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-24 md:pb-12">
-      <SiteHeader />
-
+    <div className="bg-background">
       <main className="mx-auto max-w-6xl px-4 py-8">
         {paymentNotice && (
           <div className="mb-5 flex items-start gap-2 rounded-xl border border-destructive/25 bg-destructive/5 p-3.5 text-xs font-semibold text-destructive">
@@ -192,8 +198,8 @@ export default function CoursesPage() {
                 aria-pressed={difficulty === option.value}
                 className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
                   difficulty === option.value
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-border/70 bg-card text-muted-foreground hover:text-foreground"
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border bg-card text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {option.label}
@@ -210,8 +216,8 @@ export default function CoursesPage() {
                 aria-pressed={subject === option}
                 className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
                   subject === option
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-border/70 bg-card text-muted-foreground hover:text-foreground"
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border bg-card text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {option === "all" ? "All subjects" : option}

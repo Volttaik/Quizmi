@@ -95,7 +95,7 @@ export default function NotificationsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-24 md:pb-12">
+    <div className="bg-background">
       <div className="mx-auto max-w-2xl px-4 py-6">
         <div className="mb-6 flex items-center gap-3">
           <Link

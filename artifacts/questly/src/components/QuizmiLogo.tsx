@@ -1,4 +1,5 @@
 "use client";
+
 export default function QuizmiLogo({
   className = "",
   size = 36,
@@ -13,10 +14,10 @@ export default function QuizmiLogo({
     >
       <img
         src="/logo.png"
-        alt="Quizme"
+        alt="QUIZIMI"
         width={size}
         height={size}
-        className="rounded-xl w-full h-full"
+        className="rounded-lg w-full h-full"
       />
     </div>
   );
@@ -33,10 +34,12 @@ export function QuizmiWordmark({
 }) {
   const textColor = variant === "light" ? "text-foreground" : "text-white";
   return (
-    <div className={`flex items-center gap-2.5 ${className}`}>
+    <div className={`flex items-center gap-2 ${className}`}>
       <QuizmiLogo size={size} />
-      <span className={`text-xl font-extrabold tracking-tight ${textColor}`}>
-        Quizme
+      <span
+        className={`text-base font-extrabold uppercase leading-none tracking-[0.14em] ${textColor}`}
+      >
+        QUIZIMI
       </span>
     </div>
   );

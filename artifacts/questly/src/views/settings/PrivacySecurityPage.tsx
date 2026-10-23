@@ -7,7 +7,7 @@ export default function PrivacySecurityPage() {
   const { openUserProfile } = useClerk();
 
   return (
-    <div className="min-h-screen bg-background pb-28">
+    <div className="bg-background">
       <div className="max-w-lg mx-auto px-4 pt-6">
         <div className="flex items-center gap-3 mb-6">
           <Link href="/profile" className="w-9 h-9 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-colors">
@@ -52,7 +52,7 @@ export default function PrivacySecurityPage() {
 
         <div className="bg-primary/5 rounded-2xl border border-primary/10 p-4">
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Your data is stored securely in our managed database. Quizme never shares your personal information with third parties.
+            Your data is stored securely in our managed database. QUIZIMI never shares your personal information with third parties.
           </p>
         </div>
       </div>

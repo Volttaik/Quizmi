@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useClerk, useUser } from "@clerk/nextjs";
-import { LayoutDashboard, Library, History, LogOut } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
+import { LayoutDashboard, Library, History } from "lucide-react";
 import { QuizmiWordmark } from "@/components/QuizmiLogo";
 import ThemeToggle from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
@@ -14,31 +14,49 @@ const LINKS = [
   { href: "/history", label: "History", icon: History, authOnly: true },
 ];
 
+function initialsFor(name: string) {
+  return name
+    .trim()
+    .split(/\s+/)
+    .map((part) => part[0] ?? "")
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+}
+
 export default function SiteHeader() {
   const pathname = usePathname() ?? "";
-  const { isLoaded, isSignedIn } = useUser();
-  const { signOut } = useClerk();
+  const { isLoaded, isSignedIn, user } = useUser();
 
   const links = LINKS.filter((link) => !link.authOnly || isSignedIn);
+  const displayName = user?.fullName ?? user?.firstName ?? user?.username ?? "Account";
+  const initials = initialsFor(displayName) || "U";
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 w-full max-w-6xl items-center gap-3 px-4">
-        <Link href={isSignedIn ? "/dashboard" : "/"} className="rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40">
-          <QuizmiWordmark size={30} />
+    <header className="sticky top-0 z-40 border-b border-border bg-card">
+      <div className="mx-auto flex h-14 w-full max-w-6xl items-center gap-2 px-4">
+        <Link
+          href={isSignedIn ? "/dashboard" : "/"}
+          aria-label="QUIZIMI home"
+          className="rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
+        >
+          <QuizmiWordmark size={26} />
         </Link>
 
-        <nav aria-label="Primary" className="ml-4 hidden items-center gap-1 md:flex">
+        <nav aria-label="Primary" className="ml-3 hidden items-center gap-1 md:flex">
           {links.map((link) => {
-            const active = pathname === link.href || pathname.startsWith(`${link.href}/`);
+            const active =
+              pathname === link.href ||
+              pathname.startsWith(`${link.href}/`) ||
+              (link.href === "/history" && pathname.startsWith("/results"));
             return (
               <Link
                 key={link.href}
                 href={link.href}
                 aria-current={active ? "page" : undefined}
-                className={`flex items-center gap-2 rounded-full px-3.5 py-2 text-sm font-semibold transition-colors ${
+                className={`flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors ${
                   active
-                    ? "bg-primary/10 text-primary"
+                    ? "bg-muted text-foreground"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 }`}
               >
@@ -49,29 +67,41 @@ export default function SiteHeader() {
           })}
         </nav>
 
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex min-w-0 items-center gap-2">
           <ThemeToggle />
+
           {!isLoaded ? (
-            <div className="h-9 w-24 animate-pulse rounded-full bg-muted" />
+            <div className="flex items-center gap-2" aria-hidden>
+              <div className="h-8 w-8 rounded-full bg-muted" />
+              <div className="hidden h-3 w-20 rounded bg-muted sm:block" />
+            </div>
           ) : isSignedIn ? (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => signOut({ redirectUrl: "/" })}
-              className="hidden rounded-full text-muted-foreground hover:text-foreground sm:inline-flex"
+            <Link
+              href="/profile"
+              aria-label={`${displayName} — open profile`}
+              className="flex min-w-0 items-center gap-2 rounded-full py-1 pl-1 pr-1 transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:pr-3"
             >
-              <LogOut className="h-4 w-4" />
-              Sign out
-            </Button>
+              <span className="hidden max-w-[9rem] truncate text-sm font-semibold text-foreground sm:block">
+                {displayName}
+              </span>
+              <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-accent text-[11px] font-extrabold text-accent-foreground">
+                {user?.imageUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={user.imageUrl} alt="" className="h-full w-full object-cover" />
+                ) : (
+                  initials
+                )}
+              </span>
+            </Link>
           ) : (
             <>
-              <Link href="/sign-in">
-                <Button variant="ghost" size="sm" className="rounded-full font-semibold">
+              <Link href="/sign-in" className="hidden sm:block">
+                <Button variant="ghost" size="sm" className="rounded-lg font-semibold">
                   Sign in
                 </Button>
               </Link>
               <Link href="/sign-up">
-                <Button size="sm" className="rounded-full font-semibold">
+                <Button size="sm" className="rounded-lg font-semibold">
                   Get started
                 </Button>
               </Link>

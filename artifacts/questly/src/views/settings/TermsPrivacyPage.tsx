@@ -5,7 +5,7 @@ import { ChevronLeft } from "lucide-react";
 
 export default function TermsPrivacyPage() {
   return (
-    <div className="min-h-screen bg-background pb-24 md:pb-12">
+    <div className="bg-background">
       <div className="mx-auto max-w-2xl px-4 py-6">
         <div className="mb-6 flex items-center gap-3">
           <Link
@@ -19,14 +19,14 @@ export default function TermsPrivacyPage() {
         </div>
 
         <div className="space-y-4">
-          <Section title="Using Quizme">
+          <Section title="Using QUIZIMI">
             <p>
-              Quizme provides course-based computer-based testing practice for educational use.
-              Course content is supplied by Quizme and is intended for revision and self-assessment.
+              QUIZIMI provides course-based computer-based testing practice for educational use.
+              Course content is supplied by QUIZIMI and is intended for revision and self-assessment.
             </p>
             <p>
               Results are a practice indicator only. We make no guarantee that performance in a
-              Quizme assessment predicts the outcome of any external examination.
+              QUIZIMI assessment predicts the outcome of any external examination.
             </p>
           </Section>
 
@@ -39,7 +39,7 @@ export default function TermsPrivacyPage() {
             <p>
               Paid courses are purchased through Paystack. Access is granted only after the server
               verifies the transaction. Card details are handled by Paystack and are never stored by
-              Quizme.
+              QUIZIMI.
             </p>
             <p>
               Accounts used to disrupt the service, attempt to extract answer keys, or automate

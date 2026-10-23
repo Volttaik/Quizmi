@@ -7,6 +7,7 @@ import {
   ArrowRight,
   BarChart3,
   BookOpen,
+  CheckCircle2,
   Keyboard,
   ListChecks,
   Search,
@@ -14,7 +15,6 @@ import {
   Timer,
   X,
 } from "lucide-react";
-import SiteHeader from "@/components/SiteHeader";
 import CourseCard from "@/components/CourseCard";
 import { QuizmiWordmark } from "@/components/QuizmiLogo";
 import { Button } from "@/components/ui/button";
@@ -24,13 +24,13 @@ const STEPS = [
   {
     step: "01",
     title: "Choose a course",
-    body: "Browse the course catalogue, read what each course covers, and pick the one you want to prepare for.",
+    body: "Browse the catalogue, read what each course covers, and pick the one you are preparing for.",
     icon: BookOpen,
   },
   {
     step: "02",
     title: "Set up your attempt",
-    body: "Choose how many questions you want to answer and select a timer from 10 to 60 minutes — or take it untimed.",
+    body: "Choose how many questions to answer and select a timer from 10 to 60 minutes — or take it untimed.",
     icon: ListChecks,
   },
   {
@@ -62,6 +62,13 @@ const FEATURES = [
     title: "Built for long assessments",
     body: "Question sets are selected per attempt, so courses with hundreds of questions stay responsive.",
   },
+];
+
+const CUBE_PHRASES = [
+  "Search your course",
+  "Choose a timer",
+  "Answer with focus",
+  "Review every answer",
 ];
 
 type HomePageProps = {
@@ -156,92 +163,148 @@ export default function HomePage({
   }, [courses.length, debounced, loading]);
 
   return (
-    <div className="min-h-screen bg-background">
-      <SiteHeader />
+    <div className="bg-background">
+      {/* ── Hero ─────────────────────────────────────────────────────────── */}
+      <section className="border-b border-border bg-card">
+        <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-12 sm:py-16 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14 lg:py-20">
+          <div>
+            <p className="inline-flex items-center gap-2 rounded-full bg-accent px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-accent-foreground">
+              <BookOpen className="h-3.5 w-3.5" />
+              Welcome to QUIZIMI
+            </p>
 
-      {/* Hero */}
-      <section className="relative overflow-hidden border-b border-border/60">
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -top-40 left-1/2 h-[460px] w-[860px] -translate-x-1/2 rounded-full bg-primary/12 blur-[120px]" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,transparent_18%,hsl(var(--background))_76%)]" />
-        </div>
+            <h1 className="mt-5 text-4xl font-black leading-[1.04] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+              Practice real questions.
+              <span className="block text-primary">Walk in prepared.</span>
+            </h1>
 
-        <div className="relative mx-auto max-w-4xl px-4 pb-16 pt-16 text-center sm:pt-24">
-          <span className="animate-fade-up inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-semibold text-primary">
-            <BookOpen className="h-3.5 w-3.5" />
-            Course-based CBT practice
-          </span>
+            <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+              Course-based practice for computer-based tests. Search the catalogue, choose your
+              timer, and finish with a scored result and a full answer review.
+            </p>
 
-          <h1 className="animate-fade-up mt-6 text-4xl font-black leading-[1.05] tracking-tight text-foreground sm:text-6xl">
-            Welcome to{" "}
-            <span className="bg-gradient-to-r from-[hsl(262,72%,56%)] via-[hsl(285,70%,58%)] to-[hsl(232,80%,58%)] bg-clip-text text-transparent">
-              Quizme
-            </span>
-          </h1>
-
-          <p className="animate-fade-up mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            Find your courses, practise with CBT questions, and track your progress.
-          </p>
-
-          <form
-            className="animate-fade-up mx-auto mt-8 flex max-w-xl flex-col gap-2 sm:flex-row"
-            onSubmit={(event) => {
-              event.preventDefault();
-              setDebounced(search.trim());
-              scrollToCourses();
-            }}
-            role="search"
-          >
-            <div className="relative flex-1">
-              <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <input
-                type="search"
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                placeholder="Search courses, subjects or topics"
-                aria-label="Search courses"
-                className="h-12 w-full rounded-full border border-border/80 bg-card pl-11 pr-11 text-sm font-medium text-foreground shadow-sm outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-primary/50 focus:ring-2 focus:ring-primary/15"
-              />
-              {search && (
-                <button
-                  type="button"
-                  onClick={() => setSearch("")}
-                  aria-label="Clear search"
-                  className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1 text-muted-foreground hover:text-foreground"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              )}
-            </div>
-            <Button type="submit" size="lg" className="h-12 rounded-full px-7 text-sm font-bold">
-              Search courses
-            </Button>
-          </form>
-
-          <div className="animate-fade-up mt-5 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link href={isSignedIn ? "/dashboard" : "/sign-up"}>
-              <Button variant="outline" className="h-11 rounded-full border-border px-6 text-sm font-semibold">
-                {isSignedIn ? "Go to dashboard" : "Create an account"}
+            <form
+              className="mt-8 flex max-w-xl flex-col gap-2 sm:flex-row"
+              onSubmit={(event) => {
+                event.preventDefault();
+                setDebounced(search.trim());
+                scrollToCourses();
+              }}
+              role="search"
+            >
+              <div className="relative flex-1">
+                <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  type="search"
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                  placeholder="Search courses, subjects or topics"
+                  aria-label="Search courses"
+                  className="h-12 w-full rounded-xl border border-border bg-background pl-11 pr-11 text-sm font-medium text-foreground outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-primary/60 focus:ring-2 focus:ring-primary/15"
+                />
+                {search && (
+                  <button
+                    type="button"
+                    onClick={() => setSearch("")}
+                    aria-label="Clear search"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-muted-foreground hover:text-foreground"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+              <Button type="submit" size="lg" className="h-12 rounded-xl px-6 text-sm font-bold">
+                Search courses
               </Button>
-            </Link>
-            <p className="text-xs font-medium text-muted-foreground">
+            </form>
+
+            <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
+              <Link
+                href={isSignedIn ? "/dashboard" : "/sign-up"}
+                className="text-sm font-bold text-primary underline-offset-4 hover:underline"
+              >
+                {isSignedIn ? "Go to your dashboard" : "Create a free account"}
+              </Link>
+              <a
+                href="#how-it-works"
+                className="text-sm font-semibold text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+              >
+                How QUIZIMI works
+              </a>
+            </div>
+
+            <p className="mt-6 flex items-center gap-2 text-xs font-medium text-muted-foreground">
+              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
               Choose your question count and timer · Results saved automatically
             </p>
+          </div>
+
+          {/* Rotating centrepiece */}
+          <div className="flex justify-center lg:justify-end">
+            <div className="w-full max-w-sm overflow-hidden rounded-3xl border border-border bg-muted px-7 py-8 sm:px-9 sm:py-10">
+              <p className="text-center text-[10.5px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+                A calmer way to practise
+              </p>
+
+              <div className="flex justify-center py-10">
+                <div className="cube-stage" aria-hidden="true">
+                  <div className="cube">
+                    <div className="cube-face cube-face-front">
+                      <span>{CUBE_PHRASES[0]}</span>
+                    </div>
+                    <div className="cube-face cube-face-right">
+                      <span>{CUBE_PHRASES[1]}</span>
+                    </div>
+                    <div className="cube-face cube-face-back">
+                      <span>{CUBE_PHRASES[2]}</span>
+                    </div>
+                    <div className="cube-face cube-face-left">
+                      <span>{CUBE_PHRASES[3]}</span>
+                    </div>
+                    <div className="cube-face cube-face-top">
+                      <span className="text-[10px] uppercase tracking-[0.2em]">QUIZIMI</span>
+                    </div>
+                    <div className="cube-face cube-face-bottom">
+                      <span className="text-[10px] uppercase tracking-[0.2em]">CBT</span>
+                    </div>
+                  </div>
+                </div>
+                <span className="sr-only">
+                  QUIZIMI: search your course, choose a timer, answer with focus, and review every
+                  answer.
+                </span>
+              </div>
+
+              <div className="rounded-xl border border-border bg-card px-4 py-3">
+                <p className="text-center text-sm font-bold leading-snug text-card-foreground">
+                  One course. One timer. One clear score.
+                </p>
+                <p className="mt-1 text-center text-xs leading-relaxed text-muted-foreground">
+                  Built around the subjects you actually study.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Courses */}
-      <section ref={resultsRef} id="courses" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-16 sm:py-20">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
+      {/* ── Course discovery ─────────────────────────────────────────────── */}
+      <section
+        ref={resultsRef}
+        id="courses"
+        className="mx-auto max-w-6xl scroll-mt-20 px-4 py-14 sm:py-16"
+      >
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div className="max-w-2xl">
+            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-primary">
               {isFiltering ? "Search results" : "Course catalogue"}
             </p>
             <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
-              {isFiltering && debounced ? `Courses matching “${debounced}”` : "Available courses"}
+              {isFiltering && debounced
+                ? `Courses matching “${debounced}”`
+                : "Find the course you are preparing for"}
             </h2>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
               {isFiltering
                 ? "Every result comes directly from the course catalogue."
                 : "Pick a course to see its assessment details, price and available questions."}
@@ -258,10 +321,10 @@ export default function HomePage({
                 type="button"
                 onClick={() => setSubject(option)}
                 aria-pressed={subject === option}
-                className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors ${
+                className={`rounded-lg border px-3.5 py-1.5 text-xs font-semibold transition-colors ${
                   subject === option
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-border/70 bg-card text-muted-foreground hover:text-foreground"
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border bg-card text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {option === "all" ? "All subjects" : option}
@@ -272,12 +335,12 @@ export default function HomePage({
 
         <div className="mt-8">
           {error ? (
-            <div className="rounded-2xl border border-destructive/30 bg-destructive/5 p-8 text-center">
+            <div className="rounded-2xl border border-destructive/30 bg-card p-8 text-center">
               <p className="text-sm font-semibold text-destructive">{error}</p>
               <Button
                 variant="outline"
                 size="sm"
-                className="mt-4 rounded-full"
+                className="mt-4 rounded-lg"
                 onClick={() => setReloadKey((key) => key + 1)}
               >
                 Try again
@@ -290,8 +353,8 @@ export default function HomePage({
               ))}
             </div>
           ) : courses.length === 0 ? (
-            <div className="rounded-2xl border border-border/70 bg-card p-12 text-center">
-              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-muted">
+            <div className="rounded-2xl border border-border bg-card p-12 text-center">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-muted">
                 <BookOpen className="h-5 w-5 text-muted-foreground" />
               </div>
               <h3 className="text-base font-bold text-foreground">
@@ -306,7 +369,7 @@ export default function HomePage({
                 <Button
                   variant="outline"
                   size="sm"
-                  className="mt-5 rounded-full"
+                  className="mt-5 rounded-lg"
                   onClick={() => {
                     setSearch("");
                     setDebounced("");
@@ -325,98 +388,128 @@ export default function HomePage({
                 ))}
               </div>
               <div className="mt-8 flex justify-center">
-                <Link href="/courses">
-                  <Button variant="outline" className="rounded-full px-6">
+                <Button asChild variant="outline" className="rounded-lg px-6">
+                  <Link href="/courses">
                     Browse the full catalogue
                     <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
               </div>
             </>
           )}
         </div>
       </section>
 
-      {/* How it works */}
-      <section className="border-y border-border/60 bg-muted/30">
-        <div className="mx-auto max-w-6xl px-4 py-16 sm:py-20">
-          <div className="max-w-2xl">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">How Quizme works</p>
+      {/* ── How it works ─────────────────────────────────────────────────── */}
+      <section id="how-it-works" className="scroll-mt-20 border-y border-border bg-muted">
+        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:py-16 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+          <div className="lg:sticky lg:top-24 lg:self-start">
+            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-primary">
+              How QUIZIMI works
+            </p>
             <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
-              Three steps from study to score
+              Three steps. One focused loop.
             </h2>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              No dashboards to configure first. Open a course, set the conditions for this attempt,
+              and the rest is handled by the assessment itself.
+            </p>
+            <Button asChild className="mt-6 rounded-lg">
+              <Link href="/courses">
+                Open the catalogue
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
           </div>
 
-          <div className="mt-10 grid gap-5 sm:grid-cols-3">
+          <ol className="space-y-0">
             {STEPS.map((step) => (
-              <div key={step.step} className="rounded-2xl border border-border/70 bg-card p-5">
-                <div className="flex items-center justify-between">
-                  <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                    <step.icon className="h-5 w-5" strokeWidth={1.9} />
+              <li
+                key={step.step}
+                className="grid grid-cols-[3rem_1fr] gap-4 border-t border-border py-6 first:border-t-0 first:pt-0 last:pb-0 sm:grid-cols-[4rem_1fr] sm:gap-6"
+              >
+                <span className="text-2xl font-black leading-none text-primary/35 sm:text-3xl">
+                  {step.step}
+                </span>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <step.icon className="h-4 w-4 text-primary" strokeWidth={2} />
+                    <h3 className="text-base font-bold text-foreground">{step.title}</h3>
                   </div>
-                  <span className="text-2xl font-black text-primary/20">{step.step}</span>
+                  <p className="mt-1.5 max-w-lg text-sm leading-relaxed text-muted-foreground">
+                    {step.body}
+                  </p>
                 </div>
-                <h3 className="mt-4 text-sm font-bold text-card-foreground">{step.title}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{step.body}</p>
-              </div>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
       </section>
 
-      {/* Features */}
-      <section className="mx-auto max-w-6xl px-4 py-16 sm:py-20">
+      {/* ── Exam-ready features ──────────────────────────────────────────── */}
+      <section className="mx-auto max-w-6xl px-4 py-14 sm:py-16">
         <div className="max-w-2xl">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Built for examinations</p>
+          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-primary">
+            Built for examinations
+          </p>
           <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
-            A focused workspace for CBT practice
+            The details that matter on exam day
           </h2>
         </div>
 
-        <div className="mt-8 grid gap-4 sm:grid-cols-2">
+        <div className="mt-9 grid gap-x-12 gap-y-8 sm:grid-cols-2">
           {FEATURES.map((feature) => (
-            <div
-              key={feature.title}
-              className="rounded-2xl border border-border/70 bg-card p-5 transition-shadow hover:shadow-md"
-            >
-              <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <feature.icon className="h-5 w-5" strokeWidth={1.9} />
+            <div key={feature.title} className="border-t border-border pt-5">
+              <div className="flex items-center gap-2.5">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent text-accent-foreground">
+                  <feature.icon className="h-4 w-4" strokeWidth={1.9} />
+                </span>
+                <h3 className="text-sm font-bold text-foreground">{feature.title}</h3>
               </div>
-              <h3 className="text-sm font-bold text-card-foreground">{feature.title}</h3>
-              <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{feature.body}</p>
+              <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">
+                {feature.body}
+              </p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="mx-auto max-w-6xl px-4 pb-20">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[hsl(262,72%,52%)] via-[hsl(272,68%,48%)] to-[hsl(240,70%,46%)] px-6 py-12 text-center sm:px-12">
-          <div className="pointer-events-none absolute -right-10 -top-16 h-56 w-56 rounded-full bg-white/10 blur-2xl" />
-          <h2 className="relative text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-            Pick a course and start practising
-          </h2>
-          <p className="relative mx-auto mt-3 max-w-md text-sm leading-relaxed text-white/75">
-            Open a course, set your question count and timer, and take a computer-based assessment
-            with a full result report at the end.
-          </p>
-          <Link href="/courses" className="relative mt-7 inline-block">
+      {/* ── Call to action ───────────────────────────────────────────────── */}
+      <section className="mx-auto max-w-6xl px-4 pb-16">
+        <div className="relative overflow-hidden rounded-3xl bg-brand px-6 py-12 text-center sm:px-12">
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -bottom-8 left-1/2 -translate-x-1/2 select-none text-[7rem] font-black uppercase leading-none tracking-tighter text-white/10 sm:text-[10rem]"
+          >
+            QUIZIMI
+          </span>
+          <div className="relative">
+            <h2 className="text-2xl font-extrabold tracking-tight text-brand-foreground sm:text-4xl">
+              Pick a course and start practising
+            </h2>
+            <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-brand-foreground/80">
+              Open a course, set your question count and timer, and take a computer-based
+              assessment with a full result report at the end.
+            </p>
             <Button
+              asChild
               size="lg"
-              className="h-12 rounded-full bg-white px-8 text-sm font-bold text-[hsl(262,72%,42%)] hover:bg-white/90"
+              className="mt-7 h-12 rounded-xl border-0 bg-card px-8 text-sm font-bold text-foreground hover:bg-muted"
             >
-              Explore courses
-              <ArrowRight className="h-4 w-4" />
+              <Link href="/courses">
+                Explore courses
+                <ArrowRight className="h-4 w-4" />
+              </Link>
             </Button>
-          </Link>
+          </div>
         </div>
       </section>
 
-      <footer className="border-t border-border/60">
+      <footer className="border-t border-border bg-card">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 py-8 sm:flex-row">
-          <QuizmiWordmark size={26} />
+          <QuizmiWordmark size={24} />
           <p className="text-xs text-muted-foreground">
-            Quizme · Course-based computer-based testing
+            QUIZIMI · Course-based computer-based testing
           </p>
           <div className="flex items-center gap-5 text-xs font-semibold text-muted-foreground">
             <Link href="/courses" className="hover:text-foreground">

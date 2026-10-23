@@ -8,6 +8,8 @@ const isPublicRoute = createRouteMatcher([
   "/courses(.*)",
   "/quizzes(.*)",
   "/offline",
+  "/manifest.json",
+  "/robots.txt",
   "/api/courses(.*)",
   "/api/payments/callback(.*)",
   "/api/payments/webhook(.*)",

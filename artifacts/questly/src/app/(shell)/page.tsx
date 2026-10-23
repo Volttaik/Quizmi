@@ -3,6 +3,9 @@ import { getSessionUser } from "@/lib/auth";
 import { listPublishedCourses, listSubjects } from "@/lib/courses";
 import type { CourseSummary } from "@/lib/types";
 
+// Course access and purchase state depend on the signed-in learner.
+export const dynamic = "force-dynamic";
+
 export default async function Page() {
   let initialCourses: CourseSummary[] = [];
   let initialSubjects: string[] = [];

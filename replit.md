@@ -1,4 +1,4 @@
-# Quizme
+# QUIZIMI
 
 A course-based computer-based testing platform. Learners browse a real course
 catalogue, purchase access through Paystack, choose how many questions to
@@ -51,7 +51,8 @@ SQLite, in-memory or mock fallback.
 - `artifacts/questly/` — Next.js app (`@workspace/questly`)
   - `src/views/` — home, course catalogue, course detail/launch, dashboard,
     exam runner, result, history, profile
-  - `src/app/courses/` — public course routes
+  - `src/app/(shell)/` — shared header/bottom-nav shell for primary screens
+  - `src/app/(shell)/courses/` — public course routes
   - `src/app/api/courses/` — course listing and detail
   - `src/app/api/attempts/` — start/resume, draft saves, heartbeat, departure
     events, submission and results
@@ -107,8 +108,12 @@ SQLite, in-memory or mock fallback.
 
 ## Product notes
 
-- Homepage: real course search, subject filters, course cards, empty/error/loading
-  states, no simulated exams or invented statistics.
+- Homepage: split hero with a functional course search, a lightweight rotating
+  cube centrepiece, subject filters, real course cards, and empty/error/loading
+  states — no simulated exams or invented statistics.
+- Navigation: the `(shell)` layout keeps one header and one bottom navigation
+  mounted across home, courses, course details, dashboard, history, profile,
+  results and settings. The exam runner keeps its dedicated layout.
 - Course page: description, price, purchase state, question count, timer choice
   (10–60 minutes or unlimited) and start/resume.
 - Exam runner: question map with pagination, keyboard shortcuts, incremental

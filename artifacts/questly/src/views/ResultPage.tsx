@@ -88,7 +88,7 @@ export default function ResultPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
+      <div className="flex items-center justify-center py-24">
         <Loader2 className="h-7 w-7 animate-spin text-primary" />
       </div>
     );
@@ -96,7 +96,7 @@ export default function ResultPage() {
 
   if (inProgress) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="bg-background">
         <div className="mx-auto flex max-w-md flex-col items-center px-4 py-24 text-center">
           <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
             <Clock className="h-6 w-6" />
@@ -115,7 +115,7 @@ export default function ResultPage() {
 
   if (error || !result) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="bg-background">
         <div className="mx-auto flex max-w-md flex-col items-center px-4 py-24 text-center">
           <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-muted">
             <XCircle className="h-6 w-6 text-muted-foreground" />
@@ -137,7 +137,7 @@ export default function ResultPage() {
   const isTerminated = result.status === "terminated";
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background">
       <main className="mx-auto max-w-3xl px-4 py-8">
         <Link
           href="/history"
@@ -149,10 +149,8 @@ export default function ResultPage() {
 
         {/* Score hero */}
         <section
-          className={`mt-5 overflow-hidden rounded-3xl border p-6 ${
-            result.passed
-              ? "border-emerald-500/25 bg-gradient-to-br from-emerald-500/10 via-card to-card"
-              : "border-rose-500/25 bg-gradient-to-br from-rose-500/10 via-card to-card"
+          className={`mt-5 overflow-hidden rounded-3xl border bg-card p-6 ${
+            result.passed ? "border-emerald-500/35" : "border-rose-500/35"
           }`}
         >
           <div className="flex flex-wrap items-start justify-between gap-4">

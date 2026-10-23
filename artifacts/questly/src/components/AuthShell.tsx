@@ -12,41 +12,46 @@ export default function AuthShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-background lg:grid lg:grid-cols-2">
       {/* Brand panel */}
-      <aside className="relative hidden overflow-hidden bg-gradient-to-br from-[hsl(262,72%,42%)] via-[hsl(272,68%,38%)] to-[hsl(240,65%,30%)] p-12 lg:flex lg:flex-col lg:justify-between">
-        <div className="pointer-events-none absolute -right-16 -top-16 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-24 -left-16 h-80 w-80 rounded-full bg-black/20 blur-3xl" />
+      <aside className="relative hidden overflow-hidden bg-brand p-12 lg:flex lg:flex-col lg:justify-between">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full border border-white/15"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -bottom-32 -left-20 h-96 w-96 rounded-full border border-white/10"
+        />
 
-        <Link href="/" className="relative">
-          <div className="flex items-center gap-2.5">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="" className="h-9 w-9 rounded-xl" />
-            <span className="text-xl font-extrabold tracking-tight text-white">Quizme</span>
-          </div>
+        <Link href="/" className="relative w-fit rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60">
+          <QuizmiWordmark variant="dark" size={30} />
         </Link>
 
         <div className="relative max-w-md">
-          <h1 className="text-4xl font-black leading-[1.1] tracking-tight text-white">
+          <h1 className="text-4xl font-black leading-[1.1] tracking-tight text-brand-foreground">
             Your courses.
             <br />
             Real exam practice.
           </h1>
-          <p className="mt-4 text-sm leading-relaxed text-white/70">
+          <p className="mt-4 text-sm leading-relaxed text-brand-foreground/75">
             A focused CBT workspace: choose a course, set your question count and timer, and get a
             detailed report on every attempt.
           </p>
 
           <ul className="mt-8 space-y-3">
             {POINTS.map((point) => (
-              <li key={point} className="flex items-start gap-2.5 text-sm text-white/85">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-300" />
+              <li
+                key={point}
+                className="flex items-start gap-2.5 text-sm text-brand-foreground/90"
+              >
+                <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0 text-brand-foreground" />
                 {point}
               </li>
             ))}
           </ul>
         </div>
 
-        <p className="relative text-xs text-white/45">
-          Course-based computer-based testing
+        <p className="relative text-xs text-brand-foreground/70">
+          QUIZIMI · Course-based computer-based testing
         </p>
       </aside>
 
