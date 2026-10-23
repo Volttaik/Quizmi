@@ -20,21 +20,21 @@ export default function ScoreTrendChart({
       <AreaChart data={data} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
         <defs>
           <linearGradient id="scoreFill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="hsl(262, 72%, 58%)" stopOpacity={0.35} />
-            <stop offset="100%" stopColor="hsl(262, 72%, 58%)" stopOpacity={0} />
+            <stop offset="0%" stopColor="var(--accent)" stopOpacity={0.32} />
+            <stop offset="100%" stopColor="var(--accent)" stopOpacity={0} />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
         <XAxis
           dataKey="attempt"
-          tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+          tick={{ fontSize: 11, fill: "var(--muted)" }}
           axisLine={false}
           tickLine={false}
         />
         <YAxis
           domain={[0, 100]}
           ticks={[0, 25, 50, 75, 100]}
-          tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+          tick={{ fontSize: 11, fill: "var(--muted)" }}
           axisLine={false}
           tickLine={false}
           width={40}
@@ -44,19 +44,19 @@ export default function ScoreTrendChart({
           labelFormatter={(label: number) => `Attempt ${label}`}
           contentStyle={{
             borderRadius: 12,
-            border: "1px solid hsl(var(--border))",
-            background: "hsl(var(--popover))",
-            color: "hsl(var(--popover-foreground))",
+            border: "1px solid var(--border)",
+            background: "var(--overlay)",
+            color: "var(--overlay-foreground)",
             fontSize: 12,
           }}
         />
         <Area
           type="monotone"
           dataKey="percentage"
-          stroke="hsl(262, 72%, 58%)"
+          stroke="var(--accent)"
           strokeWidth={2}
           fill="url(#scoreFill)"
-          dot={{ r: 3, fill: "hsl(262, 72%, 58%)" }}
+          dot={{ r: 3, fill: "var(--accent)" }}
           activeDot={{ r: 5 }}
         />
       </AreaChart>

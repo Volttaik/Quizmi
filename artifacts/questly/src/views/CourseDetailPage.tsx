@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
+import { Alert, Button } from "@heroui/react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -16,12 +17,11 @@ import {
   ListCheck,
   Lock,
   Play,
-  ShoppingBag,
   TargetDart,
   TriangleExclamation,
 } from "@gravity-ui/icons";
-import { Button } from "@/components/ui/button";
-import { difficultyStyle, formatDate, formatPrice } from "@/lib/format";
+import ButtonLink from "@/components/ui/ButtonLink";
+import { formatDate, formatPrice } from "@/lib/format";
 import type { CourseDetail } from "@/lib/types";
 
 type Notice = { tone: "success" | "error"; message: string };
@@ -129,383 +129,401 @@ export default function CourseDetailPage() {
 
   if (loading) {
     return (
-      <div className="bg-background">
-        <div className="mx-auto max-w-5xl px-4 py-8">
-          <div className="skeleton h-6 w-28 rounded-lg" />
-          <div className="skeleton mt-5 h-48 rounded-2xl sm:h-64" />
-          <div className="skeleton mt-5 h-10 w-64 rounded-lg" />
-          <div className="mt-4 grid gap-0.5 sm:grid-cols-2 lg:grid-cols-4">
-            {Array.from({ length: 4 }).map((_, index) => (
-              <div key={index} className="skeleton h-20 rounded-xl" />
-            ))}
+      <main className="mx-auto max-w-6xl px-5 py-8 sm:px-6 lg:px-8">
+        <div className="skeleton h-5 w-24 rounded-lg" />
+        <div className="skeleton mt-5 h-[22rem] rounded-[2rem]" />
+        <div className="mt-8 grid gap-8 lg:grid-cols-[1.4fr_0.6fr]">
+          <div className="space-y-4">
+            <div className="skeleton h-8 w-2/3 rounded-xl" />
+            <div className="skeleton h-4 w-full rounded-lg" />
+            <div className="skeleton h-4 w-5/6 rounded-lg" />
           </div>
+          <div className="skeleton h-72 rounded-[1.75rem]" />
         </div>
-      </div>
+      </main>
     );
   }
 
   if (notFound || (!course && !error)) {
     return (
-      <div className="bg-background">
-        <div className="mx-auto flex max-w-md flex-col items-center px-4 py-24 text-center">
-          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-muted">
-            <CircleInfo className="h-6 w-6 text-muted-foreground" />
-          </div>
-          <h1 className="text-xl font-extrabold text-foreground">Course unavailable</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            This course may have been unpublished or the link is incorrect.
-          </p>
-          <Button asChild className="mt-6 rounded-full">
-            <Link href="/courses">Back to courses</Link>
-          </Button>
-        </div>
-      </div>
+      <main className="mx-auto flex max-w-md flex-col items-center px-5 py-24 text-center">
+        <span className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-secondary text-muted-foreground">
+          <CircleInfo className="h-6 w-6" />
+        </span>
+        <h1 className="text-display-md text-foreground">Course unavailable</h1>
+        <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">
+          This course may have been unpublished or the link is incorrect.
+        </p>
+        <ButtonLink href="/courses" className="mt-6 rounded-full">
+          Back to courses
+        </ButtonLink>
+      </main>
     );
   }
 
   if (error && !course) {
     return (
-      <div className="bg-background">
-        <div className="mx-auto flex max-w-md flex-col items-center px-4 py-24 text-center">
-          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-destructive/10">
-            <TriangleExclamation className="h-6 w-6 text-destructive" />
-          </div>
-          <h1 className="text-xl font-extrabold text-foreground">Could not load this course</h1>
-          <p className="mt-2 text-sm text-muted-foreground">{error}</p>
-          <Button variant="outline" className="mt-6 rounded-full" onClick={loadCourse}>
-            Try again
-          </Button>
-        </div>
-      </div>
+      <main className="mx-auto flex max-w-md flex-col items-center px-5 py-24 text-center">
+        <span className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-danger-soft text-danger-soft-foreground">
+          <TriangleExclamation className="h-6 w-6" />
+        </span>
+        <h1 className="text-display-md text-foreground">Could not load this course</h1>
+        <p className="mt-2.5 text-sm text-muted-foreground">{error}</p>
+        <Button variant="outline" className="mt-6 rounded-full" onPress={loadCourse}>
+          Try again
+        </Button>
+      </main>
     );
   }
 
   if (!course) return null;
 
-  const difficulty = difficultyStyle(course.difficulty);
   const locked = !course.hasAccess;
   const exhausted = course.attemptsRemaining !== null && course.attemptsRemaining <= 0;
   const resumeId = course.inProgressAttemptId;
   const canBegin = !locked && !exhausted && course.questionCount > 0;
+  const actionLabel = course.questionCount === 0
+    ? "No questions yet"
+    : exhausted
+      ? "No attempts left"
+      : "Assessment unavailable";
+
+  const facts = [
+    {
+      icon: ListCheck,
+      label: "Question bank",
+      value: `${course.questionCount.toLocaleString()} question${course.questionCount === 1 ? "" : "s"}`,
+    },
+    {
+      icon: Clock,
+      label: "Timing",
+      value:
+        course.durationMinutes !== null
+          ? `${course.durationMinutes} min suggested`
+          : "10–60 min or untimed",
+    },
+    { icon: TargetDart, label: "Pass mark", value: `${course.passScore}%` },
+    {
+      icon: BookOpen,
+      label: "Attempts",
+      value: course.maxAttempts
+        ? `${course.attemptsUsed} of ${course.maxAttempts} used`
+        : `${course.attemptsUsed} taken · unlimited`,
+    },
+  ];
 
   return (
-    <div className="bg-background">
-      <main className="mx-auto max-w-5xl px-4 py-6 sm:py-8">
+    <div className="bg-background pb-4">
+      <main className="mx-auto max-w-6xl px-5 pb-12 pt-6 sm:px-6 lg:px-8">
         <Link
           href="/courses"
-          className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
+          className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-muted-foreground transition-colors hover:text-foreground"
         >
           <ArrowLeft className="h-4 w-4" />
-          Courses
+          All courses
         </Link>
 
         {notice && (
-          <p
-            className={`mt-4 flex items-start gap-2 rounded-xl p-3 text-xs font-semibold ${
-              notice.tone === "success"
-                ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
-                : "bg-destructive/10 text-destructive"
-            }`}
+          <Alert
+            status={notice.tone === "success" ? "success" : "danger"}
+            className="mt-4"
           >
-            {notice.tone === "success" ? (
-              <CircleCheck className="mt-0.5 h-4 w-4 flex-shrink-0" />
-            ) : (
-              <TriangleExclamation className="mt-0.5 h-4 w-4 flex-shrink-0" />
-            )}
-            {notice.message}
-          </p>
+            <Alert.Indicator />
+            <Alert.Content>
+              <Alert.Title>
+                {notice.tone === "success" ? "Payment confirmed" : "Payment not confirmed"}
+              </Alert.Title>
+              <Alert.Description>{notice.message}</Alert.Description>
+            </Alert.Content>
+          </Alert>
         )}
 
-        {/* Course banner */}
-        <div className="mt-4 overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm">
+        {/* ── Editorial course hero ────────────────────────────────────────── */}
+        <section className="relative mt-4 overflow-hidden rounded-[2rem] bg-[var(--background-inverse)]">
           {course.coverImageUrl ? (
-            <div className="relative h-40 w-full bg-muted sm:h-56">
-              {/* Course artwork may be hosted on any origin, so it is rendered as a plain image. */}
+            <>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={course.coverImageUrl}
                 alt={`${course.title} course banner`}
-                className="h-full w-full object-cover"
+                className="absolute inset-0 h-full w-full object-cover"
               />
-            </div>
+              <div
+                aria-hidden
+                className="absolute inset-0 bg-gradient-to-t from-[#160f2e]/95 via-[#160f2e]/65 to-[#160f2e]/20"
+              />
+            </>
           ) : (
-            <div className="flex h-36 w-full items-end bg-gradient-to-br from-primary/85 via-primary/70 to-brand p-5 sm:h-48 sm:p-6">
-              <div className="flex items-center gap-3 text-primary-foreground">
-                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/15">
-                  <GraduationCap className="h-6 w-6" />
-                </span>
-                <span className="text-sm font-bold uppercase tracking-[0.18em]">
-                  {course.code ?? course.subject ?? "Course"}
-                </span>
-              </div>
+            <div aria-hidden className="absolute inset-0 brand-gradient">
+              <div className="absolute -right-16 -top-16 h-72 w-72 rounded-full border border-white/15" />
+              <div className="absolute -bottom-20 left-10 h-64 w-64 rounded-full border border-white/10" />
             </div>
           )}
-        </div>
 
-        <div className="mt-5 flex flex-wrap items-center gap-2">
-          {course.code && (
-            <span className="rounded-md bg-accent px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-accent-foreground">
-              {course.code}
-            </span>
-          )}
-          <span
-            className={`rounded-md border px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide ${difficulty.className}`}
-          >
-            {difficulty.label}
-          </span>
-          {course.subject && (
-            <span className="rounded-md bg-muted px-2.5 py-1 text-[11px] font-semibold text-muted-foreground">
-              {course.subject}
-            </span>
-          )}
-          {course.isPurchased && (
-            <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/10 px-2.5 py-1 text-[11px] font-semibold text-emerald-700 dark:text-emerald-400">
-              <Check className="h-3 w-3" /> Purchased
-            </span>
-          )}
-          {course.isFree && (
-            <span className="rounded-md bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary">
-              Free course
-            </span>
-          )}
-          {resumeId && (
-            <span className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary">
-              <Play className="h-3 w-3" /> In progress
-            </span>
-          )}
-        </div>
-
-        <h1 className="mt-3 text-2xl font-extrabold leading-tight tracking-tight text-foreground sm:text-4xl">
-          {course.title}
-        </h1>
-
-        {/* Primary action sits directly beneath the course heading. */}
-        {locked ? (
-          <div className="mt-6 flex flex-col gap-3 rounded-2xl border border-primary/25 bg-card p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-5">
-            <div className="flex items-start gap-3">
-              <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <Lock className="h-5 w-5" />
-              </span>
-              <div>
-                <p className="text-sm font-bold text-foreground">Unlock this assessment</p>
-                <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
-                  One-time payment of {formatPrice(course.priceKobo, course.currency)}. Access is
-                  granted after the server verifies your payment.
-                </p>
-              </div>
-            </div>
-            <Button
-              onClick={buyCourse}
-              disabled={buying || !isLoaded || course.questionCount === 0}
-              className="h-11 w-full rounded-lg text-sm font-bold sm:w-auto sm:px-6"
-            >
-              {buying ? "Starting checkout…" : isSignedIn ? "Buy this course" : "Sign in to buy"}
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          </div>
-        ) : (
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <Button
-              asChild={canBegin}
-              disabled={!canBegin}
-              className="h-12 rounded-lg px-7 text-sm font-bold"
-            >
-              {canBegin ? (
-                <Link href={`/courses/${course.slug}/configure`}>
-                  Next
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              ) : (
-                <span>
-                  {course.questionCount === 0
-                    ? "No questions yet"
-                    : exhausted
-                      ? "No attempts left"
-                      : "Assessment unavailable"}
+          <div className="relative flex min-h-[20rem] flex-col justify-end px-6 pb-8 pt-24 sm:min-h-[24rem] sm:px-9 sm:pb-10">
+            <div className="flex flex-wrap items-center gap-2">
+              {course.code && (
+                <span className="rounded-full bg-white/95 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[#241f33]">
+                  {course.code}
                 </span>
               )}
-            </Button>
+              {course.subject && (
+                <span className="rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur">
+                  {course.subject}
+                </span>
+              )}
+              {course.isFree && (
+                <span className="rounded-full bg-[var(--brand-mint)] px-3 py-1 text-[11px] font-bold text-[#10231f]">
+                  Free course
+                </span>
+              )}
+              {course.isPurchased && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur">
+                  <CircleCheck className="h-3.5 w-3.5" /> In your library
+                </span>
+              )}
+              {resumeId && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur">
+                  <Play className="h-3 w-3" /> Attempt in progress
+                </span>
+              )}
+            </div>
 
-            {resumeId && (
-              <Button asChild variant="outline" className="h-12 rounded-lg px-6 text-sm font-bold">
-                <Link href={`/exam/${resumeId}`}>
-                  <Play className="h-4 w-4" />
-                  Resume assessment
-                </Link>
-              </Button>
+            <h1 className="mt-4 max-w-3xl text-display-lg text-white">{course.title}</h1>
+
+            {course.description && (
+              <p className="mt-3 max-w-2xl text-[14px] leading-relaxed text-white/75 sm:text-[15px]">
+                {course.description.split("\n")[0]}
+              </p>
             )}
 
-            <p className="text-xs font-medium text-muted-foreground sm:ml-2">
-              {exhausted
-                ? `You have used all ${course.maxAttempts} attempts for this course.`
-                : "Choose your duration, question count and result preference next."}
-            </p>
-          </div>
-        )}
-
-        {course.description && (
-          <p className="mt-6 max-w-3xl whitespace-pre-line text-sm leading-relaxed text-muted-foreground sm:text-base">
-            {course.description}
-          </p>
-        )}
-
-        {error && (
-          <p className="mt-4 flex items-start gap-2 rounded-xl bg-destructive/10 p-3 text-xs font-semibold text-destructive">
-            <TriangleExclamation className="mt-0.5 h-4 w-4 flex-shrink-0" />
-            {error}
-          </p>
-        )}
-
-        {!course.paymentConfigured && locked && course.questionCount > 0 && (
-          <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-            Online checkout is not configured on this deployment yet. Add the Paystack server key to
-            enable purchases.
-          </p>
-        )}
-
-        {/* Course information */}
-        <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {[
-            { icon: ListCheck, label: "Questions available", value: course.questionCount.toLocaleString() },
-            {
-              icon: Clock,
-              label: "Duration choice",
-              value:
-                course.durationMinutes !== null
-                  ? `${course.durationMinutes} min suggested`
-                  : "10–60 min or unlimited",
-            },
-            { icon: TargetDart, label: "Pass mark", value: `${course.passScore}%` },
-            {
-              icon: BookOpen,
-              label: "Attempts",
-              value: course.maxAttempts
-                ? `${course.attemptsUsed} of ${course.maxAttempts} used`
-                : `${course.attemptsUsed} taken`,
-            },
-          ].map((item) => (
-            <div
-              key={item.label}
-              className="rounded-xl border border-border/70 bg-card p-3.5 shadow-sm"
-            >
-              <item.icon className="h-4 w-4 text-primary" />
-              <p className="mt-2.5 text-sm font-extrabold leading-tight text-card-foreground">
-                {item.value}
-              </p>
-              <p className="mt-0.5 text-[11px] font-semibold text-muted-foreground">{item.label}</p>
-            </div>
-          ))}
-        </div>
-
-        {course.attemptsUsed > 0 && (
-          <div className="mt-4 grid grid-cols-3 gap-3 rounded-xl border border-border/70 bg-card p-4 text-center">
-            <div>
-              <p className="text-lg font-extrabold text-foreground">{course.bestPercentage ?? 0}%</p>
-              <p className="text-[11px] font-semibold text-muted-foreground">Your best</p>
-            </div>
-            <div>
-              <p className="text-lg font-extrabold text-foreground">{course.lastPercentage ?? 0}%</p>
-              <p className="text-[11px] font-semibold text-muted-foreground">Last score</p>
-            </div>
-            <div>
-              <p className="text-lg font-extrabold text-foreground">{course.averagePercentage ?? 0}%</p>
-              <p className="text-[11px] font-semibold text-muted-foreground">All takers</p>
+            <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-[12px] font-medium text-white/80">
+              <span className="inline-flex items-center gap-1.5">
+                <ListCheck className="h-3.5 w-3.5" />
+                {course.questionCount.toLocaleString()} questions
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <Clock className="h-3.5 w-3.5" />
+                {course.durationMinutes !== null ? `${course.durationMinutes} min default` : "Choose your timer"}
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <TargetDart className="h-3.5 w-3.5" />
+                {course.passScore}% to pass
+              </span>
             </div>
           </div>
-        )}
+        </section>
 
-        <div className="mt-7 grid gap-4 lg:grid-cols-2">
-          <section className="rounded-2xl border border-border/70 bg-card p-5">
-            <h2 className="text-base font-bold text-card-foreground">How the assessment runs</h2>
-            <ul className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
-              <li className="flex gap-3">
-                <CircleCheck className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-500" />
-                Answers are validated and scored on the server. The browser never sees the answer
-                key for an attempt that has not been submitted.
-              </li>
-              <li className="flex gap-3">
-                <Clock className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
-                Choose 10–60 minutes or unlimited time, then choose how many of the{" "}
-                {course.questionCount.toLocaleString()} questions to attempt.
-              </li>
-              <li className="flex gap-3">
-                <Play className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
-                Instant Results gives feedback after each answer. Results at the End keeps answers
-                hidden until you finish.
-              </li>
-              <li className="flex gap-3">
-                <TriangleExclamation className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-500" />
-                Leaving the assessment is recorded. After three departures the attempt ends and
-                cannot resume; your saved answers are scored.
-              </li>
-            </ul>
-          </section>
-
-          <section className="rounded-2xl border border-border/70 bg-card p-5">
-            <h2 className="text-base font-bold text-card-foreground">
-              {locked ? "What you unlock" : "What you get"}
-            </h2>
-            <ul className="mt-4 space-y-2.5 text-sm text-muted-foreground">
-              {[
-                "Access to the full question bank for this course",
-                "Choose the number of questions for each attempt",
-                "Timed or unlimited computer-based practice",
-                "Saved progress if the page refreshes",
-                "A dedicated exam screen with answer review and explanations",
-                "Attempt history and performance analytics",
-              ].map((item) => (
-                <li key={item} className="flex items-start gap-2.5">
-                  <CircleCheck className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-500" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </section>
-        </div>
-
-        {locked && (
-          <section className="mt-4 rounded-2xl border border-border/70 bg-card p-5">
-            <h2 className="flex items-center gap-2 text-base font-bold text-card-foreground">
-              <ShoppingBag className="h-4 w-4 text-primary" />
-              Course access
-            </h2>
-            <div className="mt-3 flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <p className="text-2xl font-black tracking-tight text-foreground">
-                  {formatPrice(course.priceKobo, course.currency)}
+        <div className="mt-8 grid items-start gap-8 lg:grid-cols-[1.45fr_0.55fr] lg:gap-12">
+          {/* ── Main column ─────────────────────────────────────────────────── */}
+          <div>
+            {course.description && (
+              <section>
+                <h2 className="font-display text-[1.35rem] font-semibold text-foreground">
+                  About this course
+                </h2>
+                <p className="mt-3 whitespace-pre-line text-[14.5px] leading-[1.8] text-muted-foreground">
+                  {course.description}
                 </p>
-                <p className="mt-0.5 text-xs font-medium text-muted-foreground">
-                  One-time payment · access verified on the server
-                </p>
-              </div>
-              <ul className="space-y-1.5 text-xs text-muted-foreground">
-                <li className="flex items-center gap-2">
-                  <Check className="h-3.5 w-3.5 text-emerald-500" /> Full question bank
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="h-3.5 w-3.5 text-emerald-500" />
-                  {course.maxAttempts
-                    ? `${course.maxAttempts} attempt${course.maxAttempts === 1 ? "" : "s"} included`
-                    : "Unlimited practice attempts"}
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="h-3.5 w-3.5 text-emerald-500" /> Results and history stay in your
-                  account
-                </li>
+              </section>
+            )}
+
+            <section className="mt-10">
+              <h2 className="font-display text-[1.35rem] font-semibold text-foreground">
+                How the assessment runs
+              </h2>
+              <ul className="mt-4 divide-y divide-border/70 border-y border-border/70">
+                {[
+                  {
+                    icon: CircleCheck,
+                    tone: "text-success",
+                    body: "Answers are validated and scored on the server. The browser never sees the answer key for an attempt that has not been submitted.",
+                  },
+                  {
+                    icon: Clock,
+                    tone: "text-accent",
+                    body: `Choose 10–60 minutes or unlimited time, then choose how many of the ${course.questionCount.toLocaleString()} available questions to attempt.`,
+                  },
+                  {
+                    icon: Play,
+                    tone: "text-accent",
+                    body: "Instant Results gives feedback after each answer. Results at the End keeps answers hidden until you finish.",
+                  },
+                  {
+                    icon: TriangleExclamation,
+                    tone: "text-warning",
+                    body: "Leaving the assessment is recorded. After three departures the attempt ends and cannot resume; your saved answers are scored.",
+                  },
+                ].map((item) => (
+                  <li key={item.body} className="flex gap-3.5 py-4">
+                    <item.icon className={`mt-0.5 h-4 w-4 flex-shrink-0 ${item.tone}`} />
+                    <p className="text-[13.5px] leading-relaxed text-muted-foreground">{item.body}</p>
+                  </li>
+                ))}
               </ul>
-            </div>
-          </section>
-        )}
+            </section>
 
-        {!locked && (
-          <p className="mt-4 text-xs text-muted-foreground">
-            {course.isPurchased
-              ? `Purchased${course.purchasedAt ? ` on ${formatDate(course.purchasedAt)}` : ""}.`
-              : "Free course — no purchase required."}{" "}
-            Secure checkout by Paystack when applicable. Access is granted only after server
-            verification.
-          </p>
-        )}
+            <section className="mt-10">
+              <h2 className="font-display text-[1.35rem] font-semibold text-foreground">
+                {locked ? "What you unlock" : "What's included"}
+              </h2>
+              <ul className="mt-4 grid gap-x-8 gap-y-3 sm:grid-cols-2">
+                {[
+                  "The full question bank for this course",
+                  "Choose the number of questions each attempt",
+                  "Timed or untimed computer-based practice",
+                  "Progress saved if the page refreshes",
+                  "A focused exam screen with answer review",
+                  "Attempt history and performance insights",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2.5 text-[13.5px] text-muted-foreground">
+                    <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-success" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            {course.attemptsUsed > 0 && (
+              <section className="mt-10">
+                <h2 className="font-display text-[1.35rem] font-semibold text-foreground">
+                  Your performance
+                </h2>
+                <dl className="mt-4 grid grid-cols-3 gap-4 rounded-[1.5rem] bg-surface-secondary px-6 py-5">
+                  {[
+                    { label: "Your best", value: `${course.bestPercentage ?? 0}%` },
+                    { label: "Last score", value: `${course.lastPercentage ?? 0}%` },
+                    { label: "All takers", value: `${course.averagePercentage ?? 0}%` },
+                  ].map((stat) => (
+                    <div key={stat.label}>
+                      <dd className="font-display text-2xl font-semibold tracking-tight text-foreground">
+                        {stat.value}
+                      </dd>
+                      <dt className="mt-1 text-[11px] font-semibold text-muted-foreground">
+                        {stat.label}
+                      </dt>
+                    </div>
+                  ))}
+                </dl>
+              </section>
+            )}
+          </div>
+
+          {/* ── Action rail ─────────────────────────────────────────────────── */}
+          <aside className="lg:sticky lg:top-24">
+            <div className="rounded-[1.75rem] border border-border/80 bg-surface p-6 shadow-[0_20px_50px_-32px_rgba(35,25,80,0.45)]">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                {locked ? "Course access" : course.isPurchased ? "You own this course" : "Free to start"}
+              </p>
+              <p className="mt-2 font-display text-[2rem] font-semibold leading-none tracking-[-0.03em] text-foreground">
+                {locked ? formatPrice(course.priceKobo, course.currency) : "Ready"}
+              </p>
+              <p className="mt-2 text-[12px] leading-relaxed text-muted-foreground">
+                {locked
+                  ? "One-time payment. Access is granted after the server verifies your payment."
+                  : exhausted
+                    ? `You have used all ${course.maxAttempts} attempts for this course.`
+                    : "Choose your duration, question count and result mode next."}
+              </p>
+
+              <div className="mt-5 space-y-2.5">
+                {locked ? (
+                  <Button
+                    fullWidth
+                    size="lg"
+                    className="rounded-xl"
+                    isDisabled={buying || !isLoaded || course.questionCount === 0}
+                    onPress={buyCourse}
+                  >
+                    {buying
+                      ? "Starting checkout…"
+                      : isSignedIn
+                        ? "Unlock this course"
+                        : "Sign in to buy"}
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                ) : canBegin ? (
+                  <ButtonLink
+                    href={`/courses/${course.slug}/configure`}
+                    fullWidth
+                    size="lg"
+                    className="rounded-xl"
+                  >
+                    Start an assessment
+                    <ArrowRight className="h-4 w-4" />
+                  </ButtonLink>
+                ) : (
+                  <Button fullWidth size="lg" className="rounded-xl" isDisabled>
+                    {actionLabel}
+                  </Button>
+                )}
+
+                {resumeId && (
+                  <ButtonLink
+                    href={`/exam/${resumeId}`}
+                    variant="outline"
+                    fullWidth
+                    className="rounded-xl"
+                  >
+                    <Play className="h-4 w-4" />
+                    Resume assessment
+                  </ButtonLink>
+                )}
+              </div>
+
+              <dl className="mt-6 space-y-3 border-t border-border/70 pt-5">
+                {facts.map((fact) => (
+                  <div key={fact.label} className="flex items-start gap-3">
+                    <fact.icon className="mt-0.5 h-4 w-4 flex-shrink-0 text-muted-foreground" />
+                    <div>
+                      <dt className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+                        {fact.label}
+                      </dt>
+                      <dd className="mt-0.5 text-[13px] font-semibold text-foreground">{fact.value}</dd>
+                    </div>
+                  </div>
+                ))}
+              </dl>
+
+              {exhausted && !locked && (
+                <p className="mt-4 flex items-start gap-2 rounded-xl bg-warning-soft px-3 py-2.5 text-[11.5px] leading-relaxed text-warning-soft-foreground">
+                  <Lock className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
+                  This course allows {course.maxAttempts} attempt
+                  {course.maxAttempts === 1 ? "" : "s"}.
+                </p>
+              )}
+
+              {!course.paymentConfigured && locked && course.questionCount > 0 && (
+                <p className="mt-4 text-[11px] leading-relaxed text-muted-foreground">
+                  Online checkout is not configured on this deployment yet. Add the Paystack server
+                  key to enable purchases.
+                </p>
+              )}
+
+              <p className="mt-5 flex items-start gap-2 text-[11px] leading-relaxed text-muted-foreground">
+                <GraduationCap className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
+                {course.isPurchased
+                  ? `Purchased${course.purchasedAt ? ` on ${formatDate(course.purchasedAt)}` : ""}. Secure payment by Paystack; access verified on the server.`
+                  : "Secure checkout by Paystack. Access is granted only after server verification."}
+              </p>
+            </div>
+
+            {error && (
+              <Alert status="danger" className="mt-4">
+                <Alert.Indicator />
+                <Alert.Content>
+                  <Alert.Description>{error}</Alert.Description>
+                </Alert.Content>
+              </Alert>
+            )}
+
+            {!locked && !resumeId && course.questionCount === 0 && (
+              <p className="mt-4 rounded-xl bg-surface-secondary px-4 py-3 text-[11.5px] leading-relaxed text-muted-foreground">
+                Question sets for this course are still being prepared. Check back soon.
+              </p>
+            )}
+          </aside>
+        </div>
       </main>
     </div>
   );

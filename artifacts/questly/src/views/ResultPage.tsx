@@ -17,13 +17,10 @@ import {
   Trophy,
   XCircle,
 } from "lucide-react";
+import { ToggleButton, ToggleButtonGroup } from "@heroui/react";
 import { Button } from "@/components/ui/button";
 import ShareResultButton from "@/views/ShareResultButton";
-import {
-  formatDate,
-  formatTimeTaken,
-  scoreClasses,
-} from "@/lib/format";
+import { formatDate, formatTimeTaken } from "@/lib/format";
 import type { AttemptResult } from "@/lib/types";
 
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
@@ -197,27 +194,21 @@ export default function ResultPage() {
         </Link>
 
         {/* Score hero */}
-        <section
-          className={`mt-5 overflow-hidden rounded-3xl border bg-card p-6 ${
-            result.passed ? "border-emerald-500/35" : "border-rose-500/35"
-          }`}
-        >
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div className="min-w-0">
-              <p className="text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground">
+        <section className="relative mt-5 overflow-hidden rounded-[2rem] brand-gradient p-6 text-white shadow-[0_30px_70px_-34px_rgba(67,45,160,0.7)] sm:p-8">
+          <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+            <div className="absolute -right-10 -top-16 h-56 w-56 rounded-full border border-white/15" />
+            <div className="absolute -bottom-20 left-1/3 h-56 w-56 rounded-full border border-white/10" />
+          </div>
+          <div className="relative flex flex-wrap items-start justify-between gap-6">
+            <div className="min-w-0 flex-1">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/65">
                 {result.subject ?? "General"} · {formatDate(result.submittedAt)}
               </p>
-              <h1 className="mt-1.5 text-2xl font-extrabold leading-tight text-foreground">
+              <h1 className="mt-2 max-w-xl font-display text-[1.75rem] font-semibold leading-tight tracking-[-0.02em] text-white sm:text-[2.1rem]">
                 {result.courseTitle}
               </h1>
-              <div className="mt-3 flex flex-wrap items-center gap-2">
-                <span
-                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-extrabold ${
-                    result.passed
-                      ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
-                      : "bg-rose-500/15 text-rose-700 dark:text-rose-400"
-                  }`}
-                >
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-[11.5px] font-semibold text-white backdrop-blur">
                   {result.passed ? (
                     <CheckCircle2 className="h-3.5 w-3.5" />
                   ) : (
@@ -225,38 +216,38 @@ export default function ResultPage() {
                   )}
                   {result.passed ? "Passed" : "Not passed"}
                 </span>
-                <span className="rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">
+                <span className="rounded-full bg-white/10 px-3 py-1 text-[11.5px] font-medium text-white/85 backdrop-blur">
                   Pass mark {result.passScore}%
                 </span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> Assessment complete
+                <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 text-[11.5px] font-medium text-white/85 backdrop-blur">
+                  <CheckCircle2 className="h-3.5 w-3.5" /> Assessment complete
                 </span>
                 {isExpired && (
-                  <span className="rounded-full bg-amber-500/15 px-3 py-1 text-xs font-bold text-amber-700 dark:text-amber-400">
+                  <span className="rounded-full bg-white/15 px-3 py-1 text-[11.5px] font-semibold text-white">
                     Time expired
                   </span>
                 )}
                 {isTerminated && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-3 py-1 text-xs font-bold text-amber-700 dark:text-amber-400">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-3 py-1 text-[11.5px] font-semibold text-white">
                     <AlertTriangle className="h-3.5 w-3.5" /> Terminated
                   </span>
                 )}
               </div>
             </div>
 
-            <div className="text-right">
-              <p className={`text-5xl font-black leading-none ${scoreClasses(result.percentage)}`}>
+            <div className="text-left sm:text-right">
+              <p className="font-display text-[3.75rem] font-semibold leading-none tracking-[-0.04em] text-white sm:text-[4.5rem]">
                 {result.percentage}%
               </p>
-              <p className="mt-1.5 text-sm font-semibold text-muted-foreground">
-                {result.score} / {result.totalMarks} marks
+              <p className="mt-2 text-[12.5px] font-medium text-white/70">
+                {result.score} of {result.totalMarks} marks
               </p>
             </div>
           </div>
         </section>
 
         {isTerminated && (
-          <div className="mt-4 rounded-2xl border border-amber-500/25 bg-amber-500/5 p-4 text-sm leading-relaxed text-amber-800 dark:text-amber-300">
+          <div className="mt-4 rounded-2xl border border-warning/25 bg-warning-soft p-4 text-sm leading-relaxed text-warning-soft-foreground">
             This assessment was terminated automatically because you left it three times. Your last
             saved answers were scored and this attempt cannot be resumed. You can start a new
             assessment from the course page.
@@ -265,25 +256,29 @@ export default function ResultPage() {
 
         {/* Breakdown */}
         {result.hasReview ? (
-        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <dl className="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-[1.5rem] border border-border/80 bg-border/60 sm:grid-cols-4">
           {[
-            { icon: CheckCircle2, label: "Correct", value: result.correctCount, tone: "text-emerald-500" },
-            { icon: XCircle, label: "Incorrect", value: incorrect, tone: "text-rose-500" },
-            { icon: Target, label: "Unanswered", value: unanswered, tone: "text-amber-500" },
+            { icon: CheckCircle2, label: "Correct", value: result.correctCount, tone: "text-success" },
+            { icon: XCircle, label: "Incorrect", value: incorrect, tone: "text-danger" },
+            { icon: Target, label: "Unanswered", value: unanswered, tone: "text-warning" },
             {
               icon: Clock,
               label: "Time taken",
               value: formatTimeTaken(result.timeTakenSeconds),
-              tone: "text-primary",
+              tone: "text-accent",
             },
           ].map((item) => (
-            <div key={item.label} className="rounded-2xl border border-border/70 bg-card p-4">
-              <item.icon className={`h-4 w-4 ${item.tone}`} />
-              <p className="mt-2.5 text-xl font-extrabold text-card-foreground">{item.value}</p>
-              <p className="text-[11px] font-semibold text-muted-foreground">{item.label}</p>
+            <div key={item.label} className="bg-surface px-5 py-4">
+              <dt className="flex items-center gap-2 text-[11.5px] font-semibold text-muted-foreground">
+                <item.icon className={`h-3.5 w-3.5 ${item.tone}`} />
+                {item.label}
+              </dt>
+              <dd className="mt-2 font-display text-[1.6rem] font-semibold leading-none text-foreground">
+                {item.value}
+              </dd>
             </div>
           ))}
-        </div>
+        </dl>
         ) : (
           <div className="mt-4 rounded-2xl border border-border/70 bg-card p-4 text-sm leading-relaxed text-muted-foreground">
             A detailed answer review is not available for this attempt. The score shown above is
@@ -296,14 +291,14 @@ export default function ResultPage() {
           <button
             type="button"
             onClick={() => jumpToReview("incorrect")}
-            className="mt-4 flex w-full items-start gap-3 rounded-2xl border border-amber-500/25 bg-amber-500/5 p-4 text-left transition-colors hover:bg-amber-500/10"
+            className="mt-4 flex w-full items-start gap-3 rounded-2xl border border-warning/25 bg-warning-soft p-4 text-left transition-colors hover:border-warning/45"
           >
-            <Target className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-600 dark:text-amber-400" />
-            <span className="flex-1 text-sm leading-relaxed text-amber-800 dark:text-amber-300">
+            <Target className="mt-0.5 h-4 w-4 flex-shrink-0 text-warning-soft-foreground" />
+            <span className="flex-1 text-sm leading-relaxed text-warning-soft-foreground">
               <span className="font-bold">Focus area:</span> review your {incorrect} incorrect
               answer{incorrect === 1 ? "" : "s"} — the explanations are in the answer review below.
             </span>
-            <ArrowRight className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-600 dark:text-amber-400" />
+            <ArrowRight className="mt-0.5 h-4 w-4 flex-shrink-0 text-warning-soft-foreground" />
           </button>
         )}
 
@@ -348,7 +343,17 @@ export default function ResultPage() {
         <section ref={reviewRef} className="mt-8 scroll-mt-20">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-base font-extrabold text-foreground">Answer review</h2>
-            <div className="flex items-center gap-1 rounded-full bg-muted p-1">
+            <ToggleButtonGroup
+              selectionMode="single"
+              disallowEmptySelection
+              selectedKeys={new Set([filter])}
+              onSelectionChange={(keys) => {
+                const next = Array.from(keys)[0];
+                if (next) setFilter(String(next) as Filter);
+              }}
+              size="sm"
+              className="rounded-full bg-surface-secondary p-1"
+            >
               {(
                 [
                   { key: "all", label: "All" },
@@ -356,26 +361,16 @@ export default function ResultPage() {
                   { key: "correct", label: "Correct" },
                 ] as Array<{ key: Filter; label: string }>
               ).map((tab) => (
-                <button
-                  key={tab.key}
-                  type="button"
-                  onClick={() => setFilter(tab.key)}
-                  aria-pressed={filter === tab.key}
-                  className={`rounded-full px-3 py-1.5 text-xs font-bold transition-colors ${
-                    filter === tab.key
-                      ? "bg-background text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
+                <ToggleButton key={tab.key} id={tab.key} className="rounded-full px-3 text-[12px] font-semibold">
                   {tab.label}
-                </button>
+                </ToggleButton>
               ))}
-            </div>
+            </ToggleButtonGroup>
           </div>
 
           {filtered.length === 0 ? (
             <div className="mt-4 rounded-2xl border border-border/70 bg-card p-8 text-center">
-              <Trophy className="mx-auto mb-2 h-6 w-6 text-emerald-500" />
+              <Trophy className="mx-auto mb-2 h-6 w-6 text-success" />
               <p className="text-sm font-semibold text-foreground">
                 {filter === "incorrect" ? "No incorrect answers — excellent work." : "Nothing to show here."}
               </p>
@@ -385,16 +380,16 @@ export default function ResultPage() {
               {filtered.slice(0, visible).map((question, index) => (
                 <article
                   key={question.id}
-                  className={`rounded-2xl border bg-card p-5 ${
-                    question.correct ? "border-emerald-500/25" : "border-rose-500/25"
+                  className={`rounded-2xl border bg-surface p-5 ${
+                    question.correct ? "border-success/25" : "border-danger/20"
                   }`}
                 >
                   <div className="flex items-start gap-3">
                     <span
                       className={`mt-0.5 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg text-xs font-black ${
                         question.correct
-                          ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
-                          : "bg-rose-500/15 text-rose-600 dark:text-rose-400"
+                          ? "bg-success-soft text-success-soft-foreground"
+                          : "bg-danger-soft text-danger-soft-foreground"
                       }`}
                     >
                       {index + 1}
@@ -409,9 +404,9 @@ export default function ResultPage() {
                           const isCorrect = optionIndex === question.correctIndex;
                           const isChosen = optionIndex === question.selectedIndex;
                           const classes = isCorrect
-                            ? "border-emerald-500/50 bg-emerald-500/5 text-foreground"
+                            ? "border-success/45 bg-success-soft text-foreground"
                             : isChosen
-                              ? "border-rose-500/50 bg-rose-500/5 text-foreground"
+                              ? "border-danger/40 bg-danger-soft text-foreground"
                               : "border-border/60 text-muted-foreground";
 
                           return (
@@ -424,12 +419,12 @@ export default function ResultPage() {
                               </span>
                               <span className="flex-1">{option}</span>
                               {isCorrect && (
-                                <span className="text-[10px] font-bold uppercase tracking-wide text-emerald-600 dark:text-emerald-400">
+                                <span className="text-[10px] font-bold uppercase tracking-wide text-success-soft-foreground">
                                   Correct
                                 </span>
                               )}
                               {isChosen && !isCorrect && (
-                                <span className="text-[10px] font-bold uppercase tracking-wide text-rose-600 dark:text-rose-400">
+                                <span className="text-[10px] font-bold uppercase tracking-wide text-danger-soft-foreground">
                                   Your answer
                                 </span>
                               )}
@@ -439,13 +434,13 @@ export default function ResultPage() {
                       </div>
 
                       {question.selectedIndex === null && (
-                        <p className="mt-2 text-xs font-semibold text-amber-600 dark:text-amber-400">
+                        <p className="mt-2 text-xs font-semibold text-warning-soft-foreground">
                           You did not answer this question.
                         </p>
                       )}
 
                       {question.explanation && (
-                        <div className="mt-3 rounded-xl bg-muted/60 p-3">
+                        <div className="mt-3 rounded-xl bg-surface-secondary p-3.5">
                           <p className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
                             Explanation
                           </p>

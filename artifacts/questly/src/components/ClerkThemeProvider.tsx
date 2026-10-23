@@ -8,8 +8,8 @@ import { useTheme } from "@/components/ThemeProvider";
 const SHARED = {
   variables: {
     fontFamily: "'Plus Jakarta Sans', sans-serif",
-    borderRadius: "0.75rem",
-    colorPrimary: "hsl(262, 72%, 55%)",
+    borderRadius: "0.875rem",
+    colorPrimary: "#5b4bff",
   },
   elements: {
     rootBox: "w-full flex justify-center",
@@ -18,10 +18,10 @@ const SHARED = {
     footer: "!shadow-none !border-0 !bg-transparent !rounded-none",
     footerAction: "rounded-b-2xl",
     formButtonPrimary:
-      "!bg-[hsl(262,72%,55%)] hover:!bg-[hsl(262,72%,48%)] rounded-xl font-semibold normal-case",
+      "!bg-[#5b4bff] hover:!bg-[#4a3ae0] rounded-xl font-semibold normal-case shadow-none",
     formFieldInput: "rounded-xl",
     socialButtonsBlockButton: "rounded-xl",
-    headerTitle: "font-extrabold",
+    headerTitle: "font-bold tracking-tight",
   },
 };
 
@@ -29,13 +29,13 @@ const LIGHT = {
   ...SHARED,
   variables: {
     ...SHARED.variables,
-    colorForeground: "hsl(222, 47%, 11%)",
-    colorMutedForeground: "hsl(220, 12%, 44%)",
-    colorDanger: "hsl(0, 72%, 51%)",
-    colorBackground: "hsl(0, 0%, 100%)",
-    colorInput: "hsl(220, 18%, 96%)",
-    colorInputForeground: "hsl(222, 47%, 11%)",
-    colorNeutral: "hsl(220, 18% 90%)",
+    colorForeground: "#241f33",
+    colorMutedForeground: "#6b6478",
+    colorDanger: "#d92d4b",
+    colorBackground: "#ffffff",
+    colorInput: "#f6f4f0",
+    colorInputForeground: "#241f33",
+    colorNeutral: "#e6e1d9",
   },
 };
 
@@ -44,14 +44,14 @@ const DARK = {
   baseTheme: dark,
   variables: {
     ...SHARED.variables,
-    colorPrimary: "hsl(262, 72%, 62%)",
-    colorForeground: "hsl(220, 20%, 95%)",
-    colorMutedForeground: "hsl(220, 12%, 62%)",
-    colorDanger: "hsl(0, 68%, 60%)",
-    colorBackground: "hsl(222, 34%, 10%)",
-    colorInput: "hsl(222, 26%, 15%)",
-    colorInputForeground: "hsl(220, 20%, 95%)",
-    colorNeutral: "hsl(222, 26%, 20%)",
+    colorPrimary: "#8b7dff",
+    colorForeground: "#f4f2f8",
+    colorMutedForeground: "#a79fb8",
+    colorDanger: "#f2778c",
+    colorBackground: "#1c1927",
+    colorInput: "#262233",
+    colorInputForeground: "#f4f2f8",
+    colorNeutral: "#332e42",
   },
 };
 

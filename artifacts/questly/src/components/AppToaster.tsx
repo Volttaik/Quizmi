@@ -24,9 +24,10 @@ export default function AppToaster() {
       theme={isDark ? "dark" : "light"}
       toastOptions={{
         style: {
-          background: "hsl(var(--card))",
-          color: "hsl(var(--card-foreground))",
-          border: "1px solid hsl(var(--border))",
+          background: "var(--surface)",
+          color: "var(--surface-foreground)",
+          border: "1px solid var(--border)",
+          borderRadius: "0.875rem",
         },
         classNames: {
           description: "text-muted-foreground",

@@ -3,19 +3,17 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
-import { BookMarked, Home, Library, History, User } from "lucide-react";
+import { Bookmark, Clock, BookOpen, House, Person } from "@gravity-ui/icons";
 
 import { cn } from "@/lib/utils";
 
 const TABS = [
-  { href: "/dashboard", label: "Home", icon: Home },
-  { href: "/my-courses", label: "My Courses", icon: BookMarked },
-  { href: "/courses", label: "Courses", icon: Library },
-  { href: "/history", label: "History", icon: History },
-  { href: "/profile", label: "Profile", icon: User },
+  { href: "/dashboard", label: "Home", icon: House },
+  { href: "/my-courses", label: "Library", icon: Bookmark },
+  { href: "/courses", label: "Courses", icon: BookOpen },
+  { href: "/history", label: "History", icon: Clock },
+  { href: "/profile", label: "Profile", icon: Person },
 ];
-
-const NAV_HEIGHT = "env(safe-area-inset-bottom)";
 
 export default function BottomNav() {
   const pathname = usePathname() ?? "";
@@ -28,12 +26,9 @@ export default function BottomNav() {
   return (
     <nav
       aria-label="Primary mobile navigation"
-      className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-card shadow-[0_-4px_16px_rgba(15,23,42,0.06)] md:hidden dark:shadow-[0_-4px_16px_rgba(0,0,0,0.35)]"
-      style={{ paddingBottom: NAV_HEIGHT }}
+      className="pointer-events-none fixed inset-x-0 bottom-0 z-50 px-3 pb-[max(0.65rem,env(safe-area-inset-bottom))] md:hidden"
     >
-      <div
-        className="mx-auto flex max-w-lg items-stretch justify-around px-1.5 pb-[env(safe-area-inset-bottom)]"
-      >
+      <div className="pointer-events-auto mx-auto flex max-w-md items-stretch gap-0.5 rounded-[1.6rem] border border-border/80 bg-surface/92 p-1.5 shadow-[0_16px_40px_-16px_rgba(20,16,40,0.35)] backdrop-blur-xl dark:shadow-[0_18px_44px_-14px_rgba(0,0,0,0.75)]">
         {TABS.map((tab) => {
           const active =
             pathname === tab.href ||
@@ -45,24 +40,21 @@ export default function BottomNav() {
               key={tab.href}
               href={tab.href}
               aria-current={active ? "page" : undefined}
-              className="flex min-h-14 flex-1 flex-col items-center justify-center gap-0.5 py-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring/40"
+              className={cn(
+                "group relative flex min-h-[52px] flex-1 flex-col items-center justify-center gap-1 rounded-[1.2rem] px-0.5 py-1.5 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/40",
+                active ? "bg-accent-soft text-accent-soft-foreground" : "text-muted-foreground",
+              )}
             >
-              <span
+              <tab.icon
                 className={cn(
-                  "flex h-7 w-12 items-center justify-center rounded-full transition-colors",
-                  active ? "bg-primary text-primary-foreground" : "text-muted-foreground",
+                  "h-[19px] w-[19px] transition-transform duration-200",
+                  active ? "scale-105" : "group-hover:scale-105",
                 )}
-              >
-                <tab.icon
-                  className="h-[18px] w-[18px]"
-                  strokeWidth={active ? 2.2 : 1.9}
-                />
-              </span>
+              />
               <span
                 className={cn(
-                  "whitespace-nowrap text-[10px] font-semibold leading-none transition-colors",
-                  active ? "text-foreground" : "text-muted-foreground",
-                  "sm:text-[10.5px]",
+                  "text-[10px] font-semibold leading-none tracking-tight",
+                  active ? "text-accent-soft-foreground" : "text-muted-foreground",
                 )}
               >
                 {tab.label}

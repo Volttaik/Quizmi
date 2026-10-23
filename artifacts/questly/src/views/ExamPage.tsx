@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import {
   ArrowLeft,
-  ArrowRight,
   BookOpen,
   Check,
   ChevronLeft,
@@ -16,8 +15,6 @@ import {
   CloudSlash,
   Flag,
   Flame,
-  ListCheck,
-  Play,
   Stopwatch,
   TriangleExclamation,
   Xmark,
@@ -31,7 +28,6 @@ const AUTOSAVE_DELAY = 650;
 const CLIENT_DEPARTURE_DEDUPE = 5000;
 const AUTO_SUBMIT_RETRY_MS = 5000;
 const AUTO_SUBMIT_MAX_RETRIES = 6;
-const CONFETTI_COLORS = ["#8b5cf6", "#4ade80", "#fbbf24", "#fb7185", "#60a5fa"];
 
 type SaveState = "idle" | "saving" | "saved" | "error";
 
@@ -79,7 +75,6 @@ export default function ExamPage() {
   const [submittingAttempt, setSubmittingAttempt] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [burst, setBurst] = useState(0);
   const [streak, setStreak] = useState(0);
   const [showStudyNudge, setShowStudyNudge] = useState(false);
 
@@ -100,6 +95,8 @@ export default function ExamPage() {
   const incorrectStreakRef = useRef(0);
   const studyNudgeShownRef = useRef(false);
   const seenQuestionRef = useRef<number | null>(null);
+  const questionScrollRef = useRef<HTMLElement | null>(null);
+  const answerScrollRef = useRef<HTMLDivElement | null>(null);
 
   answersRef.current = answers;
   feedbackRef.current = feedbackByQuestion;
@@ -235,7 +232,6 @@ export default function ExamPage() {
           milestone,
           nonce: Date.now() + Math.random(),
         });
-        setBurst((value) => value + 1);
       } else {
         incorrectStreakRef.current += 1;
         streakRef.current = 0;
@@ -353,7 +349,7 @@ export default function ExamPage() {
       } else {
         // A previous request may have graded this answer even if its response
         // was lost. Re-read the attempt so feedback stays consistent instead
-        // of leaving the question stuck on Submit answer.
+        // of leaving the question stuck on Submit Answer.
         const refreshed = await fetch(`/api/attempts/${currentAttempt.id}`, {
           cache: "no-store",
         });
@@ -602,8 +598,8 @@ export default function ExamPage() {
     goTo(current + 1);
   }, [current, questions.length, goTo]);
 
-  // Keep the question at the top of the viewport when moving through a long
-  // assessment, without yanking the page on the first render.
+  // The question and answer panes scroll on their own, so a new question
+  // resets both to the top instead of moving the page.
   useEffect(() => {
     if (!attempt) return;
     if (seenQuestionRef.current === null) {
@@ -612,9 +608,17 @@ export default function ExamPage() {
     }
     if (seenQuestionRef.current !== current) {
       seenQuestionRef.current = current;
-      window.scrollTo({ top: 0, behavior: "auto" });
+      questionScrollRef.current?.scrollTo({ top: 0 });
+      answerScrollRef.current?.scrollTo({ top: 0 });
     }
   }, [attempt, current]);
+
+  // A verdict appears below the options, so bring it into view once it lands.
+  useEffect(() => {
+    if (!feedbackNotice) return;
+    const pane = answerScrollRef.current;
+    if (pane) pane.scrollTo({ top: pane.scrollHeight, behavior: "smooth" });
+  }, [feedbackNotice]);
 
   useEffect(() => {
     if (!confirmOpen) return;
@@ -667,7 +671,7 @@ export default function ExamPage() {
     if (finishedRef.current) return;
     if (
       window.confirm(
-        "Leave this assessment? Leaving is recorded as a departure. On the third departure, the assessment is terminated."
+        "Leave this assessment? This counts as a departure, and the timer keeps running."
       )
     ) {
       sendDeparture("left assessment");
@@ -679,8 +683,8 @@ export default function ExamPage() {
   /* ── Render: loading / errors / termination ───────────────────────────── */
   if (loading) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-background">
-        <Stopwatch className="h-7 w-7 animate-spin text-primary" />
+      <div className="flex h-[100dvh] flex-col items-center justify-center gap-3 bg-background">
+        <Stopwatch className="h-6 w-6 animate-spin text-primary" />
         <p className="text-sm font-medium text-muted-foreground">Preparing your assessment…</p>
       </div>
     );
@@ -688,25 +692,20 @@ export default function ExamPage() {
 
   if (terminated && attempt) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-background px-6 text-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
-          <TriangleExclamation className="h-8 w-8" />
-        </div>
-        <h1 className="text-xl font-extrabold text-foreground">Assessment terminated</h1>
-        <p className="max-w-md text-sm leading-relaxed text-muted-foreground">
-          This attempt ended because you left the assessment three times. Your saved answers were
-          scored and you cannot resume this attempt. You can start a new assessment from the course
-          page.
+      <div className="flex h-[100dvh] flex-col items-center justify-center gap-3 bg-background px-6 text-center">
+        <TriangleExclamation className="h-7 w-7 text-warning" />
+        <h1 className="font-display text-xl font-semibold text-foreground">Assessment ended</h1>
+        <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
+          You left this assessment {attempt.maxDepartures} times. Your saved answers were scored and
+          this attempt cannot be resumed.
         </p>
-        <div className="flex flex-col gap-2 sm:flex-row">
-          <Link href={`/results/${attempt.id}`}>
-            <Button className="rounded-lg">View result</Button>
-          </Link>
-          <Link href={`/courses/${attempt.courseSlug}`}>
-            <Button variant="outline" className="rounded-lg">
-              Back to course
-            </Button>
-          </Link>
+        <div className="mt-2 flex flex-col gap-2 sm:flex-row">
+          <Button asChild className="rounded-xl">
+            <Link href={`/results/${attempt.id}`}>View Results</Link>
+          </Button>
+          <Button asChild variant="outline" className="rounded-xl">
+            <Link href={`/courses/${attempt.courseSlug}`}>Back to Course</Link>
+          </Button>
         </div>
       </div>
     );
@@ -714,19 +713,17 @@ export default function ExamPage() {
 
   if (loadError || !attempt || !question) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-background px-6 text-center">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-muted">
-          <TriangleExclamation className="h-6 w-6 text-muted-foreground" />
-        </div>
-        <h1 className="text-lg font-bold text-foreground">
-          {loadError ?? "This attempt could not be opened"}
+      <div className="flex h-[100dvh] flex-col items-center justify-center gap-3 bg-background px-6 text-center">
+        <TriangleExclamation className="h-7 w-7 text-muted-foreground" />
+        <h1 className="font-display text-lg font-semibold text-foreground">
+          {loadError ?? "This assessment could not be opened"}
         </h1>
         <p className="max-w-sm text-sm text-muted-foreground">
-          Your attempt may have been submitted, terminated, or the course no longer has questions.
+          It may already be submitted or ended.
         </p>
-        <Link href="/dashboard">
-          <Button className="rounded-lg">Back to dashboard</Button>
-        </Link>
+        <Button asChild className="mt-1 rounded-xl">
+          <Link href="/dashboard">Back to Dashboard</Link>
+        </Button>
       </div>
     );
   }
@@ -742,6 +739,7 @@ export default function ExamPage() {
   const isFinalQuestion = current === totalQuestions - 1;
   const isFirstQuestion = current === 0;
   const departures = attempt.departures;
+  const lastDepartureWarning = departures >= attempt.maxDepartures - 1;
   const notice =
     feedbackNotice && feedbackNotice.questionId === question.id
       ? feedbackNotice
@@ -761,79 +759,60 @@ export default function ExamPage() {
       : null;
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
-      {/* Focused exam header: no site header, no bottom navigation. */}
-      <header className="sticky top-0 z-30 border-b border-border bg-card">
-        <div className="mx-auto flex h-14 max-w-5xl items-center gap-2.5 px-3 sm:gap-3 sm:px-4">
-          <button
-            type="button"
-            onClick={leaveAssessment}
-            aria-label="Leave assessment"
-            className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </button>
+    <div className="flex h-[100dvh] min-h-[26rem] flex-col overflow-hidden bg-background">
+      {/* Header: title, timer and progress stay locked in place. */}
+      <header className="z-30 shrink-0 border-b border-border/70 bg-background">
+        <div className="mx-auto flex w-full max-w-4xl flex-col px-4 sm:px-6 lg:max-w-6xl">
+          <div className="flex h-14 items-center gap-2.5">
+            <button
+              type="button"
+              onClick={leaveAssessment}
+              aria-label="Leave assessment"
+              className="-ml-1.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-surface-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/40"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </button>
 
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-bold text-foreground">{attempt.courseTitle}</p>
-            <p className="truncate text-[11px] font-semibold text-muted-foreground">
-              {isInstant ? "Instant Results" : "Results at the End"} · Question {current + 1} of{" "}
-              {totalQuestions}
+            <p className="min-w-0 flex-1 truncate font-display text-[15px] font-semibold text-foreground">
+              {attempt.courseTitle}
             </p>
+
+            {streak >= 2 && (
+              <span
+                key={streak}
+                aria-label={`${streak} correct answers in a row`}
+                className="animate-pop flex items-center gap-1 rounded-full bg-success-soft px-2.5 py-1 text-[11px] font-bold text-success-soft-foreground"
+              >
+                <Flame className="h-3.5 w-3.5" />
+                {streak}
+              </span>
+            )}
+
+            {departures > 0 && (
+              <span
+                title={`${departures} of ${attempt.maxDepartures} departures`}
+                aria-label={`${departures} of ${attempt.maxDepartures} departures recorded`}
+                className="flex items-center gap-1 rounded-full bg-warning-soft px-2.5 py-1 text-[11px] font-bold text-warning-soft-foreground"
+              >
+                <Flag className="h-3.5 w-3.5" />
+                {departures}
+              </span>
+            )}
           </div>
 
-          {streak >= 2 && (
-            <span
-              key={streak}
-              aria-label={`${streak} correct answers in a row`}
-              className="animate-pop hidden items-center gap-1 rounded-md bg-emerald-500/10 px-2 py-1.5 text-xs font-extrabold text-emerald-700 dark:text-emerald-400 sm:inline-flex"
-            >
-              <Flame className="h-3.5 w-3.5" /> {streak}
-            </span>
-          )}
+          <div className="flex items-center gap-3 pb-3">
+            <p className="whitespace-nowrap text-[12px] font-medium text-muted-foreground">
+              Question <span className="font-bold text-foreground">{current + 1}</span> of{" "}
+              {totalQuestions}
+            </p>
 
-          {departures > 0 && (
-            <span
-              className="hidden items-center gap-1 rounded-md bg-amber-500/10 px-2 py-1.5 text-xs font-bold text-amber-700 dark:text-amber-400 md:inline-flex"
-              title="Departures recorded"
-            >
-              <Flag className="h-3.5 w-3.5" />
-              {departures}/{attempt.maxDepartures}
-            </span>
-          )}
-
-          {secondsLeft !== null ? (
             <div
-              aria-live="polite"
-              aria-label={`Time remaining ${formatCountdown(secondsLeft)}`}
-              className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-extrabold tabular-nums ${
-                urgent
-                  ? "bg-rose-500/10 text-rose-600 dark:text-rose-400"
-                  : "bg-muted text-foreground"
-              }`}
-            >
-              <Stopwatch className="h-4 w-4" />
-              {formatCountdown(secondsLeft)}
-            </div>
-          ) : (
-            <span className="rounded-md bg-muted px-2.5 py-1.5 text-xs font-bold text-muted-foreground">
-              Untimed
-            </span>
-          )}
-        </div>
-
-        <div className="border-t border-border/60 bg-background">
-          <div className="mx-auto flex max-w-5xl items-center gap-3 px-3 py-2 sm:px-4">
-            <span className="whitespace-nowrap text-[11px] font-extrabold uppercase tracking-wide text-foreground">
-              Question {current + 1} of {totalQuestions}
-            </span>
-            <div
-              className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted"
+              className="h-1 flex-1 overflow-hidden rounded-full bg-surface-secondary"
               role="progressbar"
               aria-valuemin={0}
               aria-valuemax={totalQuestions}
               aria-valuenow={progressCount}
-              aria-label="Assessment completion"
+              aria-label="Assessment progress"
             >
               <div
                 className="h-full rounded-full bg-primary transition-[width] duration-300"
@@ -842,154 +821,103 @@ export default function ExamPage() {
                 }}
               />
             </div>
-            <span className="whitespace-nowrap text-[11px] font-semibold text-muted-foreground">
-              {isInstant ? `${submittedCount} submitted` : `${answeredCount} answered`}
-              {!isInstant && unansweredCount > 0 ? ` · ${unansweredCount} left` : ""}
-            </span>
+
+            {secondsLeft !== null ? (
+              <p
+                aria-live="polite"
+                aria-label={`Time left ${formatCountdown(secondsLeft)}`}
+                className={`flex items-center gap-1.5 whitespace-nowrap text-[11px] font-semibold tabular-nums ${
+                  urgent ? "text-danger" : "text-muted-foreground"
+                }`}
+              >
+                <Stopwatch className="h-3.5 w-3.5" />
+                Time Left
+                <span className={`text-[13px] font-bold ${urgent ? "text-danger" : "text-foreground"}`}>
+                  {formatCountdown(secondsLeft)}
+                </span>
+              </p>
+            ) : (
+              <p className="whitespace-nowrap text-[11px] font-semibold text-muted-foreground">
+                Untimed
+              </p>
+            )}
           </div>
         </div>
       </header>
 
-      {departures > 0 && (
-        <div className="border-b border-amber-500/20 bg-amber-500/10 px-4 py-2.5">
-          <p className="mx-auto flex max-w-5xl items-start gap-2 text-xs font-semibold text-amber-800 dark:text-amber-300">
-            <TriangleExclamation className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
-            {departures >= attempt.maxDepartures - 1
-              ? `Departure ${departures} of ${attempt.maxDepartures} recorded. The next departure will end this assessment.`
-              : `Departure ${departures} of ${attempt.maxDepartures} recorded. Leaving again adds to the count; the third departure ends the assessment.`}
-          </p>
-        </div>
+      {lastDepartureWarning && (
+        <p className="shrink-0 bg-warning-soft px-4 py-2 text-center text-[11.5px] font-semibold text-warning-soft-foreground sm:px-6">
+          {departures >= attempt.maxDepartures
+            ? "This was your final departure."
+            : "One more departure ends this assessment."}
+        </p>
       )}
 
-      <div className="mx-auto flex w-full max-w-5xl flex-1 items-start gap-6 px-3 py-5 sm:px-4 sm:py-6">
-        <main className="min-w-0 flex-1">
-          <div className="mb-3 flex flex-wrap items-center gap-2 text-[11px] font-semibold">
-            <span className="rounded-md bg-primary/10 px-2 py-1 font-extrabold text-primary">
-              Question {current + 1} of {totalQuestions}
-            </span>
-            <span className="rounded-md bg-muted px-2 py-1 text-muted-foreground">
-              {question.marks} mark{question.marks === 1 ? "" : "s"}
-            </span>
-            {streak >= 2 && (
-              <span
-                key={streak}
-                className={`animate-pop inline-flex items-center gap-1 rounded-md px-2 py-1 ${
-                  notice?.milestone
-                    ? "bg-amber-500/10 text-amber-700 dark:text-amber-400"
-                    : "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
-                }`}
-              >
-                <Flame className="h-3 w-3" /> {streak} in a row
-              </span>
-            )}
-            <span className="ml-auto inline-flex items-center gap-1.5 text-muted-foreground">
-              {isInstant ? (
-                currentFeedback ? (
-                  <>
-                    <CircleCheck className="h-3.5 w-3.5 text-emerald-500" /> Answer submitted
-                  </>
-                ) : (
-                  <>
-                    <Play className="h-3 w-3" /> Submit to check
-                  </>
-                )
-              ) : (
-                <>
-                  {saveState === "saving" && (
-                    <>
-                      <Stopwatch className="h-3.5 w-3.5 animate-pulse" /> Saving…
-                    </>
-                  )}
-                  {saveState === "saved" && (
-                    <>
-                      <CloudCheck className="h-3.5 w-3.5 text-emerald-500" /> Saved
-                    </>
-                  )}
-                  {saveState === "error" && (
-                    <>
-                      <CloudSlash className="h-3.5 w-3.5 text-rose-500" /> Save failed
-                    </>
-                  )}
-                </>
-              )}
-            </span>
-          </div>
+      {/* Three fixed regions: question, answers, actions. Each scrolls alone. */}
+      <div className="mx-auto flex min-h-0 w-full max-w-4xl flex-1 flex-col lg:max-w-6xl lg:flex-row lg:gap-0">
+        <section
+          ref={questionScrollRef}
+          aria-label="Question"
+          className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-5 sm:px-6 lg:px-10 lg:py-9"
+        >
+          <h1
+            id="question-prompt"
+            className="break-words whitespace-pre-line font-display text-[1.35rem] font-semibold leading-[1.36] tracking-[-0.02em] text-foreground sm:text-[1.6rem]"
+          >
+            {question.prompt}
+          </h1>
 
-          <section className="relative overflow-hidden rounded-xl border border-border bg-card p-4 shadow-sm sm:p-6">
-            {notice?.kind === "correct" && (
-              <span key={burst} aria-hidden="true" className="pointer-events-none absolute inset-0">
-                {Array.from({ length: 10 }).map((_, index) => {
-                  const angle = (Math.PI * 2 * index) / 10 - Math.PI / 2;
-                  const distance = 80 + (index % 3) * 40;
-                  return (
-                    <span
-                      key={index}
-                      className="confetti-dot"
-                      style={{
-                        left: "50%",
-                        top: "35%",
-                        background: CONFETTI_COLORS[index % CONFETTI_COLORS.length],
-                        animationDelay: `${index * 26}ms`,
-                        "--tx": `${Math.round(Math.cos(angle) * distance)}px`,
-                        "--ty": `${Math.round(Math.sin(angle) * distance)}px`,
-                      } as React.CSSProperties}
-                    />
-                  );
-                })}
-              </span>
-            )}
+          {question.imageUrl && (
+            <div className="mt-5 overflow-hidden rounded-xl border border-border/70 bg-surface">
+              {/* Question artwork can be hosted on any origin. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={question.imageUrl}
+                alt="Question illustration"
+                className="max-h-72 w-full object-contain"
+              />
+            </div>
+          )}
+        </section>
 
-            <h1
-              id="question-prompt"
-              className="whitespace-pre-line text-lg font-bold leading-relaxed text-card-foreground sm:text-xl"
-            >
-              {question.prompt}
-            </h1>
-
-            {question.imageUrl && (
-              <div className="mt-4 overflow-hidden rounded-lg border border-border bg-muted/30">
-                {/* Question artwork can be hosted on any origin. */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={question.imageUrl}
-                  alt="Question illustration"
-                  className="max-h-72 w-full object-contain"
-                />
-              </div>
-            )}
-
-            <div
-              className="mt-5 space-y-2.5"
-              role="radiogroup"
-              aria-labelledby="question-prompt"
-            >
+        <section
+          aria-label="Answer options"
+          className="flex min-h-0 flex-[1.15] flex-col border-t border-border/70 lg:flex-1 lg:border-l lg:border-t-0"
+        >
+          <div
+            ref={answerScrollRef}
+            className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 sm:px-6 lg:px-10 lg:py-9"
+          >
+            <div className="space-y-2.5" role="radiogroup" aria-labelledby="question-prompt">
               {question.options.map((option, index) => {
                 const selected = selection === index;
-                const isCorrectOption = Boolean(currentFeedback && index === currentFeedback.correctIndex);
+                const isCorrectOption = Boolean(
+                  currentFeedback && index === currentFeedback.correctIndex
+                );
                 const isWrongChoice = Boolean(currentFeedback && selected && !currentFeedback.correct);
 
                 let surface =
-                  "border-border bg-background hover:border-primary/40 hover:bg-muted/30";
-                let letter =
-                  "bg-muted text-muted-foreground border border-border/60";
+                  "border-border/70 bg-surface hover:border-primary/40 hover:bg-surface-secondary/60";
+                let letter = "bg-surface-secondary text-foreground/80";
                 let text = "text-foreground";
 
                 if (currentFeedback) {
                   if (isCorrectOption) {
-                    surface = "border-emerald-500 bg-emerald-500/[0.07]";
-                    letter = "bg-emerald-500 text-white border border-emerald-500";
-                    text = "text-foreground";
+                    surface = "border-success/60 bg-success-soft";
+                    letter = "bg-success text-success-foreground";
+                    text = "font-semibold text-foreground";
                   } else if (isWrongChoice) {
-                    surface = "border-rose-500 bg-rose-500/[0.06]";
-                    letter = "bg-rose-500 text-white border border-rose-500";
-                    text = "text-foreground";
+                    surface = "border-danger/60 bg-danger-soft";
+                    letter = "bg-danger text-danger-foreground";
+                    text = "font-semibold text-foreground";
                   } else {
-                    surface = "border-border bg-background opacity-70";
+                    surface = "border-border/50 bg-surface opacity-55";
+                    letter = "bg-surface-secondary text-muted-foreground";
                   }
                 } else if (selected) {
-                  surface = "border-primary bg-primary/[0.06] ring-1 ring-primary/20";
-                  letter = "bg-primary text-primary-foreground border border-primary";
-                  text = "font-bold text-foreground";
+                  surface = "border-primary/70 bg-accent-soft ring-1 ring-primary/25";
+                  letter = "bg-primary text-primary-foreground";
+                  text = "font-semibold text-foreground";
                 }
 
                 return (
@@ -1001,123 +929,84 @@ export default function ExamPage() {
                     aria-disabled={answerLocked || expired}
                     disabled={answerLocked || expired}
                     onClick={() => selectOption(index)}
-                    className={`flex min-h-14 w-full items-start gap-3 rounded-lg border-2 p-3.5 text-left shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 disabled:cursor-default sm:p-4 ${surface}`}
+                    className={`flex w-full items-start gap-3 rounded-2xl border px-4 py-3.5 text-left shadow-card transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/40 disabled:cursor-default ${surface}`}
                   >
                     <span
-                      className={`mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-md text-base font-black ${letter}`}
+                      className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-[13px] font-bold ${letter}`}
                     >
                       {optionLetter(index)}
                     </span>
-                    <span className={`flex-1 whitespace-pre-line text-[15px] leading-relaxed ${text}`}>
+                    <span
+                      className={`min-w-0 flex-1 break-words whitespace-pre-line pt-1 text-[14.5px] leading-[1.55] ${text}`}
+                    >
                       {option}
                     </span>
                     {isCorrectOption && (
-                      <CircleCheck className="mt-1 h-4 w-4 flex-shrink-0 text-emerald-600 dark:text-emerald-400" />
+                      <CircleCheck className="mt-1.5 h-4 w-4 flex-shrink-0 text-success" />
                     )}
                     {isWrongChoice && (
-                      <CircleXmark className="mt-1 h-4 w-4 flex-shrink-0 text-rose-600 dark:text-rose-400" />
-                    )}
-                    {!currentFeedback && selected && (
-                      <Check className="mt-1 h-4 w-4 flex-shrink-0 text-primary" />
+                      <CircleXmark className="mt-1.5 h-4 w-4 flex-shrink-0 text-danger" />
                     )}
                   </button>
                 );
               })}
             </div>
-          </section>
 
-          {/* Feedback panel follows the answer area, never a page-bottom bar. */}
-          {notice && currentFeedback && (
-            <div
-              key={notice.nonce}
-              role="status"
-              aria-live="polite"
-              className={`mt-3 rounded-lg border-2 p-4 ${
-                notice.kind === "correct"
-                  ? notice.milestone
-                    ? "animate-fade-up border-amber-500/50 bg-amber-500/[0.07]"
-                    : "animate-fade-up border-emerald-500/50 bg-emerald-500/[0.06]"
-                  : "animate-shake-soft border-rose-500/50 bg-rose-500/[0.05]"
-              }`}
-            >
-              <div className="flex items-start gap-2.5">
-                {notice.kind === "correct" ? (
-                  <CircleCheck
-                    className={`mt-0.5 h-5 w-5 flex-shrink-0 ${
-                      notice.milestone
-                        ? "text-amber-600 dark:text-amber-400"
-                        : "text-emerald-600 dark:text-emerald-400"
-                    }`}
-                  />
-                ) : (
-                  <CircleXmark className="mt-0.5 h-5 w-5 flex-shrink-0 text-rose-600 dark:text-rose-400" />
-                )}
-                <div className="min-w-0 flex-1">
-                  <p
-                    className={`text-sm font-extrabold ${
-                      notice.kind === "correct"
-                        ? notice.milestone
-                          ? "text-amber-800 dark:text-amber-300"
-                          : "text-emerald-800 dark:text-emerald-300"
-                        : "text-rose-800 dark:text-rose-300"
-                    }`}
-                  >
-                    {notice.message}
+            {/* Verdict, shown right beneath the options. */}
+            {notice && currentFeedback && (
+              <div
+                key={notice.nonce}
+                role="status"
+                aria-live="polite"
+                className={`mt-4 border-l-2 pl-3.5 ${
+                  notice.kind === "correct"
+                    ? notice.milestone
+                      ? "animate-fade-up border-warning text-warning-soft-foreground"
+                      : "animate-fade-up border-success text-success-soft-foreground"
+                    : "animate-shake-soft border-danger text-danger-soft-foreground"
+                }`}
+              >
+                <p className="text-sm font-bold">{notice.message}</p>
+
+                {!currentFeedback.correct && correctOptionText && (
+                  <p className="mt-1 text-[13.5px] leading-relaxed text-foreground">
+                    Answer:{" "}
+                    <strong className="font-bold">
+                      {optionLetter(currentFeedback.correctIndex)}
+                    </strong>{" "}
+                    · {correctOptionText}
                   </p>
+                )}
 
-                  {!currentFeedback.correct && correctOptionText && (
-                    <p className="mt-1.5 text-sm leading-relaxed text-foreground">
-                      The correct answer is{" "}
-                      <strong className="font-extrabold">
-                        {optionLetter(currentFeedback.correctIndex)}
-                      </strong>
-                      : {correctOptionText}
-                    </p>
-                  )}
+                {currentFeedback.explanation && (
+                  <p className="mt-1.5 whitespace-pre-line text-[13.5px] leading-relaxed text-muted-foreground">
+                    {currentFeedback.explanation}
+                  </p>
+                )}
 
-                  {currentFeedback.explanation && (
-                    <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-foreground/85">
-                      {currentFeedback.explanation}
-                    </p>
-                  )}
-
-                  {currentFeedback.reference && (
-                    <p className="mt-1.5 text-xs font-medium text-muted-foreground">
-                      Reference: {currentFeedback.reference}
-                    </p>
-                  )}
-                </div>
+                {currentFeedback.reference && (
+                  <p className="mt-1 text-[11.5px] font-medium text-muted-foreground">
+                    Reference: {currentFeedback.reference}
+                  </p>
+                )}
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Ten consecutive incorrect answers: calm, optional study nudge. */}
-          {showStudyNudge && (
-            <div
-              role="dialog"
-              aria-label="Study suggestion"
-              className="animate-fade-up mt-3 rounded-xl border border-primary/25 bg-primary/[0.04] p-4"
-            >
-              <div className="flex items-start gap-3">
+            {/* Ten consecutive misses: an optional, quiet nudge. */}
+            {showStudyNudge && (
+              <div
+                role="dialog"
+                aria-label="Study suggestion"
+                className="animate-fade-up mt-4 flex items-start gap-3 border-l-2 border-primary pl-3.5"
+              >
                 <BookOpen className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-bold text-foreground">
-                    You&apos;re working through a challenging stretch.
+                  <p className="text-sm font-semibold text-foreground">Stuck in a rough patch?</p>
+                  <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
+                    That usually just means the material is still new. Review the course, or keep
+                    going — the timer runs either way.
                   </p>
-                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                    Ten answers in a row have not gone your way — that usually means this material is
-                    still fresh, not that you can&apos;t do it. Would reviewing the course materials
-                    before you continue help?
-                  </p>
-                  <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="rounded-lg"
-                      onClick={() => setShowStudyNudge(false)}
-                    >
-                      Continue Assessment
-                    </Button>
+                  <div className="mt-2.5 flex flex-wrap gap-2">
                     <Button
                       size="sm"
                       className="rounded-lg"
@@ -1127,13 +1016,17 @@ export default function ExamPage() {
                         window.location.assign(`/courses/${attempt.courseSlug}`);
                       }}
                     >
-                      Review Course Materials
+                      Review Course
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="rounded-lg"
+                      onClick={() => setShowStudyNudge(false)}
+                    >
+                      Keep Going
                     </Button>
                   </div>
-                  <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
-                    Your answers are saved and the timer keeps running. Leaving is recorded as a
-                    departure under this assessment&apos;s rules.
-                  </p>
                 </div>
                 <button
                   type="button"
@@ -1144,213 +1037,137 @@ export default function ExamPage() {
                   <Xmark className="h-4 w-4" />
                 </button>
               </div>
-            </div>
-          )}
+            )}
 
-          {(answerError || submitError) && (
-            <p className="mt-3 flex items-start gap-2 rounded-lg bg-destructive/10 p-3 text-xs font-semibold text-destructive">
-              <TriangleExclamation className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
-              {answerError ?? submitError}
-            </p>
-          )}
+            {(answerError || submitError) && (
+              <p className="mt-3 flex items-start gap-2 text-xs font-semibold text-danger">
+                <TriangleExclamation className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
+                {answerError ?? submitError}
+              </p>
+            )}
 
-          {expired && (
-            <p className="mt-3 flex items-start gap-2 rounded-lg bg-amber-500/10 p-3 text-xs font-semibold text-amber-800 dark:text-amber-300">
-              <Stopwatch className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
-              {submittingAttempt
-                ? "Time is up. Submitting your saved answers…"
-                : "Time is up. Your saved answers are being scored."}
-            </p>
-          )}
+            {expired && (
+              <p className="mt-3 flex items-start gap-2 text-xs font-semibold text-warning-soft-foreground">
+                <Stopwatch className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
+                {submittingAttempt ? "Time is up. Submitting your answers…" : "Time is up."}
+              </p>
+            )}
+          </div>
 
-          {/* Action row: directly beneath the question, answers and feedback. */}
-          <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center">
+          {/* Actions sit with the answers and never scroll away. */}
+          <div className="flex flex-shrink-0 items-center gap-2 border-t border-border/70 px-4 py-3 sm:px-6 lg:px-10">
             {isInstant ? (
-              <>
-                {!currentFeedback ? (
-                  <Button
-                    onClick={() => void submitAnswer()}
-                    disabled={selection === null || submittingAnswer || expired}
-                    className="h-11 rounded-lg px-6 text-sm font-bold"
-                  >
-                    {submittingAnswer ? "Checking…" : "Submit answer"}
-                    {!submittingAnswer && <Check className="h-4 w-4" />}
-                  </Button>
-                ) : isFinalQuestion ? (
-                  <Button
-                    onClick={() => void finalize()}
-                    disabled={submittingAttempt}
-                    className="h-11 rounded-lg px-6 text-sm font-bold"
-                  >
-                    {submittingAttempt ? "Calculating result…" : "View results"}
-                    {!submittingAttempt && <ArrowRight className="h-4 w-4" />}
-                  </Button>
-                ) : (
-                  <Button onClick={goNext} className="h-11 rounded-lg px-6 text-sm font-bold">
-                    Next question
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                )}
-
-                <p className="text-[11px] font-medium text-muted-foreground sm:ml-2">
-                  {currentFeedback
-                    ? "Review the feedback above, then continue."
-                    : selection === null
-                      ? "Choose an option to enable Submit answer."
-                      : "Your answer is checked on the server when you submit."}
-                </p>
-              </>
+              !currentFeedback ? (
+                <Button
+                  onClick={() => void submitAnswer()}
+                  disabled={selection === null || submittingAnswer || expired}
+                  className="h-11 w-full rounded-xl px-6 text-sm font-semibold sm:w-auto"
+                >
+                  {submittingAnswer ? "Submitting…" : "Submit Answer"}
+                </Button>
+              ) : isFinalQuestion ? (
+                <Button
+                  onClick={() => void finalize()}
+                  disabled={submittingAttempt}
+                  className="h-11 w-full rounded-xl px-6 text-sm font-semibold sm:w-auto"
+                >
+                  {submittingAttempt ? "Finishing…" : "View Results"}
+                </Button>
+              ) : (
+                <Button
+                  onClick={goNext}
+                  className="h-11 w-full rounded-xl px-6 text-sm font-semibold sm:w-auto"
+                >
+                  Next Question
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              )
             ) : (
               <>
                 <Button
                   variant="outline"
                   onClick={() => goTo(current - 1)}
                   disabled={isFirstQuestion}
-                  className="h-11 rounded-lg px-5 text-sm font-bold"
+                  className="h-11 rounded-xl px-4 text-sm font-semibold"
                 >
                   <ChevronLeft className="h-4 w-4" />
                   Previous
                 </Button>
 
-                {isFinalQuestion ? (
-                  <Button
-                    onClick={() => setConfirmOpen(true)}
-                    disabled={submittingAttempt || expired}
-                    className="h-11 rounded-lg px-6 text-sm font-bold sm:ml-auto"
-                  >
-                    Finish Assessment
-                    <Check className="h-4 w-4" />
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={goNext}
-                    className="h-11 rounded-lg px-6 text-sm font-bold sm:ml-auto"
-                  >
-                    Next
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                )}
-              </>
-            )}
-          </div>
+                <div className="ml-auto flex items-center gap-2.5">
+                  {saveState !== "idle" && (
+                    <span
+                      aria-live="polite"
+                      className={`hidden items-center gap-1.5 text-[11px] font-medium sm:flex ${
+                        saveState === "error" ? "text-danger" : "text-muted-foreground"
+                      }`}
+                    >
+                      {saveState === "saving" && "Saving…"}
+                      {saveState === "saved" && (
+                        <>
+                          <CloudCheck className="h-3.5 w-3.5 text-success" /> Saved
+                        </>
+                      )}
+                      {saveState === "error" && (
+                        <>
+                          <CloudSlash className="h-3.5 w-3.5" /> Not saved
+                        </>
+                      )}
+                    </span>
+                  )}
 
-          <p className="mt-3 hidden text-[11px] text-muted-foreground sm:block">
-            Shortcuts: <kbd className="rounded border border-border bg-card px-1">1</kbd>–
-            <kbd className="rounded border border-border bg-card px-1">8</kbd> or{" "}
-            <kbd className="rounded border border-border bg-card px-1">A</kbd>–
-            <kbd className="rounded border border-border bg-card px-1">H</kbd> answer
-            {!isInstant && (
-              <>
-                {" "}
-                · <kbd className="rounded border border-border bg-card px-1">←</kbd>
-                <kbd className="rounded border border-border bg-card px-1">→</kbd> navigate
-              </>
-            )}
-          </p>
-        </main>
-
-        {/* Compact status / question map. Navigation only — no Submit All. */}
-        <aside className="hidden w-56 flex-shrink-0 lg:block">
-          <div className="sticky top-28 rounded-xl border border-border bg-card p-3.5 shadow-sm">
-            <div className="flex items-center justify-between">
-              <p className="flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wide text-muted-foreground">
-                <ListCheck className="h-3.5 w-3.5" />
-                {isInstant ? "Progress" : "Question map"}
-              </p>
-              <p className="text-[11px] font-bold text-foreground">
-                {progressCount}/{totalQuestions}
-              </p>
-            </div>
-
-            {isInstant ? (
-              <div className="mt-3 space-y-2 text-xs">
-                <div className="flex items-center justify-between rounded-md bg-muted/60 px-2.5 py-2">
-                  <span className="font-semibold text-muted-foreground">Submitted</span>
-                  <span className="font-extrabold text-foreground">{submittedCount}</span>
-                </div>
-                <div className="flex items-center justify-between rounded-md bg-muted/60 px-2.5 py-2">
-                  <span className="font-semibold text-muted-foreground">Remaining</span>
-                  <span className="font-extrabold text-foreground">{unansweredCount}</span>
-                </div>
-                <div className="flex items-center justify-between rounded-md bg-muted/60 px-2.5 py-2">
-                  <span className="font-semibold text-muted-foreground">Streak</span>
-                  <span className="font-extrabold text-foreground">{streak}</span>
-                </div>
-              </div>
-            ) : (
-              <>
-                <div className="mt-3 grid max-h-[58vh] grid-cols-6 gap-1.5 overflow-y-auto pr-0.5">
-                  {questions.map((item, index) => {
-                    const answered =
-                      answers[item.id] !== null && answers[item.id] !== undefined;
-                    const isCurrent = index === current;
-                    return (
-                      <button
-                        key={item.id}
-                        type="button"
-                        onClick={() => goTo(index)}
-                        aria-label={`Go to question ${index + 1}${answered ? ", answered" : ", unanswered"}`}
-                        aria-current={isCurrent ? "true" : undefined}
-                        className={`flex h-7 items-center justify-center rounded-md text-[11px] font-bold transition-colors ${
-                          isCurrent
-                            ? "bg-primary text-primary-foreground"
-                            : answered
-                              ? "bg-primary/15 text-primary"
-                              : "bg-muted text-muted-foreground hover:bg-muted/70"
-                        }`}
-                      >
-                        {index + 1}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                <div className="mt-3 space-y-1.5 border-t border-border/60 pt-2.5 text-[11px] font-medium text-muted-foreground">
-                  <p className="flex items-center gap-2">
-                    <span className="h-2.5 w-2.5 rounded-sm bg-primary/20" /> Answered
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <span className="h-2.5 w-2.5 rounded-sm bg-muted" /> Unanswered
-                  </p>
+                  {isFinalQuestion ? (
+                    <Button
+                      onClick={() => setConfirmOpen(true)}
+                      disabled={submittingAttempt || expired}
+                      className="h-11 rounded-xl px-5 text-sm font-semibold"
+                    >
+                      Finish Assessment
+                      <Check className="h-4 w-4" />
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={goNext}
+                      className="h-11 rounded-xl px-5 text-sm font-semibold"
+                    >
+                      Next
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  )}
                 </div>
               </>
             )}
           </div>
-        </aside>
+        </section>
       </div>
 
       {/* Finish confirmation, required before a Results at the End attempt closes. */}
       {confirmOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--backdrop)] px-4 backdrop-blur-sm"
           role="presentation"
           onClick={() => {
             if (!submittingAttempt) setConfirmOpen(false);
           }}
         >
           <div
-            className="w-full max-w-md rounded-xl border border-border bg-card p-5 shadow-lg"
+            className="animate-fade-up w-full max-w-sm rounded-2xl border border-border bg-surface p-6 shadow-overlay"
             role="dialog"
             aria-modal="true"
             aria-labelledby="finish-title"
             onClick={(event) => event.stopPropagation()}
           >
-            <h2 id="finish-title" className="text-lg font-extrabold text-foreground">
-              Finish assessment?
+            <h2 id="finish-title" className="font-display text-xl font-semibold text-foreground">
+              Finish Assessment?
             </h2>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              You have answered {answeredCount} of {totalQuestions} questions.
+              You answered {answeredCount} of {totalQuestions}.
               {unansweredCount > 0
-                ? ` ${unansweredCount} question${unansweredCount === 1 ? "" : "s"} will be marked unanswered and score zero.`
+                ? ` ${unansweredCount} unanswered question${unansweredCount === 1 ? "" : "s"} score${unansweredCount === 1 ? "s" : ""} zero.`
                 : " Every question has an answer."}
             </p>
-            {secondsLeft !== null && (
-              <p className="mt-2 text-xs font-semibold text-muted-foreground">
-                Time remaining: {formatCountdown(secondsLeft)}
-              </p>
-            )}
             {submitError && (
-              <p className="mt-3 flex items-start gap-2 rounded-lg bg-destructive/10 p-3 text-xs font-semibold text-destructive">
+              <p className="mt-3 flex items-start gap-2 text-xs font-semibold text-danger">
                 <TriangleExclamation className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
                 {submitError}
               </p>
@@ -1358,18 +1175,18 @@ export default function ExamPage() {
             <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:justify-end">
               <Button
                 variant="outline"
-                className="rounded-lg"
+                className="rounded-xl"
                 onClick={() => setConfirmOpen(false)}
                 disabled={submittingAttempt}
               >
-                Keep working
+                Keep Going
               </Button>
               <Button
-                className="rounded-lg"
+                className="rounded-xl"
                 onClick={() => void finalize()}
                 disabled={submittingAttempt}
               >
-                {submittingAttempt ? "Submitting…" : "Finish & view results"}
+                {submittingAttempt ? "Submitting…" : "Finish Assessment"}
                 {!submittingAttempt && <Check className="h-4 w-4" />}
               </Button>
             </div>

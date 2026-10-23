@@ -12,12 +12,19 @@
     "@clerk/nextjs": "^7.5.6",
     "@clerk/themes": "^2.4.57",
     "@gravity-ui/icons": "^2.23.0",
+    "@heroui/react": "3.2.6",
+    "@heroui/styles": "3.2.6",
+    "@internationalized/date": "^3.12.4",
     "@libsql/client": "^0.14.0",
+    "@react-aria/ssr": "^3.10.1",
+    "@react-aria/utils": "^3.34.1",
     "@tailwindcss/postcss": "^4.3.1",
     "@workspace/db": "workspace:*",
     "drizzle-orm": "catalog:",
     "next": "^15.5.19",
-    "qrcode": "^1.5.4"
+    "qrcode": "^1.5.4",
+    "react-aria": "^3.53.1",
+    "react-aria-components": "^1.22.1"
   },
   "devDependencies": {
     "@hookform/resolvers": "^3.10.0",

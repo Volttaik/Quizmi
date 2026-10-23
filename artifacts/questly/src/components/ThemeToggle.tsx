@@ -1,6 +1,7 @@
 "use client";
 
-import { Moon, Sun } from "lucide-react";
+import { Button, Tooltip } from "@heroui/react";
+import { Moon, Sun } from "@gravity-ui/icons";
 import { useTheme } from "@/components/ThemeProvider";
 
 export default function ThemeToggle({ className = "" }: { className?: string }) {
@@ -15,15 +16,18 @@ export default function ThemeToggle({ className = "" }: { className?: string }) 
   };
 
   return (
-    <button
-      type="button"
-      onClick={toggle}
-      aria-label="Toggle colour theme"
-      title="Toggle colour theme"
-      className={`inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 ${className}`}
-    >
-      <Moon className="h-4 w-4 dark:hidden" />
-      <Sun className="hidden h-4 w-4 dark:block" />
-    </button>
+    <Tooltip delay={600}>
+      <Button
+        variant="ghost"
+        isIconOnly
+        onPress={toggle}
+        aria-label="Toggle colour theme"
+        className={`h-9 w-9 rounded-full text-muted-foreground ${className}`}
+      >
+        <Moon className="h-[17px] w-[17px] dark:hidden" />
+        <Sun className="hidden h-[17px] w-[17px] dark:block" />
+      </Button>
+      <Tooltip.Content>Switch theme</Tooltip.Content>
+    </Tooltip>
   );
 }

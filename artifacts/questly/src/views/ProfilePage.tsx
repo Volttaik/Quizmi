@@ -4,22 +4,22 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useClerk, useUser } from "@clerk/nextjs";
 import {
-  BarChart3,
+  ArrowRightFromSquare,
+  ArrowRotateRight,
   Bell,
   Camera,
+  ChartLine,
   ChevronRight,
+  CircleQuestion,
+  Display,
   FileText,
-  HelpCircle,
-  Loader2,
-  LogOut,
-  Monitor,
+  Medal,
   Moon,
-  Shield,
+  Person,
+  ShieldCheck,
   Sun,
-  Target,
-  Trophy,
-  User,
-} from "lucide-react";
+  TargetDart,
+} from "@gravity-ui/icons";
 import { toast } from "sonner";
 import { useTheme } from "@/components/ThemeProvider";
 import { Button } from "@/components/ui/button";
@@ -28,7 +28,7 @@ import type { Analytics } from "@/lib/types";
 const THEMES = [
   { value: "light", label: "Light", icon: Sun },
   { value: "dark", label: "Dark", icon: Moon },
-  { value: "system", label: "System", icon: Monitor },
+  { value: "system", label: "System", icon: Display },
 ] as const;
 
 export default function ProfilePage() {
@@ -70,12 +70,15 @@ export default function ProfilePage() {
     .slice(0, 2);
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-8">
-      <h1 className="text-2xl font-extrabold tracking-tight text-foreground">Profile</h1>
-      <p className="mt-1 text-sm text-muted-foreground">Manage your account and preferences.</p>
+    <div className="mx-auto max-w-2xl px-5 py-10 sm:px-6 lg:px-8">
+      <p className="eyebrow">Account</p>
+      <h1 className="mt-2.5 text-display-md text-foreground">Profile & preferences</h1>
+      <p className="mt-2 text-[13.5px] text-muted-foreground">
+        Your details, appearance and shortcuts across QUIZIMI.
+      </p>
 
       {/* Identity */}
-      <section className="mt-6 rounded-2xl border border-border/70 bg-card p-5">
+      <section className="mt-7 rounded-[1.75rem] border border-border/80 bg-surface p-5 sm:p-6">
         <div className="flex items-center gap-4">
           <div className="relative">
             <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handlePhoto} />
@@ -96,7 +99,7 @@ export default function ProfilePage() {
               )}
               <span className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
                 {uploading ? (
-                  <Loader2 className="h-4 w-4 animate-spin text-white" />
+                  <ArrowRotateRight className="h-4 w-4 animate-spin text-white" />
                 ) : (
                   <Camera className="h-4 w-4 text-white" />
                 )}
@@ -105,7 +108,7 @@ export default function ProfilePage() {
           </div>
 
           <div className="min-w-0 flex-1">
-            <p className="truncate text-base font-extrabold text-card-foreground">
+            <p className="truncate font-display text-lg font-semibold text-foreground">
               {user?.fullName ?? "Learner"}
             </p>
             <p className="truncate text-sm text-muted-foreground">
@@ -135,8 +138,8 @@ export default function ProfilePage() {
       </section>
 
       {/* Appearance */}
-      <section className="mt-4 rounded-2xl border border-border/70 bg-card p-5">
-        <h2 className="text-sm font-extrabold text-card-foreground">Appearance</h2>
+      <section className="mt-4 rounded-[1.5rem] border border-border/80 bg-surface p-5 sm:p-6">
+        <h2 className="font-display text-[15px] font-semibold text-foreground">Appearance</h2>
         <div className="mt-3 grid grid-cols-3 gap-2">
           {THEMES.map((option) => {
             const active = theme === option.value;
@@ -146,9 +149,9 @@ export default function ProfilePage() {
                 type="button"
                 onClick={() => setTheme(option.value)}
                 aria-pressed={active}
-                className={`flex items-center justify-center gap-2 rounded-xl border px-3 py-2.5 text-xs font-bold transition-colors ${
+                className={`flex items-center justify-center gap-2 rounded-xl border px-3 py-2.5 text-xs font-semibold transition-colors ${
                   active
-                    ? "border-primary bg-primary text-primary-foreground"
+                    ? "border-accent bg-accent-soft text-accent-soft-foreground"
                     : "border-border text-muted-foreground hover:text-foreground"
                 }`}
               >
@@ -161,49 +164,51 @@ export default function ProfilePage() {
       </section>
 
       {/* Links */}
-      <section className="mt-4 overflow-hidden rounded-2xl border border-border/70 bg-card">
-        <Row icon={User} label="Account details" href="/settings/account" />
-        <Row icon={BarChart3} label="Performance history" href="/history" />
+      <section className="mt-4 overflow-hidden rounded-[1.5rem] border border-border/80 bg-surface">
+        <Row icon={Person} label="Account details" href="/settings/account" />
+        <Row icon={ChartLine} label="Performance history" href="/history" />
         <Row icon={Bell} label="Notifications" href="/settings/notifications" />
-        <Row icon={Shield} label="Privacy & security" href="/settings/privacy" />
+        <Row icon={ShieldCheck} label="Privacy & security" href="/settings/privacy" />
       </section>
 
-      <section className="mt-4 overflow-hidden rounded-2xl border border-border/70 bg-card">
-        <Row icon={HelpCircle} label="Help & support" href="/settings/help" />
+      <section className="mt-4 overflow-hidden rounded-[1.5rem] border border-border/80 bg-surface">
+        <Row icon={CircleQuestion} label="Help & support" href="/settings/help" />
         <Row icon={FileText} label="Terms & privacy" href="/settings/terms" />
       </section>
 
-      <section className="mt-4 rounded-2xl border border-border/70 bg-card p-5">
+      <section className="mt-4 rounded-[1.5rem] border border-border/80 bg-surface p-5 sm:p-6">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/10 text-amber-500">
-            <Trophy className="h-4 w-4" />
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-warning-soft text-warning-soft-foreground">
+            <Medal className="h-4 w-4" />
           </div>
           <div className="flex-1">
-            <p className="text-sm font-bold text-card-foreground">Best score</p>
-            <p className="text-xs text-muted-foreground">
-              Across all completed attempts
-            </p>
+            <p className="text-[13px] font-semibold text-foreground">Best score</p>
+            <p className="text-[11.5px] text-muted-foreground">Across all completed attempts</p>
           </div>
-          <p className="text-lg font-extrabold text-foreground">{analytics?.bestPercentage ?? 0}%</p>
+          <p className="font-display text-lg font-semibold text-foreground">
+            {analytics?.bestPercentage ?? 0}%
+          </p>
         </div>
-        <div className="mt-3 flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
-            <Target className="h-4 w-4" />
+        <div className="mt-4 flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-soft text-accent-soft-foreground">
+            <TargetDart className="h-4 w-4" />
           </div>
           <div className="flex-1">
-            <p className="text-sm font-bold text-card-foreground">Time on exams</p>
-            <p className="text-xs text-muted-foreground">Total time across attempts</p>
+            <p className="text-[13px] font-semibold text-foreground">Time on exams</p>
+            <p className="text-[11.5px] text-muted-foreground">Total time across attempts</p>
           </div>
-          <p className="text-lg font-extrabold text-foreground">{analytics?.totalMinutes ?? 0}m</p>
+          <p className="font-display text-lg font-semibold text-foreground">
+            {analytics?.totalMinutes ?? 0}m
+          </p>
         </div>
       </section>
 
       <Button
         variant="outline"
-        className="mt-4 w-full rounded-xl border-destructive/30 text-destructive hover:bg-destructive/5"
+        className="mt-4 w-full rounded-xl border-danger/30 text-danger"
         onClick={() => signOut({ redirectUrl: "/" })}
       >
-        <LogOut className="h-4 w-4" />
+        <ArrowRightFromSquare className="h-4 w-4" />
         Sign out
       </Button>
     </div>
@@ -222,9 +227,9 @@ function Row({
   return (
     <Link
       href={href}
-      className="flex items-center gap-3 border-b border-border/60 px-4 py-3.5 transition-colors last:border-0 hover:bg-muted/40"
+      className="flex items-center gap-3 border-b border-border/60 px-4 py-3.5 transition-colors last:border-0 hover:bg-surface-secondary"
     >
-      <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+      <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent-soft-foreground">
         <Icon className="h-4 w-4" />
       </div>
       <span className="flex-1 text-sm font-semibold text-foreground">{label}</span>

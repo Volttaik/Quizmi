@@ -4,18 +4,18 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
+import { Button, ProgressBar, ToggleButton, ToggleButtonGroup } from "@heroui/react";
 import {
-  AlertTriangle,
   ArrowRight,
-  BarChart3,
-  CheckCircle2,
+  ChartLine,
+  CircleCheck,
+  CirclePlay,
+  CircleXmark,
   Clock,
-  History,
-  PlayCircle,
-  Target,
-  XCircle,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
+  ClockArrowRotateLeft,
+  TargetDart,
+  TriangleExclamation,
+} from "@gravity-ui/icons";
 import {
   difficultyStyle,
   formatDate,
@@ -90,104 +90,152 @@ export default function HistoryPage() {
         percentage: point.percentage,
         date: point.date ? formatDate(point.date) : "",
       })),
-    [analytics]
+    [analytics],
   );
 
   return (
     <div className="bg-background">
-      <main className="mx-auto max-w-4xl px-4 py-8">
-        <div>
-          <p className="text-xs font-bold uppercase tracking-[0.16em] text-primary">Progress</p>
-          <h1 className="mt-1.5 text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
-            Attempt history
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Every assessment you have taken, with scores and timing.
-          </p>
-        </div>
-
-        {loading ? (
-          <div className="mt-6 space-y-4">
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {Array.from({ length: 4 }).map((_, index) => (
-                <div key={index} className="skeleton h-24 rounded-2xl" />
-              ))}
+      <section className="hero-mesh border-b border-border/60">
+        <div className="mx-auto max-w-5xl px-5 pb-10 pt-12 sm:px-6 sm:pb-12 sm:pt-16 lg:px-8">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="eyebrow">Progress</p>
+              <h1 className="mt-3 text-display-lg text-foreground">Attempt history</h1>
+              <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
+                Every assessment you&apos;ve taken, with scores, timing and a path back to the full
+                answer review.
+              </p>
             </div>
-            <div className="skeleton h-56 rounded-2xl" />
-            <div className="skeleton h-72 rounded-2xl" />
+            {!loading && !error && items.length > 0 && (
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                {items.length} attempt{items.length === 1 ? "" : "s"} recorded
+              </p>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <main className="mx-auto max-w-5xl px-5 py-10 sm:px-6 sm:py-12 lg:px-8">
+        {loading ? (
+          <div className="space-y-4">
+            <div className="skeleton h-24 rounded-[1.5rem]" />
+            <div className="skeleton h-56 rounded-[1.5rem]" />
+            <div className="skeleton h-72 rounded-[1.5rem]" />
           </div>
         ) : error ? (
-          <div className="mt-6 rounded-2xl border border-destructive/30 bg-destructive/5 p-8 text-center">
-            <p className="text-sm font-semibold text-destructive">{error}</p>
+          <div className="rounded-[2rem] border border-danger/25 bg-danger-soft px-6 py-14 text-center">
+            <p className="text-sm font-semibold text-danger-soft-foreground">{error}</p>
             <Button
               variant="outline"
               size="sm"
-              className="mt-4 rounded-full"
-              onClick={() => window.location.reload()}
+              className="mt-5 rounded-full"
+              onPress={() => window.location.reload()}
             >
-              Retry
+              Try again
             </Button>
           </div>
         ) : (
           <>
-            <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-[1.5rem] border border-border/80 bg-border/60 sm:grid-cols-4">
               {[
-                { icon: History, label: "Attempts", value: analytics?.completedAttempts ?? 0 },
-                { icon: BarChart3, label: "Average", value: `${analytics?.averagePercentage ?? 0}%` },
-                { icon: Target, label: "Pass rate", value: `${analytics?.passRate ?? 0}%` },
-                { icon: Clock, label: "Time on exams", value: `${analytics?.totalMinutes ?? 0} min` },
+                {
+                  icon: ClockArrowRotateLeft,
+                  label: "Completed",
+                  value: analytics?.completedAttempts ?? 0,
+                },
+                {
+                  icon: ChartLine,
+                  label: "Average",
+                  value: `${analytics?.averagePercentage ?? 0}%`,
+                },
+                { icon: TargetDart, label: "Pass rate", value: `${analytics?.passRate ?? 0}%` },
+                {
+                  icon: Clock,
+                  label: "Time on exams",
+                  value: `${analytics?.totalMinutes ?? 0} min`,
+                },
               ].map((stat) => (
-                <div key={stat.label} className="rounded-2xl border border-border/70 bg-card p-4">
-                  <stat.icon className="h-4 w-4 text-primary" />
-                  <p className="mt-2.5 text-xl font-extrabold text-card-foreground">{stat.value}</p>
-                  <p className="text-[11px] font-semibold text-muted-foreground">{stat.label}</p>
+                <div key={stat.label} className="bg-surface px-5 py-5">
+                  <dt className="flex items-center gap-2 text-[11.5px] font-semibold text-muted-foreground">
+                    <stat.icon className="h-3.5 w-3.5 text-accent" />
+                    {stat.label}
+                  </dt>
+                  <dd className="mt-2.5 font-display text-[1.8rem] font-semibold leading-none tracking-[-0.03em] text-foreground">
+                    {stat.value}
+                  </dd>
                 </div>
               ))}
+            </dl>
+
+            <div className="mt-8 grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:gap-10">
+              {chartData.length >= 2 && (
+                <section className="rounded-[1.5rem] border border-border/80 bg-surface p-5 sm:p-6">
+                  <div className="flex items-center justify-between">
+                    <h2 className="font-display text-[1.15rem] font-semibold text-foreground">
+                      Score trend
+                    </h2>
+                    <span className="text-[11px] font-medium text-muted-foreground">
+                      Last {chartData.length} attempts
+                    </span>
+                  </div>
+                  <div className="mt-5 h-52 w-full">
+                    <ScoreTrendChart data={chartData} />
+                  </div>
+                </section>
+              )}
+
+              {analytics && analytics.bySubject.length > 0 && (
+                <section>
+                  <h2 className="font-display text-[1.15rem] font-semibold text-foreground">
+                    By subject
+                  </h2>
+                  <div className="mt-5 space-y-4">
+                    {analytics.bySubject.slice(0, 6).map((subject) => (
+                      <ProgressBar
+                        key={subject.subject}
+                        value={subject.averagePercentage}
+                        aria-label={`${subject.subject} average score`}
+                      >
+                        <div className="flex items-baseline justify-between gap-3">
+                          <span className="text-[12.5px] font-semibold text-foreground">
+                            {subject.subject}
+                          </span>
+                          <span className="text-[11px] text-muted-foreground">
+                            {subject.averagePercentage}% · {subject.attempts} attempt
+                            {subject.attempts === 1 ? "" : "s"}
+                          </span>
+                        </div>
+                        <ProgressBar.Track className="mt-2 h-1.5">
+                          <ProgressBar.Fill />
+                        </ProgressBar.Track>
+                      </ProgressBar>
+                    ))}
+                  </div>
+                </section>
+              )}
             </div>
 
-            {chartData.length >= 2 && (
-              <section className="mt-6 rounded-2xl border border-border/70 bg-card p-5">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-sm font-extrabold text-card-foreground">Score trend</h2>
-                  <span className="text-xs font-semibold text-muted-foreground">
-                    Last {chartData.length} attempts
-                  </span>
+            <section className="mt-12">
+              <div className="flex flex-wrap items-end justify-between gap-3">
+                <div>
+                  <h2 className="font-display text-[1.35rem] font-semibold text-foreground">
+                    All attempts
+                  </h2>
+                  <p className="mt-1 text-[12.5px] text-muted-foreground">
+                    Open any completed attempt to review every answer.
+                  </p>
                 </div>
-                <div className="mt-4 h-48 w-full">
-                  <ScoreTrendChart data={chartData} />
-                </div>
-              </section>
-            )}
-
-            {analytics && analytics.bySubject.length > 0 && (
-              <section className="mt-6 rounded-2xl border border-border/70 bg-card p-5">
-                <h2 className="text-sm font-extrabold text-card-foreground">By subject</h2>
-                <div className="mt-4 space-y-3">
-                  {analytics.bySubject.slice(0, 6).map((subject) => (
-                    <div key={subject.subject}>
-                      <div className="flex items-center justify-between text-xs font-semibold">
-                        <span className="text-foreground">{subject.subject}</span>
-                        <span className="text-muted-foreground">
-                          {subject.averagePercentage}% · {subject.attempts} attempt
-                          {subject.attempts === 1 ? "" : "s"}
-                        </span>
-                      </div>
-                      <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-muted">
-                        <div
-                          className="h-full rounded-full bg-primary"
-                          style={{ width: `${Math.min(100, subject.averagePercentage)}%` }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            <section className="mt-6">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <h2 className="text-sm font-extrabold text-foreground">All attempts</h2>
-                <div className="flex items-center gap-1 rounded-full bg-muted p-1">
+                <ToggleButtonGroup
+                  selectionMode="single"
+                  disallowEmptySelection
+                  selectedKeys={new Set([filter])}
+                  onSelectionChange={(keys) => {
+                    const next = Array.from(keys)[0];
+                    if (next) setFilter(String(next) as Filter);
+                  }}
+                  size="sm"
+                  className="rounded-full bg-surface-secondary p-1"
+                >
                   {(
                     [
                       { key: "all", label: "All" },
@@ -195,46 +243,43 @@ export default function HistoryPage() {
                       { key: "failed", label: "Not passed" },
                     ] as Array<{ key: Filter; label: string }>
                   ).map((tab) => (
-                    <button
+                    <ToggleButton
                       key={tab.key}
-                      type="button"
-                      onClick={() => setFilter(tab.key)}
-                      aria-pressed={filter === tab.key}
-                      className={`rounded-full px-3 py-1.5 text-xs font-bold transition-colors ${
-                        filter === tab.key
-                          ? "bg-background text-foreground shadow-sm"
-                          : "text-muted-foreground hover:text-foreground"
-                      }`}
+                      id={tab.key}
+                      className="rounded-full px-3 text-[12px] font-semibold"
                     >
                       {tab.label}
-                    </button>
+                    </ToggleButton>
                   ))}
-                </div>
+                </ToggleButtonGroup>
               </div>
 
               {filtered.length === 0 ? (
-                <div className="mt-4 rounded-2xl border border-border/70 bg-card p-10 text-center">
-                  <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-muted">
-                    <History className="h-5 w-5 text-muted-foreground" />
-                  </div>
-                  <p className="text-sm font-bold text-foreground">
+                <div className="mt-5 rounded-[1.75rem] border border-border/80 bg-surface px-6 py-14 text-center">
+                  <span className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-accent-soft text-accent-soft-foreground">
+                    <ClockArrowRotateLeft className="h-5 w-5" />
+                  </span>
+                  <p className="font-display text-lg font-semibold text-foreground">
                     {completed.length === 0 ? "No attempts yet" : "Nothing matches this filter"}
                   </p>
-                  <p className="mx-auto mt-1 max-w-xs text-xs text-muted-foreground">
+                  <p className="mx-auto mt-1 max-w-xs text-[12.5px] leading-relaxed text-muted-foreground">
                     {completed.length === 0
                       ? "Your scores, timing and answer reviews will be saved here."
                       : "Try another filter to see your other attempts."}
                   </p>
                   {completed.length === 0 && (
-                    <Link href="/courses" className="mt-4 inline-block">
-                      <Button size="sm" className="rounded-full">
-                        Browse courses
-                      </Button>
-                    </Link>
+                    <Button
+                      className="mt-6 rounded-full"
+                      size="sm"
+                      onPress={() => router.push("/courses")}
+                    >
+                      Browse courses
+                      <ArrowRight className="h-4 w-4" />
+                    </Button>
                   )}
                 </div>
               ) : (
-                <div className="mt-4 divide-y divide-border/60 overflow-hidden rounded-2xl border border-border/70 bg-card">
+                <div className="mt-5 overflow-hidden rounded-[1.5rem] border border-border/80 bg-surface">
                   {filtered.map((item) => {
                     const running = item.status === "in_progress";
                     const terminated = item.status === "terminated";
@@ -243,45 +288,47 @@ export default function HistoryPage() {
                       <Link
                         key={item.attemptId}
                         href={running ? `/exam/${item.attemptId}` : `/results/${item.attemptId}`}
-                        className="flex items-center gap-3 p-4 transition-colors hover:bg-muted/40"
+                        className="group flex items-center gap-4 border-b border-border/60 px-5 py-4 transition-colors last:border-0 hover:bg-surface-secondary"
                       >
-                        <div
+                        <span
                           className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl ${
                             running
-                              ? "bg-primary/10 text-primary"
+                              ? "bg-accent-soft text-accent-soft-foreground"
                               : terminated
-                                ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                                ? "bg-warning-soft text-warning-soft-foreground"
                                 : item.passed
-                                  ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                                  : "bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                                  ? "bg-success-soft text-success-soft-foreground"
+                                  : "bg-danger-soft text-danger-soft-foreground"
                           }`}
                         >
                           {running ? (
-                            <PlayCircle className="h-5 w-5" />
+                            <CirclePlay className="h-5 w-5" />
                           ) : terminated ? (
-                            <AlertTriangle className="h-5 w-5" />
+                            <TriangleExclamation className="h-5 w-5" />
                           ) : item.passed ? (
-                            <CheckCircle2 className="h-5 w-5" />
+                            <CircleCheck className="h-5 w-5" />
                           ) : (
-                            <XCircle className="h-5 w-5" />
+                            <CircleXmark className="h-5 w-5" />
                           )}
-                        </div>
+                        </span>
 
                         <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-bold text-foreground">
+                          <p className="truncate text-[13.5px] font-semibold text-foreground">
                             {item.courseTitle}
                           </p>
                           <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-muted-foreground">
-                            <span className={`rounded-full border px-1.5 font-bold ${difficulty.className}`}>
+                            <span
+                              className={`rounded-full border px-2 py-px text-[10px] font-bold ${difficulty.className}`}
+                            >
                               {difficulty.label}
                             </span>
                             {item.subject && <span>{item.subject}</span>}
                             {running ? (
-                              <span className="font-semibold text-primary">In progress</span>
+                              <span className="font-semibold text-accent">In progress</span>
                             ) : (
                               <>
                                 {terminated && (
-                                  <span className="font-semibold text-amber-600 dark:text-amber-400">
+                                  <span className="font-semibold text-warning-soft-foreground">
                                     Terminated
                                   </span>
                                 )}
@@ -296,9 +343,11 @@ export default function HistoryPage() {
                         </div>
 
                         {running ? (
-                          <ArrowRight className="h-4 w-4 text-primary" />
+                          <ArrowRight className="h-4 w-4 text-accent transition-transform group-hover:translate-x-0.5" />
                         ) : (
-                          <span className={`text-lg font-extrabold ${scoreClasses(item.percentage)}`}>
+                          <span
+                            className={`font-display text-lg font-semibold ${scoreClasses(item.percentage)}`}
+                          >
                             {item.percentage}%
                           </span>
                         )}

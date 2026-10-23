@@ -6,20 +6,9 @@ import { useParams, useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import {
   ArrowLeft,
-  ArrowRight,
-  BookOpen,
-  Check,
-  ChevronLeft,
-  ChevronRight,
-  CircleCheck,
   CircleInfo,
-  Clock,
-  ListCheck,
   Lock,
   Play,
-  ShieldCheck,
-  Sparkles,
-  Stopwatch,
   TriangleExclamation,
 } from "@gravity-ui/icons";
 import { Button } from "@/components/ui/button";
@@ -33,8 +22,6 @@ import {
   type AssessmentPreferences,
 } from "@/lib/assessment-preferences";
 import type { CourseDetail } from "@/lib/types";
-
-const LETTERS = "ABCDEFGH".split("");
 
 export default function InstructionScreen() {
   const params = useParams() as { slug?: string };
@@ -232,207 +219,107 @@ export default function InstructionScreen() {
           Change settings
         </Link>
 
-        <div className="mt-4 flex flex-wrap items-center gap-2">
+        <div className="mt-5 flex flex-wrap items-center gap-2">
+          <span className="eyebrow">Step 2 of 2 · Instructions</span>
           {course.code && (
-            <span className="rounded-md bg-accent px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-accent-foreground">
+            <span className="rounded-full bg-accent-soft px-3 py-1 text-[10.5px] font-bold uppercase tracking-wider text-accent-soft-foreground">
               {course.code}
             </span>
           )}
-          <span className="rounded-md bg-muted px-2.5 py-1 text-[11px] font-semibold text-muted-foreground">
-            Step 2 of 2 · Instructions
-          </span>
         </div>
 
-        <h1 className="mt-2.5 text-2xl font-extrabold leading-tight tracking-tight text-foreground sm:text-3xl">
-          Assessment instructions
-        </h1>
-        <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-          Read this before you start {course.title}. It reflects the settings you just chose.
-        </p>
+        <h1 className="mt-3 text-display-lg text-foreground">Before you begin.</h1>
+        <p className="mt-2 text-[14px] text-muted-foreground">{course.title}</p>
 
         {resuming && (
-          <p className="mt-4 flex items-start gap-2 rounded-xl border border-primary/25 bg-primary/5 p-3 text-xs font-semibold text-foreground">
-            <Play className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
-            You have an assessment in progress. Starting resumes it with the settings it was created
-            with, including its original timer.
+          <p className="mt-5 flex items-start gap-2 text-[12.5px] font-medium text-accent-soft-foreground">
+            <Play className="mt-0.5 h-4 w-4 flex-shrink-0" />
+            You have an assessment in progress. Starting resumes it.
           </p>
         )}
 
         {locked && (
-          <div className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/5 p-4 text-xs leading-relaxed text-amber-800 dark:text-amber-300">
+          <div className="mt-5 rounded-2xl border border-warning/25 bg-warning-soft p-4 text-xs leading-relaxed text-warning-soft-foreground">
             <p className="flex items-center gap-2 font-bold">
               <Lock className="h-4 w-4" /> A verified purchase is required
             </p>
-            <p className="mt-1">
-              Complete payment on the course page first. The assessment questions and answer key stay
-              protected until the server confirms access.
-            </p>
+            <p className="mt-1">Complete payment on the course page to unlock the assessment.</p>
           </div>
         )}
 
         {/* Settings summary */}
-        <section className="mt-5 rounded-xl border border-border/70 bg-card p-4 shadow-sm">
-          <div className="grid grid-cols-2 gap-3">
-            {[
-              { label: "Questions", value: String(preferences.questionCount), icon: ListCheck },
-              { label: "Duration", value: durationLabel, icon: Clock },
-              {
-                label: "Result mode",
-                value: isInstant ? "Instant Results" : "Results at the End",
-                icon: Sparkles,
-              },
-              { label: "Pass mark", value: `${course.passScore}%`, icon: Check },
-            ].map((item) => (
-              <div key={item.label} className="rounded-lg bg-muted/50 p-3">
-                <item.icon className="h-3.5 w-3.5 text-primary" />
-                <p className="mt-1.5 text-sm font-extrabold leading-tight text-foreground">
-                  {item.value}
-                </p>
-                <p className="text-[11px] font-semibold text-muted-foreground">{item.label}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* A reachable start action near the top, before the longer rules. */}
-        <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-xs font-semibold text-muted-foreground">
-            Ready? The same Start Assessment action is also available below the rules.
-          </p>
-          <Button
-            onClick={startAssessment}
-            disabled={starting || !isLoaded || !canStart}
-            className="h-11 rounded-lg px-6 text-sm font-bold"
-          >
-            {startLabel}
-            {!starting && isLoaded && canStart && <Play className="h-4 w-4" />}
-          </Button>
-        </div>
+        <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-4 border-y border-border/70 py-4 sm:grid-cols-4">
+          {[
+            { label: "Questions", value: String(preferences.questionCount) },
+            { label: "Time Limit", value: durationLabel },
+            { label: "Results", value: isInstant ? "Instant" : "At the End" },
+            { label: "Pass Mark", value: `${course.passScore}%` },
+          ].map((item) => (
+            <div key={item.label}>
+              <dt className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+                {item.label}
+              </dt>
+              <dd className="mt-1 font-display text-[15px] font-semibold leading-tight text-foreground">
+                {item.value}
+              </dd>
+            </div>
+          ))}
+        </dl>
 
         {/* Rules */}
-        <section className="mt-4 rounded-xl border border-border/70 bg-card p-4 shadow-sm sm:p-5">
-          <h2 className="text-base font-bold text-foreground">How this assessment works</h2>
+        <section className="mt-8">
+          <h2 className="font-display text-xl font-semibold text-foreground">How it works</h2>
 
-          <ul className="mt-3.5 space-y-3 text-sm leading-relaxed text-muted-foreground">
+          <ul className="mt-3 divide-y divide-border/70 border-y border-border/70 text-[13.5px] leading-relaxed text-muted-foreground">
             {isInstant ? (
               <>
-                <li className="flex gap-2.5">
-                  <CircleCheck className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-500" />
-                  <span>
-                    Select one option, then press <strong className="text-foreground">Submit answer</strong>.
-                    The server checks it immediately and tells you whether it was correct.
-                  </span>
+                <li className="py-3">
+                  Choose an answer, then tap{" "}
+                  <strong className="font-semibold text-foreground">Submit Answer</strong> to see if
+                  it was right.
                 </li>
-                <li className="flex gap-2.5">
-                  <BookOpen className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
-                  <span>
-                    After submitting, the correct answer and its explanation are shown when the
-                    course provides them. Answer options are locked once submitted.
-                  </span>
+                <li className="py-3">
+                  Submitted answers are locked. Read the explanation if there is one, then tap{" "}
+                  <strong className="font-semibold text-foreground">Next Question</strong>.
                 </li>
-                <li className="flex gap-2.5">
-                  <ChevronRight className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
-                  <span>
-                    Use <strong className="text-foreground">Next question</strong> to continue. On the
-                    final question the button becomes <strong className="text-foreground">View results</strong>,
-                    which submits the whole attempt and calculates your score.
-                  </span>
-                </li>
-                <li className="flex gap-2.5">
-                  <ChevronLeft className="mt-0.5 h-4 w-4 flex-shrink-0 text-muted-foreground" />
-                  <span>
-                    Previous navigation is not available in Instant Results. Answer options are
-                    locked once submitted, and each question moves you forward.
-                  </span>
+                <li className="py-3">
+                  <strong className="font-semibold text-foreground">View Results</strong> on the last
+                  question shows your score.
                 </li>
               </>
             ) : (
               <>
-                <li className="flex gap-2.5">
-                  <CircleCheck className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-500" />
-                  <span>
-                    Select one option per question. No correctness feedback is shown while the
-                    assessment is running; the final score is calculated when you finish.
-                  </span>
+                <li className="py-3">
+                  Choose an answer for each question. Your answers save as you go.
                 </li>
-                <li className="flex gap-2.5">
-                  <ChevronLeft className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
-                  <span>
-                    Use <strong className="text-foreground">Previous</strong> and{" "}
-                    <strong className="text-foreground">Next</strong> to move between questions. Your
-                    answers are saved as you go and are preserved when you go back.
-                  </span>
+                <li className="py-3">
+                  Use <strong className="font-semibold text-foreground">Previous</strong> and{" "}
+                  <strong className="font-semibold text-foreground">Next</strong> to move around, and
+                  change an answer at any time.
                 </li>
-                <li className="flex gap-2.5">
-                  <ChevronRight className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
-                  <span>
-                    Previous is disabled on the first question. On the final question,{" "}
-                    <strong className="text-foreground">Finish assessment</strong> replaces Next and
-                    asks you to confirm before submitting.
-                  </span>
+                <li className="py-3">
+                  <strong className="font-semibold text-foreground">Finish Assessment</strong> on the
+                  last question shows your score.
                 </li>
               </>
             )}
 
-            <li className="flex gap-2.5">
-              <CircleInfo className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
-              <span>
-                Answers are chosen from options labelled{" "}
-                {LETTERS.slice(0, 4).join(", ")}. Select by clicking or tapping an option; use the
-                keyboard number keys or Tab and Enter where supported.
-              </span>
+            <li className="py-3">
+              {isTimed
+                ? `You have ${durationLabel}. When it runs out, the assessment ends and your saved answers are scored.`
+                : "There is no time limit."}
             </li>
 
-            <li className="flex gap-2.5">
-              <Stopwatch className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
-              <span>
-                {isTimed
-                  ? `You have ${durationLabel}. The countdown runs on the server and is displayed during the assessment.`
-                  : "This assessment is unlimited. It never expires because of a timer; submit whenever you are ready."}
-              </span>
-            </li>
+            <li className="py-3">Unanswered questions score zero.</li>
 
-            {isTimed && (
-              <li className="flex gap-2.5">
-                <TriangleExclamation className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-500" />
-                <span>
-                  When the timer reaches zero the attempt ends automatically. Your latest saved
-                  answers are scored, and the result is marked as expired.
-                </span>
-              </li>
-            )}
-
-            <li className="flex gap-2.5">
-              <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
-              <span>
-                Unanswered questions score zero and count toward the final result. The score is based
-                on the answers submitted for all {preferences.questionCount} questions.
-              </span>
-            </li>
-
-            <li className="flex gap-2.5">
-              <ShieldCheck className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-500" />
-              <span>
-                Scoring and answer validation happen on the server. The browser cannot fabricate a
-                score, and the answer key is only revealed according to your result preference and,
-                afterwards, the answer review.
-              </span>
-            </li>
-
-            <li className="flex gap-2.5">
-              <TriangleExclamation className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-500" />
-              <span>
-                Leaving the assessment is recorded as a departure. After two departures you see a
-                warning; the third departure ends the attempt. The server owns the count, so
-                refreshing the page does not reset it, and detection relies on browser signals so it
-                cannot catch everything.
-              </span>
+            <li className="py-3">
+              Leaving is recorded as a departure. The third departure ends the attempt.
             </li>
           </ul>
         </section>
 
         {error && (
-          <p className="mt-4 flex items-start gap-2 rounded-xl bg-destructive/10 p-3 text-xs font-semibold text-destructive">
+          <p className="mt-4 flex items-start gap-2 rounded-xl bg-danger-soft p-3 text-xs font-semibold text-danger-soft-foreground">
             <TriangleExclamation className="mt-0.5 h-4 w-4 flex-shrink-0" />
             {error}
           </p>
@@ -451,32 +338,20 @@ export default function InstructionScreen() {
           <Button
             onClick={startAssessment}
             disabled={starting || !isLoaded || !canStart}
-            className="h-12 rounded-lg px-7 text-sm font-bold"
+            className="h-12 rounded-full px-8 text-sm font-semibold shadow-[0_16px_34px_-18px_rgba(91,75,255,0.9)]"
           >
             {startLabel}
             {!starting && isLoaded && canStart && <Play className="h-4 w-4" />}
           </Button>
         </div>
 
-        <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground sm:text-right">
-          The attempt is created only when you press the Start Assessment button on this screen, and
-          repeated clicks cannot create a second attempt. Need to change something?{" "}
-          <Link
-            href={`/courses/${course.slug}/configure?${query}`}
-            className="font-semibold text-primary underline-offset-4 hover:underline"
-          >
-            Edit settings
-          </Link>
-          .
-        </p>
-
         <div className="mt-5 flex items-center justify-center">
           <Link
             href={`/courses/${course.slug}`}
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground"
           >
-            <ArrowRight className="h-3.5 w-3.5 rotate-180" />
-            Back to course
+            <ArrowLeft className="h-3.5 w-3.5" />
+            Back to Course
           </Link>
         </div>
       </main>
