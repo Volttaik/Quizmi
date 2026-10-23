@@ -1,5 +1,29 @@
 import HomePage from "@/views/HomePage";
+import { getSessionUser } from "@/lib/auth";
+import { listPublishedCourses, listSubjects } from "@/lib/courses";
+import type { CourseSummary } from "@/lib/types";
 
-export default function Page() {
-  return <HomePage />;
+export default async function Page() {
+  let initialCourses: CourseSummary[] = [];
+  let initialSubjects: string[] = [];
+  let initialError: string | null = null;
+
+  try {
+    const user = await getSessionUser();
+    [initialCourses, initialSubjects] = await Promise.all([
+      listPublishedCourses({ limit: 12 }, user?.id ?? null),
+      listSubjects(),
+    ]);
+  } catch (error) {
+    console.error("Homepage course load failed", error);
+    initialError = "Courses could not be loaded right now.";
+  }
+
+  return (
+    <HomePage
+      initialCourses={initialCourses}
+      initialSubjects={initialSubjects}
+      initialError={initialError}
+    />
+  );
 }

@@ -40,6 +40,7 @@
 }
 
 :root {
+  color-scheme: light;
   --background: 220 24% 97%;
   --foreground: 222 47% 11%;
   --muted: 220 18% 93%;
@@ -74,6 +75,7 @@
 }
 
 .dark {
+  color-scheme: dark;
   --background: 222 40% 7%;
   --foreground: 220 20% 95%;
   --muted: 222 28% 13%;

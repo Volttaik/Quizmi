@@ -560,6 +560,9 @@ importers:
 
   scripts:
     dependencies:
+      '@libsql/client':
+        specifier: ^0.14.0
+        version: 0.14.0
       '@workspace/db':
         specifier: workspace:*
         version: link:../lib/db

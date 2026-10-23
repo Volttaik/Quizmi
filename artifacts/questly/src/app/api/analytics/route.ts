@@ -7,7 +7,7 @@ export async function GET() {
   if (!user) return apiError("Unauthorized", 401);
 
   try {
-    return apiOk(await computeAnalytics(user.clerkId));
+    return apiOk(await computeAnalytics(user.id));
   } catch (error) {
     console.error("GET /api/analytics failed", error);
     return apiError("Could not load your analytics", 500);

@@ -1,8 +1,9 @@
 import type { NextRequest } from "next/server";
 import { desc, eq } from "drizzle-orm";
-import { db, attemptsTable, quizzesTable } from "@/lib/db";
+import { db, attemptsTable, coursesTable } from "@/lib/db";
 import { getSessionUser } from "@/lib/auth";
 import { startAttemptForUser } from "@/lib/attempts";
+import { isSupportedDuration } from "@/lib/course-config";
 import { apiError, apiOk, isNonEmptyString, readJson } from "@/lib/http";
 import type { HistoryItem } from "@/lib/types";
 
@@ -14,11 +15,11 @@ export async function GET() {
     const rows = await db
       .select({
         attemptId: attemptsTable.id,
-        quizId: attemptsTable.quizId,
-        quizSlug: quizzesTable.slug,
-        quizTitle: quizzesTable.title,
-        subject: quizzesTable.subject,
-        difficulty: quizzesTable.difficulty,
+        courseId: attemptsTable.courseId,
+        courseSlug: coursesTable.slug,
+        courseTitle: coursesTable.title,
+        subject: coursesTable.subject,
+        difficulty: coursesTable.difficulty,
         status: attemptsTable.status,
         score: attemptsTable.score,
         totalMarks: attemptsTable.totalMarks,
@@ -26,10 +27,11 @@ export async function GET() {
         passed: attemptsTable.passed,
         submittedAt: attemptsTable.submittedAt,
         timeTakenSeconds: attemptsTable.timeTakenSeconds,
+        terminationReason: attemptsTable.terminationReason,
       })
       .from(attemptsTable)
-      .innerJoin(quizzesTable, eq(attemptsTable.quizId, quizzesTable.id))
-      .where(eq(attemptsTable.userId, user.clerkId))
+      .innerJoin(coursesTable, eq(attemptsTable.courseId, coursesTable.id))
+      .where(eq(attemptsTable.userId, user.id))
       .orderBy(desc(attemptsTable.id))
       .limit(200);
 
@@ -49,17 +51,40 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   const user = await getSessionUser();
-  if (!user) return apiError("Sign in to start an exam", 401);
+  if (!user) return apiError("Sign in to start an assessment", 401);
 
-  const body = await readJson<{ slug?: string; accessCode?: string }>(req);
-  if (!body || !isNonEmptyString(body.slug)) return apiError("Quiz slug is required");
+  const body = await readJson<{
+    slug?: string;
+    questionCount?: unknown;
+    durationMinutes?: unknown;
+  }>(req);
+  if (!body || !isNonEmptyString(body.slug)) return apiError("Course slug is required");
+
+  let duration: number | null | undefined;
+  if (body.durationMinutes === undefined) {
+    duration = undefined;
+  } else if (body.durationMinutes === null) {
+    duration = null;
+  } else {
+    const parsed = Number(body.durationMinutes);
+    if (!isSupportedDuration(parsed)) {
+      return apiError("Choose a supported timer option (10 to 60 minutes, or unlimited)");
+    }
+    duration = parsed;
+  }
+
+  const questionCount =
+    body.questionCount === undefined ? undefined : Number(body.questionCount);
 
   try {
-    const result = await startAttemptForUser(user.clerkId, body.slug.trim(), body.accessCode);
+    const result = await startAttemptForUser(user, body.slug.trim(), {
+      questionCount,
+      durationMinutes: duration,
+    });
     if (!result.ok) return apiError(result.error, result.status);
     return apiOk(result.state, 201);
   } catch (error) {
     console.error("POST /api/attempts failed", error);
-    return apiError("Could not start this exam", 500);
+    return apiError("Could not start this assessment", 500);
   }
 }

@@ -1,6 +1,6 @@
-const CACHE_VERSION = "v2";
-const STATIC_CACHE = `quizmi-static-${CACHE_VERSION}`;
-const DYNAMIC_CACHE = `quizmi-dynamic-${CACHE_VERSION}`;
+const CACHE_VERSION = "v3";
+const STATIC_CACHE = `quizme-static-${CACHE_VERSION}`;
+const DYNAMIC_CACHE = `quizme-dynamic-${CACHE_VERSION}`;
 const OFFLINE_URL = "/offline";
 
 const STATIC_ASSETS = [
@@ -8,6 +8,8 @@ const STATIC_ASSETS = [
   "/offline",
   "/manifest.json",
   "/logo.png",
+  "/icon-192.png",
+  "/icon-512.png",
   "/logo.svg",
   "/favicon.svg",
 ];
@@ -25,6 +27,7 @@ const NEVER_CACHE = [
   "/settings",
   "/exam",
   "/results",
+  "/courses",
   "/quizzes",
 ];
 

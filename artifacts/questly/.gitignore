@@ -13,3 +13,8 @@ build/
 
 # clerk configuration (can include secrets)
 /.clerk/
+
+# environment secrets
+.env
+.env.*
+!.env.example

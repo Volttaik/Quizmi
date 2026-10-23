@@ -52,7 +52,7 @@ export default function PrivacySecurityPage() {
 
         <div className="bg-primary/5 rounded-2xl border border-primary/10 p-4">
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Your data is encrypted and stored securely. Quizmi never shares your personal information with third parties.
+            Your data is stored securely in our managed database. Quizme never shares your personal information with third parties.
           </p>
         </div>
       </div>

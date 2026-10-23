@@ -25,6 +25,12 @@ const nextConfig: NextConfig = {
   },
   serverExternalPackages: libsqlPackages,
   eslint: { ignoreDuringBuilds: true },
+  async redirects() {
+    return [
+      { source: "/quizzes", destination: "/courses", permanent: true },
+      { source: "/quizzes/:slug", destination: "/courses/:slug", permanent: true },
+    ];
+  },
   webpack: (config, { isServer }) => {
     config.resolve.alias = {
       ...config.resolve.alias,

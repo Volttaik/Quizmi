@@ -3,9 +3,9 @@ import { CheckCircle2 } from "lucide-react";
 import { QuizmiWordmark } from "@/components/QuizmiLogo";
 
 const POINTS = [
-  "Timed exams with server-enforced deadlines",
-  "Instant scoring and pass/fail results",
-  "Full answer review with explanations",
+  "Course-based CBT assessments with real questions",
+  "Choose your question count and timer before you start",
+  "Instant scoring, answer review and saved progress",
 ];
 
 export default function AuthShell({ children }: { children: React.ReactNode }) {
@@ -20,19 +20,19 @@ export default function AuthShell({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-2.5">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo.png" alt="" className="h-9 w-9 rounded-xl" />
-            <span className="text-xl font-extrabold tracking-tight text-white">Quizmi</span>
+            <span className="text-xl font-extrabold tracking-tight text-white">Quizme</span>
           </div>
         </Link>
 
         <div className="relative max-w-md">
           <h1 className="text-4xl font-black leading-[1.1] tracking-tight text-white">
-            Practise under
+            Your courses.
             <br />
-            real exam conditions.
+            Real exam practice.
           </h1>
           <p className="mt-4 text-sm leading-relaxed text-white/70">
-            A focused CBT workspace: question navigation, timers, automatic saving and a detailed
-            report on every attempt.
+            A focused CBT workspace: choose a course, set your question count and timer, and get a
+            detailed report on every attempt.
           </p>
 
           <ul className="mt-8 space-y-3">
@@ -46,7 +46,7 @@ export default function AuthShell({ children }: { children: React.ReactNode }) {
         </div>
 
         <p className="relative text-xs text-white/45">
-          Practice tests and computer-based examinations
+          Course-based computer-based testing
         </p>
       </aside>
 
@@ -59,10 +59,10 @@ export default function AuthShell({ children }: { children: React.ReactNode }) {
         <div className="w-full max-w-md">{children}</div>
 
         <Link
-          href="/quizzes"
+          href="/courses"
           className="text-xs font-semibold text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
         >
-          Browse the quiz library first
+          Browse the course catalogue first
         </Link>
       </main>
     </div>

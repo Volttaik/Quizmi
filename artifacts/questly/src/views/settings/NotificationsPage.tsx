@@ -25,7 +25,7 @@ const OPTIONS = [
   {
     icon: Megaphone,
     label: "Product updates",
-    description: "New features and quiz library additions",
+    description: "New features and course catalogue additions",
     key: "updates",
     color: "text-blue-500 bg-blue-500/10",
   },
@@ -121,7 +121,7 @@ export default function NotificationsPage() {
               </div>
               <div>
                 <p className="text-sm font-bold text-foreground">Practice reminder</p>
-                <p className="text-xs text-muted-foreground">A nudge to take a quiz</p>
+                <p className="text-xs text-muted-foreground">A nudge to practise with a course</p>
               </div>
             </div>
             <button

@@ -6,8 +6,8 @@ import { BookOpen, ChevronDown, ChevronLeft, ChevronUp, Mail } from "lucide-reac
 
 const faqs = [
   {
-    q: "Do I need an account to take a quiz?",
-    a: "You can browse the quiz library without signing in. You need a free account to start an attempt so that your answers, timer and results can be saved.",
+    q: "Do I need an account to take an assessment?",
+    a: "You can browse the course catalogue without signing in. You need an account to purchase a course and start an assessment so that your answers, timer and results can be saved.",
   },
   {
     q: "How is my score calculated?",
@@ -18,12 +18,16 @@ const faqs = [
     a: "The timer is enforced on the server. When time runs out, your saved answers are submitted automatically and your result is marked as time-expired.",
   },
   {
-    q: "Can I leave an exam and come back?",
-    a: "Yes. Your answers save as you go. If you close the page, reopening the attempt restores your answers — and the clock keeps running.",
+    q: "Can I leave an assessment and come back?",
+    a: "Your answers save as you go, and a refresh restores them. Leaving an active assessment is recorded as a departure: the first two produce a warning, and the third terminates the attempt. For a timed assessment, the clock keeps running while you are away.",
   },
   {
-    q: "Why can't I start a quiz?",
-    a: "A quiz may require an access code, may have a limit on the number of attempts, or may not have any questions published yet. The start screen explains which applies.",
+    q: "How does Quizme detect leaving an assessment?",
+    a: "The exam page reports when you hide the tab, navigate away or unload the page, and the server records the confirmed departure against your attempt. Browsers cannot detect every possible departure (for example, switching to another device), so this is a reasonable integrity measure rather than perfect proctoring.",
+  },
+  {
+    q: "Why can't I start an assessment?",
+    a: "You need course access before starting. The course may not be purchased yet, the attempt limit may be used up, or the course may not have any questions available. The course page explains which applies.",
   },
   {
     q: "Where can I see my past results?",

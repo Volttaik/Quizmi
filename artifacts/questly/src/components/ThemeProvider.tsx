@@ -44,8 +44,10 @@ export function ThemeProvider({
         ? "dark"
         : "light";
       root.classList.add(systemTheme);
+      root.style.colorScheme = systemTheme;
     } else {
       root.classList.add(theme);
+      root.style.colorScheme = theme;
     }
 
     // Re-enable transitions after a brief delay so paint completes first

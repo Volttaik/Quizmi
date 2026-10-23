@@ -9,7 +9,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }));
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="light" storageKey="quizmi-theme">
+      <ThemeProvider defaultTheme="system" storageKey="quizmi-theme">
         {children}
       </ThemeProvider>
     </QueryClientProvider>

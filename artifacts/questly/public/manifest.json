@@ -1,7 +1,7 @@
 {
-  "name": "Quizmi — Practice Tests & CBT Exams",
-  "short_name": "Quizmi",
-  "description": "Practice tests and computer-based examinations with timing, instant scoring and full answer reviews.",
+  "name": "Quizme — Course-based CBT practice",
+  "short_name": "Quizme",
+  "description": "Find your courses, practise with computer-based test questions, and track your progress.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -12,16 +12,22 @@
   "categories": ["education", "productivity"],
   "icons": [
     {
-      "src": "/logo.png",
+      "src": "/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/logo.png",
+      "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

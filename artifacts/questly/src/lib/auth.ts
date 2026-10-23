@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
 import { db, usersTable, type User } from "@/lib/db";
@@ -22,9 +23,10 @@ async function fetchClerkProfile(clerkId: string): Promise<{ name: string; email
 
 /**
  * Returns the signed-in account, creating the local row on first visit.
- * Clerk stays the single source of truth for authentication.
+ * Clerk stays the single source of truth for authentication. React cache keeps
+ * a page or route from looking the same user up more than once per request.
  */
-export async function getSessionUser(): Promise<SessionUser | null> {
+export const getSessionUser = cache(async (): Promise<SessionUser | null> => {
   const { userId } = await auth();
   if (!userId) return null;
 
@@ -40,4 +42,4 @@ export async function getSessionUser(): Promise<SessionUser | null> {
   }
 
   return user ?? null;
-}
+});

@@ -5,10 +5,12 @@
   "type": "module",
   "scripts": {
     "hello": "tsx ./src/hello.ts",
-    "migrate:quiz": "tsx ./src/migrate-legacy-quiz-data.ts",
+    "db:migrate": "tsx ./src/migrate.ts",
+    "db:verify": "tsx ./src/verify-db.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@libsql/client": "^0.14.0",
     "@workspace/db": "workspace:*",
     "drizzle-orm": "catalog:"
   },

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import {
+  AlertTriangle,
   ArrowLeft,
   BookOpen,
   CheckCircle2,
@@ -133,6 +134,7 @@ export default function ResultPage() {
   const unanswered = result.questions.filter((question) => question.selectedIndex === null).length;
   const incorrect = result.totalQuestions - result.correctCount;
   const isExpired = result.status === "expired";
+  const isTerminated = result.status === "terminated";
 
   return (
     <div className="min-h-screen bg-background">
@@ -159,7 +161,7 @@ export default function ResultPage() {
                 {result.subject ?? "General"} · {formatDate(result.submittedAt)}
               </p>
               <h1 className="mt-1.5 text-2xl font-extrabold leading-tight text-foreground">
-                {result.quizTitle}
+                {result.courseTitle}
               </h1>
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <span
@@ -184,6 +186,11 @@ export default function ResultPage() {
                     Time expired
                   </span>
                 )}
+                {isTerminated && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-3 py-1 text-xs font-bold text-amber-700 dark:text-amber-400">
+                    <AlertTriangle className="h-3.5 w-3.5" /> Terminated
+                  </span>
+                )}
               </div>
             </div>
 
@@ -197,6 +204,14 @@ export default function ResultPage() {
             </div>
           </div>
         </section>
+
+        {isTerminated && (
+          <div className="mt-4 rounded-2xl border border-amber-500/25 bg-amber-500/5 p-4 text-sm leading-relaxed text-amber-800 dark:text-amber-300">
+            This assessment was terminated automatically because you left it three times. Your last
+            saved answers were scored and this attempt cannot be resumed. You can start a new
+            assessment from the course page.
+          </div>
+        )}
 
         {/* Breakdown */}
         {result.hasReview ? (
@@ -221,22 +236,22 @@ export default function ResultPage() {
         </div>
         ) : (
           <div className="mt-4 rounded-2xl border border-border/70 bg-card p-4 text-sm leading-relaxed text-muted-foreground">
-            This attempt was recorded before answer-level history was stored, so the detailed
-            review is not available. The score shown above is your recorded result.
+            A detailed answer review is not available for this attempt. The score shown above is
+            your recorded result.
           </div>
         )}
 
         <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-          <Link href={`/quizzes/${result.quizSlug}`} className="flex-1">
+          <Link href={`/courses/${result.courseSlug}`} className="flex-1">
             <Button className="w-full rounded-full">
               <RotateCcw className="h-4 w-4" />
-              Take this quiz again
+              Open this course
             </Button>
           </Link>
-          <Link href="/quizzes" className="flex-1">
+          <Link href="/courses" className="flex-1">
             <Button variant="outline" className="w-full rounded-full">
               <BookOpen className="h-4 w-4" />
-              Browse quizzes
+              Browse courses
             </Button>
           </Link>
         </div>

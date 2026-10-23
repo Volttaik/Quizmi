@@ -9,7 +9,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 
 const LINKS = [
-  { href: "/quizzes", label: "Quizzes", icon: Library },
+  { href: "/courses", label: "Courses", icon: Library },
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, authOnly: true },
   { href: "/history", label: "History", icon: History, authOnly: true },
 ];

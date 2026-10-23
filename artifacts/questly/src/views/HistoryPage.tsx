@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import {
+  AlertTriangle,
   ArrowRight,
   BarChart3,
   CheckCircle2,
@@ -101,7 +102,7 @@ export default function HistoryPage() {
             Attempt history
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Every exam you have taken, with scores and timing.
+            Every assessment you have taken, with scores and timing.
           </p>
         </div>
 
@@ -225,9 +226,9 @@ export default function HistoryPage() {
                       : "Try another filter to see your other attempts."}
                   </p>
                   {completed.length === 0 && (
-                    <Link href="/quizzes" className="mt-4 inline-block">
+                    <Link href="/courses" className="mt-4 inline-block">
                       <Button size="sm" className="rounded-full">
-                        Take your first quiz
+                        Browse courses
                       </Button>
                     </Link>
                   )}
@@ -236,6 +237,7 @@ export default function HistoryPage() {
                 <div className="mt-4 divide-y divide-border/60 overflow-hidden rounded-2xl border border-border/70 bg-card">
                   {filtered.map((item) => {
                     const running = item.status === "in_progress";
+                    const terminated = item.status === "terminated";
                     const difficulty = difficultyStyle(item.difficulty);
                     return (
                       <Link
@@ -247,13 +249,17 @@ export default function HistoryPage() {
                           className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl ${
                             running
                               ? "bg-primary/10 text-primary"
-                              : item.passed
-                                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                                : "bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                              : terminated
+                                ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                                : item.passed
+                                  ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                                  : "bg-rose-500/10 text-rose-600 dark:text-rose-400"
                           }`}
                         >
                           {running ? (
                             <PlayCircle className="h-5 w-5" />
+                          ) : terminated ? (
+                            <AlertTriangle className="h-5 w-5" />
                           ) : item.passed ? (
                             <CheckCircle2 className="h-5 w-5" />
                           ) : (
@@ -263,7 +269,7 @@ export default function HistoryPage() {
 
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-bold text-foreground">
-                            {item.quizTitle}
+                            {item.courseTitle}
                           </p>
                           <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-muted-foreground">
                             <span className={`rounded-full border px-1.5 font-bold ${difficulty.className}`}>
@@ -274,6 +280,11 @@ export default function HistoryPage() {
                               <span className="font-semibold text-primary">In progress</span>
                             ) : (
                               <>
+                                {terminated && (
+                                  <span className="font-semibold text-amber-600 dark:text-amber-400">
+                                    Terminated
+                                  </span>
+                                )}
                                 <span>
                                   {item.score}/{item.totalMarks} marks
                                 </span>

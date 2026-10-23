@@ -1,29 +1,38 @@
 export type Difficulty = "easy" | "medium" | "hard";
-export type AttemptStatus = "in_progress" | "submitted" | "expired";
+export type AttemptStatus = "in_progress" | "submitted" | "expired" | "terminated";
 
-export type QuizSummary = {
+export type CourseSummary = {
   id: number;
   slug: string;
   title: string;
   description: string;
   subject: string | null;
   difficulty: Difficulty;
+  priceKobo: number;
+  currency: string;
   durationMinutes: number | null;
   questionCount: number;
   passScore: number;
   maxAttempts: number | null;
-  isRestricted: boolean;
+  isFree: boolean;
+  isFeatured: boolean;
+  coverImageUrl: string | null;
+  /** True when the course is free or the signed-in learner owns it. */
+  hasAccess: boolean;
+  isPurchased: boolean;
   attemptsUsed: number;
   attemptsRemaining: number | null;
   bestPercentage: number | null;
   lastPercentage: number | null;
+  inProgressAttemptId: number | null;
 };
 
-export type QuizDetail = QuizSummary & {
+export type CourseDetail = CourseSummary & {
   totalMarks: number;
   averagePercentage: number | null;
-  inProgressAttemptId: number | null;
   createdAt: string;
+  /** False until Paystack server credentials are configured. */
+  paymentConfigured: boolean;
 };
 
 export type QuestionView = {
@@ -37,9 +46,9 @@ export type QuestionView = {
 
 export type AttemptState = {
   id: number;
-  quizId: number;
-  quizSlug: string;
-  quizTitle: string;
+  courseId: number;
+  courseSlug: string;
+  courseTitle: string;
   subject: string | null;
   status: AttemptStatus;
   startedAt: string;
@@ -50,6 +59,10 @@ export type AttemptState = {
   totalMarks: number;
   questions: QuestionView[];
   answers: Array<{ questionId: number; selectedIndex: number | null }>;
+  departures: number;
+  lastDepartureAt: string | null;
+  maxDepartures: number;
+  terminationReason: string | null;
 };
 
 export type ResultQuestion = QuestionView & {
@@ -63,9 +76,9 @@ export type ResultQuestion = QuestionView & {
 
 export type AttemptResult = {
   id: number;
-  quizId: number;
-  quizSlug: string;
-  quizTitle: string;
+  courseId: number;
+  courseSlug: string;
+  courseTitle: string;
   subject: string | null;
   status: Exclude<AttemptStatus, "in_progress">;
   startedAt: string;
@@ -78,6 +91,7 @@ export type AttemptResult = {
   passScore: number;
   correctCount: number;
   totalQuestions: number;
+  terminationReason: string | null;
   /** False for older attempts that only stored an aggregate score. */
   hasReview: boolean;
   questions: ResultQuestion[];
@@ -85,9 +99,9 @@ export type AttemptResult = {
 
 export type HistoryItem = {
   attemptId: number;
-  quizId: number;
-  quizSlug: string;
-  quizTitle: string;
+  courseId: number;
+  courseSlug: string;
+  courseTitle: string;
   subject: string | null;
   difficulty: Difficulty;
   status: AttemptStatus;
@@ -97,6 +111,7 @@ export type HistoryItem = {
   passed: boolean;
   submittedAt: string | null;
   timeTakenSeconds: number | null;
+  terminationReason: string | null;
 };
 
 export type Analytics = {
@@ -117,20 +132,23 @@ export type DashboardData = {
     avatarUrl: string | null;
   };
   stats: {
-    quizzesTaken: number;
+    coursesTaken: number;
     completedAttempts: number;
     averagePercentage: number;
     passRate: number;
     bestPercentage: number;
+    purchasedCourses: number;
   };
+  purchasedCourses: CourseSummary[];
+  subjectPerformance: Array<{ subject: string; attempts: number; averagePercentage: number }>;
   inProgress: Array<{
     attemptId: number;
-    quizSlug: string;
-    quizTitle: string;
+    courseSlug: string;
+    courseTitle: string;
     secondsRemaining: number | null;
     answered: number;
     questionCount: number;
   }>;
   recentResults: HistoryItem[];
-  recommended: QuizSummary[];
+  recommended: CourseSummary[];
 };

@@ -19,23 +19,27 @@ export default function TermsPrivacyPage() {
         </div>
 
         <div className="space-y-4">
-          <Section title="Using Quizmi">
+          <Section title="Using Quizme">
             <p>
-              Quizmi provides practice tests and computer-based examination simulations for
-              educational use. Quiz content is supplied by Quizmi and is intended for revision and
-              self-assessment.
+              Quizme provides course-based computer-based testing practice for educational use.
+              Course content is supplied by Quizme and is intended for revision and self-assessment.
             </p>
             <p>
               Results are a practice indicator only. We make no guarantee that performance in a
-              Quizmi exam predicts the outcome of any external examination.
+              Quizme assessment predicts the outcome of any external examination.
             </p>
           </Section>
 
-          <Section title="Accounts">
+          <Section title="Accounts and course access">
             <p>
-              You need an account to take an exam so that your attempt, timer and result can be
-              stored. You are responsible for keeping your login credentials secure and for activity
-              on your account.
+              You need an account to purchase a course and take an assessment so that your attempt,
+              timer and result can be stored. You are responsible for keeping your login credentials
+              secure and for activity on your account.
+            </p>
+            <p>
+              Paid courses are purchased through Paystack. Access is granted only after the server
+              verifies the transaction. Card details are handled by Paystack and are never stored by
+              Quizme.
             </p>
             <p>
               Accounts used to disrupt the service, attempt to extract answer keys, or automate
@@ -46,7 +50,8 @@ export default function TermsPrivacyPage() {
           <Section title="What we store">
             <p>
               We store your name, email address and profile image (managed by our authentication
-              provider), along with your attempts: the answers you selected, your score, timing and
+              provider), along with your purchases and payment references, and your attempts: the
+              questions selected, the answers you chose, your score, timing, departure events and
               submission time.
             </p>
             <p>
@@ -62,11 +67,16 @@ export default function TermsPrivacyPage() {
             </p>
           </Section>
 
-          <Section title="Exam integrity">
+          <Section title="Assessment integrity">
             <p>
               Correct answers are withheld while an attempt is in progress and are revealed in your
-              answer review after submission. Sharing access codes or answer keys for restricted
-              quizzes is not permitted.
+              answer review after submission. Leaving an active assessment is recorded, and the
+              attempt is terminated after three departures.
+            </p>
+            <p>
+              Browser-based detection cannot observe every departure from a device. The server
+              enforces the persisted departure count and timer, so refreshing or reopening the page
+              does not reset them.
             </p>
           </Section>
 

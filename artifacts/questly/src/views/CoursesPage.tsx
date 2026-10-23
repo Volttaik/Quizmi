@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Search, SlidersHorizontal, X } from "lucide-react";
+import { AlertCircle, Search, SlidersHorizontal, X } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
-import QuizCard from "@/components/QuizCard";
+import CourseCard from "@/components/CourseCard";
 import { Button } from "@/components/ui/button";
-import type { QuizSummary } from "@/lib/types";
+import type { CourseSummary } from "@/lib/types";
 
 const DIFFICULTIES = [
   { value: "all", label: "All levels" },
@@ -15,25 +15,37 @@ const DIFFICULTIES = [
 ];
 
 const SORTS = [
-  { value: "title", label: "A–Z" },
+  { value: "featured", label: "Recommended" },
   { value: "newest", label: "Newest" },
-  { value: "shortest", label: "Fewest questions" },
-  { value: "popular", label: "Most attempted" },
+  { value: "title", label: "A–Z" },
+  { value: "price-low", label: "Lowest price" },
 ];
 
-export default function CatalogPage() {
-  const [quizzes, setQuizzes] = useState<QuizSummary[]>([]);
+export default function CoursesPage() {
+  const [courses, setCourses] = useState<CourseSummary[]>([]);
   const [subjects, setSubjects] = useState<string[]>([]);
   const [search, setSearch] = useState("");
   const [debounced, setDebounced] = useState("");
   const [subject, setSubject] = useState("all");
   const [difficulty, setDifficulty] = useState("all");
-  const [sort, setSort] = useState("title");
+  const [sort, setSort] = useState("featured");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
+  const [paymentNotice, setPaymentNotice] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    const status = new URLSearchParams(window.location.search).get("payment");
+    if (!status) return;
+    setPaymentNotice(
+      status === "failed" || status === "missing"
+        ? "A payment could not be confirmed. You have not been charged for course access. If you completed a payment, contact support with your reference."
+        : null
+    );
+    window.history.replaceState({}, "", window.location.pathname);
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => setDebounced(search.trim()), 250);
@@ -45,7 +57,7 @@ export default function CatalogPage() {
     const controller = new AbortController();
     abortRef.current = controller;
 
-    const params = new URLSearchParams();
+    const params = new URLSearchParams({ limit: "100" });
     if (debounced) params.set("q", debounced);
     if (subject !== "all") params.set("subject", subject);
     if (difficulty !== "all") params.set("difficulty", difficulty);
@@ -54,18 +66,19 @@ export default function CatalogPage() {
     setLoading(true);
     setError(null);
 
-    fetch(`/api/quizzes?${params.toString()}`, { signal: controller.signal })
+    fetch(`/api/courses?${params.toString()}`, { signal: controller.signal })
       .then(async (response) => {
-        if (!response.ok) throw new Error((await response.json()).error ?? "Request failed");
-        return response.json() as Promise<{ quizzes: QuizSummary[]; subjects: string[] }>;
+        const payload = await response.json().catch(() => null);
+        if (!response.ok) throw new Error(payload?.error ?? "Request failed");
+        return payload as { courses: CourseSummary[]; subjects: string[] };
       })
       .then((data) => {
-        setQuizzes(Array.isArray(data.quizzes) ? data.quizzes : []);
+        setCourses(Array.isArray(data.courses) ? data.courses : []);
         setSubjects(Array.isArray(data.subjects) ? data.subjects : []);
       })
       .catch((err: unknown) => {
         if (err instanceof DOMException && err.name === "AbortError") return;
-        setError(err instanceof Error ? err.message : "Could not load quizzes");
+        setError(err instanceof Error ? err.message : "Could not load courses");
       })
       .finally(() => {
         if (!controller.signal.aborted) setLoading(false);
@@ -78,7 +91,7 @@ export default function CatalogPage() {
     let count = 0;
     if (subject !== "all") count += 1;
     if (difficulty !== "all") count += 1;
-    if (sort !== "title") count += 1;
+    if (sort !== "featured") count += 1;
     return count;
   }, [subject, difficulty, sort]);
 
@@ -87,7 +100,7 @@ export default function CatalogPage() {
   const resetFilters = () => {
     setSubject("all");
     setDifficulty("all");
-    setSort("title");
+    setSort("featured");
   };
 
   return (
@@ -95,18 +108,26 @@ export default function CatalogPage() {
       <SiteHeader />
 
       <main className="mx-auto max-w-6xl px-4 py-8">
+        {paymentNotice && (
+          <div className="mb-5 flex items-start gap-2 rounded-xl border border-destructive/25 bg-destructive/5 p-3.5 text-xs font-semibold text-destructive">
+            <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" />
+            {paymentNotice}
+          </div>
+        )}
+
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h1 className="text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
-              Quiz library
+              Courses
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Practice tests and CBT examinations, ready when you are.
+              Browse the catalogue and choose a course to practise.
             </p>
           </div>
-          {!loading && (
+          {!loading && !error && (
             <p className="text-xs font-semibold text-muted-foreground">
-              {quizzes.length} {quizzes.length === 1 ? "quiz" : "quizzes"} available
+              {courses.length} {courses.length === 1 ? "course" : "courses"}
+              {isFiltering ? " match your filters" : " shown"}
             </p>
           )}
         </div>
@@ -118,8 +139,8 @@ export default function CatalogPage() {
               type="search"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search by title, subject or description"
-              aria-label="Search quizzes"
+              placeholder="Search courses by title, subject or description"
+              aria-label="Search courses"
               className="h-11 w-full rounded-xl border border-border/70 bg-card pl-10 pr-10 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-primary/50 focus:ring-2 focus:ring-primary/15"
             />
             {search && (
@@ -149,7 +170,7 @@ export default function CatalogPage() {
             <select
               value={sort}
               onChange={(event) => setSort(event.target.value)}
-              aria-label="Sort quizzes"
+              aria-label="Sort courses"
               className="hidden h-11 rounded-xl border border-border/70 bg-card px-3 text-sm font-semibold text-foreground outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/15 sm:block"
             >
               {SORTS.map((option) => (
@@ -212,7 +233,7 @@ export default function CatalogPage() {
             <select
               value={sort}
               onChange={(event) => setSort(event.target.value)}
-              aria-label="Sort quizzes"
+              aria-label="Sort courses"
               className="h-10 w-full rounded-xl border border-border/70 bg-card px-3 text-sm font-semibold text-foreground"
             >
               {SORTS.map((option) => (
@@ -240,21 +261,21 @@ export default function CatalogPage() {
           ) : loading ? (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {Array.from({ length: 6 }).map((_, index) => (
-                <div key={index} className="skeleton h-56 rounded-2xl" />
+                <div key={index} className="skeleton h-60 rounded-2xl" />
               ))}
             </div>
-          ) : quizzes.length === 0 ? (
+          ) : courses.length === 0 ? (
             <div className="rounded-2xl border border-border/70 bg-card p-12 text-center">
               <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-muted">
                 <Search className="h-5 w-5 text-muted-foreground" />
               </div>
               <h2 className="text-base font-bold text-foreground">
-                {isFiltering ? "No quizzes match those filters" : "No quizzes published yet"}
+                {isFiltering ? "No courses match those filters" : "No courses published yet"}
               </h2>
               <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
                 {isFiltering
-                  ? "Try a different subject or clear your search to see the full library."
-                  : "New practice papers will appear here as soon as they are published."}
+                  ? "Try a different subject or clear your search to see the full catalogue."
+                  : "Courses will appear here as soon as they are added to the catalogue."}
               </p>
               {isFiltering && (
                 <Button
@@ -272,8 +293,8 @@ export default function CatalogPage() {
             </div>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {quizzes.map((quiz) => (
-                <QuizCard key={quiz.id} quiz={quiz} />
+              {courses.map((course) => (
+                <CourseCard key={course.id} course={course} />
               ))}
             </div>
           )}

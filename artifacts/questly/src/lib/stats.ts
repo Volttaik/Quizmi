@@ -1,14 +1,17 @@
-import { and, desc, eq, inArray } from "drizzle-orm";
-import { db, attemptsTable, quizzesTable } from "@/lib/db";
-import { attemptsRemaining, secondsRemaining } from "@/lib/scoring";
+import { and, desc, eq, inArray, sql } from "drizzle-orm";
+import { db, attemptsTable, coursesTable, purchasesTable } from "@/lib/db";
+import { listPublishedCourses, listPurchasedCourses } from "@/lib/courses";
+import { secondsRemaining } from "@/lib/scoring";
 import type { Analytics, DashboardData, HistoryItem } from "@/lib/types";
 import type { User } from "@/lib/db";
 
+const COMPLETED_STATUSES = ["submitted", "expired", "terminated"] as const;
+
 type CompletedRow = {
   attemptId: number;
-  quizId: number;
-  quizSlug: string;
-  quizTitle: string;
+  courseId: number;
+  courseSlug: string;
+  courseTitle: string;
   subject: string | null;
   difficulty: string;
   score: number;
@@ -17,36 +20,38 @@ type CompletedRow = {
   passed: boolean;
   submittedAt: string | null;
   timeTakenSeconds: number | null;
+  terminationReason: string | null;
 };
 
 export async function loadCompletedAttempts(
-  userId: string,
+  userId: number,
   limit = 500
 ): Promise<CompletedRow[]> {
   const rows = await db
     .select({
       attemptId: attemptsTable.id,
-      quizId: attemptsTable.quizId,
-      quizSlug: quizzesTable.slug,
-      quizTitle: quizzesTable.title,
-      subject: quizzesTable.subject,
-      difficulty: quizzesTable.difficulty,
+      courseId: attemptsTable.courseId,
+      courseSlug: coursesTable.slug,
+      courseTitle: coursesTable.title,
+      subject: coursesTable.subject,
+      difficulty: coursesTable.difficulty,
       score: attemptsTable.score,
       totalMarks: attemptsTable.totalMarks,
       percentage: attemptsTable.percentage,
       passed: attemptsTable.passed,
       submittedAt: attemptsTable.submittedAt,
       timeTakenSeconds: attemptsTable.timeTakenSeconds,
+      terminationReason: attemptsTable.terminationReason,
     })
     .from(attemptsTable)
-    .innerJoin(quizzesTable, eq(attemptsTable.quizId, quizzesTable.id))
+    .innerJoin(coursesTable, eq(attemptsTable.courseId, coursesTable.id))
     .where(
       and(
         eq(attemptsTable.userId, userId),
-        inArray(attemptsTable.status, ["submitted", "expired"])
+        inArray(attemptsTable.status, [...COMPLETED_STATUSES])
       )
     )
-    .orderBy(desc(attemptsTable.submittedAt))
+    .orderBy(desc(attemptsTable.submittedAt), desc(attemptsTable.id))
     .limit(limit);
 
   return rows.map((row) => ({ ...row, passed: Boolean(row.passed) }));
@@ -56,7 +61,7 @@ function round(value: number): number {
   return Math.round(value);
 }
 
-export async function computeAnalytics(userId: string): Promise<Analytics> {
+export async function computeAnalytics(userId: number): Promise<Analytics> {
   const rows = await loadCompletedAttempts(userId);
 
   const totalAttempts = rows.length;
@@ -110,9 +115,9 @@ export async function computeAnalytics(userId: string): Promise<Analytics> {
 function toHistoryItem(row: CompletedRow): HistoryItem {
   return {
     attemptId: row.attemptId,
-    quizId: row.quizId,
-    quizSlug: row.quizSlug,
-    quizTitle: row.quizTitle,
+    courseId: row.courseId,
+    courseSlug: row.courseSlug,
+    courseTitle: row.courseTitle,
     subject: row.subject,
     difficulty: row.difficulty as HistoryItem["difficulty"],
     status: "submitted",
@@ -122,101 +127,103 @@ function toHistoryItem(row: CompletedRow): HistoryItem {
     passed: row.passed,
     submittedAt: row.submittedAt,
     timeTakenSeconds: row.timeTakenSeconds,
+    terminationReason: row.terminationReason,
   };
 }
 
 export async function buildDashboard(user: User): Promise<DashboardData> {
-  const [completed, openAttempts] = await Promise.all([
-    loadCompletedAttempts(user.clerkId, 100),
-    db
-      .select({
-        attemptId: attemptsTable.id,
-        quizSlug: quizzesTable.slug,
-        quizTitle: quizzesTable.title,
-        expiresAt: attemptsTable.expiresAt,
-        answers: attemptsTable.answers,
-        questionCount: quizzesTable.questionCount,
-      })
-      .from(attemptsTable)
-      .innerJoin(quizzesTable, eq(attemptsTable.quizId, quizzesTable.id))
-      .where(
-        and(
-          eq(attemptsTable.userId, user.clerkId),
-          eq(attemptsTable.status, "in_progress")
+  const [completed, openAttempts, purchasedCourses, aggregateRows, purchasedCountRows, discover] =
+    await Promise.all([
+      loadCompletedAttempts(user.id, 100),
+      db
+        .select({
+          attemptId: attemptsTable.id,
+          courseSlug: coursesTable.slug,
+          courseTitle: coursesTable.title,
+          expiresAt: attemptsTable.expiresAt,
+          answers: attemptsTable.answers,
+          questionIds: attemptsTable.questionIds,
+        })
+        .from(attemptsTable)
+        .innerJoin(coursesTable, eq(attemptsTable.courseId, coursesTable.id))
+        .where(
+          and(eq(attemptsTable.userId, user.id), eq(attemptsTable.status, "in_progress"))
         )
-      )
-      .orderBy(desc(attemptsTable.id))
-      .limit(5),
-  ]);
+        .orderBy(desc(attemptsTable.id))
+        .limit(5),
+      listPurchasedCourses(user.id),
+      db
+        .select({
+          attempts: sql<number>`count(*)`,
+          average: sql<number>`coalesce(avg(${attemptsTable.percentage}), 0)`,
+          passed: sql<number>`coalesce(sum(${attemptsTable.passed}), 0)`,
+          best: sql<number>`coalesce(max(${attemptsTable.percentage}), 0)`,
+          courses: sql<number>`count(distinct ${attemptsTable.courseId})`,
+        })
+        .from(attemptsTable)
+        .where(
+          and(
+            eq(attemptsTable.userId, user.id),
+            inArray(attemptsTable.status, [...COMPLETED_STATUSES])
+          )
+        ),
+      db
+        .select({ count: sql<number>`count(*)` })
+        .from(purchasesTable)
+        .where(eq(purchasesTable.userId, user.id)),
+      listPublishedCourses({ limit: 12 }, user.id),
+    ]);
 
-  const total = completed.length;
-  const passed = completed.filter((row) => row.passed).length;
+  const aggregate = aggregateRows[0];
+  const total = Number(aggregate?.attempts ?? 0);
 
   const inProgress = openAttempts
     .filter((attempt) => (secondsRemaining(attempt.expiresAt) ?? 1) > 0)
     .map((attempt) => ({
       attemptId: attempt.attemptId,
-      quizSlug: attempt.quizSlug,
-      quizTitle: attempt.quizTitle,
+      courseSlug: attempt.courseSlug,
+      courseTitle: attempt.courseTitle,
       secondsRemaining: secondsRemaining(attempt.expiresAt),
       answered: Array.isArray(attempt.answers)
         ? attempt.answers.filter((answer) => answer.selectedIndex !== null).length
         : 0,
-      questionCount: attempt.questionCount,
+      questionCount: Array.isArray(attempt.questionIds) ? attempt.questionIds.length : 0,
     }));
 
-  const attemptedQuizIds = new Set(completed.map((row) => row.quizId));
+  const ownedIds = new Set(purchasedCourses.map((course) => course.id));
+  const recommended = discover
+    .filter((course) => !ownedIds.has(course.id) && !course.inProgressAttemptId)
+    .slice(0, 3);
 
-  const candidates = await db
-    .select({
-      id: quizzesTable.id,
-      slug: quizzesTable.slug,
-      title: quizzesTable.title,
-      description: quizzesTable.description,
-      subject: quizzesTable.subject,
-      difficulty: quizzesTable.difficulty,
-      durationMinutes: quizzesTable.durationMinutes,
-      questionCount: quizzesTable.questionCount,
-      passScore: quizzesTable.passScore,
-      maxAttempts: quizzesTable.maxAttempts,
-      accessCode: quizzesTable.accessCode,
-    })
-    .from(quizzesTable)
-    .where(eq(quizzesTable.isPublished, true))
-    .orderBy(desc(quizzesTable.createdAt))
-    .limit(50);
-
-  const recommended = candidates
-    .filter((quiz) => !attemptedQuizIds.has(quiz.id) && quiz.questionCount > 0)
-    .slice(0, 3)
-    .map((quiz) => ({
-      id: quiz.id,
-      slug: quiz.slug,
-      title: quiz.title,
-      description: quiz.description,
-      subject: quiz.subject,
-      difficulty: quiz.difficulty as DashboardData["recommended"][number]["difficulty"],
-      durationMinutes: quiz.durationMinutes,
-      questionCount: quiz.questionCount,
-      passScore: quiz.passScore,
-      maxAttempts: quiz.maxAttempts,
-      isRestricted: Boolean(quiz.accessCode),
-      attemptsUsed: 0,
-      attemptsRemaining: attemptsRemaining(quiz.maxAttempts, 0),
-      bestPercentage: null,
-      lastPercentage: null,
-    }));
+  const subjectMap = new Map<string, { attempts: number; total: number }>();
+  for (const row of completed) {
+    const key = row.subject?.trim() || "General";
+    const current = subjectMap.get(key) ?? { attempts: 0, total: 0 };
+    current.attempts += 1;
+    current.total += row.percentage;
+    subjectMap.set(key, current);
+  }
+  const subjectPerformance = Array.from(subjectMap.entries())
+    .map(([subject, value]) => ({
+      subject,
+      attempts: value.attempts,
+      averagePercentage: round(value.total / value.attempts),
+    }))
+    .sort((a, b) => b.attempts - a.attempts)
+    .slice(0, 5);
 
   return {
     user: { name: user.name, email: user.email, avatarUrl: user.avatarUrl },
     stats: {
-      quizzesTaken: new Set(completed.map((row) => row.quizId)).size,
+      coursesTaken: Number(aggregate?.courses ?? 0),
       completedAttempts: total,
-      averagePercentage:
-        total === 0 ? 0 : round(completed.reduce((sum, row) => sum + row.percentage, 0) / total),
-      passRate: total === 0 ? 0 : round((passed / total) * 100),
-      bestPercentage: total === 0 ? 0 : Math.max(...completed.map((row) => row.percentage)),
+      averagePercentage: total === 0 ? 0 : round(Number(aggregate?.average ?? 0)),
+      passRate: total === 0 ? 0 : round((Number(aggregate?.passed ?? 0) / total) * 100),
+      bestPercentage: total === 0 ? 0 : round(Number(aggregate?.best ?? 0)),
+      purchasedCourses: Number(purchasedCountRows[0]?.count ?? 0),
     },
+    purchasedCourses,
+    subjectPerformance,
     inProgress,
     recentResults: completed.slice(0, 5).map(toHistoryItem),
     recommended,

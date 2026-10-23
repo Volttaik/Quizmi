@@ -6,6 +6,19 @@ export function formatDuration(minutes: number | null | undefined): string {
   return rest === 0 ? `${hours} hr${hours > 1 ? "s" : ""}` : `${hours} hr ${rest} min`;
 }
 
+export function formatPrice(priceKobo: number, currency = "NGN"): string {
+  if (!priceKobo || priceKobo <= 0) return "Free";
+  try {
+    return new Intl.NumberFormat("en-NG", {
+      style: "currency",
+      currency,
+      maximumFractionDigits: priceKobo % 100 === 0 ? 0 : 2,
+    }).format(priceKobo / 100);
+  } catch {
+    return `${(priceKobo / 100).toLocaleString()} ${currency}`;
+  }
+}
+
 export function formatTimeTaken(seconds: number | null | undefined): string {
   if (!seconds || seconds <= 0) return "—";
   const mins = Math.floor(seconds / 60);
