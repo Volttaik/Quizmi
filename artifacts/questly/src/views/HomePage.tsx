@@ -14,7 +14,6 @@ import {
   X,
 } from "lucide-react";
 
-import AnswerSheetStage from "@/components/AnswerSheetStage";
 import Logo from "@/components/Brand";
 import CourseCard from "@/components/CourseCard";
 import { Reveal, ease } from "@/components/Motion";
@@ -140,107 +139,94 @@ export default function HomePage({ initialCourses, initialSubjects, initialError
         />
 
         <div className="relative z-10 mx-auto max-w-6xl px-4 pb-14 pt-10 sm:px-6 sm:pt-14 lg:pb-20">
-          <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1.04fr)_minmax(0,0.96fr)] lg:gap-14">
-            <div className="min-w-0">
-              <motion.h1
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.06, duration: 0.55, ease }}
-                className="mt-4 text-display-xl text-foreground"
-              >
-                Find your course
-              </motion.h1>
+          <motion.h1
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.06, duration: 0.55, ease }}
+            className="mt-4 max-w-[36rem] text-display-xl text-foreground"
+          >
+            Find your course
+          </motion.h1>
 
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.14, duration: 0.5, ease }}
-                className="lede mt-5 max-w-[31rem]"
-              >
-                Explore your courses and practice with questions to prepare for your exams.
-              </motion.p>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.14, duration: 0.5, ease }}
+            className="lede mt-5 max-w-[31rem]"
+          >
+            Explore your courses and practice with questions to prepare for your exams.
+          </motion.p>
 
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.2, duration: 0.5, ease }}
-                className="mt-7 flex flex-col gap-3 sm:flex-row"
-              >
-                <Button
-                  className="h-12 px-6 text-[15px]"
-                  onClick={() => {
-                    searchRef.current?.focus();
-                    searchRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-                  }}
-                >
-                  Explore courses
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-                <Button asChild variant="outline" className="h-12 px-6 text-[15px]">
-                  <Link href="/courses">Browse the catalogue</Link>
-                </Button>
-              </motion.div>
-
-              {/* The search sits on a hall-ticket slip rather than a floating bar. */}
-              <motion.form
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.26, duration: 0.5, ease }}
-                role="search"
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  setDebounced(search.trim());
-                  scrollToCourses();
-                }}
-                className="exam-slip mt-8 max-w-[33rem]"
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <label htmlFor="course-search" className="eyebrow">
-                    Course name or code
-                  </label>
-                  <span className="rounded-full bg-secondary px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-secondary-foreground">
-                    Search
-                  </span>
-                </div>
-                <div className="mt-2.5 flex flex-col gap-2 sm:flex-row">
-                  <div className="relative flex-1">
-                    <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <input
-                      id="course-search"
-                      ref={searchRef}
-                      value={search}
-                      onChange={(event) => setSearch(event.target.value)}
-                      aria-label="Search courses by name or code"
-                      placeholder="e.g. DECN 101 or Economics"
-                      className="h-11 w-full rounded-[var(--radius)] border border-input bg-background/70 pl-10 pr-9 text-sm shadow-[inset_0_1px_2px_hsl(258_45%_12%/0.05)] outline-none transition-colors placeholder:text-muted-foreground focus:border-accent focus:bg-background"
-                    />
-                    {search && (
-                      <button
-                        type="button"
-                        onClick={() => setSearch("")}
-                        aria-label="Clear search"
-                        className="absolute right-2.5 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground hover:bg-muted"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                    )}
-                  </div>
-                  <Button type="submit" className="h-11 px-5">
-                    Search
-                  </Button>
-                </div>
-              </motion.form>
-            </div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.12, duration: 0.6, ease }}
-              className="relative lg:pl-4"
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.5, ease }}
+            className="mt-7 flex flex-col gap-3 sm:flex-row"
+          >
+            <Button
+              className="h-12 px-6 text-[15px]"
+              onClick={() => {
+                searchRef.current?.focus();
+                searchRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+              }}
             >
-              <AnswerSheetStage />
-            </motion.div>
-          </div>
+              Explore courses
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+            <Button asChild variant="outline" className="h-12 px-6 text-[15px]">
+              <Link href="/courses">Browse the catalogue</Link>
+            </Button>
+          </motion.div>
+
+          {/* The search sits on a hall-ticket slip rather than a floating bar. */}
+          <motion.form
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.26, duration: 0.5, ease }}
+            role="search"
+            onSubmit={(event) => {
+              event.preventDefault();
+              setDebounced(search.trim());
+              scrollToCourses();
+            }}
+            className="exam-slip mt-8 max-w-[33rem]"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <label htmlFor="course-search" className="eyebrow">
+                Course name or code
+              </label>
+              <span className="rounded-full bg-secondary px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.14em] text-secondary-foreground">
+                Search
+              </span>
+            </div>
+            <div className="mt-2.5 flex flex-col gap-2 sm:flex-row">
+              <div className="relative flex-1">
+                <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  id="course-search"
+                  ref={searchRef}
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                  aria-label="Search courses by name or code"
+                  placeholder="e.g. DECN 101 or Economics"
+                  className="h-11 w-full rounded-[var(--radius)] border border-input bg-background/70 pl-10 pr-9 text-sm shadow-[inset_0_1px_2px_hsl(258_45%_12%/0.05)] outline-none transition-colors placeholder:text-muted-foreground focus:border-accent focus:bg-background"
+                />
+                {search && (
+                  <button
+                    type="button"
+                    onClick={() => setSearch("")}
+                    aria-label="Clear search"
+                    className="absolute right-2.5 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground hover:bg-muted"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+              <Button type="submit" className="h-11 px-5">
+                Search
+              </Button>
+            </div>
+          </motion.form>
         </div>
       </section>
 
