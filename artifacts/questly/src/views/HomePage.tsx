@@ -10,7 +10,6 @@ import {
   Clock,
   ListChecks,
   Search,
-  ShieldCheck,
   Target,
   X,
 } from "lucide-react";
@@ -116,11 +115,6 @@ export default function HomePage({ initialCourses, initialSubjects, initialError
 
   const isFiltering = debounced.length > 0 || subject !== "all";
 
-  const totalQuestions = useMemo(
-    () => courses.reduce((total, course) => total + (course.questionCount || 0), 0),
-    [courses]
-  );
-
   const scrollToCourses = () => {
     resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
@@ -148,26 +142,13 @@ export default function HomePage({ initialCourses, initialSubjects, initialError
         <div className="relative z-10 mx-auto max-w-6xl px-4 pb-14 pt-10 sm:px-6 sm:pt-14 lg:pb-20">
           <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1.04fr)_minmax(0,0.96fr)] lg:gap-14">
             <div className="min-w-0">
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ ease }}
-                className="flex items-center gap-3"
-              >
-                <span aria-hidden className="h-px w-8 bg-accent" />
-                <span className="eyebrow">Course-based CBT practice</span>
-              </motion.div>
-
               <motion.h1
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.06, duration: 0.55, ease }}
                 className="mt-4 text-display-xl text-foreground"
               >
-                Sit the paper
-                <span className="mt-1.5 block font-serif text-[0.58em] font-normal italic leading-tight text-muted-foreground">
-                  before it counts.
-                </span>
+                Find your course
               </motion.h1>
 
               <motion.p
@@ -176,8 +157,7 @@ export default function HomePage({ initialCourses, initialSubjects, initialError
                 transition={{ delay: 0.14, duration: 0.5, ease }}
                 className="lede mt-5 max-w-[31rem]"
               >
-                Real questions from your course, a clock you set, and a marked paper the moment you
-                finish. QUIZMI is the practice hall between your notes and exam day.
+                Explore your courses and practice with questions to prepare for your exams.
               </motion.p>
 
               <motion.div
@@ -193,7 +173,7 @@ export default function HomePage({ initialCourses, initialSubjects, initialError
                     searchRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
                   }}
                 >
-                  Find your course
+                  Explore courses
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
                 <Button asChild variant="outline" className="h-12 px-6 text-[15px]">
@@ -250,25 +230,6 @@ export default function HomePage({ initialCourses, initialSubjects, initialError
                   </Button>
                 </div>
               </motion.form>
-
-              <motion.ul
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.32, duration: 0.5, ease }}
-                className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-muted-foreground"
-              >
-                <li>
-                  <span className="font-semibold text-foreground">{courses.length}</span>{" "}
-                  {courses.length === 1 ? "course" : "courses"} published
-                </li>
-                <li>
-                  <span className="font-semibold text-foreground">
-                    {totalQuestions.toLocaleString()}
-                  </span>{" "}
-                  questions in the bank
-                </li>
-                <li className="hidden sm:list-item">Timed and marked on the server</li>
-              </motion.ul>
             </div>
 
             <motion.div
@@ -282,7 +243,6 @@ export default function HomePage({ initialCourses, initialSubjects, initialError
           </div>
         </div>
       </section>
-
 
       {/* ── Course catalogue ─────────────────────────────────────────────── */}
       <section
@@ -415,47 +375,19 @@ export default function HomePage({ initialCourses, initialSubjects, initialError
       </section>
 
       {/* ── Exam-day details ─────────────────────────────────────────────── */}
-      <section className="bg-card">
-        <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-2">
-          <Reveal>
-            <h2 className="text-xl font-semibold sm:text-2xl">Practice that feels rewarding</h2>
-            <p className="mt-3.5 text-[15px] leading-relaxed text-muted-foreground">
-              Every answer gets a clear verdict, a spoken cue and a short explanation where the
-              course provides one. Build a streak and QUIZMI cheers you on.
-            </p>
-            <h3 className="mt-8 text-xl font-semibold">Know where you stand</h3>
-            <p className="mt-2.5 text-[15px] leading-relaxed text-muted-foreground">
-              After each session you get your score, accuracy, time taken and a question-by-question
-              review. Your history tracks how you improve over time.
-            </p>
-          </Reveal>
-
-          <Reveal delay={0.1} className="space-y-4">
-            {[
-              {
-                icon: Clock,
-                title: "Timed like exam day",
-                body: "Deadlines are enforced on the server, so the clock keeps running even if you refresh.",
-              },
-              {
-                icon: ShieldCheck,
-                title: "Honest scoring",
-                body: "Correct answers stay hidden until submission. Your score is calculated by the server.",
-              },
-            ].map((item) => (
-              <div
-                key={item.title}
-                className="flex items-start gap-4 rounded-[5px] border border-border bg-background p-5 shadow-sm"
-              >
-                <item.icon className="mt-0.5 h-5 w-5 shrink-0 text-accent" />
-                <div>
-                  <p className="font-semibold">{item.title}</p>
-                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{item.body}</p>
-                </div>
-              </div>
-            ))}
-          </Reveal>
-        </div>
+      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+        <Reveal className="mx-auto max-w-2xl text-center">
+          <h2 className="text-xl font-semibold sm:text-2xl">Practice that feels rewarding</h2>
+          <p className="mt-3.5 text-[15px] leading-relaxed text-muted-foreground">
+            Every answer gets a clear verdict, a spoken cue and a short explanation where the
+            course provides one. Build a streak and QUIZMI cheers you on.
+          </p>
+          <h3 className="mt-8 text-xl font-semibold">Know where you stand</h3>
+          <p className="mt-2.5 text-[15px] leading-relaxed text-muted-foreground">
+            After each session you get your score, accuracy, time taken and a question-by-question
+            review. Your history tracks how you improve over time.
+          </p>
+        </Reveal>
       </section>
 
       {/* ── Closing call to action ───────────────────────────────────────── */}
