@@ -29,7 +29,7 @@ function fallbackFor(course: CourseSummary) {
 export default function CourseCard({ course }: { course: CourseSummary }) {
   const [coverOk, setCoverOk] = useState(true);
   const unlocked = course.hasAccess;
-  const action = unlocked ? "Practise" : course.isFree ? "Start free" : "Preview & unlock";
+  const action = unlocked ? "Practise" : course.isFree ? "Start free" : "Get Course";
 
   return (
     <div className="group dotted-edge flex h-full flex-col overflow-hidden rounded-[var(--radius)] border border-border/70 bg-card shadow-[var(--shadow-sm)] transition-[box-shadow,transform,border-color] duration-200 hover:-translate-y-0.5 hover:border-border hover:shadow-[var(--shadow-md)]">

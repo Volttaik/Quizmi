@@ -23,6 +23,7 @@ import {
 import BackgroundOrbs from "@/components/BackgroundOrbs";
 import { BrandLoader } from "@/components/Brand";
 import AnswerReveal from "@/components/AnswerReveal";
+import Graffiti from "@/components/Graffiti";
 import SessionRecovery from "@/components/SessionRecovery";
 import { ease } from "@/components/Motion";
 import { Button } from "@/components/ui/button";
@@ -1167,6 +1168,11 @@ export default function ExamPage() {
             <div className="relative mt-6">
               {currentFeedback && (
                 <AnswerReveal variant={isCorrect ? "correct" : "incorrect"} seed={current} />
+              )}
+              {/* Only genuinely correct answers get the graffiti celebration;
+                  the seed key re-arms the burst for each question. */}
+              {currentFeedback && isCorrect && (
+                <Graffiti key={current} seed={current} />
               )}
               <motion.div
                 className="space-y-2.5"

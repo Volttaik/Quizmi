@@ -248,78 +248,71 @@ export default function CourseDetailPage() {
           </Alert>
         )}
 
-        {/* ── Editorial course hero ────────────────────────────────────────── */}
-        <section className="relative mt-4 overflow-hidden rounded-[var(--radius)] bg-[var(--background-inverse)] shadow-[var(--shadow-md)]">
-          {course.coverImageUrl ? (
-            <>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
+        {/* ── Course banner: its own space, no text over the image ─────────── */}
+        <section className="relative mt-4">
+          <div className="relative overflow-hidden rounded-[var(--radius)] border border-border/70 bg-card shadow-[var(--shadow-md)]">
+            {course.coverImageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={course.coverImageUrl}
                 alt={`${course.title} course banner`}
-                className="absolute inset-0 h-full w-full object-cover"
+                className="block aspect-[2/1] max-h-[26rem] w-full object-cover"
               />
+            ) : (
               <div
                 aria-hidden
-                className="absolute inset-0 bg-gradient-to-t from-[#160f2e]/95 via-[#160f2e]/65 to-[#160f2e]/20"
-              />
-            </>
-          ) : (
-            <div aria-hidden className="absolute inset-0 brand-gradient">
-              <div className="absolute -right-16 -top-16 h-72 w-72 rounded-full border border-white/15" />
-              <div className="absolute -bottom-20 left-10 h-64 w-64 rounded-full border border-white/10" />
+                className="brand-gradient relative flex aspect-[2/1] max-h-[26rem] w-full items-center justify-center"
+              >
+                <div className="absolute -right-16 -top-16 h-72 w-72 rounded-full border border-white/15" />
+                <div className="absolute -bottom-20 left-10 h-64 w-64 rounded-full border border-white/10" />
+              </div>
+            )}
+            <div className="absolute right-4 top-4 z-10 sm:right-6 sm:top-6">
+              <ShareCourseButton slug={course.slug} title={course.title} />
             </div>
-          )}
+          </div>
+        </section>
 
-          <div className="absolute right-4 top-4 z-10 sm:right-6 sm:top-6">
-            <ShareCourseButton slug={course.slug} title={course.title} />
+        {/* ── Course information, beneath the banner ───────────────────────── */}
+        <section className="mt-6">
+          <div className="flex flex-wrap items-center gap-2">
+            {course.code && (
+              <span className="rounded-full bg-secondary px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-secondary-foreground">
+                {course.code}
+              </span>
+            )}
+            {course.subject && (
+              <span className="rounded-full bg-muted px-3 py-1 text-[11px] font-semibold text-muted-foreground">
+                {course.subject}
+              </span>
+            )}
+            {course.isFree && (
+              <span className="rounded-full bg-success/10 px-3 py-1 text-[11px] font-bold text-success">
+                Free course
+              </span>
+            )}
+            {course.isPurchased && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-success/10 px-3 py-1 text-[11px] font-semibold text-success">
+                <CircleCheck className="h-3.5 w-3.5" /> In your library
+              </span>
+            )}
           </div>
 
-          <div className="relative flex min-h-[20rem] flex-col justify-end px-6 pb-8 pt-24 sm:min-h-[24rem] sm:px-9 sm:pb-10">
-            <div className="flex flex-wrap items-center gap-2">
-              {course.code && (
-                <span className="rounded-full bg-white/95 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[#241f33]">
-                  {course.code}
-                </span>
-              )}
-              {course.subject && (
-                <span className="rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur">
-                  {course.subject}
-                </span>
-              )}
-              {course.isFree && (
-                <span className="rounded-full bg-white/15 px-3 py-1 text-[11px] font-bold text-white backdrop-blur">
-                  Free course
-                </span>
-              )}
-              {course.isPurchased && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur">
-                  <CircleCheck className="h-3.5 w-3.5" /> In your library
-                </span>
-              )}
-            </div>
+          <h1 className="mt-4 max-w-3xl text-display-lg text-foreground">{course.title}</h1>
 
-            <h1 className="mt-4 max-w-3xl text-display-lg text-white">{course.title}</h1>
-
-            {course.description && (
-              <p className="mt-3 max-w-2xl text-[14px] leading-relaxed text-white/75 sm:text-[15px]">
-                {course.description.split("\n")[0]}
-              </p>
-            )}
-
-            <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-[12px] font-medium text-white/80">
-              <span className="inline-flex items-center gap-1.5">
-                <ListCheck className="h-3.5 w-3.5" />
-                {course.questionCount.toLocaleString()} questions
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <Clock className="h-3.5 w-3.5" />
-                {course.durationMinutes !== null ? `${course.durationMinutes} min default` : "Choose your timer"}
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <TargetDart className="h-3.5 w-3.5" />
-                {course.passScore}% to pass
-              </span>
-            </div>
+          <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-[12px] font-medium text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5">
+              <ListCheck className="h-3.5 w-3.5" />
+              {course.questionCount.toLocaleString()} questions
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <Clock className="h-3.5 w-3.5" />
+              {course.durationMinutes !== null ? `${course.durationMinutes} min default` : "Choose your timer"}
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <TargetDart className="h-3.5 w-3.5" />
+              {course.passScore}% to pass
+            </span>
           </div>
         </section>
 

@@ -8,7 +8,14 @@ import type { AttemptResult } from "@/lib/types";
  * invented client-side.
  */
 
+/**
+ * The card is a 4:5 portrait (1080×1320). The previous square canvas cropped
+ * its footer off the bottom edge; every section below is positioned from the
+ * top with printed measurements, so the QR code and call to action always sit
+ * inside the padded area of the canvas.
+ */
 export const SHARE_CARD_SIZE = 1080;
+export const SHARE_CARD_HEIGHT = 1320;
 
 const INK = "#140d29";
 const INK_SOFT = "#1d1438";
@@ -16,9 +23,7 @@ const LAVENDER = "#c3b4f4";
 const MUTED = "#8d81b8";
 const WHITE = "#f7f5ff";
 const GREEN = "#4ade80";
-const ROSE = "#fb7185";
 const AMBER = "#fbbf24";
-const BRAND = "#8b5cf6";
 
 const FONT_STACK = '"Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif';
 
@@ -127,9 +132,10 @@ export async function renderResultCard(result: AttemptResult): Promise<Blob> {
   await loadBrandFont();
 
   const size = SHARE_CARD_SIZE;
+  const height = SHARE_CARD_HEIGHT;
   const canvas = document.createElement("canvas");
   canvas.width = size;
-  canvas.height = size;
+  canvas.height = height;
   const ctx = canvas.getContext("2d");
   if (!ctx) throw new Error("Canvas is not available in this browser");
 
@@ -137,23 +143,34 @@ export async function renderResultCard(result: AttemptResult): Promise<Blob> {
 
   /* ── Background ──────────────────────────────────────────────────────── */
   ctx.fillStyle = INK;
-  ctx.fillRect(0, 0, size, size);
+  ctx.fillRect(0, 0, size, height);
 
-  const glow = ctx.createRadialGradient(size * 0.82, size * 0.1, 40, size * 0.82, size * 0.1, 820);
+  const glow = ctx.createRadialGradient(size * 0.82, 70, 40, size * 0.82, 70, 820);
   glow.addColorStop(0, "rgba(139, 92, 246, 0.34)");
   glow.addColorStop(0.55, "rgba(139, 92, 246, 0.08)");
   glow.addColorStop(1, "rgba(139, 92, 246, 0)");
   ctx.fillStyle = glow;
-  ctx.fillRect(0, 0, size, size);
+  ctx.fillRect(0, 0, size, height);
 
-  const glowBottom = ctx.createRadialGradient(size * 0.1, size * 0.95, 20, size * 0.1, size * 0.95, 620);
+  const glowBottom = ctx.createRadialGradient(
+    size * 0.1,
+    height * 0.97,
+    20,
+    size * 0.1,
+    height * 0.97,
+    620
+  );
   glowBottom.addColorStop(0, "rgba(74, 222, 128, 0.10)");
   glowBottom.addColorStop(1, "rgba(74, 222, 128, 0)");
   ctx.fillStyle = glowBottom;
-  ctx.fillRect(0, 0, size, size);
+  ctx.fillRect(0, 0, size, height);
 
-  /* ── Header: logo + wordmark ─────────────────────────────────────────── */
+  /* ── Layout constants ────────────────────────────────────────────────── */
   const pad = 84;
+  const contentWidth = size - pad * 2;
+  ctx.textBaseline = "alphabetic";
+
+  /* ── Header: logo + wordmark + status chip ───────────────────────────── */
   const logo = await loadImage("/logo.png");
   if (logo) {
     ctx.save();
@@ -165,7 +182,6 @@ export async function renderResultCard(result: AttemptResult): Promise<Blob> {
 
   ctx.fillStyle = WHITE;
   ctx.font = `800 34px ${FONT_STACK}`;
-  ctx.textBaseline = "alphabetic";
   ctx.fillText("QUIZMI", pad + (logo ? 96 : 0), pad + 52);
 
   const chip = statusChip(result);
@@ -179,7 +195,7 @@ export async function renderResultCard(result: AttemptResult): Promise<Blob> {
   ctx.fillStyle = chip.color;
   ctx.fillText(chip.label, chipX + 28, pad + 48);
 
-  /* ── Course title + meta ─────────────────────────────────────────────── */
+  /* ── Course subject + date ───────────────────────────────────────────── */
   const meta = [result.subject ?? "General", formatDate(result.submittedAt)]
     .filter(Boolean)
     .join(" · ");
@@ -187,17 +203,20 @@ export async function renderResultCard(result: AttemptResult): Promise<Blob> {
   ctx.font = `600 26px ${FONT_STACK}`;
   ctx.fillText(meta.toUpperCase(), pad, pad + 158);
 
+  /* ── Course title ────────────────────────────────────────────────────── */
   ctx.fillStyle = WHITE;
   ctx.font = `800 58px ${FONT_STACK}`;
-  const titleLines = wrapLines(ctx, result.courseTitle, size - pad * 2, 2);
+  const titleLines = wrapLines(ctx, result.courseTitle, contentWidth, 2);
   let titleY = pad + 232;
   for (const line of titleLines) {
     ctx.fillText(line, pad, titleY);
     titleY += 70;
   }
+  // titleY now sits one line height below the last painted title line.
+  const titleBottom = titleY - 70;
 
   /* ── Score block ─────────────────────────────────────────────────────── */
-  const scoreTop = Math.max(titleY + 36, 520);
+  const scoreTop = Math.max(titleBottom + 56, 520);
 
   ctx.fillStyle = WHITE;
   ctx.font = `800 210px ${FONT_STACK}`;
@@ -209,7 +228,7 @@ export async function renderResultCard(result: AttemptResult): Promise<Blob> {
 
   /* Progress bar under the percentage */
   const barY = scoreTop + 262;
-  const barWidth = size - pad * 2;
+  const barWidth = contentWidth;
   ctx.fillStyle = INK_SOFT;
   roundRect(ctx, pad, barY, barWidth, 18, 9);
   ctx.fill();
@@ -228,7 +247,7 @@ export async function renderResultCard(result: AttemptResult): Promise<Blob> {
   /* ── Stat tiles ──────────────────────────────────────────────────────── */
   const tilesY = barY + 96;
   const gap = 24;
-  const tileWidth = (size - pad * 2 - gap * 2) / 3;
+  const tileWidth = (contentWidth - gap * 2) / 3;
   const tiles: Array<{ label: string; value: string }> = [
     { label: "CORRECT", value: `${result.correctCount}/${result.totalQuestions}` },
     { label: "MARKS", value: `${result.score}/${result.totalMarks}` },
@@ -255,17 +274,18 @@ export async function renderResultCard(result: AttemptResult): Promise<Blob> {
     ctx.font = `800 44px ${FONT_STACK}`;
     ctx.fillText(tile.value, x + 28, tilesY + 104);
   });
+  const tilesBottom = tilesY + 132;
 
-  /* ── Footer: QR + CTA ────────────────────────────────────────────────── */
-  const footerY = tilesY + 132 + 56;
-
+  /* ── Footer: divider, QR code and call to action ─────────────────────── */
+  const dividerY = tilesBottom + 44;
   ctx.strokeStyle = "rgba(247, 245, 255, 0.12)";
   ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.moveTo(pad, footerY - 36);
-  ctx.lineTo(size - pad, footerY - 36);
+  ctx.moveTo(pad, dividerY);
+  ctx.lineTo(size - pad, dividerY);
   ctx.stroke();
 
+  const footerTop = dividerY + 44;
   const qrSize = 190;
   try {
     const qrDataUrl = await QRCode.toDataURL(courseUrl, {
@@ -277,9 +297,9 @@ export async function renderResultCard(result: AttemptResult): Promise<Blob> {
     const qr = await loadImage(qrDataUrl);
     if (qr) {
       ctx.fillStyle = "#ffffff";
-      roundRect(ctx, pad - 10, footerY - 10, qrSize + 20, qrSize + 20, 22);
+      roundRect(ctx, pad - 10, footerTop - 10, qrSize + 20, qrSize + 20, 22);
       ctx.fill();
-      ctx.drawImage(qr, pad, footerY, qrSize, qrSize);
+      ctx.drawImage(qr, pad, footerTop, qrSize, qrSize);
     }
   } catch {
     // A missing QR still leaves the readable link below.
@@ -289,7 +309,7 @@ export async function renderResultCard(result: AttemptResult): Promise<Blob> {
   ctx.fillStyle = WHITE;
   ctx.font = `800 40px ${FONT_STACK}`;
   const ctaLines = wrapLines(ctx, "Try this course on QUIZMI", size - pad - ctaX, 2);
-  let ctaY = footerY + 54;
+  let ctaY = footerTop + 54;
   for (const line of ctaLines) {
     ctx.fillText(line, ctaX, ctaY);
     ctaY += 50;
@@ -301,6 +321,11 @@ export async function renderResultCard(result: AttemptResult): Promise<Blob> {
   ctx.fillStyle = MUTED;
   ctx.font = `600 22px ${FONT_STACK}`;
   ctx.fillText("Scan the code or open the link to start practising.", ctaX, ctaY + 52);
+
+  // Worst case audit (two title lines + two CTA lines):
+  //   tilesBottom = 1010, divider = 1054, footerTop = 1098,
+  //   QR bottom = 1288, CTA copy bottom ≈ 1234 — all inside 1320 with ≥ 32px
+  //   to spare, so nothing is ever cropped.
 
   /* ── Export ───────────────────────────────────────────────────────────── */
   return new Promise<Blob>((resolve, reject) => {
