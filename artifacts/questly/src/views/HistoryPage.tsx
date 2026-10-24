@@ -336,7 +336,7 @@ export default function HistoryPage() {
                   </p>
                 </div>
               ) : (
-                <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {sessions.map((item) => {
                     const meta = attemptStatusMeta(item.status);
                     const open = item.status === "in_progress";
