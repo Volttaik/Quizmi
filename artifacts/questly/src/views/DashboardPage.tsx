@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
+  ArrowRight,
+  BookOpen,
   ChevronRight,
   Clock,
   Flame,
@@ -115,7 +117,10 @@ export default function DashboardPage() {
   const hasActivity = data.stats.completedAttempts > 0;
   const hour = new Date().getHours();
   const greet = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
-  const featured = data.purchasedCourses[0] ?? data.recommended[0];
+  // The featured card reads the server-computed owned list only — an
+  // unpurchased course never appears as the dashboard's hero. Learners who
+  // own nothing get the empty state below instead.
+  const featured = data.purchasedCourses[0];
   const courseHref = featured ? `/courses/${featured.slug}` : "/courses";
 
   const explore = (event: React.FormEvent) => {
@@ -146,9 +151,28 @@ export default function DashboardPage() {
       </Reveal>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-3">
-        {featured && (
+        {featured ? (
           <Reveal className="min-w-0 lg:col-span-2">
             <CourseCard course={featured} />
+          </Reveal>
+        ) : (
+          <Reveal className="dotted-edge-tl rounded-[5px] border border-dashed border-border bg-card p-8 text-center lg:col-span-2">
+            <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-[5px] bg-accent-soft text-accent-soft-foreground">
+              <BookOpen className="h-5 w-5" />
+            </span>
+            <h2 className="mt-4 text-base font-semibold sm:text-lg">
+              No unlocked courses yet
+            </h2>
+            <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
+              Courses you purchase appear here with your progress. Explore the
+              catalogue for your first assessment.
+            </p>
+            <Button asChild size="sm" className="mt-5">
+              <Link href="/courses">
+                Explore courses
+                <ArrowRight className="ml-1.5 h-4 w-4" />
+              </Link>
+            </Button>
           </Reveal>
         )}
         <div className="grid min-w-0 grid-cols-2 gap-4 lg:grid-cols-1">

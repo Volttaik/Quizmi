@@ -35,8 +35,8 @@ export const COURSE = {
     "An introductory course exploring the causes and dynamics of conflict, conflict resolution strategies, negotiation, mediation, peacebuilding, and approaches to achieving sustainable peace.",
   subject: "Peace and Conflict Studies",
   difficulty: "medium",
-  /** Set via --price-kobo; 0 keeps the course free to practise. */
-  priceKobo: 0,
+  /** ₦1000. Prices are stored in kobo so the Paystack amount is an integer. */
+  priceKobo: 100_000,
   currency: "NGN",
   passScore: 50,
   maxAttempts: null as number | null,
