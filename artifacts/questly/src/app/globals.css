@@ -303,24 +303,27 @@
 }
 
 /* ─── Hero canvas ─────────────────────────────────────────────────────────
-   A measured exam hall: faint column rules, a warm violet bloom and a floor
-   tone that separates the hero from the catalogue below. */
+   Two softly glowing 3D spheres drift through the hero, over a warm violet
+   bloom and a floor tone that separates the hero from the catalogue below. */
 .hero-stage {
   background:
     radial-gradient(56rem 26rem at 82% -12%, hsl(var(--accent) / 0.12), transparent 70%),
     radial-gradient(28rem 18rem at 8% 8%, hsl(292 70% 60% / 0.08), transparent 72%),
     linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--background)) 62%, hsl(var(--muted) / 0.6) 100%);
 }
-.hero-grid {
-  background-image: linear-gradient(
-    to right,
-    hsl(var(--foreground) / 0.05) 1px,
-    transparent 1px
-  );
-  background-size: 4.5rem 100%;
-  -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 76%);
-  mask-image: linear-gradient(180deg, #000 0%, transparent 76%);
+.hero-orb {
+  position: absolute;
   pointer-events: none;
+  border-radius: 9999px;
+  background:
+    radial-gradient(circle at 31% 25%, hsl(286 100% 95%) 0%, transparent 24%),
+    radial-gradient(circle at 72% 84%, hsl(var(--accent) / 0.42) 0%, transparent 56%),
+    radial-gradient(circle at 50% 55%, hsl(var(--primary) / 0.3) 0%, hsl(var(--primary) / 0.12) 64%, transparent 92%);
+  box-shadow:
+    inset 0 -0.75em 1.5em hsl(265 80% 40% / 0.3),
+    inset 0 0.4em 1em hsl(283 95% 92% / 0.35),
+    0 0 2.25rem hsl(var(--accent) / 0.25),
+    0 1.25rem 3rem hsl(265 65% 12% / 0.12);
 }
 
 /* The hero search sits on a hall-ticket slip: a ruled card with a spine. */

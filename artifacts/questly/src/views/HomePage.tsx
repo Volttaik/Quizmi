@@ -129,14 +129,15 @@ export default function HomePage({ initialCourses, initialSubjects, initialError
     <div className="overflow-x-clip">
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <section className="hero-stage relative overflow-hidden">
-        <div aria-hidden className="hero-grid absolute inset-0" />
+        {/* Two softly glowing 3D spheres drift behind the copy — decorative:
+            aria-hidden, pointer-events off, floated by .orb-float-*. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute -left-28 top-6 h-72 w-72 rounded-full bg-accent/15 blur-3xl"
+          className="hero-orb orb-float-slow -left-24 -top-20 h-80 w-80"
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute -right-20 bottom-0 h-64 w-64 rounded-full bg-primary/10 blur-3xl"
+          className="hero-orb orb-float-slower -right-20 -bottom-16 h-72 w-72 opacity-80"
         />
 
         {/* The empty right side of the hero carries one quiet, animated

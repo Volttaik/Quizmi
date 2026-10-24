@@ -1,2 +1,7 @@
 */tmp-*.ts
 artifacts/questly/tmp-*.ts
+
+# Next.js build output and Clerk keyless-instance runtime data (the .clerk
+# directory includes the unclaimed instance's secret key — never commit it).
+.next/
+.clerk/
