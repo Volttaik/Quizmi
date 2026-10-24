@@ -16,6 +16,7 @@
     "ingest:pos101": "tsx ./src/ingest-pos101.ts",
     "ingest:soc103": "tsx ./src/ingest-soc103.ts",
     "ingest:soc105": "tsx ./src/ingest-soc105.ts",
+    "ingest:ent201": "tsx ./src/ingest-ent201.ts",
     "repair:attempts": "tsx ./src/repair-attempts.ts"
   },
   "dependencies": {
