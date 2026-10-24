@@ -5,7 +5,8 @@ import type { AttemptResult } from "@/lib/types";
  * Renders a completed attempt into a shareable achievement graphic using the
  * real, server-persisted result. Everything drawn on the card — score,
  * percentage, marks, date, status — comes from the stored attempt; nothing is
- * invented client-side.
+ * invented client-side. The performance tier (see `performanceBand`) chooses
+ * one of five distinct designs from fail up to excellent.
  */
 
 /**
@@ -24,8 +25,78 @@ const MUTED = "#8d81b8";
 const WHITE = "#f7f5ff";
 const GREEN = "#4ade80";
 const AMBER = "#fbbf24";
+const ROSE = "#fb7185";
+const VIOLET = "#a78bfa";
 
 const FONT_STACK = '"Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif';
+
+export type PerformanceBand = {
+  /** 1 = fail … 5 = excellent. Drives stars, colour theme and copy. */
+  tier: 1 | 2 | 3 | 4 | 5;
+  chipLabel: string;
+  /** Short tier message painted under the progress bar. */
+  headline: string;
+  color: string;
+};
+
+/**
+ * One design per performance level, measured only against the real stored
+ * score and the course's own pass mark:
+ *   1 — below the pass mark (fail)
+ *   2 — passed, under 70%
+ *   3 — 70–84%
+ *   4 — 85–94%
+ *   5 — 95% or higher (excellent)
+ */
+export function performanceBand(result: AttemptResult): PerformanceBand {
+  const pct = Math.min(100, Math.max(0, result.percentage));
+  if (!result.passed) {
+    return {
+      tier: 1,
+      chipLabel: "NOT PASSED",
+      headline: "Every expert was once here — another attempt is waiting.",
+      color: ROSE,
+    };
+  }
+  if (pct < 70) {
+    return {
+      tier: 2,
+      chipLabel: "PASSED",
+      headline: "You cleared the pass mark — the next band is close.",
+      color: GREEN,
+    };
+  }
+  if (pct < 85) {
+    return {
+      tier: 3,
+      chipLabel: "STRONG RESULT",
+      headline: "A strong paper — the details are coming together.",
+      color: VIOLET,
+    };
+  }
+  if (pct < 95) {
+    return {
+      tier: 4,
+      chipLabel: "OUTSTANDING",
+      headline: "Outstanding — only a handful of answers slipped by.",
+      color: AMBER,
+    };
+  }
+  return {
+    tier: 5,
+    chipLabel: "TOP OF THE CLASS",
+    headline: "Elite score — you own this course.",
+    color: AMBER,
+  };
+}
+
+function hexToRgba(hex: string, alpha: number): string {
+  const value = hex.replace("#", "");
+  const r = parseInt(value.slice(0, 2), 16);
+  const g = parseInt(value.slice(2, 4), 16);
+  const b = parseInt(value.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
 
 /** Canonical, public course URL — contains no private identifiers. */
 export function courseUrlFor(slug: string): string {
@@ -35,25 +106,22 @@ export function courseUrlFor(slug: string): string {
   return `${origin}/courses/${encodeURIComponent(slug)}`;
 }
 
-export function shareTextFor(result: AttemptResult, courseUrl: string): string {
+export function shareTextFor(
+  result: AttemptResult,
+  courseUrl: string,
+  options?: { userName?: string | null }
+): string {
   // A card is only offered for graded attempts, but never let a missing result
   // turn into a claimed score if that changes.
   if (!result.hasResult) {
     return `I'm studying ${result.courseTitle} on QUIZMI. Take the course here: ${courseUrl}`;
   }
+  const who = options?.userName?.trim() ? options.userName.trim() : "I";
   const headline =
     result.status === "submitted"
-      ? `I scored ${result.percentage}% on the ${result.courseTitle} assessment on QUIZMI!`
-      : `I completed the ${result.courseTitle} assessment on QUIZMI (${result.percentage}%).`;
+      ? `${who} scored ${result.percentage}% on the ${result.courseTitle} assessment on QUIZMI!`
+      : `${who} completed the ${result.courseTitle} assessment on QUIZMI (${result.percentage}%).`;
   return `${headline} Think you can do better? Take the same course here: ${courseUrl}`;
-}
-
-function statusChip(result: AttemptResult): { label: string; color: string } {
-  if (result.status === "terminated") return { label: "ATTEMPT ENDED", color: AMBER };
-  if (result.status === "expired") return { label: "TIME EXPIRED", color: AMBER };
-  if (result.status === "not_submitted") return { label: "NOT SUBMITTED", color: AMBER };
-  if (result.passed) return { label: "PASSED", color: GREEN };
-  return { label: "COMPLETED", color: LAVENDER };
 }
 
 function loadImage(src: string): Promise<HTMLImageElement | null> {
@@ -128,7 +196,61 @@ async function loadBrandFont(): Promise<void> {
   }
 }
 
-export async function renderResultCard(result: AttemptResult): Promise<Blob> {
+/** Draws the 5-star rating; earned stars take the band colour. */
+function drawStars(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  baseline: number,
+  band: PerformanceBand
+) {
+  const size = 46;
+  const pitch = 60;
+  for (let i = 0; i < 5; i += 1) {
+    const earned = i < band.tier;
+    ctx.fillStyle = earned ? band.color : `${WHITE}24`;
+    ctx.beginPath();
+    for (let point = 0; point < 10; point += 1) {
+      const radius = point % 2 === 0 ? size / 2 : size / 4.6;
+      const angle = (Math.PI / 5) * point - Math.PI / 2;
+      const cx = x + i * pitch + size / 2 + radius * Math.cos(angle);
+      const cy = baseline - size / 4 + radius * Math.sin(angle);
+      if (point === 0) ctx.moveTo(cx, cy);
+      else ctx.lineTo(cx, cy);
+    }
+    ctx.closePath();
+    ctx.fill();
+  }
+}
+
+/** A few soft sparkles near the big score for the top two tiers. */
+function drawSparkles(
+  ctx: CanvasRenderingContext2D,
+  color: string,
+  scoreRight: number,
+  scoreTop: number
+) {
+  const spots = [
+    { x: scoreRight - 40, y: scoreTop + 40, r: 9 },
+    { x: scoreRight + 60, y: scoreTop + 90, r: 6 },
+    { x: scoreRight + 20, y: scoreTop + 170, r: 12 },
+    { x: scoreRight + 90, y: scoreTop + 30, r: 5 },
+  ];
+  for (const spot of spots) {
+    ctx.fillStyle = hexToRgba(color, 0.55);
+    ctx.beginPath();
+    ctx.arc(spot.x, spot.y, spot.r * 0.55, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = hexToRgba(color, 0.25);
+    ctx.beginPath();
+    ctx.arc(spot.x, spot.y, spot.r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+export async function renderResultCard(
+  result: AttemptResult,
+  options?: { userName?: string | null }
+): Promise<Blob> {
   await loadBrandFont();
 
   const size = SHARE_CARD_SIZE;
@@ -140,15 +262,17 @@ export async function renderResultCard(result: AttemptResult): Promise<Blob> {
   if (!ctx) throw new Error("Canvas is not available in this browser");
 
   const courseUrl = courseUrlFor(result.courseSlug);
+  const band = performanceBand(result);
+  const userName = options?.userName?.trim() ? options.userName.trim() : null;
 
-  /* ── Background ──────────────────────────────────────────────────────── */
+  /* ── Background (tinted by the performance band) ─────────────────────── */
   ctx.fillStyle = INK;
   ctx.fillRect(0, 0, size, height);
 
   const glow = ctx.createRadialGradient(size * 0.82, 70, 40, size * 0.82, 70, 820);
-  glow.addColorStop(0, "rgba(139, 92, 246, 0.34)");
-  glow.addColorStop(0.55, "rgba(139, 92, 246, 0.08)");
-  glow.addColorStop(1, "rgba(139, 92, 246, 0)");
+  glow.addColorStop(0, hexToRgba(band.color, 0.34));
+  glow.addColorStop(0.55, hexToRgba(band.color, 0.08));
+  glow.addColorStop(1, hexToRgba(band.color, 0));
   ctx.fillStyle = glow;
   ctx.fillRect(0, 0, size, height);
 
@@ -160,8 +284,8 @@ export async function renderResultCard(result: AttemptResult): Promise<Blob> {
     height * 0.97,
     620
   );
-  glowBottom.addColorStop(0, "rgba(74, 222, 128, 0.10)");
-  glowBottom.addColorStop(1, "rgba(74, 222, 128, 0)");
+  glowBottom.addColorStop(0, hexToRgba(band.color, 0.1));
+  glowBottom.addColorStop(1, hexToRgba(band.color, 0));
   ctx.fillStyle = glowBottom;
   ctx.fillRect(0, 0, size, height);
 
@@ -170,7 +294,7 @@ export async function renderResultCard(result: AttemptResult): Promise<Blob> {
   const contentWidth = size - pad * 2;
   ctx.textBaseline = "alphabetic";
 
-  /* ── Header: logo + wordmark + status chip ───────────────────────────── */
+  /* ── Header: logo + wordmark + performance chip ──────────────────────── */
   const logo = await loadImage("/logo.png");
   if (logo) {
     ctx.save();
@@ -184,47 +308,78 @@ export async function renderResultCard(result: AttemptResult): Promise<Blob> {
   ctx.font = `800 34px ${FONT_STACK}`;
   ctx.fillText("QUIZMI", pad + (logo ? 96 : 0), pad + 52);
 
-  const chip = statusChip(result);
   ctx.font = `800 24px ${FONT_STACK}`;
-  const chipTextWidth = ctx.measureText(chip.label).width;
+  const chipTextWidth = ctx.measureText(band.chipLabel).width;
   const chipWidth = chipTextWidth + 56;
   const chipX = size - pad - chipWidth;
-  ctx.fillStyle = `${chip.color}26`;
+  ctx.fillStyle = hexToRgba(band.color, 0.15);
   roundRect(ctx, chipX, pad + 12, chipWidth, 52, 26);
   ctx.fill();
-  ctx.fillStyle = chip.color;
-  ctx.fillText(chip.label, chipX + 28, pad + 48);
+  ctx.strokeStyle = hexToRgba(band.color, 0.45);
+  ctx.lineWidth = 2.5;
+  roundRect(ctx, chipX, pad + 12, chipWidth, 52, 26);
+  ctx.stroke();
+  ctx.fillStyle = band.color;
+  ctx.fillText(band.chipLabel, chipX + 28, pad + 48);
+
+  /* ── Achieved by … (username row with initial avatar) ────────────────── */
+  const avatarTop = pad + 132;
+  const avatar = 64;
+  if (userName) {
+    ctx.fillStyle = hexToRgba(band.color, 0.2);
+    ctx.beginPath();
+    ctx.arc(pad + avatar / 2, avatarTop + avatar / 2, avatar / 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = band.color;
+    ctx.font = `800 30px ${FONT_STACK}`;
+    ctx.textAlign = "center";
+    ctx.fillText(userName.charAt(0).toUpperCase(), pad + avatar / 2, avatarTop + 42);
+    ctx.textAlign = "left";
+
+    ctx.fillStyle = WHITE;
+    ctx.font = `700 34px ${FONT_STACK}`;
+    ctx.fillText(shorten(userName, 34), pad + avatar + 24, avatarTop + 34);
+
+    ctx.fillStyle = MUTED;
+    ctx.font = `700 20px ${FONT_STACK}`;
+    ctx.fillText("YOUR LATEST RUN", pad + avatar + 24, avatarTop + 62);
+  }
 
   /* ── Course subject + date ───────────────────────────────────────────── */
+  const metaY = avatarTop + avatar + 44;
   const meta = [result.subject ?? "General", formatDate(result.submittedAt)]
     .filter(Boolean)
     .join(" · ");
   ctx.fillStyle = MUTED;
   ctx.font = `600 26px ${FONT_STACK}`;
-  ctx.fillText(meta.toUpperCase(), pad, pad + 158);
+  ctx.fillText(meta.toUpperCase(), pad, metaY);
 
   /* ── Course title ────────────────────────────────────────────────────── */
   ctx.fillStyle = WHITE;
   ctx.font = `800 58px ${FONT_STACK}`;
   const titleLines = wrapLines(ctx, result.courseTitle, contentWidth, 2);
-  let titleY = pad + 232;
+  let titleY = metaY + 78;
   for (const line of titleLines) {
     ctx.fillText(line, pad, titleY);
     titleY += 70;
   }
-  // titleY now sits one line height below the last painted title line.
   const titleBottom = titleY - 70;
 
   /* ── Score block ─────────────────────────────────────────────────────── */
   const scoreTop = Math.max(titleBottom + 56, 520);
 
-  ctx.fillStyle = WHITE;
+  ctx.fillStyle = band.color;
   ctx.font = `800 210px ${FONT_STACK}`;
-  ctx.fillText(`${result.percentage}%`, pad, scoreTop + 170);
+  const scoreText = `${result.percentage}%`;
+  ctx.fillText(scoreText, pad, scoreTop + 170);
+  const scoreRight = pad + ctx.measureText(scoreText).width;
+
+  if (band.tier >= 4) drawSparkles(ctx, band.color, scoreRight + 24, scoreTop + 10);
 
   ctx.fillStyle = MUTED;
   ctx.font = `700 30px ${FONT_STACK}`;
   ctx.fillText("YOUR SCORE", pad, scoreTop + 224);
+  drawStars(ctx, pad + 290, scoreTop + 232, band);
 
   /* Progress bar under the percentage */
   const barY = scoreTop + 262;
@@ -236,7 +391,15 @@ export async function renderResultCard(result: AttemptResult): Promise<Blob> {
   ctx.fillStyle = `${MUTED}66`;
   ctx.fillRect(passX - 2, barY - 8, 4, 34);
   const fillWidth = Math.max(18, (barWidth * Math.min(100, Math.max(0, result.percentage))) / 100);
-  ctx.fillStyle = chip.color;
+  // The top two tiers get a graded gold fill; everything else is flat.
+  if (band.tier >= 4 && fillWidth > 24) {
+    const fill = ctx.createLinearGradient(pad, barY, pad + fillWidth, barY);
+    fill.addColorStop(0, hexToRgba(band.color, 0.75));
+    fill.addColorStop(1, band.color);
+    ctx.fillStyle = fill;
+  } else {
+    ctx.fillStyle = band.color;
+  }
   roundRect(ctx, pad, barY, fillWidth, 18, 9);
   ctx.fill();
 
@@ -244,8 +407,13 @@ export async function renderResultCard(result: AttemptResult): Promise<Blob> {
   ctx.font = `600 22px ${FONT_STACK}`;
   ctx.fillText(`Pass mark ${result.passScore}%`, pad, barY + 52);
 
+  /* ── Performance headline ────────────────────────────────────────────── */
+  ctx.fillStyle = band.color;
+  ctx.font = `italic 700 28px ${FONT_STACK}`;
+  ctx.fillText(wrapLines(ctx, band.headline, contentWidth, 1)[0], pad, barY + 100);
+
   /* ── Stat tiles ──────────────────────────────────────────────────────── */
-  const tilesY = barY + 96;
+  const tilesY = barY + 138;
   const gap = 24;
   const tileWidth = (contentWidth - gap * 2) / 3;
   const tiles: Array<{ label: string; value: string }> = [
@@ -277,7 +445,7 @@ export async function renderResultCard(result: AttemptResult): Promise<Blob> {
   const tilesBottom = tilesY + 132;
 
   /* ── Footer: divider, QR code and call to action ─────────────────────── */
-  const dividerY = tilesBottom + 44;
+  const dividerY = tilesBottom + 36;
   ctx.strokeStyle = "rgba(247, 245, 255, 0.12)";
   ctx.lineWidth = 2;
   ctx.beginPath();
@@ -285,8 +453,8 @@ export async function renderResultCard(result: AttemptResult): Promise<Blob> {
   ctx.lineTo(size - pad, dividerY);
   ctx.stroke();
 
-  const footerTop = dividerY + 44;
-  const qrSize = 190;
+  const footerTop = dividerY + 36;
+  const qrSize = 140;
   try {
     const qrDataUrl = await QRCode.toDataURL(courseUrl, {
       margin: 1,
@@ -297,7 +465,7 @@ export async function renderResultCard(result: AttemptResult): Promise<Blob> {
     const qr = await loadImage(qrDataUrl);
     if (qr) {
       ctx.fillStyle = "#ffffff";
-      roundRect(ctx, pad - 10, footerTop - 10, qrSize + 20, qrSize + 20, 22);
+      roundRect(ctx, pad - 10, footerTop - 10, qrSize + 20, qrSize + 20, 18);
       ctx.fill();
       ctx.drawImage(qr, pad, footerTop, qrSize, qrSize);
     }
@@ -305,27 +473,30 @@ export async function renderResultCard(result: AttemptResult): Promise<Blob> {
     // A missing QR still leaves the readable link below.
   }
 
-  const ctaX = pad + qrSize + 48;
+  const ctaX = pad + qrSize + 44;
   ctx.fillStyle = WHITE;
-  ctx.font = `800 40px ${FONT_STACK}`;
+  ctx.font = `800 32px ${FONT_STACK}`;
   const ctaLines = wrapLines(ctx, "Try this course on QUIZMI", size - pad - ctaX, 2);
-  let ctaY = footerTop + 54;
+  let ctaY = footerTop + 44;
   for (const line of ctaLines) {
     ctx.fillText(line, ctaX, ctaY);
-    ctaY += 50;
+    ctaY += 40;
   }
   ctx.fillStyle = LAVENDER;
-  ctx.font = `600 25px ${FONT_STACK}`;
+  ctx.font = `600 24px ${FONT_STACK}`;
   const displayUrl = courseUrl.replace(/^https?:\/\//, "");
-  ctx.fillText(shorten(displayUrl, 38), ctaX, ctaY + 12);
+  ctx.fillText(shorten(displayUrl, 38), ctaX, ctaY + 8);
   ctx.fillStyle = MUTED;
-  ctx.font = `600 22px ${FONT_STACK}`;
-  ctx.fillText("Scan the code or open the link to start practising.", ctaX, ctaY + 52);
+  ctx.font = `600 21px ${FONT_STACK}`;
+  ctx.fillText("Scan the code or open the link to start practising.", ctaX, ctaY + 44);
 
-  // Worst case audit (two title lines + two CTA lines):
-  //   tilesBottom = 1010, divider = 1054, footerTop = 1098,
-  //   QR bottom = 1288, CTA copy bottom ≈ 1234 — all inside 1320 with ≥ 32px
-  //   to spare, so nothing is ever cropped.
+  // Worst case audit (two-line title + one-line CTA — "Try this course on
+  // QUIZMI" fits the cta width at 32px, so never wraps):
+  //   avatarBottom 280, metaY 324, title 402 (+70) → titleBottom 472,
+  //   scoreTop = max(528, 520) = 528, barY 790, headline 890,
+  //   tiles 928–1060, divider 1096, footerTop 1132, QR bottom 1272,
+  //   CTA text bottom ≈ 1264 — all inside 1320 with ≥ 24px to spare.
+  // A one-line title raises no bottom edge (scoreTop floors at 520).
 
   /* ── Export ───────────────────────────────────────────────────────────── */
   return new Promise<Blob>((resolve, reject) => {

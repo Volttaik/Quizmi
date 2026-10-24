@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useUser } from "@clerk/nextjs";
 import { Check, Copy, Download, Loader2, MessageCircle, Share2, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -32,13 +33,18 @@ export default function ShareResultButton({
   const [busy, setBusy] = useState<Busy>("idle");
   const [sheetOpen, setSheetOpen] = useState(false);
   const [lastBlob, setLastBlob] = useState<Blob | null>(null);
+  const { user } = useUser();
+
+  // The card is the sharer's own result, so the display name can come from
+  // their signed-in account without touching any stored attempt data.
+  const userName = user?.fullName ?? user?.username ?? user?.firstName ?? null;
 
   const courseUrl = courseUrlFor(result.courseSlug);
-  const shareText = shareTextFor(result, courseUrl);
+  const shareText = shareTextFor(result, courseUrl, { userName });
 
   const buildCard = async (): Promise<Blob> => {
     if (lastBlob) return lastBlob;
-    const blob = await renderResultCard(result);
+    const blob = await renderResultCard(result, { userName });
     setLastBlob(blob);
     return blob;
   };
