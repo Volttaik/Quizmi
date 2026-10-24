@@ -13,6 +13,7 @@
     "ingest:ecn102": "tsx ./src/ingest-ecn102.ts",
     "ingest:pcr101": "tsx ./src/ingest-pcr101.ts",
     "ingest:psy101": "tsx ./src/ingest-psy101.ts",
+    "ingest:pos101": "tsx ./src/ingest-pos101.ts",
     "ingest:soc103": "tsx ./src/ingest-soc103.ts",
     "ingest:soc105": "tsx ./src/ingest-soc105.ts",
     "repair:attempts": "tsx ./src/repair-attempts.ts"
