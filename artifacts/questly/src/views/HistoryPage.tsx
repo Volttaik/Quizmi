@@ -136,7 +136,7 @@ export default function HistoryPage() {
   return (
     <div className="bg-background">
       <section className="hero-mesh border-b border-border/60">
-        <div className="mx-auto max-w-5xl px-5 pb-10 pt-12 sm:px-6 sm:pb-12 sm:pt-16 lg:px-8">
+        <div className="mx-auto max-w-6xl px-5 pb-10 pt-12 sm:px-6 sm:pb-12 sm:pt-16 lg:px-8">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="eyebrow">Progress</p>
@@ -155,22 +155,22 @@ export default function HistoryPage() {
         </div>
       </section>
 
-      <main className="mx-auto max-w-5xl px-5 py-10 sm:px-6 sm:py-12 lg:px-8">
+      <main className="mx-auto max-w-6xl px-5 py-10 sm:px-6 sm:py-12 lg:px-8">
         {loading ? (
           <div className="space-y-4">
-            <div className="skeleton h-24 rounded-[1.5rem]" />
-            <div className="skeleton h-56 rounded-[1.5rem]" />
-            <div className="skeleton h-72 rounded-[1.5rem]" />
+            <div className="skeleton h-24 rounded-[var(--radius)]" />
+            <div className="skeleton h-56 rounded-[var(--radius)]" />
+            <div className="skeleton h-72 rounded-[var(--radius)]" />
           </div>
         ) : error ? (
-          <div className="rounded-[2rem] border border-danger/25 bg-danger-soft px-6 py-14 text-center">
+          <div className="rounded-[var(--radius)] border border-danger/25 bg-danger-soft px-6 py-14 text-center">
             <p className="text-sm font-semibold text-danger-soft-foreground">{error}</p>
             <Button variant="outline" size="sm" className="mt-5 rounded-full" onPress={retry}>
               Try again
             </Button>
           </div>
         ) : items.length === 0 ? (
-          <div className="rounded-[2rem] border border-border/80 bg-surface px-6 py-16 text-center">
+          <div className="dotted-edge-tl rounded-[var(--radius)] border border-border/80 bg-surface px-6 py-16 text-center">
             <span className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-accent-soft text-accent-soft-foreground">
               <ClockArrowRotateLeft className="h-5 w-5" />
             </span>
@@ -187,7 +187,7 @@ export default function HistoryPage() {
         ) : (
           <>
             {hasGraded && (
-              <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-[1.5rem] border border-border/80 bg-border/60 sm:grid-cols-4">
+              <dl className="dotted-edge-tl grid grid-cols-2 gap-px overflow-hidden rounded-[var(--radius)] border border-border/80 bg-border/60 sm:grid-cols-4">
                 {[
                   {
                     icon: ClockArrowRotateLeft,
@@ -215,7 +215,7 @@ export default function HistoryPage() {
                       <stat.icon className="h-3.5 w-3.5 text-accent" />
                       {stat.label}
                     </dt>
-                    <dd className="mt-2.5 font-display text-[1.8rem] font-semibold leading-none tracking-[-0.03em] text-foreground">
+                    <dd className="mt-2.5 font-display text-[1.35rem] font-semibold leading-none tracking-[-0.02em] text-foreground">
                       {stat.value}
                     </dd>
                   </div>
@@ -224,7 +224,7 @@ export default function HistoryPage() {
             )}
 
             {(analytics?.notSubmittedAttempts ?? 0) > 0 && (
-              <p className="mt-4 rounded-2xl border border-border/70 bg-surface-secondary px-4 py-3 text-[12.5px] leading-relaxed text-muted-foreground">
+              <p className="mt-4 rounded-[var(--radius)] border border-border/70 bg-surface-secondary px-4 py-3 text-[12.5px] leading-relaxed text-muted-foreground">
                 {analytics?.notSubmittedAttempts} attempt
                 {analytics?.notSubmittedAttempts === 1 ? " was" : "s were"} opened but not
                 submitted. They stay in your history without a score, and never count as
@@ -234,7 +234,7 @@ export default function HistoryPage() {
 
             <div className="mt-8 grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:gap-10">
               {chartData.length >= 2 && (
-                <section className="rounded-[1.5rem] border border-border/80 bg-surface p-5 sm:p-6">
+                <section className="dotted-edge-tl rounded-[var(--radius)] border border-border/80 bg-surface p-5 sm:p-6">
                   <div className="flex items-center justify-between">
                     <h2 className="font-display text-[1.15rem] font-semibold text-foreground">
                       Score trend
@@ -322,7 +322,7 @@ export default function HistoryPage() {
               </div>
 
               {groups.length === 0 ? (
-                <div className="mt-5 rounded-[1.75rem] border border-border/80 bg-surface px-6 py-14 text-center">
+                <div className="mt-5 rounded-[var(--radius)] border border-border/80 bg-surface px-6 py-14 text-center">
                   <span className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-accent-soft text-accent-soft-foreground">
                     <ClockArrowRotateLeft className="h-5 w-5" />
                   </span>
@@ -338,10 +338,10 @@ export default function HistoryPage() {
                   {groups.map((group) => (
                     <section
                       key={group.courseId}
-                      className="overflow-hidden rounded-[1.5rem] border border-border/80 bg-surface"
+                      className="dotted-edge overflow-hidden rounded-[var(--radius)] border border-border/80 bg-surface shadow-card transition-[box-shadow] duration-200 hover:shadow-card-hover"
                       aria-label={`${group.courseTitle} attempts`}
                     >
-                      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 bg-surface-secondary/60 px-5 py-4">
+                      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 bg-surface-secondary/60 px-5 py-4 sm:px-6">
                         <div className="min-w-0">
                           <Link
                             href={`/courses/${group.courseSlug}`}
@@ -391,17 +391,17 @@ export default function HistoryPage() {
                             <li key={item.attemptId}>
                               <Link
                                 href={href}
-                                className="group flex flex-wrap items-center gap-4 px-5 py-4 transition-colors hover:bg-surface-secondary"
+                                className="group flex flex-wrap items-center gap-4 px-5 py-5 transition-colors hover:bg-surface-secondary sm:px-6"
                               >
                                 <span
-                                  className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl ${attemptTone(item)}`}
+                                  className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-[var(--radius)] ${attemptTone(item)}`}
                                 >
                                   <AttemptIcon item={item} />
                                 </span>
 
                                 <div className="min-w-0 flex-1">
                                   <div className="flex flex-wrap items-center gap-2">
-                                    <p className="text-[13.5px] font-semibold text-foreground">
+                                    <p className="text-sm font-semibold text-foreground">
                                       Attempt {item.attemptNumber}
                                     </p>
                                     <span
@@ -410,7 +410,7 @@ export default function HistoryPage() {
                                       {meta.label}
                                     </span>
                                   </div>
-                                  <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-muted-foreground">
+                                  <div className="mt-1.5 flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-xs leading-relaxed text-muted-foreground">
                                     <span>{formatDate(date)}</span>
                                     <span>· {formatRelative(date)}</span>
                                     {item.hasResult ? (
@@ -437,7 +437,7 @@ export default function HistoryPage() {
                                 <div className="flex items-center gap-3">
                                   {item.hasResult ? (
                                     <span
-                                      className={`font-display text-lg font-semibold ${scoreClasses(item.percentage)}`}
+                                      className={`font-display text-xl font-semibold ${scoreClasses(item.percentage)}`}
                                     >
                                       {item.percentage}%
                                     </span>

@@ -22,7 +22,7 @@ function CourseRow({ course }: { course: CourseSummary }) {
   const actionLabel = course.attemptsUsed > 0 ? "Practise again" : "Start assessment";
 
   return (
-    <Card className="group overflow-hidden rounded-[1.65rem] border border-border/70 bg-surface p-0 transition-all duration-300 hover:border-accent/25 hover:shadow-[0_22px_48px_-28px_rgba(35,25,80,0.45)]">
+    <Card className="group dotted-edge overflow-hidden rounded-[var(--radius)] border border-border/70 bg-surface p-0 shadow-[var(--shadow-sm)] transition-[box-shadow,transform,border-color] duration-200 hover:-translate-y-0.5 hover:border-border hover:shadow-[var(--shadow-md)]">
       <Link
         href={`/courses/${course.slug}`}
         className="flex flex-col focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/40 sm:flex-row"
@@ -178,11 +178,11 @@ export default function MyCoursesPage() {
         {loading ? (
           <div className="space-y-4">
             {Array.from({ length: 3 }).map((_, index) => (
-              <div key={index} className="skeleton h-52 rounded-[1.65rem]" />
+              <div key={index} className="skeleton h-52 rounded-[var(--radius)]" />
             ))}
           </div>
         ) : error ? (
-          <div className="rounded-[2rem] border border-danger/25 bg-danger-soft px-6 py-14 text-center">
+          <div className="rounded-[var(--radius)] border border-danger/25 bg-danger-soft px-6 py-14 text-center">
             <p className="text-sm font-semibold text-danger-soft-foreground">{error}</p>
             <Button
               variant="outline"
@@ -194,8 +194,8 @@ export default function MyCoursesPage() {
             </Button>
           </div>
         ) : courses.length === 0 ? (
-          <div className="rounded-[2rem] border border-border/80 bg-surface px-6 py-20 text-center">
-            <span className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-[1.4rem] bg-accent-soft text-accent-soft-foreground">
+          <div className="dotted-edge-tl rounded-[var(--radius)] border border-border/80 bg-surface px-6 py-20 text-center">
+            <span className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-[var(--radius)] bg-accent-soft text-accent-soft-foreground">
               <BookOpen className="h-7 w-7" />
             </span>
             <h2 className="font-display text-2xl font-semibold text-foreground">

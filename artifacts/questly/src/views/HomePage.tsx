@@ -16,6 +16,7 @@ import {
 
 import Logo from "@/components/Brand";
 import CourseCard from "@/components/CourseCard";
+import HeroCube from "@/components/HeroCube";
 import { Reveal, ease } from "@/components/Motion";
 import { Button } from "@/components/ui/button";
 import type { CourseSummary } from "@/lib/types";
@@ -138,6 +139,18 @@ export default function HomePage({ initialCourses, initialSubjects, initialError
           className="pointer-events-none absolute -right-20 bottom-0 h-64 w-64 rounded-full bg-primary/10 blur-3xl"
         />
 
+        {/* The empty right side of the hero carries one quiet, animated
+            knowledge cube — message faces turn in view, ticking through what
+            the platform does. Decorative: aria-hidden, pointer-events off. */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4, duration: 0.7, ease }}
+          className="pointer-events-none absolute right-[7%] top-[26%] hidden md:block"
+        >
+          <HeroCube size={164} />
+        </motion.div>
+
         <div className="relative z-10 mx-auto max-w-6xl px-4 pb-14 pt-10 sm:px-6 sm:pt-14 lg:pb-20">
           <motion.h1
             initial={{ opacity: 0, y: 10 }}
@@ -227,6 +240,17 @@ export default function HomePage({ initialCourses, initialSubjects, initialError
               </Button>
             </div>
           </motion.form>
+
+          {/* Small screens get the cube centred below the search slip instead
+              of in the absolute right gutter, so it always fits. */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.7, ease }}
+            className="mt-10 flex justify-center md:hidden"
+          >
+            <HeroCube size={112} />
+          </motion.div>
         </div>
       </section>
 

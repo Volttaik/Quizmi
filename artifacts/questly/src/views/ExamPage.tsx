@@ -1150,7 +1150,7 @@ export default function ExamPage() {
                 {attempt.subject}
               </span>
             )}
-            <h1 className="mt-3 whitespace-pre-line text-pretty text-lg font-semibold leading-snug sm:text-xl">
+            <h1 className="font-question mt-3 whitespace-pre-line text-pretty text-lg font-semibold leading-snug sm:text-xl">
               {question.prompt}
             </h1>
 

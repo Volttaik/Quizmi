@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Caveat:wght@700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Caveat:wght@700&family=Carlito:wght@400;700&display=swap");
 
 @layer theme, base, clerk, components, utilities;
 @import "tailwindcss";
@@ -83,6 +83,10 @@
   --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Fraunces", Georgia, serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Question type — Carlito (metric-compatible with Calibri), scoped to quiz
+     question text only via the generated `font-question` utility. */
+  --font-question: "Carlito", "Calibri", ui-sans-serif, system-ui, sans-serif;
 
   --shadow-sm: 0 1px 2px hsl(258 45% 12% / 0.06);
   --shadow: 0 2px 8px hsl(258 45% 12% / 0.06);
@@ -179,6 +183,7 @@
   --font-sans: var(--font-sans);
   --font-serif: var(--font-serif);
   --font-mono: var(--font-mono);
+  --font-question: var(--font-question);
 
   /* Lumio's flattened radius scale: one 5px surface radius and one pill. */
   --radius-none: 0px;
@@ -416,6 +421,93 @@
 /* The mesh should never compete with an image that covers the card. */
 .dotted-edge[data-flat="true"]::before {
   opacity: 0.35;
+}
+
+/* ─── Hero knowledge cube ────────────────────────────────────────────────────────
+   A pure-CSS 3D cube for the homepage hero: it turns one face-step at a
+   time, pausing on each of the four message faces so the copy stays
+   readable. No JS, no per-frame work — just compositor-driven transforms,
+   disabled under prefers-reduced-motion. */
+.hero-cube-scene {
+  perspective: 1100px;
+  perspective-origin: 50% 45%;
+}
+.hero-cube {
+  --cube-face: calc(var(--cube-size) / 2);
+  position: relative;
+  width: var(--cube-size);
+  height: var(--cube-size);
+  transform-style: preserve-3d;
+  animation: hero-cube-spin 20s ease-in-out infinite;
+}
+.hero-cube-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  background:
+    radial-gradient(70% 55% at 50% 0%, hsl(var(--accent) / 0.1), transparent 75%),
+    hsl(var(--card));
+  box-shadow: var(--shadow-md);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  padding: 0.6rem;
+}
+.hero-cube-face--front {
+  transform: translateZ(var(--cube-face));
+}
+.hero-cube-face--back {
+  transform: rotateY(180deg) translateZ(var(--cube-face));
+}
+.hero-cube-face--left {
+  transform: rotateY(-90deg) translateZ(var(--cube-face));
+}
+.hero-cube-face--right {
+  transform: rotateY(90deg) translateZ(var(--cube-face));
+}
+/* Brand end-caps: violet identity + paper dots as the top and base of the
+   cube. They never carry a message. */
+.hero-cube-cap {
+  border-radius: var(--radius);
+}
+.hero-cube-cap--top {
+  transform: rotateX(90deg) translateZ(var(--cube-face));
+}
+.hero-cube-cap--bottom {
+  transform: rotateX(-90deg) translateZ(var(--cube-face));
+}
+@keyframes hero-cube-spin {
+  0% {
+    transform: rotateX(-12deg) rotateY(0deg);
+  }
+  8%, 22% {
+    transform: rotateX(-12deg) rotateY(90deg);
+  }
+  30%, 44% {
+    transform: rotateX(-12deg) rotateY(180deg);
+  }
+  52%, 66% {
+    transform: rotateX(-12deg) rotateY(270deg);
+  }
+  74%, 92% {
+    transform: rotateX(-12deg) rotateY(360deg);
+  }
+  100% {
+    transform: rotateX(-12deg) rotateY(360deg);
+  }
+}
+/* The platform-wide reduce rule freezes animation timing; keep the cube
+   readable on its first face rather than half-turned. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-cube {
+    animation: none;
+    transform: rotateX(-12deg) rotateY(0deg);
+  }
 }
 
 /* Decorative background orbs: transform-only motion, disabled under
