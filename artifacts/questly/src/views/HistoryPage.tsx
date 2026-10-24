@@ -391,16 +391,17 @@ export default function HistoryPage() {
                             <li key={item.attemptId}>
                               <Link
                                 href={href}
-                                className="group flex flex-wrap items-center gap-4 px-5 py-5 transition-colors hover:bg-surface-secondary sm:px-6"
+                                className="group block px-5 py-4 transition-colors hover:bg-surface-secondary sm:px-6 sm:py-5"
                               >
-                                <span
-                                  className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-[var(--radius)] ${attemptTone(item)}`}
-                                >
-                                  <AttemptIcon item={item} />
-                                </span>
+                                {/* Top row: attempt identity left, score + compact action top-right. */}
+                                <div className="flex items-center gap-3">
+                                  <span
+                                    className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[var(--radius)] ${attemptTone(item)}`}
+                                  >
+                                    <AttemptIcon item={item} />
+                                  </span>
 
-                                <div className="min-w-0 flex-1">
-                                  <div className="flex flex-wrap items-center gap-2">
+                                  <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-0.5">
                                     <p className="text-sm font-semibold text-foreground">
                                       Attempt {item.attemptNumber}
                                     </p>
@@ -410,46 +411,53 @@ export default function HistoryPage() {
                                       {meta.label}
                                     </span>
                                   </div>
-                                  <div className="mt-1.5 flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-xs leading-relaxed text-muted-foreground">
-                                    <span>{formatDate(date)}</span>
-                                    <span>· {formatRelative(date)}</span>
-                                    {item.hasResult ? (
-                                      <>
-                                        <span>· {item.correctCount} correct</span>
-                                        <span>· {item.incorrectCount} incorrect</span>
-                                        <span>· {item.unansweredCount} unanswered</span>
-                                        <span>
-                                          · {item.answeredCount}/{item.totalQuestions} answered
-                                        </span>
-                                        <span>· {formatTimeTaken(item.timeTakenSeconds)}</span>
-                                      </>
-                                    ) : (
-                                      <>
-                                        <span>
-                                          · {item.answeredCount}/{item.totalQuestions} answered
-                                        </span>
-                                        <span>· no score recorded</span>
-                                      </>
+
+                                  <div className="flex flex-shrink-0 items-center gap-2.5">
+                                    {item.hasResult && (
+                                      <span
+                                        className={`font-display text-lg font-semibold ${scoreClasses(item.percentage)}`}
+                                      >
+                                        {item.percentage}%
+                                      </span>
                                     )}
+                                    <span className="flex h-8 items-center rounded-full border border-border px-3 text-[11px] font-semibold text-foreground transition-colors group-hover:border-accent group-hover:text-accent">
+                                      {open ? "Resume" : "View results"}
+                                      <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                                    </span>
                                   </div>
                                 </div>
 
-                                <div className="flex items-center gap-3">
+                                {/* Details span the full card width and wrap naturally on mobile. */}
+                                <div className="mt-1.5 flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-xs leading-relaxed text-muted-foreground">
                                   {item.hasResult ? (
-                                    <span
-                                      className={`font-display text-xl font-semibold ${scoreClasses(item.percentage)}`}
-                                    >
-                                      {item.percentage}%
-                                    </span>
+                                    <>
+                                      <span>{formatDate(date)}</span>
+                                      <span>· {formatRelative(date)}</span>
+                                      <span>· {item.correctCount} correct</span>
+                                      <span>· {item.incorrectCount} incorrect</span>
+                                      <span>· {item.unansweredCount} unanswered</span>
+                                      <span>
+                                        · {item.answeredCount}/{item.totalQuestions} answered
+                                      </span>
+                                      <span>· {formatTimeTaken(item.timeTakenSeconds)}</span>
+                                    </>
                                   ) : (
-                                    <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                                      {open ? "Resume" : "View"}
-                                    </span>
+                                    <>
+                                      <span>{formatDate(date)}</span>
+                                      <span>· {formatRelative(date)}</span>
+                                      <span>
+                                        · {item.answeredCount}/{item.totalQuestions} answered
+                                      </span>
+                                      {open ? (
+                                        <span>
+                                          · {item.totalQuestions - item.answeredCount} unanswered
+                                        </span>
+                                      ) : (
+                                        <span>· no score recorded</span>
+                                      )}
+                                      {!open && <span>· {formatTimeTaken(item.timeTakenSeconds)}</span>}
+                                    </>
                                   )}
-                                  <span className="flex h-9 items-center rounded-full border border-border px-3 text-[11.5px] font-semibold text-foreground transition-colors group-hover:border-accent group-hover:text-accent">
-                                    {open ? "Resume" : "View results"}
-                                    <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
-                                  </span>
                                 </div>
                               </Link>
                             </li>
