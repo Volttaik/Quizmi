@@ -23,10 +23,8 @@ const SORTS = [
 
 export default function CoursesPage() {
   const [courses, setCourses] = useState<CourseSummary[]>([]);
-  const [subjects, setSubjects] = useState<string[]>([]);
   const [search, setSearch] = useState("");
   const [debounced, setDebounced] = useState("");
-  const [subject, setSubject] = useState("all");
   const [sort, setSort] = useState("featured");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -66,7 +64,6 @@ export default function CoursesPage() {
 
     const params = new URLSearchParams({ limit: "100" });
     if (debounced) params.set("q", debounced);
-    if (subject !== "all") params.set("subject", subject);
     params.set("sort", sort);
 
     setLoading(true);
@@ -76,11 +73,10 @@ export default function CoursesPage() {
       .then(async (response) => {
         const payload = await response.json().catch(() => null);
         if (!response.ok) throw new Error(payload?.error ?? "Request failed");
-        return payload as { courses: CourseSummary[]; subjects: string[] };
+        return payload as { courses: CourseSummary[] };
       })
       .then((data) => {
         setCourses(Array.isArray(data.courses) ? data.courses : []);
-        setSubjects(Array.isArray(data.subjects) ? data.subjects : []);
       })
       .catch((err: unknown) => {
         if (err instanceof DOMException && err.name === "AbortError") return;
@@ -91,17 +87,16 @@ export default function CoursesPage() {
       });
 
     return () => controller.abort();
-  }, [debounced, subject, sort, reloadKey]);
+  }, [debounced, sort, reloadKey]);
 
   const isFiltering = useMemo(
-    () => subject !== "all" || sort !== "featured" || debounced.length > 0,
-    [subject, sort, debounced]
+    () => sort !== "featured" || debounced.length > 0,
+    [sort, debounced]
   );
   const sortLabel = SORTS.find((option) => option.value === sort)?.label ?? "Recommended";
 
   const resetFilters = () => {
     setSearch("");
-    setSubject("all");
     setSort("featured");
   };
 
@@ -163,26 +158,6 @@ export default function CoursesPage() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-
-      {subjects.length > 0 && (
-        <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
-          {["all", ...subjects].map((option) => (
-            <button
-              key={option}
-              type="button"
-              onClick={() => setSubject(option)}
-              aria-pressed={subject === option}
-              className={`shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
-                subject === option
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-foreground hover:bg-secondary"
-              }`}
-            >
-              {option === "all" ? "All subjects" : option}
-            </button>
-          ))}
-        </div>
-      )}
 
       {isFiltering && !loading && (
         <div className="mt-5 flex items-center justify-between gap-4">

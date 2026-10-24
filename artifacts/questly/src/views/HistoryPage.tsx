@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Button, ProgressBar, ToggleButton, ToggleButtonGroup } from "@heroui/react";
-import ButtonLink from "@/components/ui/ButtonLink";
 import {
   ArrowRight,
   ChartLine,
@@ -19,7 +18,6 @@ import {
   TriangleExclamation,
 } from "@gravity-ui/icons";
 import {
-  difficultyStyle,
   formatDate,
   formatRelative,
   formatTimeTaken,
@@ -120,7 +118,11 @@ export default function HistoryPage() {
     () => items.filter((item) => matchesHistoryFilter(item, filter)),
     [items, filter]
   );
-  const groups = useMemo(() => groupAttemptsByCourse(filtered), [filtered]);
+  // Attempt numbering stays per-course; every attempt then becomes its own card.
+  const sessions = useMemo(
+    () => groupAttemptsByCourse(filtered).flatMap((group) => group.attempts),
+    [filtered]
+  );
   const hasGraded = (analytics?.completedAttempts ?? 0) > 0;
 
   const chartData = useMemo(
@@ -142,8 +144,8 @@ export default function HistoryPage() {
               <p className="eyebrow">Progress</p>
               <h1 className="mt-3 text-display-lg text-foreground">Attempt history</h1>
               <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
-                Every attempt, grouped by course and numbered in the order you took it. Open any
-                row to review that exact attempt&apos;s answers.
+                One compact card per attempt, numbered in the order you took it. Open any card to
+                review that exact attempt&apos;s answers.
               </p>
             </div>
             {!loading && items.length > 0 && (
@@ -284,11 +286,11 @@ export default function HistoryPage() {
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
                   <h2 className="font-display text-[1.35rem] font-semibold text-foreground">
-                    Your courses
+                    Your sessions
                   </h2>
                   <p className="mt-1 text-[12.5px] text-muted-foreground">
-                    Attempt 1 is your first try at that course; numbers follow the order you took
-                    them.
+                    One card per attempt — attempt 1 is your first try at that course, numbers
+                    follow the order you took them.
                   </p>
                 </div>
                 <ToggleButtonGroup
@@ -321,7 +323,7 @@ export default function HistoryPage() {
                 </ToggleButtonGroup>
               </div>
 
-              {groups.length === 0 ? (
+              {sessions.length === 0 ? (
                 <div className="mt-5 rounded-[var(--radius)] border border-border/80 bg-surface px-6 py-14 text-center">
                   <span className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-accent-soft text-accent-soft-foreground">
                     <ClockArrowRotateLeft className="h-5 w-5" />
@@ -334,138 +336,83 @@ export default function HistoryPage() {
                   </p>
                 </div>
               ) : (
-                <div className="mt-6 space-y-6">
-                  {groups.map((group) => (
-                    <section
-                      key={group.courseId}
-                      className="dotted-edge overflow-hidden rounded-[var(--radius)] border border-border/80 bg-surface shadow-card transition-[box-shadow] duration-200 hover:shadow-card-hover"
-                      aria-label={`${group.courseTitle} attempts`}
-                    >
-                      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 bg-surface-secondary/60 px-5 py-4 sm:px-6">
-                        <div className="min-w-0">
-                          <Link
-                            href={`/courses/${group.courseSlug}`}
-                            className="truncate font-display text-[15px] font-semibold text-foreground hover:text-accent"
+                <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                  {sessions.map((item) => {
+                    const meta = attemptStatusMeta(item.status);
+                    const open = item.status === "in_progress";
+                    const href = open ? `/exam/${item.attemptId}` : `/results/${item.attemptId}`;
+                    const date = item.submittedAt ?? item.startedAt;
+                    return (
+                      <Link
+                        key={item.attemptId}
+                        href={href}
+                        aria-label={`Attempt ${item.attemptNumber} of ${item.courseTitle}`}
+                        className="dotted-edge group flex flex-col gap-2 rounded-[var(--radius)] border border-border/80 bg-surface px-4 py-3 shadow-card transition-colors duration-200 hover:bg-surface-secondary hover:shadow-card-hover"
+                      >
+                        {/* Row 1: course + attempt identity left, score + status right. */}
+                        <div className="flex items-center gap-2.5">
+                          <span
+                            className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-[var(--radius)] ${attemptTone(item)}`}
                           >
-                            {group.courseTitle}
-                          </Link>
-                          <p className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-muted-foreground">
-                            {group.difficulty && (
-                              <span
-                                className={`rounded-full border px-2 py-px text-[10px] font-bold ${
-                                  difficultyStyle(group.difficulty).className
-                                }`}
-                              >
-                                {difficultyStyle(group.difficulty).label}
-                              </span>
-                            )}
-                            {group.subject && <span>{group.subject}</span>}
-                            <span>
-                              {group.gradedAttempts} graded
-                              {group.unfinishedAttempts > 0
-                                ? ` · ${group.unfinishedAttempts} unfinished`
-                                : ""}
+                            <AttemptIcon item={item} />
+                          </span>
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-[12px] font-semibold text-foreground">
+                              {item.courseTitle}
+                            </p>
+                            <p className="mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[10.5px] text-muted-foreground">
+                              <span className="font-medium">Attempt {item.attemptNumber}</span>
+                              {item.subject && <span>· {item.subject}</span>}
+                            </p>
+                          </div>
+                          <span
+                            className={`flex-shrink-0 rounded-full border px-1.5 py-px text-[9px] font-bold uppercase tracking-wide ${meta.className}`}
+                          >
+                            {meta.label}
+                          </span>
+                          {item.hasResult && (
+                            <span
+                              className={`font-display flex-shrink-0 text-[14px] font-semibold leading-none ${scoreClasses(item.percentage)}`}
+                            >
+                              {item.percentage}%
                             </span>
-                            {group.bestPercentage !== null && (
-                              <span>· Best {group.bestPercentage}%</span>
-                            )}
-                          </p>
+                          )}
+                          <ArrowRight className="h-3.5 w-3.5 flex-shrink-0 text-muted-foreground transition-colors group-hover:text-accent" />
                         </div>
-                        <ButtonLink
-                          href={`/courses/${group.courseSlug}`}
-                          variant="outline"
-                          size="sm"
-                          className="h-8 rounded-full px-3 text-[12px]"
-                        >
-                          Course
-                        </ButtonLink>
-                      </header>
 
-                      <ul className="divide-y divide-border/60">
-                        {group.attempts.map((item) => {
-                          const meta = attemptStatusMeta(item.status);
-                          const open = item.status === "in_progress";
-                          const href = open ? `/exam/${item.attemptId}` : `/results/${item.attemptId}`;
-                          const date = item.submittedAt ?? item.startedAt;
-                          return (
-                            <li key={item.attemptId}>
-                              <Link
-                                href={href}
-                                className="group block px-5 py-4 transition-colors hover:bg-surface-secondary sm:px-6 sm:py-5"
-                              >
-                                {/* Top row: attempt identity left, score + compact action top-right. */}
-                                <div className="flex items-center gap-3">
-                                  <span
-                                    className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[var(--radius)] ${attemptTone(item)}`}
-                                  >
-                                    <AttemptIcon item={item} />
-                                  </span>
-
-                                  <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-0.5">
-                                    <p className="text-sm font-semibold text-foreground">
-                                      Attempt {item.attemptNumber}
-                                    </p>
-                                    <span
-                                      className={`rounded-full border px-2 py-px text-[10px] font-bold uppercase tracking-wide ${meta.className}`}
-                                    >
-                                      {meta.label}
-                                    </span>
-                                  </div>
-
-                                  <div className="flex flex-shrink-0 items-center gap-2.5">
-                                    {item.hasResult && (
-                                      <span
-                                        className={`font-display text-lg font-semibold ${scoreClasses(item.percentage)}`}
-                                      >
-                                        {item.percentage}%
-                                      </span>
-                                    )}
-                                    <span className="flex h-8 items-center rounded-full border border-border px-3 text-[11px] font-semibold text-foreground transition-colors group-hover:border-accent group-hover:text-accent">
-                                      {open ? "Resume" : "View results"}
-                                      <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
-                                    </span>
-                                  </div>
-                                </div>
-
-                                {/* Details span the full card width and wrap naturally on mobile. */}
-                                <div className="mt-1.5 flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-xs leading-relaxed text-muted-foreground">
-                                  {item.hasResult ? (
-                                    <>
-                                      <span>{formatDate(date)}</span>
-                                      <span>· {formatRelative(date)}</span>
-                                      <span>· {item.correctCount} correct</span>
-                                      <span>· {item.incorrectCount} incorrect</span>
-                                      <span>· {item.unansweredCount} unanswered</span>
-                                      <span>
-                                        · {item.answeredCount}/{item.totalQuestions} answered
-                                      </span>
-                                      <span>· {formatTimeTaken(item.timeTakenSeconds)}</span>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <span>{formatDate(date)}</span>
-                                      <span>· {formatRelative(date)}</span>
-                                      <span>
-                                        · {item.answeredCount}/{item.totalQuestions} answered
-                                      </span>
-                                      {open ? (
-                                        <span>
-                                          · {item.totalQuestions - item.answeredCount} unanswered
-                                        </span>
-                                      ) : (
-                                        <span>· no score recorded</span>
-                                      )}
-                                      {!open && <span>· {formatTimeTaken(item.timeTakenSeconds)}</span>}
-                                    </>
-                                  )}
-                                </div>
-                              </Link>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </section>
-                  ))}
+                        {/* Row 2: compact attempt facts. */}
+                        <p className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[10.5px] leading-relaxed text-muted-foreground">
+                          {item.hasResult ? (
+                            <>
+                              <span>{formatDate(date)}</span>
+                              <span>· {formatRelative(date)}</span>
+                              <span>· {item.correctCount} correct</span>
+                              <span>· {item.incorrectCount} incorrect</span>
+                              <span>· {item.unansweredCount} unanswered</span>
+                              <span>
+                                · {item.answeredCount}/{item.totalQuestions} answered
+                              </span>
+                              <span>· {formatTimeTaken(item.timeTakenSeconds)}</span>
+                            </>
+                          ) : (
+                            <>
+                              <span>{formatDate(date)}</span>
+                              <span>· {formatRelative(date)}</span>
+                              <span>
+                                · {item.answeredCount}/{item.totalQuestions} answered
+                              </span>
+                              {open ? (
+                                <span>· {item.totalQuestions - item.answeredCount} unanswered</span>
+                              ) : (
+                                <span>· no score recorded</span>
+                              )}
+                              {!open && <span>· {formatTimeTaken(item.timeTakenSeconds)}</span>}
+                            </>
+                          )}
+                        </p>
+                      </Link>
+                    );
+                  })}
                 </div>
               )}
             </section>

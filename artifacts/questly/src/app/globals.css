@@ -94,7 +94,7 @@
   --shadow-lg: 0 18px 40px -16px hsl(258 45% 12% / 0.2);
   --shadow-xl: 0 30px 60px -24px hsl(258 45% 12% / 0.28);
 
-  --scrollbar-thumb: hsl(258 45% 12% / 0.15);
+
 }
 
 .dark {
@@ -143,7 +143,7 @@
   --shadow-lg: 0 18px 40px -16px hsl(0 0% 0% / 0.65);
   --shadow-xl: 0 30px 60px -24px hsl(0 0% 0% / 0.75);
 
-  --scrollbar-thumb: hsl(258 30% 96% / 0.16);
+
 }
 
 @theme inline {
@@ -652,17 +652,14 @@
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-/* ─── Scrollbars ─────────────────────────────────────────────────────────── */
+/* ─── Scrollbars (indicators hidden; content still scrolls normally) ─────── */
+* {
+  scrollbar-width: none;
+}
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb);
-  border-radius: 9999px;
+  width: 0;
+  height: 0;
+  display: none;
 }
 
 button,

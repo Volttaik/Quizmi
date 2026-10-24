@@ -19,6 +19,7 @@ import {
   Plus,
   RefreshCw,
   Sparkles,
+  Target,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -39,6 +40,51 @@ import {
   type AssessmentPreferences,
 } from "@/lib/assessment-preferences";
 import type { CourseDetail } from "@/lib/types";
+
+/** One stat tile inside the dark session summary card. */
+function SummaryTile({
+  icon: Icon,
+  label,
+  value,
+  sub,
+}: {
+  icon: typeof Sparkles;
+  label: string;
+  value: string;
+  sub?: string;
+}) {
+  return (
+    <div className="rounded-[5px] border border-primary-foreground/10 bg-primary-foreground/[0.07] p-3">
+      <div className="flex items-center gap-1.5 text-primary-foreground/60">
+        <Icon className="h-3.5 w-3.5" />
+        <span className="text-[10px] font-bold uppercase tracking-wide">{label}</span>
+      </div>
+      <p className="mt-2 font-display text-[1.05rem] font-semibold leading-none">{value}</p>
+      {sub && <p className="mt-1 text-[10px] text-primary-foreground/50">{sub}</p>}
+    </div>
+  );
+}
+
+/** One labelled detail row inside the dark session summary card. */
+function SummaryRow({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: typeof Sparkles;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-3 text-sm">
+      <span className="flex items-center gap-2 text-primary-foreground/70">
+        <Icon className="h-3.5 w-3.5" />
+        {label}
+      </span>
+      <span className="text-right font-semibold">{value}</span>
+    </div>
+  );
+}
 
 const RESULT_MODES: Array<{
   value: ResultMode;
@@ -536,53 +582,70 @@ export default function ConfigureScreen() {
           </Reveal>
         </div>
 
-        {/* Session summary — Lumio's dark panel with the accent action. */}
+        {/* Session summary — sticky dark card: course strip, stat tiles, details. */}
         <Reveal
           delay={0.15}
-          className="h-fit rounded-[5px] bg-primary p-5 text-primary-foreground shadow-md sm:p-6 lg:sticky lg:top-24"
+          className="h-fit overflow-hidden rounded-[5px] bg-primary text-primary-foreground shadow-md lg:sticky lg:top-24"
         >
-          <h2 className="text-lg font-semibold">Session summary</h2>
-          <dl className="mt-4 space-y-2.5 text-sm">
-            <div className="flex justify-between gap-3">
-              <dt className="text-primary-foreground/70">Course</dt>
-              <dd className="text-right font-semibold">{course.title}</dd>
+          {/* Header strip: course identity. */}
+          <div className="border-b border-primary-foreground/10 px-5 pb-4 pt-5 sm:px-6">
+            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary-foreground/60">
+              Ready to begin
+            </p>
+            <div className="mt-1.5 flex items-start justify-between gap-3">
+              <h2 className="text-[15px] font-semibold leading-snug">{course.title}</h2>
+              <span className="mt-0.5 flex h-6 flex-shrink-0 items-center rounded-[5px] border border-primary-foreground/15 bg-primary-foreground/10 px-2 text-[10px] font-bold uppercase tracking-wide">
+                {course.code ?? course.subject}
+              </span>
             </div>
-            {hasChapters && (
-              <div className="flex justify-between gap-3">
-                <dt className="text-primary-foreground/70">Chapter</dt>
-                <dd className="text-right font-semibold">
-                  {selectedChapter ? `Chapter ${selectedChapter.number}` : "All chapters"}
-                </dd>
-              </div>
-            )}
-            <div className="flex justify-between gap-3">
-              <dt className="text-primary-foreground/70">Questions</dt>
-              <dd className="font-semibold">
-                {countValid ? parsedCount : preferences.questionCount}{" "}
-                {selectedChapter ? `from chapter ${selectedChapter.number}` : "random"}
-              </dd>
-            </div>
-            <div className="flex justify-between gap-3">
-              <dt className="text-primary-foreground/70">Timer</dt>
-              <dd className="font-semibold">
-                {preferences.durationMinutes === null ? "Off" : `${preferences.durationMinutes} minutes`}
-              </dd>
-            </div>
-            <div className="flex justify-between gap-3">
-              <dt className="text-primary-foreground/70">Results</dt>
-              <dd className="text-right font-semibold">{isInstant ? "Instant" : "At the end"}</dd>
-            </div>
-            <div className="flex justify-between gap-3">
-              <dt className="text-primary-foreground/70">Pass mark</dt>
-              <dd className="font-semibold">{course.passScore}%</dd>
-            </div>
-          </dl>
-          <p className="mt-4 text-xs leading-relaxed text-primary-foreground/70">
-            Stay on the quiz page once you begin. Leaving may end your attempt.
-          </p>
+          </div>
 
-          {error && (
-            <p className="mt-3 rounded-[5px] bg-destructive/20 px-3.5 py-2.5 text-xs" role="alert">
+          {/* Stat tiles: questions, timer, results mode. */}
+          <div className="grid grid-cols-3 gap-2 px-5 pt-4 sm:px-6">
+            <SummaryTile
+              icon={Layers}
+              label="Questions"
+              value={String(countValid ? parsedCount : preferences.questionCount)}
+              sub={`${available} available`}
+            />
+            <SummaryTile
+              icon={Clock}
+              label="Timer"
+              value={
+                preferences.durationMinutes === null
+                  ? "Off"
+                  : `${preferences.durationMinutes}m`
+              }
+              sub={preferences.durationMinutes === null ? "open ended" : "per attempt"}
+            />
+            <SummaryTile
+              icon={isInstant ? Sparkles : ListChecks}
+              label="Results"
+              value={isInstant ? "Instant" : "At end"}
+              sub={isInstant ? "see each answer" : "score after submit"}
+            />
+          </div>
+
+          {/* Details: chapter scope and pass mark. */}
+          <div className="mt-3 space-y-2.5 px-5 sm:px-6">
+            {hasChapters && (
+              <SummaryRow
+                icon={BookMarked}
+                label="Chapter"
+                value={selectedChapter ? `Chapter ${selectedChapter.number}` : "All chapters"}
+              />
+            )}
+            <SummaryRow icon={Target} label="Pass mark" value={`${course.passScore}%`} />
+          </div>
+
+          {/* Footer: warning, error, action, exit. */}
+          <div className="mt-4 space-y-4 px-5 pb-5 sm:px-6 sm:pb-6">
+            <p className="text-[11px] leading-relaxed text-primary-foreground/70">
+              Stay on the quiz page once you begin. Leaving may end your attempt.
+            </p>
+
+            {error && (
+            <p className="rounded-[5px] bg-destructive/20 px-3.5 py-2.5 text-xs" role="alert">
               {error}
             </p>
           )}
@@ -590,7 +653,7 @@ export default function ConfigureScreen() {
           <Button
             onClick={goNext}
             disabled={!canContinue || !isLoaded || busy}
-            className="mt-5 h-11 w-full bg-accent text-[15px] text-accent-foreground hover:bg-accent/90"
+            className="h-11 w-full bg-accent text-[15px] text-accent-foreground hover:bg-accent/90"
           >
             {busy ? (
               <>
@@ -617,11 +680,12 @@ export default function ConfigureScreen() {
 
           <Link
             href={`/courses/${course.slug}`}
-            className="mt-3 flex items-center justify-center gap-2 text-xs text-primary-foreground/70 transition-colors hover:text-primary-foreground"
+            className="flex items-center justify-center gap-2 text-xs text-primary-foreground/70 transition-colors hover:text-primary-foreground"
           >
-            <RefreshCw className="h-3.5 w-3.5" />
-            Back to course
-          </Link>
+              <RefreshCw className="h-3.5 w-3.5" />
+              Back to course
+            </Link>
+          </div>
         </Reveal>
       </div>
     </div>
