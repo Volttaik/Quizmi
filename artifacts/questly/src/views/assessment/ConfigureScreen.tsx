@@ -1,9 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import type { ComponentType } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
+import { ListCheck, TargetDart } from "@gravity-ui/icons";
 import {
   ArrowLeft,
   ArrowRight,
@@ -19,7 +21,6 @@ import {
   Plus,
   RefreshCw,
   Sparkles,
-  Target,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -41,47 +42,25 @@ import {
 } from "@/lib/assessment-preferences";
 import type { CourseDetail } from "@/lib/types";
 
-/** One stat tile inside the dark session summary card. */
-function SummaryTile({
-  icon: Icon,
-  label,
-  value,
-  sub,
-}: {
-  icon: typeof Sparkles;
-  label: string;
-  value: string;
-  sub?: string;
-}) {
-  return (
-    <div className="rounded-[5px] border border-primary-foreground/10 bg-primary-foreground/[0.07] p-3">
-      <div className="flex items-center gap-1.5 text-primary-foreground/60">
-        <Icon className="h-3.5 w-3.5" />
-        <span className="text-[10px] font-bold uppercase tracking-wide">{label}</span>
-      </div>
-      <p className="mt-2 font-display text-[1.05rem] font-semibold leading-none">{value}</p>
-      {sub && <p className="mt-1 text-[10px] text-primary-foreground/50">{sub}</p>}
-    </div>
-  );
-}
-
-/** One labelled detail row inside the dark session summary card. */
+/** One labelled fact row, matching the course page's action rail. */
 function SummaryRow({
   icon: Icon,
   label,
   value,
 }: {
-  icon: typeof Sparkles;
+  icon: ComponentType<{ className?: string }>;
   label: string;
   value: string;
 }) {
   return (
-    <div className="flex items-center justify-between gap-3 text-sm">
-      <span className="flex items-center gap-2 text-primary-foreground/70">
-        <Icon className="h-3.5 w-3.5" />
-        {label}
-      </span>
-      <span className="text-right font-semibold">{value}</span>
+    <div className="flex items-start gap-3">
+      <Icon className="mt-0.5 h-4 w-4 flex-shrink-0 text-muted-foreground" />
+      <div>
+        <dt className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+          {label}
+        </dt>
+        <dd className="mt-0.5 text-[13px] font-semibold text-foreground">{value}</dd>
+      </div>
     </div>
   );
 }
@@ -582,70 +561,62 @@ export default function ConfigureScreen() {
           </Reveal>
         </div>
 
-        {/* Session summary — sticky dark card: course strip, stat tiles, details. */}
+        {/* Session summary — same surface as the course page's action rail. */}
         <Reveal
           delay={0.15}
-          className="h-fit overflow-hidden rounded-[5px] bg-primary text-primary-foreground shadow-md lg:sticky lg:top-24"
+          className="dotted-edge h-fit rounded-[var(--radius)] border border-border/80 bg-surface p-6 shadow-[var(--shadow-lg)] lg:sticky lg:top-24"
         >
-          {/* Header strip: course identity. */}
-          <div className="border-b border-primary-foreground/10 px-5 pb-4 pt-5 sm:px-6">
-            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary-foreground/60">
-              Ready to begin
-            </p>
-            <div className="mt-1.5 flex items-start justify-between gap-3">
-              <h2 className="text-[15px] font-semibold leading-snug">{course.title}</h2>
-              <span className="mt-0.5 flex h-6 flex-shrink-0 items-center rounded-[5px] border border-primary-foreground/15 bg-primary-foreground/10 px-2 text-[10px] font-bold uppercase tracking-wide">
-                {course.code ?? course.subject}
-              </span>
-            </div>
-          </div>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+            {course.isPurchased ? "You own this course" : "Free to start"}
+          </p>
+          <p className="mt-2 font-display text-[2rem] font-semibold leading-none tracking-[-0.03em] text-foreground">
+            Ready
+          </p>
+          <p className="mt-2 text-[12px] leading-relaxed text-muted-foreground">
+            {exhausted
+              ? "You have used all your attempts for this course."
+              : available === 0
+                ? "This course has no questions yet."
+                : "Choose your duration, question count and result mode next."}
+          </p>
 
-          {/* Stat tiles: questions, timer, results mode. */}
-          <div className="grid grid-cols-3 gap-2 px-5 pt-4 sm:px-6">
-            <SummaryTile
-              icon={Layers}
+          {/* Session facts, identical row style to the course action rail. */}
+          <dl className="mt-6 space-y-3 border-t border-border/70 pt-5">
+            <SummaryRow
+              icon={ListCheck}
               label="Questions"
-              value={String(countValid ? parsedCount : preferences.questionCount)}
-              sub={`${available} available`}
+              value={`${countValid ? parsedCount : preferences.questionCount} of ${available} in the bank`}
             />
-            <SummaryTile
-              icon={Clock}
-              label="Timer"
-              value={
-                preferences.durationMinutes === null
-                  ? "Off"
-                  : `${preferences.durationMinutes}m`
-              }
-              sub={preferences.durationMinutes === null ? "open ended" : "per attempt"}
-            />
-            <SummaryTile
-              icon={isInstant ? Sparkles : ListChecks}
-              label="Results"
-              value={isInstant ? "Instant" : "At end"}
-              sub={isInstant ? "see each answer" : "score after submit"}
-            />
-          </div>
-
-          {/* Details: chapter scope and pass mark. */}
-          <div className="mt-3 space-y-2.5 px-5 sm:px-6">
             {hasChapters && (
               <SummaryRow
-                icon={BookMarked}
+                icon={Layers}
                 label="Chapter"
                 value={selectedChapter ? `Chapter ${selectedChapter.number}` : "All chapters"}
               />
             )}
-            <SummaryRow icon={Target} label="Pass mark" value={`${course.passScore}%`} />
-          </div>
+            <SummaryRow
+              icon={Clock}
+              label="Timing"
+              value={
+                preferences.durationMinutes === null
+                  ? "Untimed"
+                  : `${preferences.durationMinutes} min`
+              }
+            />
+            <SummaryRow
+              icon={isInstant ? Sparkles : ListChecks}
+              label="Results"
+              value={isInstant ? "Instant, as you answer" : "At the end of the session"}
+            />
+            <SummaryRow icon={TargetDart} label="Pass mark" value={`${course.passScore}%`} />
+          </dl>
 
-          {/* Footer: warning, error, action, exit. */}
-          <div className="mt-4 space-y-4 px-5 pb-5 sm:px-6 sm:pb-6">
-            <p className="text-[11px] leading-relaxed text-primary-foreground/70">
-              Stay on the quiz page once you begin. Leaving may end your attempt.
-            </p>
+          <p className="mt-5 text-[11px] leading-relaxed text-muted-foreground">
+            Stay on the quiz page once you begin. Leaving may end your attempt.
+          </p>
 
             {error && (
-            <p className="rounded-[5px] bg-destructive/20 px-3.5 py-2.5 text-xs" role="alert">
+            <p className="mt-5 rounded-[5px] bg-destructive/20 px-3.5 py-2.5 text-xs" role="alert">
               {error}
             </p>
           )}
@@ -653,7 +624,7 @@ export default function ConfigureScreen() {
           <Button
             onClick={goNext}
             disabled={!canContinue || !isLoaded || busy}
-            className="h-11 w-full bg-accent text-[15px] text-accent-foreground hover:bg-accent/90"
+            className="mt-6 h-11 w-full bg-accent text-[15px] text-accent-foreground hover:bg-accent/90"
           >
             {busy ? (
               <>
@@ -680,12 +651,11 @@ export default function ConfigureScreen() {
 
           <Link
             href={`/courses/${course.slug}`}
-            className="flex items-center justify-center gap-2 text-xs text-primary-foreground/70 transition-colors hover:text-primary-foreground"
+            className="flex items-center justify-center gap-2 text-xs text-muted-foreground transition-colors hover:text-foreground"
           >
               <RefreshCw className="h-3.5 w-3.5" />
               Back to course
             </Link>
-          </div>
         </Reveal>
       </div>
     </div>
