@@ -44,7 +44,7 @@ export const COURSE = {
   isPublished: 1,
   featured: 1,
   /** Served from the app's public directory. */
-  coverImageUrl: "/ecn102/banner.webp",
+  coverImageUrl: "https://files.catbox.moe/fxowq0.png",
 } as const;
 
 const EXPECTED_CHAPTERS = 5;
