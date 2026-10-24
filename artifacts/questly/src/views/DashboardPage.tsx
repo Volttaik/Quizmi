@@ -125,7 +125,10 @@ export default function DashboardPage() {
   };
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+    // overflow-x-clip matches the homepage's guard: a miscalculated child can
+    // never paint past this container toward the viewport edge and drag the
+    // sticky header/bottom bar out of visual alignment.
+    <main className="mx-auto max-w-6xl overflow-x-clip px-4 py-10 sm:px-6">
       <Reveal className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3.5">
           <Avatar name={data.user.name || "You"} src={data.user.avatarUrl} size={52} className="ring-1 ring-border" />
@@ -144,11 +147,11 @@ export default function DashboardPage() {
 
       <div className="mt-8 grid gap-6 lg:grid-cols-3">
         {featured && (
-          <Reveal className="lg:col-span-2">
+          <Reveal className="min-w-0 lg:col-span-2">
             <CourseCard course={featured} />
           </Reveal>
         )}
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-1">
+        <div className="grid min-w-0 grid-cols-2 gap-4 lg:grid-cols-1">
           <Stat icon={Target} label="Average accuracy" value={`${data.stats.averagePercentage}%`} />
           <Stat icon={Trophy} label="Graded attempts" value={String(data.stats.completedAttempts)} />
           <Stat
@@ -160,7 +163,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="mt-10 grid gap-6 lg:grid-cols-2">
-        <Reveal className="dotted-edge rounded-[5px] border border-border bg-card p-5 shadow-sm sm:p-6">
+        <Reveal className="dotted-edge min-w-0 rounded-[5px] border border-border bg-card p-5 shadow-sm sm:p-6">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">Recent sessions</h2>
             {hasActivity && (
@@ -192,7 +195,7 @@ export default function DashboardPage() {
                     }
                     className="flex items-center justify-between gap-3 py-3 transition-colors hover:bg-muted/50"
                   >
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <p className="truncate font-medium">{result.courseTitle}</p>
                       <p className="truncate text-xs text-muted-foreground">
                         {result.hasResult
@@ -202,7 +205,7 @@ export default function DashboardPage() {
                           : `${attemptStatusMeta(result.status).label} · ${result.answeredCount}/${result.totalQuestions} answered`}
                       </p>
                     </div>
-                    <span className="flex items-center gap-2 font-serif text-lg font-semibold">
+                    <span className="flex shrink-0 items-center gap-2 font-serif text-lg font-semibold">
                       {result.hasResult ? (
                         <>
                           {result.score}/{result.totalMarks}
@@ -221,7 +224,7 @@ export default function DashboardPage() {
           )}
         </Reveal>
 
-        <Reveal delay={0.05} className="dotted-edge rounded-[5px] border border-border bg-card p-5 shadow-sm sm:p-6">
+        <Reveal delay={0.05} className="dotted-edge min-w-0 rounded-[5px] border border-border bg-card p-5 shadow-sm sm:p-6">
           <h2 className="text-lg font-semibold">By subject</h2>
           {data.subjectPerformance.length === 0 ? (
             <div className="mt-5 rounded-[5px] border-2 border-dashed border-border p-6 text-center">
