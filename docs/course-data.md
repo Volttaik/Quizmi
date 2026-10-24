@@ -96,6 +96,16 @@ course or duplicate questions. Use
 `pnpm --filter @workspace/scripts run ingest:ecn102 -- --parse-only` to validate
 without writing.
 
+`scripts/src/ingest-soc103.ts` follows the same contract for SOC 103 –
+Introduction to African Societies and Cultures: `scripts/content/soc103-questions.txt`
+holds 1,000 questions in 11 chapters, the script validates every question against
+the printed answer index and requires all 1,000 explanations, then upserts the
+course (₦1,000, banner at `/soc103/banner.webp`) and replaces its questions in
+page-sized batches. Re-running it updates the course row in place — it never
+creates a second course or duplicate questions. Use
+`pnpm --filter @workspace/scripts run ingest:soc103 -- --parse-only` to validate
+without writing.
+
 ## Example ingestion
 
 ```sql
