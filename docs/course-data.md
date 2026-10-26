@@ -106,6 +106,17 @@ creates a second course or duplicate questions. Use
 `pnpm --filter @workspace/scripts run ingest:soc103 -- --parse-only` to validate
 without writing.
 
+`scripts/src/ingest-dacn206.ts` follows the same contract for DACN 206 –
+Laboratory Accounting: `scripts/content/dacn206-questions.txt` holds 600
+questions in 6 chapters, the script validates every question against the printed
+answer index and requires all 600 explanations, then upserts the course
+(₦500, banner at `/dacn206/banner.webp`) and replaces its questions in
+page-sized batches. It refuses to run when the same course code already exists
+under a different slug. Re-running it updates the course row in place — it never
+creates a second course or duplicate questions. Use
+`pnpm --filter @workspace/scripts run ingest:dacn206 -- --parse-only` to validate
+without writing.
+
 ## Example ingestion
 
 ```sql

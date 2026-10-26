@@ -25,6 +25,10 @@ app. Course and question content is inserted directly into Turso — see
 - `pnpm --filter @workspace/scripts run ingest:ecn102` — parse and ingest the
   ECN 102 course and its 500-question, 5-chapter bank (same flags; ₦500 by
   default, re-runs update the course in place and replace its questions)
+- `pnpm --filter @workspace/scripts run ingest:dacn206` — parse and ingest the
+  DACN 206 – Laboratory Accounting course and its 600-question, 6-chapter bank
+  (same flags; ₦500 by default, re-runs update the course in place and replace
+  its questions)
 - `pnpm --filter @workspace/scripts run repair:attempts` — re-derive stored
   attempt results from their own answer sheets and move answer-less closed
   attempts to `not_submitted` (idempotent; `-- --dry-run` previews)

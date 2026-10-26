@@ -1,0 +1,6714 @@
+LABORATORY ACCOUNTING (DACN 206)
+UNIVERSITY-LEVEL MULTIPLE-CHOICE QUESTION BANK
+600 QUESTIONS WITH ANSWERS AND EXPLANATIONS
+
+TABLE OF CONTENTS
+
+Chapter 1: The Use of Spreadsheet Application for Functions and Analysis (001-101)
+Chapter 2: The Use of Cloud-Based Accounting Software (102-201)
+Chapter 3: Audit Software (202-298)
+Chapter 4: Productivity/Presentation Tools (299-398)
+Chapter 5: Project Management Tools (399-498)
+Chapter 6: Database Management Software (499-600)
+
+
+========================================================================
+CHAPTER 1: THE USE OF SPREADSHEET APPLICATION FOR FUNCTIONS AND ANALYSIS
+Questions 001-101
+========================================================================
+
+Question 001. A spreadsheet is best described as:
+
+A. A presentation slide
+B. A word processing document
+C. A database query
+D. An electronic worksheet of rows and columns used to organise and analyse data
+
+Correct Answer: D
+
+Explanation: Spreadsheets arrange data in a grid of cells.
+
+Question 002. The most widely used spreadsheet application in accounting offices is:
+
+A. Adobe Photoshop
+B. Microsoft PowerPoint
+C. Microsoft Excel
+D. Microsoft Word
+
+Correct Answer: C
+
+Explanation: Excel dominates accounting and finance work.
+
+Question 003. The intersection of a row and a column in a spreadsheet is called a:
+
+A. Record
+B. Slide
+C. Cell
+D. Field
+
+Correct Answer: C
+
+Explanation: Each cell has a unique address.
+
+Question 004. A cell address such as B5 refers to:
+
+A. Row B, column 5
+B. Column B, row 5
+C. Book B, cell 5
+D. Sheet B, page 5
+
+Correct Answer: B
+
+Explanation: Columns are letters and rows are numbers.
+
+Question 005. In Excel, columns are identified by:
+
+A. Colours
+B. Symbols
+C. Letters
+D. Numbers
+
+Correct Answer: C
+
+Explanation: Columns run from A onwards.
+
+Question 006. In Excel, rows are identified by:
+
+A. Numbers
+B. Letters
+C. Colours
+D. Symbols
+
+Correct Answer: A
+
+Explanation: Rows are numbered 1, 2, 3...
+
+Question 007. A collection of worksheets in one Excel file is called a:
+
+A. Workbook
+B. Template only
+C. Folder
+D. Database
+
+Correct Answer: A
+
+Explanation: Each workbook can contain many sheets.
+
+Question 008. The default file extension for an Excel workbook (2007 and later) is:
+
+A. .accdb
+B. .docx
+C. .pptx
+D. .xlsx
+
+Correct Answer: D
+
+Explanation: .xlsm is used when macros are present.
+
+Question 009. The file extension for a macro-enabled Excel workbook is:
+
+A. .txt
+B. .csv
+C. .xlsx
+D. .xlsm
+
+Correct Answer: D
+
+Explanation: Macros require the .xlsm format.
+
+Question 010. A CSV file stores data as:
+
+A. Formatted charts
+B. Plain text values separated by commas
+C. Encrypted macros
+D. Images
+
+Correct Answer: B
+
+Explanation: CSV means comma-separated values.
+
+Question 011. Every Excel formula must begin with:
+
+A. An equals sign (=)
+B. A hash sign (#)
+C. A dollar sign ($)
+D. A plus sign (+) only
+
+Correct Answer: A
+
+Explanation: The = sign tells Excel to calculate.
+
+Question 012. The currently selected cell in a worksheet is called the:
+
+A. Name box
+B. Formula bar
+C. Active cell
+D. Range
+
+Correct Answer: C
+
+Explanation: It has a bold border.
+
+Question 013. A group of adjacent cells such as A1:A10 is called a:
+
+A. Field
+B. Range
+C. Table only
+D. Slide
+
+Correct Answer: B
+
+Explanation: The colon indicates a range.
+
+Question 014. The Name Box in Excel displays:
+
+A. The workbook's author
+B. The formula result only
+C. The chart title
+D. The address or name of the active cell
+
+Correct Answer: D
+
+Explanation: It is to the left of the formula bar.
+
+Question 015. The formula bar in Excel shows:
+
+A. The contents or formula of the active cell
+B. The list of sheets
+C. The print preview
+D. Only the file name
+
+Correct Answer: A
+
+Explanation: Formulas are edited here.
+
+Question 016. The function used to add a range of numbers is:
+
+A. COUNT
+B. ADD
+C. SUM
+D. TOTALIZE
+
+Correct Answer: C
+
+Explanation: =SUM(A1:A10) adds the values.
+
+Question 017. The function that returns the arithmetic mean of a range is:
+
+A. MEAN
+B. MEDIAN
+C. MODE
+D. AVERAGE
+
+Correct Answer: D
+
+Explanation: =AVERAGE(range) computes the mean.
+
+Question 018. The function that returns the largest value in a range is:
+
+A. TOP
+B. LARGEST
+C. HIGH
+D. MAX
+
+Correct Answer: D
+
+Explanation: =MAX(range) finds the highest number.
+
+Question 019. The function that returns the smallest value in a range is:
+
+A. SMALL only
+B. LOW
+C. MIN
+D. BOTTOM
+
+Correct Answer: C
+
+Explanation: =MIN(range) finds the lowest number.
+
+Question 020. The COUNT function counts:
+
+A. Text cells only
+B. Cells containing numbers
+C. All non-empty cells
+D. Blank cells only
+
+Correct Answer: B
+
+Explanation: COUNTA counts all non-blank cells.
+
+Question 021. The COUNTA function counts:
+
+A. Only numeric cells
+B. Only errors
+C. Only blank cells
+D. All non-empty cells
+
+Correct Answer: D
+
+Explanation: It includes text and numbers.
+
+Question 022. The COUNTBLANK function counts:
+
+A. Error cells
+B. Numeric cells
+C. Text cells
+D. Empty cells in a range
+
+Correct Answer: D
+
+Explanation: Useful to find missing data.
+
+Question 023. The IF function is used to:
+
+A. Return one value if a condition is true and another if false
+B. Add numbers
+C. Sort data
+D. Create charts
+
+Correct Answer: A
+
+Explanation: =IF(test, value_if_true, value_if_false).
+
+Question 024. The formula =IF(B2>=50,"Pass","Fail") returns "Pass" when:
+
+A. B2 is 50 or more
+B. B2 is less than 50
+C. B2 contains text
+D. B2 is blank only
+
+Correct Answer: A
+
+Explanation: The condition B2>=50 is true.
+
+Question 025. The SUMIF function adds values that:
+
+A. Are formatted bold
+B. Are negative only
+C. Meet a single specified criterion
+D. Are in every sheet
+
+Correct Answer: C
+
+Explanation: =SUMIF(range, criteria, sum_range).
+
+Question 026. The SUMIFS function differs from SUMIF because it:
+
+A. Allows multiple criteria
+B. Only works on text
+C. Only counts cells
+D. Allows no criteria
+
+Correct Answer: A
+
+Explanation: SUMIFS supports several conditions.
+
+Question 027. The COUNTIF function counts cells that:
+
+A. Are blank only
+B. Contain formulas only
+C. Are in another workbook only
+D. Meet a specified condition
+
+Correct Answer: D
+
+Explanation: E.g. =COUNTIF(A:A,"Paid").
+
+Question 028. The AVERAGEIF function returns the average of cells that:
+
+A. Meet a given criterion
+B. Are hidden
+C. Are all blank
+D. Contain errors
+
+Correct Answer: A
+
+Explanation: It filters before averaging.
+
+Question 029. VLOOKUP is used to:
+
+A. Sort data vertically
+B. Insert a vertical chart
+C. Search for a value in the first column of a table and return a value from another column in the same row
+D. Count vertical cells
+
+Correct Answer: C
+
+Explanation: V stands for vertical.
+
+Question 030. In =VLOOKUP(A2,Table,3,FALSE), the number 3 refers to:
+
+A. The sheet number
+B. The number of matches
+C. The column index to return from
+D. The row number
+
+Correct Answer: C
+
+Explanation: Column 3 of the table is returned.
+
+Question 031. In VLOOKUP, using FALSE as the last argument means:
+
+A. Return blank
+B. Ignore errors
+C. Exact match
+D. Approximate match
+
+Correct Answer: C
+
+Explanation: FALSE (or 0) forces an exact match.
+
+Question 032. HLOOKUP searches for a value in:
+
+A. The last column only
+B. The first column of a table
+C. The first row of a table
+D. A chart
+
+Correct Answer: C
+
+Explanation: H stands for horizontal.
+
+Question 033. XLOOKUP improves on VLOOKUP because it can:
+
+A. Only work on text
+B. Look up in any direction and defaults to exact match
+C. Only return numbers
+D. Only look right
+
+Correct Answer: B
+
+Explanation: It is available in newer Excel versions.
+
+Question 034. INDEX and MATCH used together provide:
+
+A. A flexible lookup that can look left or right
+B. A way to sort data
+C. A pivot table
+D. A chart type
+
+Correct Answer: A
+
+Explanation: MATCH finds the position; INDEX returns the value.
+
+Question 035. The MATCH function returns:
+
+A. The cell format
+B. The sum of a range
+C. The relative position of a value in a range
+D. The value itself
+
+Correct Answer: C
+
+Explanation: E.g. =MATCH("Lagos",A1:A10,0).
+
+Question 036. The CONCATENATE (or CONCAT) function is used to:
+
+A. Delete text
+B. Split text
+C. Join text from multiple cells
+D. Count text
+
+Correct Answer: C
+
+Explanation: The & operator also joins text.
+
+Question 037. The function that removes extra spaces from text is:
+
+A. CUT
+B. CLEAN
+C. SPACE
+D. TRIM
+
+Correct Answer: D
+
+Explanation: TRIM leaves single spaces between words.
+
+Question 038. The LEFT function returns:
+
+A. Characters from the end
+B. A specified number of characters from the start of text
+C. The length of text
+D. Uppercase text
+
+Correct Answer: B
+
+Explanation: =LEFT("ACCOUNT",3) returns ACC.
+
+Question 039. The LEN function returns:
+
+A. The left characters
+B. The largest value
+C. The last row
+D. The number of characters in a text string
+
+Correct Answer: D
+
+Explanation: It counts spaces too.
+
+Question 040. The function that converts text to uppercase is:
+
+A. BIG
+B. PROPER
+C. CAPITAL
+D. UPPER
+
+Correct Answer: D
+
+Explanation: PROPER capitalises the first letter of each word.
+
+Question 041. The TODAY function returns:
+
+A. The current date and time
+B. A fixed date
+C. The day name only
+D. The current date
+
+Correct Answer: D
+
+Explanation: NOW returns date and time.
+
+Question 042. The NOW function returns:
+
+A. Only the time zone
+B. The file creation date
+C. Only the current date
+D. The current date and time
+
+Correct Answer: D
+
+Explanation: It updates when the sheet recalculates.
+
+Question 043. The DATEDIF function can be used to calculate:
+
+A. Day names
+B. Currency conversion
+C. The difference between two dates in days, months or years
+D. The sum of dates
+
+Correct Answer: C
+
+Explanation: Useful for ageing analysis.
+
+Question 044. The ROUND function is used to:
+
+A. Find the average
+B. Round a number to a specified number of digits
+C. Count numbers
+D. Remove decimals by truncation only
+
+Correct Answer: B
+
+Explanation: =ROUND(12.456,2) gives 12.46.
+
+Question 045. The ABS function returns:
+
+A. The absolute (positive) value of a number
+B. The average
+C. The largest number
+D. The amount in words
+
+Correct Answer: A
+
+Explanation: ABS(-500) returns 500.
+
+Question 046. A relative cell reference such as A1:
+
+A. Never changes when copied
+B. Is always an error
+C. Refers to another workbook only
+D. Changes when the formula is copied to another cell
+
+Correct Answer: D
+
+Explanation: Relative references adjust automatically.
+
+Question 047. An absolute cell reference is written as:
+
+A. A1
+B. $A$1
+C. A$1$
+D. #A#1
+
+Correct Answer: B
+
+Explanation: Dollar signs lock both column and row.
+
+Question 048. A mixed cell reference such as $A1 locks:
+
+A. Neither
+B. Both column and row
+C. The column only
+D. The row only
+
+Correct Answer: C
+
+Explanation: A$1 would lock the row only.
+
+Question 049. The keyboard key used to toggle between relative and absolute references while editing a formula is:
+
+A. F12
+B. F4
+C. F5
+D. F2
+
+Correct Answer: B
+
+Explanation: F4 cycles through reference types.
+
+Question 050. The F2 key in Excel is used to:
+
+A. Open help
+B. Save the workbook
+C. Edit the active cell
+D. Spell-check
+
+Correct Answer: C
+
+Explanation: It enters edit mode.
+
+Question 051. The error #DIV/0! means:
+
+A. A name is not recognised
+B. A formula is dividing by zero or an empty cell
+C. The column is too narrow
+D. The value is not available
+
+Correct Answer: B
+
+Explanation: Use IFERROR to handle it.
+
+Question 052. The error #N/A usually means:
+
+A. A value is not available, e.g. a lookup found no match
+B. Division by zero
+C. Invalid number
+D. The cell is too narrow
+
+Correct Answer: A
+
+Explanation: It is common with VLOOKUP.
+
+Question 053. The error #NAME? indicates that:
+
+A. Division by zero
+B. A reference is invalid
+C. The value is too large
+D. Excel does not recognise text in the formula, such as a misspelt function
+
+Correct Answer: D
+
+Explanation: E.g. =SUMM(A1:A5).
+
+Question 054. The error #REF! indicates:
+
+A. A misspelt function
+B. Missing value
+C. Division by zero
+D. An invalid cell reference, often after deleting cells
+
+Correct Answer: D
+
+Explanation: Deleted referenced cells cause #REF!.
+
+Question 055. The display ##### in a cell usually means:
+
+A. The file is corrupted
+B. The column is too narrow to show the value
+C. The value is text
+D. The formula is wrong
+
+Correct Answer: B
+
+Explanation: Widening the column fixes it.
+
+Question 056. The IFERROR function is used to:
+
+A. Return a specified value if a formula results in an error
+B. Create errors
+C. Delete formulas
+D. Count errors only
+
+Correct Answer: A
+
+Explanation: E.g. =IFERROR(A1/B1,0).
+
+Question 057. The PMT function calculates:
+
+A. The present value of shares
+B. The total tax
+C. The profit margin
+D. The periodic payment for a loan based on constant payments and interest rate
+
+Correct Answer: D
+
+Explanation: =PMT(rate, nper, pv).
+
+Question 058. The FV function calculates:
+
+A. The fair value of assets
+B. The future value of an investment
+C. The final VAT
+D. The fixed variance
+
+Correct Answer: B
+
+Explanation: It assumes periodic constant payments and rate.
+
+Question 059. The PV function calculates:
+
+A. The profit value
+B. The present value of an investment
+C. The purchase VAT
+D. The price variance
+
+Correct Answer: B
+
+Explanation: It discounts future cash flows.
+
+Question 060. The NPV function in Excel calculates:
+
+A. Nominal price variance
+B. Net present value of a series of cash flows at a discount rate
+C. Number of payment periods
+D. Net profit value
+
+Correct Answer: B
+
+Explanation: Used in capital budgeting.
+
+Question 061. The IRR function calculates:
+
+A. The interest rate on a receipt
+B. The income ratio
+C. The internal rate of return for a series of cash flows
+D. The inventory reorder rate
+
+Correct Answer: C
+
+Explanation: IRR is the rate at which NPV equals zero.
+
+Question 062. The SLN function computes:
+
+A. Salary levels
+B. Straight-line depreciation for one period
+C. Simple loan numbers
+D. Sales ledger totals
+
+Correct Answer: B
+
+Explanation: =SLN(cost, salvage, life).
+
+Question 063. The DB or DDB functions compute:
+
+A. Straight-line depreciation
+B. Daily budget
+C. Reducing-balance depreciation
+D. Debtors balance
+
+Correct Answer: C
+
+Explanation: DDB is double-declining balance.
+
+Question 064. If an asset costs N500,000 with a salvage value of N50,000 and a life of 5 years, the SLN depreciation per year is:
+
+A. N50,000
+B. N90,000
+C. N100,000
+D. N110,000
+
+Correct Answer: B
+
+Explanation: (500,000 - 50,000)/5 = 90,000.
+
+Question 065. The NPER function returns:
+
+A. The number of periods for an investment or loan
+B. The net profit
+C. The number of employees
+D. The percentage rate
+
+Correct Answer: A
+
+Explanation: Used in loan analysis.
+
+Question 066. The RATE function returns:
+
+A. The tax rate only
+B. The growth in sales
+C. The exchange rate
+D. The interest rate per period of an annuity
+
+Correct Answer: D
+
+Explanation: It solves for the interest rate.
+
+Question 067. Sorting data in Excel means:
+
+A. Encrypting data
+B. Hiding data
+C. Arranging data in ascending or descending order
+D. Removing data
+
+Correct Answer: C
+
+Explanation: Data > Sort is used.
+
+Question 068. Filtering data in Excel allows you to:
+
+A. Merge cells
+B. Change cell colours only
+C. Delete unwanted rows permanently
+D. Display only rows that meet certain criteria
+
+Correct Answer: D
+
+Explanation: AutoFilter hides non-matching rows.
+
+Question 069. Advanced Filter in Excel allows:
+
+A. Filtering with complex criteria and copying results elsewhere
+B. Only sorting
+C. Only charts
+D. Only formatting
+
+Correct Answer: A
+
+Explanation: It uses a criteria range.
+
+Question 070. Conditional formatting in Excel is used to:
+
+A. Automatically format cells based on their values
+B. Protect cells
+C. Merge cells
+D. Insert formulas
+
+Correct Answer: A
+
+Explanation: E.g. highlight overdue balances in red.
+
+Question 071. Data validation in Excel is used to:
+
+A. Restrict the type of data entered into a cell
+B. Create charts
+C. Sort data
+D. Calculate totals
+
+Correct Answer: A
+
+Explanation: E.g. a drop-down list of account codes.
+
+Question 072. A drop-down list in a cell is created using:
+
+A. Conditional formatting
+B. Goal Seek
+C. Data Validation with the List option
+D. Pivot charts
+
+Correct Answer: C
+
+Explanation: It reduces data entry errors.
+
+Question 073. A PivotTable is used to:
+
+A. Summarise, group and analyse large data sets interactively
+B. Draw pictures
+C. Write letters
+D. Send emails
+
+Correct Answer: A
+
+Explanation: It is powerful for accounting analysis.
+
+Question 074. In a PivotTable, the "Values" area typically contains:
+
+A. Chart titles
+B. Filters only
+C. Row labels only
+D. Numeric fields to be summarised, e.g. sum of sales
+
+Correct Answer: D
+
+Explanation: Values are aggregated.
+
+Question 075. A PivotChart is:
+
+A. A chart linked to a PivotTable
+B. A macro
+C. A database table
+D. A static picture
+
+Correct Answer: A
+
+Explanation: It updates with the PivotTable.
+
+Question 076. A slicer in Excel is used to:
+
+A. Delete rows
+B. Cut cells
+C. Split windows
+D. Filter PivotTables or tables visually with buttons
+
+Correct Answer: D
+
+Explanation: Slicers make filtering interactive.
+
+Question 077. Goal Seek in Excel is used to:
+
+A. Format cells
+B. Sort data
+C. Find the input value needed to achieve a desired result
+D. Protect the workbook
+
+Correct Answer: C
+
+Explanation: E.g. sales needed to reach a target profit.
+
+Question 078. Goal Seek is found under:
+
+A. View > Zoom
+B. Insert > Charts
+C. Home > Styles
+D. Data > What-If Analysis
+
+Correct Answer: D
+
+Explanation: It is a what-if analysis tool.
+
+Question 079. Scenario Manager in Excel allows users to:
+
+A. Draw diagrams
+B. Create and compare different sets of input values
+C. Record macros
+D. Send emails
+
+Correct Answer: B
+
+Explanation: E.g. best, worst and expected cases.
+
+Question 080. A Data Table (what-if) in Excel shows:
+
+A. Database records
+B. How changing one or two variables affects a formula's result
+C. A pivot summary
+D. A chart
+
+Correct Answer: B
+
+Explanation: It is used for sensitivity analysis.
+
+Question 081. Solver in Excel is an add-in used for:
+
+A. Optimisation problems with constraints
+B. Spell checking
+C. Password recovery
+D. Printing
+
+Correct Answer: A
+
+Explanation: E.g. maximising profit subject to resources.
+
+Question 082. Sensitivity analysis in a spreadsheet helps accountants to:
+
+A. Hide figures
+B. Avoid budgeting
+C. Encrypt files
+D. See how changes in assumptions affect outcomes
+
+Correct Answer: D
+
+Explanation: It supports decision making.
+
+Question 083. A line chart is most suitable for showing:
+
+A. Single values only
+B. Trends over time
+C. Parts of a whole
+D. Text data
+
+Correct Answer: B
+
+Explanation: E.g. monthly sales trend.
+
+Question 084. A pie chart is most suitable for showing:
+
+A. Proportions of a whole
+B. Trends over many years
+C. Large data sets with many categories
+D. Correlation
+
+Correct Answer: A
+
+Explanation: Each slice is a share.
+
+Question 085. A column or bar chart is most suitable for:
+
+A. Comparing values across categories
+B. Showing correlation only
+C. Showing text
+D. Showing proportions only
+
+Correct Answer: A
+
+Explanation: E.g. sales by branch.
+
+Question 086. A scatter chart is used to show:
+
+A. Proportions
+B. Text categories
+C. The relationship between two numeric variables
+D. Monthly totals only
+
+Correct Answer: C
+
+Explanation: It helps detect correlation.
+
+Question 087. Freeze Panes in Excel is used to:
+
+A. Hide sheets
+B. Stop formulas from calculating
+C. Keep rows or columns visible while scrolling
+D. Lock the file with a password
+
+Correct Answer: C
+
+Explanation: Useful for headings in long ledgers.
+
+Question 088. Protecting a worksheet in Excel prevents:
+
+A. Printing
+B. Opening the file in all cases
+C. Unauthorised changes to locked cells
+D. Calculation
+
+Correct Answer: C
+
+Explanation: Review > Protect Sheet.
+
+Question 089. Excel Tables (Ctrl+T) offer benefits such as:
+
+A. Disabling filters
+B. Slower calculations
+C. Automatic expansion, structured references and banded rows
+D. Removing formulas
+
+Correct Answer: C
+
+Explanation: Tables make ranges dynamic.
+
+Question 090. A macro in Excel is:
+
+A. A recorded sequence of actions that can be replayed to automate tasks
+B. A large chart
+C. A type of error
+D. A cell format
+
+Correct Answer: A
+
+Explanation: Macros use VBA.
+
+Question 091. VBA stands for:
+
+A. Variable Basic Analysis
+B. Visual Basic for Applications
+C. Visual Business Accounting
+D. Virtual Base Application
+
+Correct Answer: B
+
+Explanation: It is Excel's programming language.
+
+Question 092. Flash Fill in Excel:
+
+A. Automatically fills data when it detects a pattern
+B. Protects data
+C. Deletes data
+D. Flashes the screen
+
+Correct Answer: A
+
+Explanation: Shortcut Ctrl+E.
+
+Question 093. Text to Columns in Excel is used to:
+
+A. Join columns
+B. Create charts
+C. Split the contents of one column into several columns
+D. Convert numbers to words
+
+Correct Answer: C
+
+Explanation: E.g. splitting "Surname, Firstname".
+
+Question 094. Remove Duplicates in Excel helps to:
+
+A. Hide rows
+B. Duplicate data
+C. Count unique values only
+D. Delete repeated records from a data set
+
+Correct Answer: D
+
+Explanation: Found under the Data tab.
+
+Question 095. The keyboard shortcut for AutoSum in Excel is:
+
+A. Alt + F4
+B. Ctrl + Z
+C. Ctrl + S
+D. Alt + =
+
+Correct Answer: D
+
+Explanation: It inserts =SUM() automatically.
+
+Question 096. The keyboard shortcut Ctrl + Z is used to:
+
+A. Zoom
+B. Save
+C. Undo the last action
+D. Redo
+
+Correct Answer: C
+
+Explanation: Ctrl + Y redoes.
+
+Question 097. Ctrl + ; in Excel inserts:
+
+A. The current date
+B. The current time
+C. A semicolon formula
+D. A new sheet
+
+Correct Answer: A
+
+Explanation: Ctrl + Shift + ; inserts the time.
+
+Question 098. Spreadsheets are useful for preparing a trial balance because they:
+
+A. Replace the need for accounts
+B. Cannot add numbers
+C. Only store text
+D. Automatically total debits and credits and detect differences
+
+Correct Answer: D
+
+Explanation: Formulas quickly check whether totals agree.
+
+Question 099. A key limitation of spreadsheets in accounting is:
+
+A. Inability to store numbers
+B. Inability to print
+C. Vulnerability to formula and input errors without audit trails
+D. Inability to calculate
+
+Correct Answer: C
+
+Explanation: Large spreadsheets can hide costly errors.
+
+Question 100. Trace Precedents in Excel shows:
+
+A. Print areas
+B. The cells that affect the value of the selected cell
+C. Hidden sheets
+D. Cells that depend on the selected cell
+
+Correct Answer: B
+
+Explanation: Arrows point from source cells.
+
+Question 101. Trace Dependents in Excel shows:
+
+A. Charts
+B. Cells whose values depend on the selected cell
+C. Errors only
+D. Cells that feed into the selected cell
+
+Correct Answer: B
+
+Explanation: Found under Formulas > Formula Auditing.
+
+
+========================================================================
+CHAPTER 2: THE USE OF CLOUD-BASED ACCOUNTING SOFTWARE
+Questions 102-201
+========================================================================
+
+Question 102. Cloud-based accounting software is:
+
+A. Manual ledger books
+B. Software installed only on one office computer
+C. Accounting software hosted on remote servers and accessed via the internet
+D. A spreadsheet printed on paper
+
+Correct Answer: C
+
+Explanation: Data is stored online by the provider.
+
+Question 103. Another name for cloud accounting software delivered on subscription is:
+
+A. Hardware as a Service
+B. Desktop-only licence
+C. Software as a Service (SaaS)
+D. Freeware only
+
+Correct Answer: C
+
+Explanation: Users pay recurring fees.
+
+Question 104. Which of these is an example of cloud-based accounting software?
+
+A. Adobe Reader
+B. Microsoft Paint
+C. QuickBooks Online
+D. Windows Notepad
+
+Correct Answer: C
+
+Explanation: Others include Xero, Zoho Books and Sage Business Cloud.
+
+Question 105. Xero is best described as:
+
+A. An audit firm
+B. A presentation tool
+C. A spreadsheet program
+D. A cloud-based accounting platform for small and medium businesses
+
+Correct Answer: D
+
+Explanation: Founded in New Zealand in 2006.
+
+Question 106. Zoho Books is:
+
+A. A hardware device
+B. A cloud accounting application from Zoho
+C. A database engine
+D. A word processor
+
+Correct Answer: B
+
+Explanation: It is part of the Zoho suite.
+
+Question 107. Sage Business Cloud Accounting is:
+
+A. An antivirus program
+B. A cloud accounting product from Sage
+C. A project tool only
+D. A web browser
+
+Correct Answer: B
+
+Explanation: Sage also offers desktop software.
+
+Question 108. Wave Accounting is known for offering:
+
+A. Only paid enterprise ERP
+B. Only payroll for governments
+C. Free cloud accounting for small businesses
+D. Only audit services
+
+Correct Answer: C
+
+Explanation: Wave earns from payments and payroll.
+
+Question 109. A major advantage of cloud accounting is:
+
+A. Access to financial data anytime and anywhere with internet
+B. No internet required at all
+C. Need to be physically in the office
+D. Higher hardware costs
+
+Correct Answer: A
+
+Explanation: Remote access supports flexible work.
+
+Question 110. A major disadvantage of cloud accounting is:
+
+A. Dependence on reliable internet connectivity
+B. Lower upfront cost
+C. Real-time access
+D. Automatic updates
+
+Correct Answer: A
+
+Explanation: Poor internet limits access.
+
+Question 111. Desktop (on-premise) accounting software differs from cloud software because it is:
+
+A. Always free
+B. Installed and run on local computers
+C. Accessed only through browsers
+D. Hosted by the vendor
+
+Correct Answer: B
+
+Explanation: Examples include Sage 50 desktop and Peachtree.
+
+Question 112. In cloud accounting, software updates are usually:
+
+A. Installed manually from CDs
+B. Applied automatically by the provider
+C. Charged per update always
+D. Never available
+
+Correct Answer: B
+
+Explanation: Users always have the latest version.
+
+Question 113. Real-time financial reporting in cloud accounting means:
+
+A. Reports reflect transactions as soon as they are recorded
+B. Reports are always delayed
+C. Reports are produced once a year
+D. Reports are manual only
+
+Correct Answer: A
+
+Explanation: Managers see current figures.
+
+Question 114. Bank feeds in cloud accounting software:
+
+A. Print bank statements only
+B. Feed cash to banks
+C. Close bank accounts
+D. Automatically import bank transactions into the software
+
+Correct Answer: D
+
+Explanation: They simplify bank reconciliation.
+
+Question 115. Bank reconciliation in cloud accounting involves:
+
+A. Preparing budgets only
+B. Matching bank statement lines with recorded transactions
+C. Calculating payroll
+D. Opening new accounts
+
+Correct Answer: B
+
+Explanation: Software suggests matches automatically.
+
+Question 116. The chart of accounts in accounting software is:
+
+A. A bank statement
+B. A list of employees
+C. A pie chart of profit
+D. A list of all accounts used to record transactions
+
+Correct Answer: D
+
+Explanation: It is grouped into assets, liabilities, equity, income and expenses.
+
+Question 117. A typical first step in setting up cloud accounting software for a business is:
+
+A. Deleting data
+B. Running year-end
+C. Printing invoices
+D. Creating the company profile and chart of accounts
+
+Correct Answer: D
+
+Explanation: Setup includes financial year and currency.
+
+Question 118. Opening balances are entered in accounting software to:
+
+A. Record account balances brought forward from the previous system
+B. Pay suppliers
+C. Calculate depreciation only
+D. Close the books
+
+Correct Answer: A
+
+Explanation: They ensure continuity of records.
+
+Question 119. An invoice in accounting software is:
+
+A. A document issued to a customer requesting payment for goods or services
+B. A payslip
+C. A supplier's bill
+D. A bank statement
+
+Correct Answer: A
+
+Explanation: Sales invoices increase accounts receivable.
+
+Question 120. A bill in cloud accounting software refers to:
+
+A. A sales invoice
+B. An invoice received from a supplier
+C. A quotation
+D. A credit note to customers
+
+Correct Answer: B
+
+Explanation: Bills increase accounts payable.
+
+Question 121. A credit note is issued to:
+
+A. Pay salaries
+B. Record depreciation
+C. Increase sales
+D. Reduce the amount a customer owes, e.g. for returned goods
+
+Correct Answer: D
+
+Explanation: It reverses all or part of an invoice.
+
+Question 122. A quotation (estimate) in accounting software:
+
+A. States the proposed price before a sale is confirmed
+B. Is a tax return
+C. Records payment received
+D. Closes the period
+
+Correct Answer: A
+
+Explanation: It can be converted to an invoice.
+
+Question 123. Recurring invoices in cloud accounting are used for:
+
+A. Supplier payments only
+B. Payroll only
+C. Automatically generating invoices at regular intervals
+D. One-off sales only
+
+Correct Answer: C
+
+Explanation: E.g. monthly service fees.
+
+Question 124. Accounts receivable (debtors) ageing report shows:
+
+A. Supplier balances
+B. Staff ages
+C. Asset lives
+D. How long customer invoices have been outstanding
+
+Correct Answer: D
+
+Explanation: It helps credit control.
+
+Question 125. Accounts payable ageing report shows:
+
+A. Customer debts
+B. How long amounts owed to suppliers have been outstanding
+C. Inventory levels
+D. Tax rates
+
+Correct Answer: B
+
+Explanation: It helps payment planning.
+
+Question 126. Multi-currency features in cloud accounting allow:
+
+A. Recording transactions in foreign currencies with exchange rate handling
+B. Avoiding exchange rates
+C. Only naira transactions
+D. Printing money
+
+Correct Answer: A
+
+Explanation: Useful for importers and exporters.
+
+Question 127. Inventory tracking in cloud accounting software helps to:
+
+A. Monitor stock quantities and values
+B. Draw slides
+C. Prepare payslips only
+D. Pay taxes only
+
+Correct Answer: A
+
+Explanation: It updates stock as sales and purchases occur.
+
+Question 128. The general ledger in accounting software:
+
+A. Lists only customers
+B. Lists only suppliers
+C. Contains all accounts and their transactions
+D. Stores only invoices
+
+Correct Answer: C
+
+Explanation: Subsidiary ledgers feed into it.
+
+Question 129. A journal entry in accounting software is used to:
+
+A. Print cheques only
+B. Create invoices only
+C. Record transactions not captured by standard forms, e.g. adjustments
+D. Send emails
+
+Correct Answer: C
+
+Explanation: Manual journals must balance.
+
+Question 130. Audit trail in cloud accounting refers to:
+
+A. A hiking path
+B. A bank statement
+C. The auditor's report
+D. A record of who made what changes and when
+
+Correct Answer: D
+
+Explanation: It improves accountability.
+
+Question 131. User roles and permissions in cloud accounting help to:
+
+A. Delete data automatically
+B. Give everyone full access
+C. Increase errors
+D. Restrict access according to job responsibilities
+
+Correct Answer: D
+
+Explanation: They support segregation of duties.
+
+Question 132. Segregation of duties as an internal control means:
+
+A. One person does everything
+B. Only auditors record transactions
+C. Different people handle authorisation, recording and custody
+D. No one checks transactions
+
+Correct Answer: C
+
+Explanation: It reduces fraud risk.
+
+Question 133. Data security in cloud accounting is commonly provided by:
+
+A. Storing data on paper
+B. Encryption, secure data centres and two-factor authentication
+C. Leaving data unprotected
+D. Sharing passwords
+
+Correct Answer: B
+
+Explanation: Providers invest heavily in security.
+
+Question 134. Two-factor authentication in cloud accounting requires:
+
+A. A password plus a second verification such as a code
+B. No login at all
+C. Only a username
+D. Two passwords written on paper
+
+Correct Answer: A
+
+Explanation: It protects against stolen passwords.
+
+Question 135. Data backup in cloud accounting is usually:
+
+A. Performed automatically by the provider
+B. Done only on floppy disks
+C. Impossible
+D. The auditor's duty
+
+Correct Answer: A
+
+Explanation: Automatic backups reduce data loss.
+
+Question 136. A concern about cloud accounting relating to who can access stored data is:
+
+A. Font choice
+B. Speed of printing
+C. Screen colour
+D. Data privacy and confidentiality
+
+Correct Answer: D
+
+Explanation: Businesses must trust providers.
+
+Question 137. Data sovereignty concerns in cloud accounting relate to:
+
+A. The type of keyboard
+B. The colour of reports
+C. The number of users
+D. The country where data is stored and its laws
+
+Correct Answer: D
+
+Explanation: Local laws may require data residency.
+
+Question 138. Integration (API) in cloud accounting allows:
+
+A. Only printing
+B. Only emailing
+C. Connection with other apps such as payment, CRM and e-commerce platforms
+D. Isolation from all apps
+
+Correct Answer: C
+
+Explanation: APIs exchange data automatically.
+
+Question 139. An API stands for:
+
+A. Automated Payroll Input
+B. Accounting Process Integration
+C. Applied Programme Index
+D. Application Programming Interface
+
+Correct Answer: D
+
+Explanation: It lets software systems communicate.
+
+Question 140. Payroll modules in cloud accounting software are used to:
+
+A. Reconcile banks only
+B. Create invoices
+C. Draw charts only
+D. Calculate salaries, deductions and payslips
+
+Correct Answer: D
+
+Explanation: They handle PAYE and pension deductions.
+
+Question 141. PAYE in Nigerian payroll refers to:
+
+A. Pay As You Earn personal income tax deducted from salaries
+B. Payment After Year End
+C. Personal Account Yield Earnings
+D. Pension Allowance Yearly Estimate
+
+Correct Answer: A
+
+Explanation: Employers remit it to tax authorities.
+
+Question 142. Tax (VAT) settings in cloud accounting allow:
+
+A. Only income tax
+B. Automatic calculation of VAT on sales and purchases
+C. Removal of tax returns
+D. Avoidance of tax
+
+Correct Answer: B
+
+Explanation: The current Nigerian VAT rate is 7.5%.
+
+Question 143. If a sale is N10,000 exclusive of VAT at 7.5%, the VAT amount is:
+
+A. N7,500
+B. N75
+C. N1,000
+D. N750
+
+Correct Answer: D
+
+Explanation: 10,000 x 7.5% = 750.
+
+Question 144. A VAT-inclusive price of N10,750 at 7.5% VAT has a net amount of:
+
+A. N10,750
+B. N9,943
+C. N10,000
+D. N10,500
+
+Correct Answer: C
+
+Explanation: 10,750 / 1.075 = 10,000.
+
+Question 145. The Trial Balance report in accounting software:
+
+A. Lists all ledger balances to check that debits equal credits
+B. Shows only bank balance
+C. Lists only customers
+D. Is a tax return
+
+Correct Answer: A
+
+Explanation: It is generated automatically.
+
+Question 146. The Profit and Loss report in cloud accounting shows:
+
+A. Customer list
+B. Cash in hand only
+C. Income and expenses over a period
+D. Assets and liabilities
+
+Correct Answer: C
+
+Explanation: It shows net profit or loss.
+
+Question 147. The Balance Sheet report shows:
+
+A. Income over time
+B. VAT returns only
+C. Assets, liabilities and equity at a date
+D. Payroll details
+
+Correct Answer: C
+
+Explanation: It reflects financial position.
+
+Question 148. The Cash Flow report shows:
+
+A. Cash inflows and outflows over a period
+B. Staff list
+C. Stock quantities
+D. Profit only
+
+Correct Answer: A
+
+Explanation: It reveals liquidity.
+
+Question 149. Dashboards in cloud accounting provide:
+
+A. Only raw journals
+B. Error messages
+C. Login screens only
+D. Visual summaries of key financial information
+
+Correct Answer: D
+
+Explanation: E.g. cash balance and overdue invoices.
+
+Question 150. Period lock (lock date) in accounting software is used to:
+
+A. Change passwords
+B. Prevent changes to transactions in closed periods
+C. Unlock all data
+D. Delete old periods
+
+Correct Answer: B
+
+Explanation: It protects finalised records.
+
+Question 151. Year-end closing in accounting software:
+
+A. Opens a bank account
+B. Transfers income and expense balances to retained earnings
+C. Creates invoices
+D. Deletes all data
+
+Correct Answer: B
+
+Explanation: It prepares for the new year.
+
+Question 152. Fixed asset register features in cloud accounting help to:
+
+A. Record assets and compute depreciation automatically
+B. Pay salaries
+C. Send emails
+D. Record sales only
+
+Correct Answer: A
+
+Explanation: Depreciation journals are posted automatically.
+
+Question 153. Expense claim features allow employees to:
+
+A. Approve their own salaries
+B. Submit receipts for reimbursement
+C. Change tax rates
+D. Delete transactions
+
+Correct Answer: B
+
+Explanation: Receipts can be photographed with phones.
+
+Question 154. Receipt capture (OCR) in cloud accounting software:
+
+A. Encrypts receipts only
+B. Extracts data from scanned or photographed receipts
+C. Shreds receipts
+D. Prints receipts
+
+Correct Answer: B
+
+Explanation: OCR means optical character recognition.
+
+Question 155. Mobile apps for cloud accounting allow users to:
+
+A. Only play games
+B. Only make calls
+C. Avoid accounting
+D. Create invoices and view reports on smartphones
+
+Correct Answer: D
+
+Explanation: Mobility increases productivity.
+
+Question 156. Subscription pricing for cloud accounting typically means:
+
+A. Paying nothing ever
+B. Paying per printed page
+C. Paying a monthly or annual fee
+D. Paying once forever
+
+Correct Answer: C
+
+Explanation: Plans differ by features and users.
+
+Question 157. Total cost of ownership of cloud accounting is often lower than desktop because:
+
+A. IT staff needs increase
+B. There are no servers to buy or maintain
+C. Licences are always more expensive
+D. Hardware costs are higher
+
+Correct Answer: B
+
+Explanation: The vendor handles infrastructure.
+
+Question 158. Scalability of cloud accounting means:
+
+A. It only suits one user
+B. It cannot be expanded
+C. It is fixed forever
+D. It can easily grow with the business by adding users or features
+
+Correct Answer: D
+
+Explanation: Upgrading plans is simple.
+
+Question 159. Multi-user access in cloud accounting enables:
+
+A. Several users, including the accountant, to work on the same books
+B. Only one person to use it ever
+C. Data deletion
+D. Offline use only
+
+Correct Answer: A
+
+Explanation: Collaboration improves efficiency.
+
+Question 160. Accountant/advisor access in cloud software allows:
+
+A. Clients to hide records
+B. External accountants to review client books remotely
+C. Competitors to view data
+D. Banks to print money
+
+Correct Answer: B
+
+Explanation: It improves advisory services.
+
+Question 161. Migration to cloud accounting involves:
+
+A. Hiring auditors
+B. Only buying new computers
+C. Deleting all historical data
+D. Transferring data from an old system to the new cloud system
+
+Correct Answer: D
+
+Explanation: Careful conversion avoids errors.
+
+Question 162. A risk during data migration is:
+
+A. Faster reporting
+B. Better security
+C. Data loss or incorrect balances
+D. Lower costs
+
+Correct Answer: C
+
+Explanation: Reconciliation after migration is essential.
+
+Question 163. Vendor lock-in refers to:
+
+A. Supplier credit limits
+B. Difficulty switching providers because of data formats or dependence
+C. Locking the office door
+D. Inventory locking
+
+Correct Answer: B
+
+Explanation: Exporting data periodically reduces risk.
+
+Question 164. Service Level Agreement (SLA) with a cloud provider defines:
+
+A. Selling prices
+B. Expected service availability and support standards
+C. Tax rates
+D. Staff salaries
+
+Correct Answer: B
+
+Explanation: E.g. 99.9% uptime.
+
+Question 165. Uptime refers to:
+
+A. The percentage of time a service is available
+B. Time employees arrive
+C. The time zone
+D. Time to print reports
+
+Correct Answer: A
+
+Explanation: High uptime is essential for cloud software.
+
+Question 166. Downtime in cloud accounting means:
+
+A. A holiday
+B. Working hours
+C. A period when the service is unavailable
+D. A sales period
+
+Correct Answer: C
+
+Explanation: It disrupts business operations.
+
+Question 167. Bank rules in software like Xero allow:
+
+A. Cancelling transactions
+B. Overriding audits
+C. Automatic categorisation of recurring bank transactions
+D. Banks to set prices
+
+Correct Answer: C
+
+Explanation: They save reconciliation time.
+
+Question 168. Classes, tracking categories or departments in cloud accounting help to:
+
+A. Analyse income and expenses by segment, project or location
+B. Encrypt reports
+C. Lock users
+D. Delete accounts
+
+Correct Answer: A
+
+Explanation: Useful for departmental reporting.
+
+Question 169. Budgeting features in cloud accounting allow:
+
+A. Paying salaries only
+B. Comparing actual results with budgeted figures
+C. Creating slides
+D. Avoiding planning
+
+Correct Answer: B
+
+Explanation: Budget vs actual reports highlight variances.
+
+Question 170. Online payment integration on invoices allows:
+
+A. Rejection of payments
+B. Delayed payments only
+C. Customers to pay invoices directly via card or transfer links
+D. Only cash payments
+
+Correct Answer: C
+
+Explanation: Paystack or Stripe can be connected.
+
+Question 171. Electronic invoicing improves cash collection by:
+
+A. Increasing errors
+B. Delaying invoice delivery
+C. Sending invoices instantly and enabling online payment
+D. Removing payment options
+
+Correct Answer: C
+
+Explanation: Faster invoicing shortens the cash cycle.
+
+Question 172. Automated payment reminders in cloud accounting:
+
+A. Delete overdue invoices
+B. Email customers about overdue invoices
+C. Pay suppliers automatically without approval
+D. Increase prices
+
+Correct Answer: B
+
+Explanation: They improve credit control.
+
+Question 173. Purchase orders in accounting software are used to:
+
+A. Pay salaries
+B. Record customer sales
+C. Formally request goods from suppliers before billing
+D. Record depreciation
+
+Correct Answer: C
+
+Explanation: They support purchase control.
+
+Question 174. Three-way matching in purchasing compares:
+
+A. Three customers
+B. Purchase order, goods received note and supplier invoice
+C. Three payslips
+D. Three bank statements
+
+Correct Answer: B
+
+Explanation: It prevents paying for goods not ordered or received.
+
+Question 175. A goods received note (GRN) confirms:
+
+A. Payment of salary
+B. Sale to a customer
+C. Receipt of goods from a supplier
+D. Bank deposit
+
+Correct Answer: C
+
+Explanation: It supports three-way matching.
+
+Question 176. Contact management in cloud accounting stores:
+
+A. Only employee passwords
+B. Only bank PINs
+C. Only tax rates
+D. Customer and supplier details
+
+Correct Answer: D
+
+Explanation: Contacts link to invoices and bills.
+
+Question 177. Cloud accounting contributes to paperless offices by:
+
+A. Storing documents and records digitally
+B. Banning computers
+C. Requiring printed ledgers
+D. Increasing paper filing
+
+Correct Answer: A
+
+Explanation: Attachments are kept with transactions.
+
+Question 178. Attaching source documents to transactions in cloud software:
+
+A. Provides supporting evidence for audits
+B. Has no purpose
+C. Hides the transaction
+D. Deletes the transaction
+
+Correct Answer: A
+
+Explanation: Auditors can view the evidence.
+
+Question 179. The main difference between ERP and basic cloud accounting software is that ERP:
+
+A. Handles only invoices
+B. Integrates accounting with other business functions like HR, inventory and production
+C. Is always free
+D. Has no accounting module
+
+Correct Answer: B
+
+Explanation: SAP and Oracle are ERP vendors.
+
+Question 180. Odoo is an example of:
+
+A. A slide tool
+B. An antivirus
+C. An open-source ERP with cloud accounting modules
+D. A spreadsheet only
+
+Correct Answer: C
+
+Explanation: It offers modular business apps.
+
+Question 181. Microsoft Dynamics 365 Business Central is:
+
+A. A mobile network
+B. A word processor only
+C. A video game
+D. A cloud ERP solution with financial management
+
+Correct Answer: D
+
+Explanation: It targets small to mid-sized businesses.
+
+Question 182. Internet connectivity challenges in Nigeria affect cloud accounting adoption by:
+
+A. Removing costs
+B. Making it faster
+C. Increasing uptime
+D. Limiting reliable access to online systems
+
+Correct Answer: D
+
+Explanation: Some providers offer limited offline modes.
+
+Question 183. The role of the accountant is changing with cloud accounting towards:
+
+A. Advisory and analytical services
+B. Only manual data entry
+C. Only bookkeeping by hand
+D. Eliminating accountants completely
+
+Correct Answer: A
+
+Explanation: Automation frees time for analysis.
+
+Question 184. Automation in cloud accounting reduces:
+
+A. Manual data entry and errors
+B. Access to data
+C. Speed
+D. Accuracy
+
+Correct Answer: A
+
+Explanation: Bank feeds and rules automate tasks.
+
+Question 185. Artificial intelligence in cloud accounting is used for:
+
+A. Manual posting only
+B. Printing only
+C. Transaction categorisation and anomaly detection
+D. Making coffee
+
+Correct Answer: C
+
+Explanation: AI improves efficiency and fraud detection.
+
+Question 186. Continuous accounting refers to:
+
+A. Processing and reconciling transactions throughout the period rather than at month-end only
+B. Manual accounting only
+C. Never reconciling
+D. Closing books once every ten years
+
+Correct Answer: A
+
+Explanation: Cloud tools enable it.
+
+Question 187. Compliance features in cloud accounting help businesses to:
+
+A. Hide transactions
+B. Avoid taxes illegally
+C. Delete records
+D. Meet tax and reporting requirements
+
+Correct Answer: D
+
+Explanation: E.g. VAT reports.
+
+Question 188. FIRS's electronic tax filing platform supports:
+
+A. Online filing and payment of taxes
+B. Company registration
+C. Only paper returns
+D. Bank reconciliation
+
+Correct Answer: A
+
+Explanation: Cloud accounting reports feed into tax filing.
+
+Question 189. A free trial of cloud accounting software allows users to:
+
+A. Use it forever without paying
+B. Delete other software
+C. Test the software before subscribing
+D. Avoid registration
+
+Correct Answer: C
+
+Explanation: Most vendors offer trials.
+
+Question 190. When choosing cloud accounting software, a business should consider:
+
+A. Only the vendor's country flag
+B. Only the font
+C. Only the logo colour
+D. Features, cost, security, support and local tax compliance
+
+Correct Answer: D
+
+Explanation: Fit for purpose is essential.
+
+Question 191. Data export in cloud accounting allows users to:
+
+A. Delete data permanently only
+B. Hide data
+C. Print only
+D. Download reports and data in formats like Excel or CSV
+
+Correct Answer: D
+
+Explanation: It supports analysis and backups.
+
+Question 192. Importing data into cloud accounting software is often done using:
+
+A. Fax
+B. Handwriting
+C. Voice notes
+D. CSV templates
+
+Correct Answer: D
+
+Explanation: CSV imports speed up setup.
+
+Question 193. Cash-basis accounting records transactions when:
+
+A. Contracts are signed
+B. Goods are ordered
+C. Cash is received or paid
+D. Invoices are issued
+
+Correct Answer: C
+
+Explanation: Many software packages support both bases.
+
+Question 194. Accrual-basis accounting records transactions when:
+
+A. Cash is received only
+B. Taxes are paid only
+C. They are earned or incurred, regardless of cash movement
+D. Audits occur
+
+Correct Answer: C
+
+Explanation: IFRS requires accrual accounting.
+
+Question 195. Credit limits set in accounting software help to:
+
+A. Control the amount of credit extended to customers
+B. Increase bad debts
+C. Pay suppliers
+D. Remove credit control
+
+Correct Answer: A
+
+Explanation: Exceeding limits triggers warnings.
+
+Question 196. Cloud accounting improves collaboration between business owners and accountants because:
+
+A. Both can view the same live data simultaneously
+B. Only one can log in ever
+C. Data must be emailed in pieces
+D. Owners cannot access data
+
+Correct Answer: A
+
+Explanation: Shared access reduces delays.
+
+Question 197. The main purpose of laboratory practice with cloud accounting software is to:
+
+A. Replace accounting theory entirely
+B. Develop practical skills in recording and reporting transactions digitally
+C. Avoid using computers
+D. Memorise vendor names only
+
+Correct Answer: B
+
+Explanation: Hands-on practice builds competence.
+
+Question 198. A sales receipt in cloud accounting is used when:
+
+A. A customer is given credit
+B. Payment is received at the time of sale
+C. Depreciation is recorded
+D. A supplier is paid
+
+Correct Answer: B
+
+Explanation: It records cash sales without an invoice.
+
+Question 199. Petty cash transactions in accounting software are recorded to:
+
+A. Record large loans
+B. Record share capital
+C. Record depreciation
+D. Track small cash expenses
+
+Correct Answer: D
+
+Explanation: A petty cash account is used.
+
+Question 200. Customer statements generated by cloud accounting software show:
+
+A. Payroll details
+B. Supplier bills only
+C. Tax rates only
+D. Invoices, payments and balance owed by a customer
+
+Correct Answer: D
+
+Explanation: They remind customers of outstanding amounts.
+
+Question 201. Single sign-on (SSO) in cloud software allows users to:
+
+A. Share accounts
+B. Access several applications with one set of login credentials
+C. Avoid passwords entirely without security
+D. Sign in only once in a lifetime
+
+Correct Answer: B
+
+Explanation: It simplifies secure access.
+
+
+========================================================================
+CHAPTER 3: AUDIT SOFTWARE
+Questions 202-298
+========================================================================
+
+Question 202. Audit software refers to:
+
+A. Programs used only for typing letters
+B. Computer programs used by auditors to perform audit procedures
+C. Games for auditors
+D. Payroll software only
+
+Correct Answer: B
+
+Explanation: It supports data analysis and documentation.
+
+Question 203. Computer-Assisted Audit Techniques (CAATs) are:
+
+A. Interviews only
+B. Techniques that use computers to assist in performing audit procedures
+C. Physical stock counts only
+D. Manual vouching only
+
+Correct Answer: B
+
+Explanation: CAATs improve efficiency and coverage.
+
+Question 204. CAATs is an abbreviation for:
+
+A. Certified Accounting and Auditing Tools
+B. Computer-Assisted Audit Techniques
+C. Computerised Accounts and Tax Systems
+D. Central Audit Assessment Tests
+
+Correct Answer: B
+
+Explanation: Sometimes also called CAATTs (tools and techniques).
+
+Question 205. The two main categories of CAATs are:
+
+A. Hardware and furniture
+B. Spreadsheets and word processors
+C. Printers and scanners
+D. Audit software and test data
+
+Correct Answer: D
+
+Explanation: Audit software analyses data; test data tests controls.
+
+Question 206. Generalised audit software (GAS) is:
+
+A. Software designed to perform audit functions on data from different systems
+B. A payroll package
+C. Software written for one client only
+D. An operating system
+
+Correct Answer: A
+
+Explanation: ACL and IDEA are examples.
+
+Question 207. Which of these is an example of generalised audit software?
+
+A. PowerPoint
+B. IDEA
+C. Skype
+D. Microsoft Paint
+
+Correct Answer: B
+
+Explanation: IDEA is by CaseWare.
+
+Question 208. ACL (now Galvanize/Diligent HighBond) is:
+
+A. A presentation tool
+B. A database server only
+C. An accounting firm
+D. A data analysis tool widely used by auditors
+
+Correct Answer: D
+
+Explanation: ACL stands for Audit Command Language.
+
+Question 209. IDEA stands for:
+
+A. Interactive Data Extraction and Analysis
+B. Integrated Digital Evidence Archive
+C. Independent Data Examination Audit
+D. Internal Data Entry Application
+
+Correct Answer: A
+
+Explanation: It is used for analysing client data.
+
+Question 210. Specialised (custom) audit software is:
+
+A. Software written to perform specific audit tasks for a particular client or system
+B. An internet browser
+C. Free games
+D. General office software
+
+Correct Answer: A
+
+Explanation: It is costly but tailored.
+
+Question 211. Test data as a CAAT involves:
+
+A. Processing dummy transactions through the client's system to test controls
+B. Counting cash
+C. Analysing actual data files only
+D. Interviewing staff
+
+Correct Answer: A
+
+Explanation: Results are compared with expected outcomes.
+
+Question 212. A limitation of test data is that:
+
+A. It tests all real transactions
+B. It needs no planning
+C. It cannot detect errors
+D. It tests the system only at a point in time
+
+Correct Answer: D
+
+Explanation: Programs may change afterwards.
+
+Question 213. An Integrated Test Facility (ITF) involves:
+
+A. Interviewing auditors
+B. Testing only on paper
+C. Physical inspection only
+D. Creating a dummy entity within the client's live system to process test transactions
+
+Correct Answer: D
+
+Explanation: Test transactions must be reversed afterwards.
+
+Question 214. Embedded audit modules are:
+
+A. Separate laptops
+B. Audit routines built into the client's application to monitor transactions continuously
+C. Audit reports
+D. Paper checklists
+
+Correct Answer: B
+
+Explanation: They support continuous auditing.
+
+Question 215. Parallel simulation involves:
+
+A. Hiring two auditors
+B. Two companies merging
+C. Running two audits at once
+D. The auditor reprocessing client data with independent software and comparing results
+
+Correct Answer: D
+
+Explanation: Differences indicate processing errors.
+
+Question 216. Continuous auditing refers to:
+
+A. Auditing performed on a continuous or near real-time basis using technology
+B. Auditing once every decade
+C. Manual vouching only
+D. Never auditing
+
+Correct Answer: A
+
+Explanation: Embedded modules and analytics enable it.
+
+Question 217. A key advantage of audit software is that it allows auditors to:
+
+A. Ignore data
+B. Replace professional judgement entirely
+C. Avoid all testing
+D. Test 100% of a population rather than a sample
+
+Correct Answer: D
+
+Explanation: Full-population testing increases assurance.
+
+Question 218. Another advantage of CAATs is:
+
+A. Faster processing of large volumes of data
+B. Higher sampling risk always
+C. Increased manual work
+D. Reduced accuracy
+
+Correct Answer: A
+
+Explanation: Computers process data quickly.
+
+Question 219. A disadvantage of CAATs is:
+
+A. Reduced audit quality always
+B. Inability to process data
+C. High initial setup costs and need for specialised skills
+D. Elimination of evidence
+
+Correct Answer: C
+
+Explanation: Training and software licences cost money.
+
+Question 220. Before using audit software, the auditor must usually:
+
+A. Print all records
+B. Delete client data
+C. Skip planning
+D. Obtain and understand the client's data files and their format
+
+Correct Answer: D
+
+Explanation: Data access and integrity must be confirmed.
+
+Question 221. Data extraction in audit software refers to:
+
+A. Encrypting records
+B. Printing records only
+C. Deleting records
+D. Selecting records from a file that meet specified criteria
+
+Correct Answer: D
+
+Explanation: E.g. extract invoices above N1 million.
+
+Question 222. Stratification in audit software involves:
+
+A. Printing reports
+B. Grouping data into bands based on values
+C. Sorting alphabetically only
+D. Deleting small values
+
+Correct Answer: B
+
+Explanation: It helps focus on high-value items.
+
+Question 223. Gap detection in audit software is used to:
+
+A. Find duplicate items
+B. Identify missing items in a numerical sequence, e.g. invoice numbers
+C. Draw charts
+D. Calculate totals
+
+Correct Answer: B
+
+Explanation: Gaps may indicate unrecorded transactions.
+
+Question 224. Duplicate detection in audit software helps to identify:
+
+A. Small values only
+B. Missing numbers
+C. Repeated transactions such as duplicate payments
+D. Large values only
+
+Correct Answer: C
+
+Explanation: Duplicates may indicate errors or fraud.
+
+Question 225. Ageing analysis in audit software is used to:
+
+A. Calculate employees' ages
+B. Determine asset lives only
+C. Count inventory
+D. Analyse receivables or payables by how long they have been outstanding
+
+Correct Answer: D
+
+Explanation: It supports bad debt assessment.
+
+Question 226. Recalculation using audit software involves:
+
+A. Estimating figures without data
+B. Interviewing staff
+C. Deleting calculations
+D. Re-performing calculations such as totals, interest or depreciation
+
+Correct Answer: D
+
+Explanation: It verifies arithmetical accuracy.
+
+Question 227. Footing a file in audit terms means:
+
+A. Adding up the totals of a column or file
+B. Signing the report
+C. Deleting the last record
+D. Walking around the office
+
+Correct Answer: A
+
+Explanation: Totals are compared with ledger balances.
+
+Question 228. Sampling using audit software allows auditors to:
+
+A. Pick only favourable items
+B. Select statistical or random samples automatically
+C. Ignore populations
+D. Avoid sampling entirely
+
+Correct Answer: B
+
+Explanation: Common methods include random and monetary unit sampling.
+
+Question 229. Monetary Unit Sampling (MUS) selects items based on:
+
+A. Date only
+B. Individual monetary units, giving larger items higher chance of selection
+C. Alphabetical order
+D. Customer names
+
+Correct Answer: B
+
+Explanation: Also called probability-proportional-to-size sampling.
+
+Question 230. Random sampling means:
+
+A. Every item in the population has an equal chance of selection
+B. Selecting the first items only
+C. Selecting items the auditor likes
+D. Selecting only large items
+
+Correct Answer: A
+
+Explanation: Random number generators are used.
+
+Question 231. Systematic sampling involves:
+
+A. Selecting items at a constant interval after a random start
+B. Selecting only the largest items
+C. Selecting all items
+D. Selecting by guesswork
+
+Correct Answer: A
+
+Explanation: E.g. every 50th invoice.
+
+Question 232. Benford's Law is used in audit analytics to:
+
+A. Design slides
+B. Prepare budgets
+C. Calculate depreciation
+D. Identify unusual digit patterns that may indicate fraud
+
+Correct Answer: D
+
+Explanation: Leading digit 1 appears about 30% of the time.
+
+Question 233. According to Benford's Law, the leading digit that appears most frequently in natural data sets is:
+
+A. 7
+B. 1
+C. 9
+D. 5
+
+Correct Answer: B
+
+Explanation: Its expected frequency is about 30.1%.
+
+Question 234. Joining (matching) files in audit software allows auditors to:
+
+A. Rename files only
+B. Delete files
+C. Compare data from two files, e.g. employee and supplier addresses
+D. Print files only
+
+Correct Answer: C
+
+Explanation: Matches may reveal fictitious suppliers.
+
+Question 235. Exception reporting in audit software highlights:
+
+A. Deleted files
+B. Transactions that fall outside expected parameters
+C. Employee birthdays
+D. Only normal transactions
+
+Correct Answer: B
+
+Explanation: Exceptions are investigated further.
+
+Question 236. Data analytics in auditing refers to:
+
+A. Writing letters
+B. Counting cash manually
+C. Typing reports
+D. Analysing large data sets to identify patterns, anomalies and risks
+
+Correct Answer: D
+
+Explanation: It enhances audit quality.
+
+Question 237. Audit management software (e.g. CaseWare Working Papers) is used to:
+
+A. Process payroll
+B. Prepare and manage electronic working papers
+C. Analyse only bank statements
+D. Draw pictures
+
+Correct Answer: B
+
+Explanation: It organises audit documentation.
+
+Question 238. Electronic working papers offer advantages such as:
+
+A. Easy review, storage and retrieval
+B. More paper usage
+C. Slower review
+D. Higher risk of loss always
+
+Correct Answer: A
+
+Explanation: Reviewers can access files remotely.
+
+Question 239. TeamMate is an example of:
+
+A. A database engine
+B. A sports app
+C. Audit management software used mainly by internal auditors
+D. A presentation tool
+
+Correct Answer: C
+
+Explanation: It manages audit workflow and documentation.
+
+Question 240. Audit working papers serve to:
+
+A. Advertise the firm
+B. Replace financial statements
+C. Pay audit fees
+D. Document the evidence obtained and conclusions reached
+
+Correct Answer: D
+
+Explanation: ISA 230 deals with documentation.
+
+Question 241. ISA 230 deals with:
+
+A. Going concern
+B. Audit sampling
+C. Audit documentation
+D. Fraud
+
+Correct Answer: C
+
+Explanation: It requires sufficient documentation.
+
+Question 242. ISA 530 deals with:
+
+A. Audit sampling
+B. Subsequent events
+C. Related parties
+D. Audit documentation
+
+Correct Answer: A
+
+Explanation: It guides sample design and evaluation.
+
+Question 243. ISA 330 deals with:
+
+A. Using experts
+B. The auditor's responses to assessed risks
+C. Audit reports
+D. Opening balances
+
+Correct Answer: B
+
+Explanation: It covers tests of controls and substantive procedures.
+
+Question 244. Tests of controls are designed to:
+
+A. Prepare financial statements
+B. Calculate tax
+C. Verify balances directly
+D. Evaluate the operating effectiveness of controls
+
+Correct Answer: D
+
+Explanation: Test data is used to test application controls.
+
+Question 245. Substantive procedures are designed to:
+
+A. Detect material misstatements at the assertion level
+B. Prepare budgets
+C. Design systems
+D. Test controls only
+
+Correct Answer: A
+
+Explanation: They include analytical procedures and tests of details.
+
+Question 246. Audit software is particularly useful for substantive procedures because it can:
+
+A. Only check controls
+B. Replace management
+C. Prevent all fraud
+D. Analyse entire populations of transactions
+
+Correct Answer: D
+
+Explanation: It performs tests of detail efficiently.
+
+Question 247. Analytical procedures involve:
+
+A. Physical inspection only
+B. Observing stock counts only
+C. Evaluating financial information through relationships among data
+D. Interviewing customers only
+
+Correct Answer: C
+
+Explanation: Ratio and trend analysis are examples.
+
+Question 248. Application controls in computerised systems relate to:
+
+A. Building security only
+B. Specific applications, e.g. input, processing and output controls
+C. Recruitment only
+D. The whole IT environment
+
+Correct Answer: B
+
+Explanation: They ensure data accuracy and completeness.
+
+Question 249. General IT controls relate to:
+
+A. Sales invoices only
+B. The overall IT environment, e.g. access, change management and operations
+C. Payroll only
+D. Single transactions only
+
+Correct Answer: B
+
+Explanation: They support the effectiveness of application controls.
+
+Question 250. An example of an input control is:
+
+A. Validation checks such as range checks
+B. Insurance
+C. Backup of files
+D. Physical locks only
+
+Correct Answer: A
+
+Explanation: Input controls prevent invalid data entry.
+
+Question 251. A range check ensures that:
+
+A. Data is in alphabetical order
+B. Data falls within acceptable limits
+C. Data is deleted
+D. Data is encrypted
+
+Correct Answer: B
+
+Explanation: E.g. hours worked between 0 and 60.
+
+Question 252. A check digit is used to:
+
+A. Detect errors in numeric codes like account numbers
+B. Encrypt files
+C. Sign cheques
+D. Count cash
+
+Correct Answer: A
+
+Explanation: Modulus 11 is a common method.
+
+Question 253. A batch control total compares:
+
+A. Two staff salaries
+B. The total of input documents with the total processed by the system
+C. Two different banks
+D. Auditors' fees
+
+Correct Answer: B
+
+Explanation: Differences indicate lost or extra items.
+
+Question 254. A hash total is:
+
+A. A monetary total
+B. A total of hashtags
+C. A meaningless total of a field, e.g. account numbers, used for control
+D. A tax figure
+
+Correct Answer: C
+
+Explanation: It detects missing or altered records.
+
+Question 255. Access controls in IT systems include:
+
+A. Passwords, user IDs and biometrics
+B. Discounts
+C. Sales promotions
+D. Advertising
+
+Correct Answer: A
+
+Explanation: They restrict unauthorised access.
+
+Question 256. An audit trail in a computer system is:
+
+A. A record that allows transactions to be traced from source to output and vice versa
+B. The audit fee schedule
+C. An employee list
+D. A walking route
+
+Correct Answer: A
+
+Explanation: Loss of audit trail is a key IT audit risk.
+
+Question 257. Auditing "around the computer" means:
+
+A. Not auditing
+B. Testing the computer program in detail
+C. Testing inputs and outputs without examining the processing
+D. Physically walking around the computer
+
+Correct Answer: C
+
+Explanation: It ignores internal processing.
+
+Question 258. Auditing "through the computer" means:
+
+A. Ignoring the computer
+B. Only interviewing staff
+C. Only checking printouts
+D. Testing the processing logic and controls within the system
+
+Correct Answer: D
+
+Explanation: CAATs like test data are used.
+
+Question 259. Auditing "with the computer" means:
+
+A. Never using computers
+B. Repairing computers
+C. Auditing computer hardware only
+D. Using computers as tools to perform audit tasks
+
+Correct Answer: D
+
+Explanation: Audit software is an example.
+
+Question 260. Data integrity in audit refers to:
+
+A. Size of files only
+B. Colour of reports
+C. Speed of computers
+D. Completeness, accuracy and validity of data
+
+Correct Answer: D
+
+Explanation: Auditors must ensure data is reliable before analysis.
+
+Question 261. Before analysing client data, an auditor should reconcile the extracted data to:
+
+A. Last year's audit fee
+B. A competitor's report
+C. The client's ledger totals
+D. The auditor's own salary
+
+Correct Answer: C
+
+Explanation: This confirms completeness of the data.
+
+Question 262. Robotic Process Automation (RPA) in auditing is used to:
+
+A. Automate repetitive rule-based audit tasks
+B. Avoid audits
+C. Replace all auditors completely
+D. Build physical robots
+
+Correct Answer: A
+
+Explanation: E.g. downloading and reconciling bank statements.
+
+Question 263. Artificial intelligence in auditing can help to:
+
+A. Eliminate professional scepticism
+B. Analyse unstructured data and detect anomalies
+C. Sign audit reports
+D. Avoid evidence
+
+Correct Answer: B
+
+Explanation: AI supports risk assessment.
+
+Question 264. Fraud detection using audit software may include:
+
+A. Identifying transactions recorded on weekends or holidays
+B. Ignoring unusual entries
+C. Deleting suspicious items
+D. Approving all payments
+
+Correct Answer: A
+
+Explanation: Unusual timing can be a red flag.
+
+Question 265. Journal entry testing using audit software focuses on:
+
+A. Only sales invoices
+B. Payroll slips only
+C. Bank charges only
+D. Identifying unusual or high-risk manual journals
+
+Correct Answer: D
+
+Explanation: ISA 240 requires journal testing for fraud risk.
+
+Question 266. ISA 240 deals with:
+
+A. Using internal auditors
+B. Audit sampling
+C. Audit documentation
+D. The auditor's responsibilities relating to fraud
+
+Correct Answer: D
+
+Explanation: Management override is a key risk.
+
+Question 267. Round-sum amounts identified by audit software may indicate:
+
+A. Possible estimates or fraudulent entries
+B. Tax returns
+C. Customer complaints
+D. Correct entries always
+
+Correct Answer: A
+
+Explanation: E.g. many entries of exactly N500,000.
+
+Question 268. Employee and vendor master file matching can detect:
+
+A. Correct payroll only
+B. Depreciation errors
+C. Ghost suppliers owned by employees
+D. Bank charges
+
+Correct Answer: C
+
+Explanation: Matching addresses or bank accounts is a red flag.
+
+Question 269. Ghost employees refer to:
+
+A. Fictitious employees on the payroll
+B. Contract staff
+C. Employees working at night
+D. Retired staff receiving pensions legitimately
+
+Correct Answer: A
+
+Explanation: Audit software can match payroll to HR records.
+
+Question 270. The use of audit software requires auditors to maintain:
+
+A. Confidentiality and security of client data
+B. Public access to client data
+C. No documentation
+D. Sharing of data on social media
+
+Correct Answer: A
+
+Explanation: Professional ethics require confidentiality.
+
+Question 271. Data visualisation tools such as Power BI and Tableau help auditors to:
+
+A. Prepare payslips
+B. Present data graphically to identify trends and outliers
+C. Record transactions
+D. Type letters
+
+Correct Answer: B
+
+Explanation: Visuals make anomalies easier to spot.
+
+Question 272. Excel is often used in auditing for:
+
+A. Only email
+B. Only playing music
+C. Analysis, sampling and preparing working papers
+D. Only video editing
+
+Correct Answer: C
+
+Explanation: It is the most common general tool.
+
+Question 273. The audit risk model states that audit risk equals:
+
+A. Inherent risk + Profit
+B. Control risk / Sales
+C. Detection risk only
+D. Inherent risk x Control risk x Detection risk
+
+Correct Answer: D
+
+Explanation: Auditors manage detection risk.
+
+Question 274. Use of CAATs can reduce:
+
+A. Detection risk
+B. Market risk
+C. Business risk of the client
+D. Inherent risk directly
+
+Correct Answer: A
+
+Explanation: More extensive testing lowers detection risk.
+
+Question 275. Sampling risk is:
+
+A. The risk of theft
+B. The risk of losing samples
+C. The risk of fire
+D. The risk that a sample's conclusion differs from that of testing the whole population
+
+Correct Answer: D
+
+Explanation: Testing 100% with CAATs eliminates it.
+
+Question 276. Non-sampling risk arises from:
+
+A. Factors such as using inappropriate procedures or misinterpreting evidence
+B. Random selection
+C. The population size
+D. Sample size alone
+
+Correct Answer: A
+
+Explanation: It is reduced by quality control.
+
+Question 277. Audit software can verify the completeness of sales by:
+
+A. Checking only bank charges
+B. Counting staff
+C. Ignoring dispatch notes
+D. Matching dispatch records to invoices
+
+Correct Answer: D
+
+Explanation: Unmatched dispatches may be unrecorded sales.
+
+Question 278. Cut-off testing with audit software checks that:
+
+A. Transactions are recorded in the correct accounting period
+B. All transactions are deleted
+C. Prices are correct only
+D. Customers are happy
+
+Correct Answer: A
+
+Explanation: Transactions near year-end are examined.
+
+Question 279. Database query tools used in auditing include:
+
+A. Paint
+B. PowerPoint
+C. Notepad only
+D. SQL
+
+Correct Answer: D
+
+Explanation: SQL extracts data from relational databases.
+
+Question 280. Log analysis in IT auditing examines:
+
+A. Wooden logs
+B. Staff attendance only
+C. System logs to identify unauthorised access or changes
+D. Sales logs only
+
+Correct Answer: C
+
+Explanation: Logs provide evidence of system activity.
+
+Question 281. Change management controls ensure that:
+
+A. Only auditors write programs
+B. Programs never change
+C. Program changes are authorised, tested and documented
+D. Anyone can change programs freely
+
+Correct Answer: C
+
+Explanation: Uncontrolled changes create risks.
+
+Question 282. Cloud-based audit software allows:
+
+A. Only local work
+B. Audit teams to collaborate remotely on the same engagement
+C. Paper-only audits
+D. No sharing
+
+Correct Answer: B
+
+Explanation: It supports remote auditing.
+
+Question 283. Remote auditing became more widespread due to:
+
+A. Abolition of computers
+B. Increased paper usage
+C. Ban on travel tickets only
+D. The COVID-19 pandemic and digital tools
+
+Correct Answer: D
+
+Explanation: Video calls and shared files enabled it.
+
+Question 284. The auditor remains responsible for audit conclusions even when using software because:
+
+A. Software takes legal responsibility
+B. Clients approve the results
+C. Software signs the report
+D. Software is only a tool and professional judgement is required
+
+Correct Answer: D
+
+Explanation: Auditors must evaluate outputs critically.
+
+Question 285. Professional scepticism when using audit software means:
+
+A. Trusting management blindly
+B. Ignoring anomalies
+C. Critically assessing the reliability of data and results
+D. Accepting all outputs without question
+
+Correct Answer: C
+
+Explanation: Data could be incomplete or manipulated.
+
+Question 286. An IT audit specialist may be involved when:
+
+A. The audit is very small and manual
+B. There are no computers at all
+C. The client's systems are complex
+D. The client refuses audit
+
+Correct Answer: C
+
+Explanation: ISA 620 covers using an auditor's expert.
+
+Question 287. The Nigerian body that issues auditing and accounting standards guidance is the:
+
+A. Financial Reporting Council of Nigeria (FRCN)
+B. NCC
+C. INEC
+D. NAFDAC
+
+Correct Answer: A
+
+Explanation: FRCN regulates financial reporting.
+
+Question 288. ICAN stands for:
+
+A. Institute of Chartered Accountants of Nigeria
+B. Internal Control Association of Nigeria
+C. Institute of Certified Auditors of Nigeria
+D. International Council of Accounting Nations
+
+Correct Answer: A
+
+Explanation: ICAN regulates chartered accountants.
+
+Question 289. COBIT is a framework for:
+
+A. Governance and management of enterprise IT
+B. Accounting standards
+C. Marketing
+D. Tax computation
+
+Correct Answer: A
+
+Explanation: It is published by ISACA.
+
+Question 290. ISACA is a professional body focused on:
+
+A. IT governance, audit and security
+B. Engineering
+C. Medical practice
+D. Agriculture
+
+Correct Answer: A
+
+Explanation: It awards the CISA certification.
+
+Question 291. CISA stands for:
+
+A. Computer Information Standards Agency
+B. Certified Information Systems Auditor
+C. Chartered Internal Systems Accountant
+D. Certified Internal Security Analyst
+
+Correct Answer: B
+
+Explanation: It is an ISACA certification.
+
+Question 292. Data retention policies require that audit files be:
+
+A. Deleted immediately after the audit
+B. Shared publicly
+C. Kept for a required period securely
+D. Printed and discarded
+
+Correct Answer: C
+
+Explanation: Legal and professional rules apply.
+
+Question 293. Version control of electronic working papers ensures:
+
+A. Changes are tracked and the final version is identified
+B. Anyone can overwrite files secretly
+C. Files are deleted
+D. Files are never saved
+
+Correct Answer: A
+
+Explanation: It supports review and accountability.
+
+Question 294. Sign-off features in audit management software indicate:
+
+A. Deleting files
+B. Paying fees
+C. Logging out only
+D. Preparer and reviewer approval of working papers
+
+Correct Answer: D
+
+Explanation: They provide evidence of review.
+
+Question 295. Audit software helps in the audit of inventory by:
+
+A. Physically counting stock
+B. Analysing stock movement and identifying slow-moving items
+C. Replacing stock counts entirely
+D. Ignoring obsolete stock
+
+Correct Answer: B
+
+Explanation: Slow-moving items may need write-down.
+
+Question 296. Audit software can test payroll by:
+
+A. Approving salaries
+B. Recalculating gross pay and deductions for all employees
+C. Ignoring overtime
+D. Paying staff directly
+
+Correct Answer: B
+
+Explanation: Full recalculation detects errors.
+
+Question 297. A key skill for auditors using audit software is:
+
+A. Data analysis and understanding of databases
+B. Driving only
+C. Singing
+D. Painting
+
+Correct Answer: A
+
+Explanation: Technical skills complement auditing knowledge.
+
+Question 298. The main objective of using audit software in laboratory practice is to:
+
+A. Avoid learning auditing
+B. Memorise logos
+C. Gain hands-on experience in analysing data for audit evidence
+D. Play games
+
+Correct Answer: C
+
+Explanation: Practical skills prepare students for modern audits.
+
+
+========================================================================
+CHAPTER 4: PRODUCTIVITY/PRESENTATION TOOLS
+Questions 299-398
+========================================================================
+
+Question 299. Productivity tools are software applications designed to:
+
+A. Only play games
+B. Only browse social media
+C. Help users create documents, presentations, spreadsheets and manage work efficiently
+D. Only edit videos
+
+Correct Answer: C
+
+Explanation: Office suites are the main productivity tools.
+
+Question 300. Microsoft Office (Microsoft 365) includes which applications?
+
+A. Word, Excel, PowerPoint and Outlook
+B. Windows and Linux
+C. Photoshop and Illustrator
+D. Chrome and Firefox
+
+Correct Answer: A
+
+Explanation: It is the dominant office suite.
+
+Question 301. Google Workspace includes:
+
+A. Photoshop and Premiere
+B. Google Docs, Sheets, Slides and Gmail
+C. Word, Excel and PowerPoint
+D. QuickBooks and Xero
+
+Correct Answer: B
+
+Explanation: It is cloud-based and browser-accessed.
+
+Question 302. Microsoft Word is primarily used for:
+
+A. Presentations
+B. Spreadsheets
+C. Word processing such as letters, reports and memos
+D. Databases
+
+Correct Answer: C
+
+Explanation: Word creates text documents.
+
+Question 303. The default file extension for Microsoft Word documents (2007 and later) is:
+
+A. .docx
+B. .pptx
+C. .xlsx
+D. .pdf
+
+Correct Answer: A
+
+Explanation: .doc was the older format.
+
+Question 304. Microsoft PowerPoint is used to:
+
+A. Create slide presentations
+B. Manage databases
+C. Process payroll
+D. Write code
+
+Correct Answer: A
+
+Explanation: Presentations combine text, images and charts.
+
+Question 305. The default file extension for PowerPoint presentations is:
+
+A. .xlsx
+B. .accdb
+C. .pptx
+D. .docx
+
+Correct Answer: C
+
+Explanation: .ppt was the older format.
+
+Question 306. Google Slides is:
+
+A. A cloud-based presentation application
+B. A spreadsheet
+C. A word processor
+D. An email client
+
+Correct Answer: A
+
+Explanation: It allows real-time collaboration.
+
+Question 307. Apple's presentation software is called:
+
+A. Numbers
+B. Keynote
+C. Safari
+D. Pages
+
+Correct Answer: B
+
+Explanation: Pages and Numbers are word processor and spreadsheet.
+
+Question 308. LibreOffice Impress is:
+
+A. A free open-source presentation program
+B. A web browser
+C. An email client
+D. A paid accounting package
+
+Correct Answer: A
+
+Explanation: LibreOffice is an open-source office suite.
+
+Question 309. A slide in a presentation is:
+
+A. A spreadsheet cell
+B. A database table
+C. A whole document
+D. A single page or screen of the presentation
+
+Correct Answer: D
+
+Explanation: Presentations consist of multiple slides.
+
+Question 310. The Slide Master in PowerPoint is used to:
+
+A. Control the overall design and layout of all slides
+B. Delete slides
+C. Print handouts only
+D. Add audio only
+
+Correct Answer: A
+
+Explanation: Changes apply across the presentation.
+
+Question 311. A slide layout determines:
+
+A. The arrangement of placeholders on a slide
+B. The printer type
+C. The file size
+D. The presenter's name only
+
+Correct Answer: A
+
+Explanation: E.g. Title and Content layout.
+
+Question 312. A placeholder in PowerPoint is:
+
+A. A transition effect
+B. A password
+C. A box that holds content such as text, images or charts
+D. A deleted slide
+
+Correct Answer: C
+
+Explanation: Placeholders are part of layouts.
+
+Question 313. A design theme in PowerPoint provides:
+
+A. Coordinated colours, fonts and effects
+B. Only speaker notes
+C. Only animations
+D. Only audio
+
+Correct Answer: A
+
+Explanation: Themes ensure visual consistency.
+
+Question 314. Slide transitions are:
+
+A. Speaker notes
+B. Visual effects when moving from one slide to the next
+C. Effects on individual objects within a slide
+D. Slide numbers
+
+Correct Answer: B
+
+Explanation: E.g. Fade or Push.
+
+Question 315. Animations in PowerPoint apply to:
+
+A. Printing
+B. Objects within a slide such as text or images
+C. Movement between slides
+D. Saving files
+
+Correct Answer: B
+
+Explanation: Entrance, emphasis and exit effects.
+
+Question 316. Speaker notes in PowerPoint are:
+
+A. Notes for the presenter not shown to the audience on the main screen
+B. Audience handouts only
+C. Slide titles
+D. Text on the slides
+
+Correct Answer: A
+
+Explanation: Presenter view displays them.
+
+Question 317. Presenter View in PowerPoint allows the presenter to see:
+
+A. Only the file menu
+B. Only the audience
+C. Only the slide sorter
+D. Current slide, next slide, notes and timer
+
+Correct Answer: D
+
+Explanation: The audience sees only the slide.
+
+Question 318. Slide Sorter view in PowerPoint is used to:
+
+A. View thumbnails and rearrange slides
+B. Write notes only
+C. Record audio
+D. Edit text in detail
+
+Correct Answer: A
+
+Explanation: It shows all slides at once.
+
+Question 319. The keyboard shortcut to start a slide show from the beginning in PowerPoint is:
+
+A. F5
+B. F7
+C. F2
+D. F12
+
+Correct Answer: A
+
+Explanation: Shift+F5 starts from the current slide.
+
+Question 320. Shift + F5 in PowerPoint:
+
+A. Saves the file
+B. Opens a new slide
+C. Closes PowerPoint
+D. Starts the slide show from the current slide
+
+Correct Answer: D
+
+Explanation: F5 starts from the beginning.
+
+Question 321. The 10/20/30 rule of presentations, by Guy Kawasaki, suggests:
+
+A. 10 slides, 20 minutes and minimum 30-point font
+B. 10 speakers, 20 topics and 30 questions
+C. 10 fonts, 20 colours and 30 images
+D. 10 minutes, 20 slides and 30 words
+
+Correct Answer: A
+
+Explanation: It promotes concise presentations.
+
+Question 322. A good practice in presentation design is to:
+
+A. Use concise bullet points and clear visuals
+B. Fill slides with long paragraphs
+C. Use low-contrast colours
+D. Use many different fonts
+
+Correct Answer: A
+
+Explanation: Less text improves audience focus.
+
+Question 323. The "6x6 rule" in slide design suggests:
+
+A. No more than six bullet points with six words each per slide
+B. Six colours per slide
+C. Six slides per minute
+D. Six animations per bullet
+
+Correct Answer: A
+
+Explanation: It limits text clutter.
+
+Question 324. High contrast between text and background in slides improves:
+
+A. Confusion
+B. Readability
+C. Loading time
+D. File size
+
+Correct Answer: B
+
+Explanation: E.g. dark text on light background.
+
+Question 325. Charts are used in presentations of financial data because they:
+
+A. Always confuse audiences
+B. Make trends and comparisons easier to understand
+C. Hide information
+D. Replace all analysis
+
+Correct Answer: B
+
+Explanation: Visuals simplify numbers.
+
+Question 326. Linking an Excel chart into PowerPoint allows:
+
+A. The slide to be locked
+B. The chart to be permanently fixed
+C. The chart to update when the Excel data changes
+D. The data to be deleted
+
+Correct Answer: C
+
+Explanation: Paste Special > Paste Link is used.
+
+Question 327. Embedding an Excel object in PowerPoint means:
+
+A. A copy of the data is stored within the presentation
+B. The object is a picture only
+C. The file is deleted
+D. The chart updates automatically from the source
+
+Correct Answer: A
+
+Explanation: Embedded objects do not update from the source.
+
+Question 328. SmartArt in Microsoft Office is used to create:
+
+A. Spreadsheets
+B. Diagrams such as organisational charts and process flows
+C. Emails
+D. Macros
+
+Correct Answer: B
+
+Explanation: SmartArt converts text into graphics.
+
+Question 329. Exporting a presentation as PDF is useful because:
+
+A. It adds animations
+B. It preserves formatting and can be viewed on most devices
+C. It increases file size always
+D. It allows editing of slides easily
+
+Correct Answer: B
+
+Explanation: PDF is a universal format.
+
+Question 330. PDF stands for:
+
+A. Printed Data File
+B. Presentation Design Format
+C. Portable Document Format
+D. Public Document Folder
+
+Correct Answer: C
+
+Explanation: It was developed by Adobe.
+
+Question 331. Mail Merge in Microsoft Word is used to:
+
+A. Send only one email
+B. Merge two Word files
+C. Delete addresses
+D. Create personalised documents such as letters to many recipients
+
+Correct Answer: D
+
+Explanation: Data comes from Excel or a database.
+
+Question 332. In mail merge, the data source contains:
+
+A. The letter template only
+B. Macros only
+C. Images only
+D. Recipient details such as names and addresses
+
+Correct Answer: D
+
+Explanation: Excel spreadsheets are often used.
+
+Question 333. Track Changes in Microsoft Word is used to:
+
+A. Delete documents
+B. Encrypt documents
+C. Print documents
+D. Record edits made to a document for review
+
+Correct Answer: D
+
+Explanation: Reviewers can accept or reject changes.
+
+Question 334. Comments in Word or Google Docs allow:
+
+A. Reviewers to add notes without changing the main text
+B. Adding page numbers
+C. Deleting text
+D. Formatting tables
+
+Correct Answer: A
+
+Explanation: Useful for collaboration.
+
+Question 335. Styles in Microsoft Word help to:
+
+A. Count words only
+B. Apply consistent formatting and generate tables of contents
+C. Encrypt text
+D. Delete headings
+
+Correct Answer: B
+
+Explanation: Heading styles feed the TOC.
+
+Question 336. An automatic table of contents in Word is generated from:
+
+A. Footnotes
+B. Page colours
+C. Comments
+D. Heading styles
+
+Correct Answer: D
+
+Explanation: Updating the TOC refreshes page numbers.
+
+Question 337. Headers and footers in a document contain:
+
+A. Comments only
+B. Information repeated at the top or bottom of each page
+C. Charts only
+D. Only the main body text
+
+Correct Answer: B
+
+Explanation: E.g. page numbers and company name.
+
+Question 338. A section break in Word allows:
+
+A. Different formatting, such as orientation, in different parts of a document
+B. Spell-checking
+C. Deleting pages
+D. Saving as PDF
+
+Correct Answer: A
+
+Explanation: E.g. landscape page for a wide table.
+
+Question 339. The keyboard shortcut Ctrl + S is used to:
+
+A. Select all
+B. Save a file
+C. Open spell check
+D. Print
+
+Correct Answer: B
+
+Explanation: It is common across Office apps.
+
+Question 340. The keyboard shortcut Ctrl + P is used to:
+
+A. Save
+B. Paragraph format
+C. Paste
+D. Print
+
+Correct Answer: D
+
+Explanation: It opens the print dialog.
+
+Question 341. The keyboard shortcut Ctrl + C is used to:
+
+A. Close
+B. Cut
+C. Centre
+D. Copy
+
+Correct Answer: D
+
+Explanation: Ctrl + X cuts.
+
+Question 342. The keyboard shortcut Ctrl + V is used to:
+
+A. Validate
+B. View
+C. Paste
+D. Verify
+
+Correct Answer: C
+
+Explanation: It pastes copied content.
+
+Question 343. Ctrl + A in most productivity applications:
+
+A. Selects all content
+B. Adds a slide
+C. Opens a file
+D. Aligns text
+
+Correct Answer: A
+
+Explanation: It selects the entire document or sheet.
+
+Question 344. Ctrl + B in Word applies:
+
+A. Breaks
+B. Borders
+C. Bold formatting
+D. Bullets
+
+Correct Answer: C
+
+Explanation: Ctrl + I applies italics.
+
+Question 345. Ctrl + F in most applications is used to:
+
+A. Format cells
+B. Freeze panes
+C. Open a file
+D. Find text
+
+Correct Answer: D
+
+Explanation: Ctrl + H opens Find and Replace.
+
+Question 346. Microsoft Outlook is primarily used for:
+
+A. Email, calendar and contacts management
+B. Accounting
+C. Presentations
+D. Spreadsheets
+
+Correct Answer: A
+
+Explanation: It integrates with Teams.
+
+Question 347. Microsoft Teams is a tool for:
+
+A. Graphics editing
+B. Chat, video meetings and collaboration
+C. Database design
+D. Accounting entries only
+
+Correct Answer: B
+
+Explanation: It is part of Microsoft 365.
+
+Question 348. Zoom is mainly used for:
+
+A. Spreadsheet analysis
+B. Video conferencing and online meetings
+C. Bookkeeping
+D. Database management
+
+Correct Answer: B
+
+Explanation: Widely adopted during COVID-19.
+
+Question 349. Google Meet is:
+
+A. Google's video conferencing tool
+B. An accounting tool
+C. A presentation template
+D. A spreadsheet
+
+Correct Answer: A
+
+Explanation: It integrates with Google Calendar.
+
+Question 350. Slack is a productivity tool used for:
+
+A. Spreadsheet calculations
+B. Printing
+C. Accounting
+D. Team messaging and communication in channels
+
+Correct Answer: D
+
+Explanation: Channels organise conversations.
+
+Question 351. Cloud storage services include:
+
+A. Google Drive, OneDrive and Dropbox
+B. Excel and Word
+C. PowerPoint and Keynote
+D. QuickBooks and Sage
+
+Correct Answer: A
+
+Explanation: They store files online.
+
+Question 352. OneDrive is:
+
+A. A presentation tool
+B. An email client
+C. Microsoft's cloud storage service
+D. A hard drive brand
+
+Correct Answer: C
+
+Explanation: It syncs files across devices.
+
+Question 353. Real-time collaboration in Google Docs means:
+
+A. Multiple users can edit the same document simultaneously
+B. Only one user can open the file
+C. Editing is disabled
+D. Files must be emailed back and forth
+
+Correct Answer: A
+
+Explanation: Changes appear instantly.
+
+Question 354. Version history in cloud documents allows users to:
+
+A. Prevent saving
+B. Change the file owner only
+C. View and restore earlier versions of a file
+D. Delete all versions permanently
+
+Correct Answer: C
+
+Explanation: It protects against accidental changes.
+
+Question 355. Sharing permissions in Google Drive include:
+
+A. Reader, Painter and Printer
+B. Viewer, Commenter and Editor
+C. Owner, Thief and Guest
+D. Admin, Robot and Visitor
+
+Correct Answer: B
+
+Explanation: Permissions control access levels.
+
+Question 356. AutoSave in Microsoft 365 automatically:
+
+A. Sends emails
+B. Deletes old files
+C. Saves changes to files stored in OneDrive or SharePoint
+D. Prints documents
+
+Correct Answer: C
+
+Explanation: It reduces data loss.
+
+Question 357. Note-taking productivity tools include:
+
+A. QuickBooks and Xero
+B. Microsoft OneNote, Evernote and Google Keep
+C. Excel and Access
+D. IDEA and ACL
+
+Correct Answer: B
+
+Explanation: They organise notes digitally.
+
+Question 358. Microsoft OneNote organises notes into:
+
+A. Rows and columns
+B. Tables and queries
+C. Slides and transitions
+D. Notebooks, sections and pages
+
+Correct Answer: D
+
+Explanation: It mimics a physical notebook.
+
+Question 359. Calendar tools help productivity by:
+
+A. Calculating taxes
+B. Designing slides
+C. Scheduling meetings and setting reminders
+D. Preparing ledgers
+
+Correct Answer: C
+
+Explanation: Outlook and Google Calendar are examples.
+
+Question 360. Time management technique "Pomodoro" involves:
+
+A. Working in focused intervals (e.g. 25 minutes) followed by short breaks
+B. Avoiding breaks
+C. Working only at night
+D. Working nonstop for hours
+
+Correct Answer: A
+
+Explanation: Tools and apps can time Pomodoros.
+
+Question 361. The Eisenhower Matrix classifies tasks by:
+
+A. Urgency and importance
+B. Age and gender
+C. Cost and price
+D. Colour and size
+
+Correct Answer: A
+
+Explanation: It guides prioritisation.
+
+Question 362. To-do list apps such as Microsoft To Do and Todoist help users to:
+
+A. Track and prioritise tasks
+B. Prepare financial statements
+C. Audit accounts
+D. Edit videos
+
+Correct Answer: A
+
+Explanation: They improve personal productivity.
+
+Question 363. Canva is a productivity/design tool used to:
+
+A. Process payroll
+B. Create presentations, posters and graphics using templates
+C. Manage databases
+D. Audit accounts
+
+Correct Answer: B
+
+Explanation: It is popular for quick designs.
+
+Question 364. Prezi differs from PowerPoint because it:
+
+A. Cannot be presented
+B. Uses a zoomable canvas rather than linear slides
+C. Is only for spreadsheets
+D. Has no visual elements
+
+Correct Answer: B
+
+Explanation: It enables non-linear presentations.
+
+Question 365. Infographics are used to:
+
+A. Replace accounting records
+B. Hide data
+C. Present information visually in a concise manner
+D. Write long reports
+
+Correct Answer: C
+
+Explanation: They combine graphics and data.
+
+Question 366. A presentation handout is:
+
+A. A speaker's script only
+B. A printed version of slides given to the audience
+C. An animation
+D. A slide transition
+
+Correct Answer: B
+
+Explanation: Handouts can include space for notes.
+
+Question 367. Rehearse Timings in PowerPoint helps presenters to:
+
+A. Practise and record the time spent on each slide
+B. Change themes
+C. Delete slides
+D. Add charts
+
+Correct Answer: A
+
+Explanation: Useful for timed presentations.
+
+Question 368. Recording a slide show in PowerPoint allows:
+
+A. Adding narration and timings for self-running presentations
+B. Editing Excel
+C. Deleting audio
+D. Printing faster
+
+Correct Answer: A
+
+Explanation: Recorded shows can be exported as video.
+
+Question 369. Accessibility checker in Office helps to:
+
+A. Check spelling only
+B. Identify content that may be difficult for people with disabilities to read
+C. Encrypt documents
+D. Count words only
+
+Correct Answer: B
+
+Explanation: E.g. missing alt text.
+
+Question 370. Alt text for images is:
+
+A. A text description of an image for screen readers
+B. File name only
+C. Hidden comments
+D. Alternative font
+
+Correct Answer: A
+
+Explanation: It improves accessibility.
+
+Question 371. Spelling and grammar check in Word is accessed using:
+
+A. F7
+B. F4
+C. F1
+D. F5
+
+Correct Answer: A
+
+Explanation: F1 opens Help.
+
+Question 372. Word count in documents is useful for:
+
+A. Calculating taxes
+B. Meeting length requirements for reports
+C. Sorting data
+D. Animating slides
+
+Correct Answer: B
+
+Explanation: It is shown in the status bar.
+
+Question 373. Templates in productivity software provide:
+
+A. Viruses
+B. Blank pages only
+C. Pre-designed formats that save time
+D. Errors
+
+Correct Answer: C
+
+Explanation: E.g. invoice or report templates.
+
+Question 374. A memo is:
+
+A. A slide show
+B. A database
+C. A financial statement
+D. A short internal business communication
+
+Correct Answer: D
+
+Explanation: Word templates exist for memos.
+
+Question 375. A business report usually includes:
+
+A. Title page, executive summary, body, conclusions and recommendations
+B. Only a single sentence
+C. Only pictures
+D. Only animations
+
+Correct Answer: A
+
+Explanation: Structure aids readability.
+
+Question 376. Footnotes in a report are used to:
+
+A. Provide additional information or references at the bottom of a page
+B. Delete text
+C. Add animations
+D. Insert slides
+
+Correct Answer: A
+
+Explanation: Endnotes appear at the end of the document.
+
+Question 377. Inserting a table in Word helps to:
+
+A. Send emails
+B. Organise data in rows and columns
+C. Create macros
+D. Add animations
+
+Correct Answer: B
+
+Explanation: Tables present figures neatly.
+
+Question 378. Watermarks in documents are used to:
+
+A. Add audio
+B. Delete text
+C. Water-proof documents
+D. Display faint text like "DRAFT" or "CONFIDENTIAL" behind content
+
+Correct Answer: D
+
+Explanation: They indicate document status.
+
+Question 379. Password-protecting a document helps to:
+
+A. Add animations
+B. Restrict unauthorised access
+C. Print faster
+D. Increase file size
+
+Correct Answer: B
+
+Explanation: Encryption secures sensitive data.
+
+Question 380. Digital signatures in documents provide:
+
+A. Decorative fonts
+B. Authentication and integrity of the document
+C. Spell checking
+D. Animations
+
+Correct Answer: B
+
+Explanation: They show the document has not been altered.
+
+Question 381. Optical Character Recognition (OCR) tools convert:
+
+A. Slides into spreadsheets
+B. Text into images only
+C. Scanned images of text into editable text
+D. Audio into video
+
+Correct Answer: C
+
+Explanation: Useful for digitising documents.
+
+Question 382. Dictation (speech-to-text) in productivity apps allows users to:
+
+A. Translate slides only
+B. Delete files automatically
+C. Print by speaking only
+D. Type by speaking
+
+Correct Answer: D
+
+Explanation: Word and Google Docs offer dictation.
+
+Question 383. Microsoft Copilot in Microsoft 365 is:
+
+A. An AI assistant that helps draft, summarise and analyse content
+B. A spreadsheet function
+C. A database engine
+D. A printer driver
+
+Correct Answer: A
+
+Explanation: It integrates with Word, Excel and PowerPoint.
+
+Question 384. AI tools in productivity apps can help accountants to:
+
+A. Summarise reports and draft documents quickly
+B. Replace professional judgement
+C. Falsify records
+D. Avoid checking work
+
+Correct Answer: A
+
+Explanation: Outputs must still be reviewed.
+
+Question 385. Keyboard shortcuts improve productivity because they:
+
+A. Increase errors always
+B. Have no effect
+C. Slow down work
+D. Reduce time spent using the mouse
+
+Correct Answer: D
+
+Explanation: Mastery increases speed.
+
+Question 386. File naming conventions help productivity by:
+
+A. Making files easy to identify and retrieve
+B. Confusing users
+C. Hiding files
+D. Increasing duplicates
+
+Correct Answer: A
+
+Explanation: E.g. "2026-10_Payroll_Report_v2".
+
+Question 387. Folder organisation in cloud storage helps to:
+
+A. Locate documents quickly and maintain order
+B. Increase clutter
+C. Delete files
+D. Lose documents
+
+Correct Answer: A
+
+Explanation: Logical structures save time.
+
+Question 388. Email etiquette includes:
+
+A. Writing in all capital letters
+B. Omitting subjects
+C. Clear subject lines and professional tone
+D. Using slang in formal emails
+
+Correct Answer: C
+
+Explanation: Professional emails reflect well on the sender.
+
+Question 389. CC in email means:
+
+A. Copy code
+B. Confidential content
+C. Carbon copy, sending a copy to other recipients visibly
+D. Cancel communication
+
+Correct Answer: C
+
+Explanation: All recipients see CC addresses.
+
+Question 390. BCC in email means:
+
+A. Basic carbon copy
+B. Blind carbon copy, sending copies without revealing recipients to others
+C. Bulk communication code
+D. Business confidential content
+
+Correct Answer: B
+
+Explanation: BCC recipients are hidden.
+
+Question 391. Presenting financial results effectively requires:
+
+A. Using tiny fonts
+B. Simple visuals, key figures and clear messages
+C. Showing every transaction on slides
+D. Reading slides word for word
+
+Correct Answer: B
+
+Explanation: Audiences need insights, not raw data.
+
+Question 392. Reading directly from slides during a presentation is discouraged because it:
+
+A. Reduces audience engagement
+B. Is required
+C. Saves time always
+D. Increases engagement
+
+Correct Answer: A
+
+Explanation: Slides should support, not replace, the speaker.
+
+Question 393. Embedding videos in presentations can:
+
+A. Reduce file size
+B. Enhance engagement if relevant
+C. Always improve every presentation
+D. Replace the speaker
+
+Correct Answer: B
+
+Explanation: Use media sparingly and purposefully.
+
+Question 394. A dashboard in presentation or reporting tools:
+
+A. Lists all transactions
+B. Stores passwords
+C. Summarises key metrics visually on one screen
+D. Is a car part only
+
+Correct Answer: C
+
+Explanation: Common in management reporting.
+
+Question 395. Microsoft Power BI is a productivity/analytics tool used for:
+
+A. Bookkeeping entries
+B. Interactive data visualisation and business intelligence reports
+C. Video calls only
+D. Word processing
+
+Correct Answer: B
+
+Explanation: It connects to many data sources.
+
+Question 396. Microsoft Forms and Google Forms are used for:
+
+A. Video editing
+B. Accounting entries
+C. Designing slides
+D. Creating surveys, quizzes and data collection forms
+
+Correct Answer: D
+
+Explanation: Responses can flow into spreadsheets.
+
+Question 397. The main benefit of integrated office suites is that:
+
+A. Applications share data and have consistent interfaces
+B. They cannot share files
+C. Each needs separate training entirely
+D. They never work together
+
+Correct Answer: A
+
+Explanation: Integration boosts efficiency.
+
+Question 398. Offline mode in Google Docs allows:
+
+A. Only viewing with internet
+B. Editing documents without internet, syncing later
+C. Deleting files
+D. Never saving work
+
+Correct Answer: B
+
+Explanation: Useful where connectivity is poor.
+
+
+========================================================================
+CHAPTER 5: PROJECT MANAGEMENT TOOLS
+Questions 399-498
+========================================================================
+
+Question 399. Project management tools are software used to:
+
+A. Only edit photos
+B. Only prepare payslips
+C. Plan, schedule, track and coordinate project tasks and resources
+D. Only send personal messages
+
+Correct Answer: C
+
+Explanation: They help deliver projects on time and budget.
+
+Question 400. A project is defined as:
+
+A. A company department
+B. A daily recurring task with no end
+C. A temporary endeavour undertaken to create a unique product, service or result
+D. A permanent routine operation
+
+Correct Answer: C
+
+Explanation: This is the PMI definition.
+
+Question 401. The Project Management Institute (PMI) publishes the:
+
+A. Nigerian tax code
+B. PMBOK Guide
+C. COBIT framework
+D. IFRS standards
+
+Correct Answer: B
+
+Explanation: PMBOK means Project Management Body of Knowledge.
+
+Question 402. The triple constraint of project management consists of:
+
+A. Price, product and place
+B. Input, process and output
+C. People, planet and profit
+D. Scope, time and cost
+
+Correct Answer: D
+
+Explanation: Quality is affected by all three.
+
+Question 403. Project scope refers to:
+
+A. The project's start date
+B. The work required to deliver the project's outputs
+C. The project manager's salary
+D. The project budget only
+
+Correct Answer: B
+
+Explanation: Scope defines what is included and excluded.
+
+Question 404. Scope creep refers to:
+
+A. Budget surplus
+B. Early project completion
+C. Uncontrolled expansion of project scope without adjustments to time or cost
+D. Reduction of scope
+
+Correct Answer: C
+
+Explanation: Change control helps prevent it.
+
+Question 405. The five process groups in PMBOK are initiating, planning, executing, monitoring and controlling, and:
+
+A. Selling
+B. Hiring
+C. Closing
+D. Auditing
+
+Correct Answer: C
+
+Explanation: They describe the project life cycle.
+
+Question 406. A project charter is:
+
+A. A document that formally authorises a project
+B. A final report
+C. A Gantt chart
+D. A timesheet
+
+Correct Answer: A
+
+Explanation: It names the sponsor and project manager.
+
+Question 407. A Work Breakdown Structure (WBS) is:
+
+A. A list of employees
+B. A risk register
+C. A financial statement
+D. A hierarchical decomposition of the project into smaller deliverables and tasks
+
+Correct Answer: D
+
+Explanation: It makes work manageable.
+
+Question 408. A work package is:
+
+A. The lowest level of the WBS that can be scheduled and assigned
+B. A Gantt chart bar only
+C. A payment voucher
+D. The project charter
+
+Correct Answer: A
+
+Explanation: Work packages are estimated and controlled.
+
+Question 409. A Gantt chart is:
+
+A. A bar chart showing project tasks against a timeline
+B. A flowchart of data
+C. A pie chart of costs
+D. An organisational chart
+
+Correct Answer: A
+
+Explanation: Developed by Henry Gantt.
+
+Question 410. The Gantt chart was developed by:
+
+A. Peter Drucker
+B. Henry Gantt
+C. Henri Fayol
+D. Frederick Taylor
+
+Correct Answer: B
+
+Explanation: It was created in the 1910s.
+
+Question 411. A milestone in project management is:
+
+A. A budget item
+B. A long task
+C. A team member
+D. A significant point or event in a project with zero duration
+
+Correct Answer: D
+
+Explanation: Milestones mark key achievements.
+
+Question 412. Task dependency means:
+
+A. Tasks have no duration
+B. Tasks are deleted
+C. Tasks are unrelated
+D. One task relies on another task's start or completion
+
+Correct Answer: D
+
+Explanation: Dependencies determine sequence.
+
+Question 413. A Finish-to-Start (FS) dependency means:
+
+A. Both tasks start together
+B. Both finish together
+C. The successor finishes before the predecessor starts
+D. A task cannot start until its predecessor finishes
+
+Correct Answer: D
+
+Explanation: It is the most common dependency.
+
+Question 414. A Start-to-Start (SS) dependency means:
+
+A. There is no relationship
+B. A task cannot start until its predecessor starts
+C. A task starts after the predecessor finishes
+D. Tasks finish together
+
+Correct Answer: B
+
+Explanation: Tasks can run in parallel.
+
+Question 415. Lag time in scheduling refers to:
+
+A. A delay between dependent tasks
+B. A task's cost
+C. An overlap between tasks
+D. A team's absence
+
+Correct Answer: A
+
+Explanation: E.g. waiting 3 days for concrete to dry.
+
+Question 416. Lead time in scheduling refers to:
+
+A. A delay between tasks
+B. An overlap allowing a successor to start before the predecessor finishes
+C. The project budget
+D. The project leader
+
+Correct Answer: B
+
+Explanation: It accelerates the schedule.
+
+Question 417. The Critical Path Method (CPM) identifies:
+
+A. The cheapest tasks
+B. The most expensive resources
+C. The longest sequence of dependent tasks that determines the minimum project duration
+D. The shortest tasks only
+
+Correct Answer: C
+
+Explanation: Delay on the critical path delays the project.
+
+Question 418. Tasks on the critical path have a total float (slack) of:
+
+A. Zero
+B. Unlimited
+C. Negative always
+D. Ten days
+
+Correct Answer: A
+
+Explanation: Any delay affects the end date.
+
+Question 419. Float (slack) is:
+
+A. The task's duration
+B. The project budget
+C. The number of resources
+D. The amount of time a task can be delayed without delaying the project
+
+Correct Answer: D
+
+Explanation: Non-critical tasks have float.
+
+Question 420. PERT stands for:
+
+A. Planning Estimate and Risk Table
+B. Project Execution and Resource Tracking
+C. Performance Evaluation Rating Tool
+D. Program Evaluation and Review Technique
+
+Correct Answer: D
+
+Explanation: It was developed by the US Navy.
+
+Question 421. In PERT, the expected time of an activity is calculated as:
+
+A. (Optimistic + Pessimistic) / 2
+B. Optimistic + Pessimistic
+C. Most likely x 4
+D. (Optimistic + 4 x Most likely + Pessimistic) / 6
+
+Correct Answer: D
+
+Explanation: It is a weighted average.
+
+Question 422. If optimistic = 2, most likely = 4 and pessimistic = 12 days, the PERT expected time is:
+
+A. 4 days
+B. 6 days
+C. 5 days
+D. 7 days
+
+Correct Answer: C
+
+Explanation: (2 + 16 + 12)/6 = 5.
+
+Question 423. A network diagram in project management shows:
+
+A. Employee salaries
+B. Bank accounts
+C. Tasks and their logical dependencies
+D. Computer networks only
+
+Correct Answer: C
+
+Explanation: Activity-on-node diagrams are common.
+
+Question 424. Microsoft Project is:
+
+A. An accounting package
+B. A spreadsheet only
+C. A project management software for scheduling and resource planning
+D. An email client
+
+Correct Answer: C
+
+Explanation: It produces Gantt charts and critical paths.
+
+Question 425. Trello is a project management tool based on:
+
+A. Spreadsheets only
+B. Slides only
+C. Accounting ledgers
+D. Kanban boards, lists and cards
+
+Correct Answer: D
+
+Explanation: Cards move across lists as work progresses.
+
+Question 426. Asana is a tool used for:
+
+A. Video editing
+B. Bookkeeping
+C. Task and project tracking for teams
+D. Auditing data
+
+Correct Answer: C
+
+Explanation: It supports lists, boards and timelines.
+
+Question 427. Jira is widely used for:
+
+A. Graphic design
+B. Payroll
+C. Tax computation
+D. Agile software development project tracking
+
+Correct Answer: D
+
+Explanation: Developed by Atlassian.
+
+Question 428. Monday.com is:
+
+A. A bank
+B. A work management platform with customisable boards
+C. A calendar day only
+D. A payroll system
+
+Correct Answer: B
+
+Explanation: It tracks projects and workflows.
+
+Question 429. ClickUp is:
+
+A. A spreadsheet function
+B. An all-in-one productivity and project management platform
+C. An audit software
+D. A cloud accounting package
+
+Correct Answer: B
+
+Explanation: It combines tasks, docs and goals.
+
+Question 430. Smartsheet is:
+
+A. A spreadsheet-style project management and collaboration tool
+B. A database engine only
+C. A presentation app
+D. A tax system
+
+Correct Answer: A
+
+Explanation: It blends grid views with Gantt features.
+
+Question 431. Basecamp is:
+
+A. An ERP system
+B. A camping service
+C. A project management and team communication tool
+D. A bank app
+
+Correct Answer: C
+
+Explanation: It organises projects with to-dos and messages.
+
+Question 432. A Kanban board typically has columns such as:
+
+A. Title, Body and Footer
+B. Assets, Liabilities and Equity
+C. To Do, In Progress and Done
+D. Debit, Credit and Balance
+
+Correct Answer: C
+
+Explanation: Kanban visualises workflow.
+
+Question 433. Kanban originated from:
+
+A. NASA
+B. The US Navy
+C. Toyota's production system
+D. Microsoft
+
+Correct Answer: C
+
+Explanation: It means "visual card" in Japanese.
+
+Question 434. Work-in-progress (WIP) limits in Kanban are used to:
+
+A. Limit the number of tasks in a stage to improve flow
+B. Increase multitasking
+C. Remove deadlines
+D. Hire more staff
+
+Correct Answer: A
+
+Explanation: They reduce bottlenecks.
+
+Question 435. Agile project management emphasises:
+
+A. Avoiding customer feedback
+B. Fixed scope at all costs
+C. Iterative delivery, collaboration and responding to change
+D. Rigid sequential phases only
+
+Correct Answer: C
+
+Explanation: The Agile Manifesto was published in 2001.
+
+Question 436. The Waterfall model of project management is:
+
+A. A sequential approach where each phase is completed before the next begins
+B. A Kanban board
+C. A random approach
+D. An iterative approach
+
+Correct Answer: A
+
+Explanation: It suits projects with stable requirements.
+
+Question 437. Scrum is:
+
+A. A waterfall method
+B. A risk register
+C. An agile framework using fixed-length iterations called sprints
+D. An accounting standard
+
+Correct Answer: C
+
+Explanation: Roles include Product Owner and Scrum Master.
+
+Question 438. A sprint in Scrum typically lasts:
+
+A. One to four weeks
+B. One day only
+C. Six months
+D. One year
+
+Correct Answer: A
+
+Explanation: Sprints produce potentially shippable increments.
+
+Question 439. The Product Backlog in Scrum is:
+
+A. A list of completed tasks only
+B. The project budget
+C. A staff roster
+D. A prioritised list of features and requirements
+
+Correct Answer: D
+
+Explanation: The Product Owner manages it.
+
+Question 440. The Scrum Master's role is to:
+
+A. Own the product budget only
+B. Write all the code
+C. Approve payroll
+D. Facilitate the Scrum process and remove impediments
+
+Correct Answer: D
+
+Explanation: The Scrum Master is a servant-leader.
+
+Question 441. A daily stand-up meeting in Scrum is:
+
+A. An annual general meeting
+B. A board meeting
+C. A short daily meeting to discuss progress and obstacles
+D. A weekly finance review
+
+Correct Answer: C
+
+Explanation: Usually 15 minutes.
+
+Question 442. A burndown chart shows:
+
+A. Remaining work versus time
+B. Budget spent on fuel
+C. Staff attendance
+D. Burnt assets
+
+Correct Answer: A
+
+Explanation: It tracks sprint or project progress.
+
+Question 443. A sprint retrospective is held to:
+
+A. Hire staff
+B. Close the company
+C. Reflect on the sprint and identify improvements
+D. Plan the next year's budget
+
+Correct Answer: C
+
+Explanation: It promotes continuous improvement.
+
+Question 444. PRINCE2 is:
+
+A. An accounting package
+B. A computer game
+C. A structured project management methodology widely used in the UK
+D. A programming language
+
+Correct Answer: C
+
+Explanation: PRINCE stands for PRojects IN Controlled Environments.
+
+Question 445. Resource allocation in project management tools involves:
+
+A. Deleting tasks
+B. Increasing scope
+C. Assigning people, equipment and materials to tasks
+D. Writing code
+
+Correct Answer: C
+
+Explanation: Tools show resource availability.
+
+Question 446. Resource levelling is used to:
+
+A. Resolve over-allocation by adjusting task schedules
+B. Increase overtime always
+C. Remove resources
+D. Create new projects
+
+Correct Answer: A
+
+Explanation: It may extend project duration.
+
+Question 447. Over-allocation of a resource means:
+
+A. A resource is assigned more work than they can handle in a period
+B. A resource is retired
+C. A resource is idle
+D. A resource has no tasks
+
+Correct Answer: A
+
+Explanation: Tools flag over-allocated resources in red.
+
+Question 448. A project budget is:
+
+A. The list of stakeholders
+B. The project charter only
+C. The project schedule
+D. The estimated total cost approved for a project
+
+Correct Answer: D
+
+Explanation: Costs are tracked against the budget.
+
+Question 449. Earned Value Management (EVM) integrates:
+
+A. Only staff morale
+B. Only tax
+C. Only marketing
+D. Scope, schedule and cost to measure project performance
+
+Correct Answer: D
+
+Explanation: It uses PV, EV and AC.
+
+Question 450. In EVM, Planned Value (PV) is:
+
+A. The total revenue
+B. The actual cost incurred
+C. The budgeted cost of work scheduled
+D. The value of work completed
+
+Correct Answer: C
+
+Explanation: PV is the baseline plan.
+
+Question 451. In EVM, Earned Value (EV) is:
+
+A. The planned cost
+B. The budgeted cost of work actually performed
+C. The profit
+D. The actual cost
+
+Correct Answer: B
+
+Explanation: It measures work completed in budget terms.
+
+Question 452. In EVM, Actual Cost (AC) is:
+
+A. The planned cost
+B. The earned value
+C. The contingency reserve
+D. The cost actually incurred for work performed
+
+Correct Answer: D
+
+Explanation: AC is recorded from accounting.
+
+Question 453. Cost Variance (CV) is calculated as:
+
+A. AC - PV
+B. PV - EV
+C. EV + AC
+D. EV - AC
+
+Correct Answer: D
+
+Explanation: A negative CV indicates over budget.
+
+Question 454. Schedule Variance (SV) is calculated as:
+
+A. AC - EV
+B. PV - AC
+C. EV - PV
+D. EV x PV
+
+Correct Answer: C
+
+Explanation: A negative SV indicates behind schedule.
+
+Question 455. Cost Performance Index (CPI) is calculated as:
+
+A. EV / AC
+B. AC / EV
+C. EV / PV
+D. PV / EV
+
+Correct Answer: A
+
+Explanation: CPI below 1 means over budget.
+
+Question 456. Schedule Performance Index (SPI) is calculated as:
+
+A. EV / PV
+B. AC / PV
+C. PV / EV
+D. EV / AC
+
+Correct Answer: A
+
+Explanation: SPI below 1 means behind schedule.
+
+Question 457. If EV = N80,000 and AC = N100,000, the CPI is:
+
+A. 0.8
+B. 1.8
+C. 0.2
+D. 1.25
+
+Correct Answer: A
+
+Explanation: 80,000/100,000 = 0.8, over budget.
+
+Question 458. If EV = N60,000 and PV = N50,000, the schedule variance is:
+
+A. 0
+B. +N10,000 (ahead of schedule)
+C. N110,000
+D. -N10,000
+
+Correct Answer: B
+
+Explanation: SV = EV - PV = 10,000.
+
+Question 459. A risk register is:
+
+A. A cash register
+B. A staff register
+C. A document listing identified risks, their assessment and responses
+D. A sales ledger
+
+Correct Answer: C
+
+Explanation: It is maintained throughout the project.
+
+Question 460. Risk response strategies for threats include avoid, transfer, mitigate and:
+
+A. Duplicate
+B. Accept
+C. Celebrate
+D. Ignore always
+
+Correct Answer: B
+
+Explanation: These are standard PMBOK responses.
+
+Question 461. Transferring a project risk means:
+
+A. Shifting the impact to a third party, e.g. through insurance or contracts
+B. Ignoring the risk
+C. Increasing the risk
+D. Eliminating the activity
+
+Correct Answer: A
+
+Explanation: The risk still exists but is borne by others.
+
+Question 462. A stakeholder in a project is:
+
+A. Any person or group affected by or able to affect the project
+B. Only the project manager
+C. Only the client's accountant
+D. Only competitors
+
+Correct Answer: A
+
+Explanation: Stakeholder management is a key knowledge area.
+
+Question 463. A RACI matrix defines:
+
+A. Reports, Accounts, Cash and Invoices
+B. Revenue, Assets, Costs and Income
+C. Risk, Audit, Control and Inspection
+D. Who is Responsible, Accountable, Consulted and Informed for tasks
+
+Correct Answer: D
+
+Explanation: It clarifies roles.
+
+Question 464. In a RACI matrix, "Accountable" means the person who:
+
+A. Does the work
+B. Ultimately answers for the task's completion and approves it
+C. Is consulted only
+D. Is merely informed
+
+Correct Answer: B
+
+Explanation: There should be only one accountable person per task.
+
+Question 465. A project baseline is:
+
+A. The project's first task
+B. The team's starting salary
+C. The final report
+D. The approved version of the scope, schedule and cost used for comparison
+
+Correct Answer: D
+
+Explanation: Performance is measured against the baseline.
+
+Question 466. Timesheets in project management tools are used to:
+
+A. Record taxes
+B. Record sales
+C. Record inventory
+D. Record time spent by team members on tasks
+
+Correct Answer: D
+
+Explanation: They support cost tracking and billing.
+
+Question 467. Project management tools support collaboration by:
+
+A. Hiding task status
+B. Isolating team members
+C. Allowing team members to share files, comments and updates in one place
+D. Preventing communication
+
+Correct Answer: C
+
+Explanation: Centralised information reduces confusion.
+
+Question 468. Notifications and reminders in project tools help to:
+
+A. Keep team members aware of deadlines and changes
+B. Hide deadlines
+C. Delete tasks
+D. Increase delays
+
+Correct Answer: A
+
+Explanation: Automated alerts improve accountability.
+
+Question 469. A project dashboard provides:
+
+A. A visual summary of project status, progress and key metrics
+B. Only passwords
+C. Only a list of files
+D. The company logo only
+
+Correct Answer: A
+
+Explanation: Stakeholders get quick insights.
+
+Question 470. Status reports in project management communicate:
+
+A. Staff salaries
+B. Progress, issues and next steps to stakeholders
+C. Only the project start date
+D. Personal opinions only
+
+Correct Answer: B
+
+Explanation: Regular reporting supports control.
+
+Question 471. Change control process ensures that:
+
+A. Any change is made freely
+B. Changes to scope, schedule or cost are evaluated and approved before implementation
+C. Changes are hidden
+D. No changes are ever allowed
+
+Correct Answer: B
+
+Explanation: A change control board may approve changes.
+
+Question 472. Project closure activities include:
+
+A. Hiring staff
+B. Increasing scope
+C. Final acceptance, documentation and lessons learned
+D. Starting new tasks
+
+Correct Answer: C
+
+Explanation: Closure formally ends the project.
+
+Question 473. Lessons learned documentation is useful because it:
+
+A. Helps improve future projects
+B. Is never read
+C. Replaces planning
+D. Records only successes
+
+Correct Answer: A
+
+Explanation: Organisational knowledge is preserved.
+
+Question 474. Templates in project management tools help to:
+
+A. Delete projects
+B. Increase setup time
+C. Quickly set up recurring types of projects
+D. Hide tasks
+
+Correct Answer: C
+
+Explanation: E.g. audit engagement or month-end close templates.
+
+Question 475. Month-end close in accounting can be managed as a project by:
+
+A. Doing tasks randomly
+B. Ignoring dependencies
+C. Avoiding deadlines
+D. Listing close tasks, owners and deadlines in a project tool
+
+Correct Answer: D
+
+Explanation: Close checklists improve timeliness.
+
+Question 476. An audit engagement can be managed using project tools to:
+
+A. Schedule fieldwork, assign staff and track progress
+B. Increase fees only
+C. Remove reviews
+D. Avoid planning
+
+Correct Answer: A
+
+Explanation: Project discipline improves audit efficiency.
+
+Question 477. Integration of project tools with accounting software allows:
+
+A. Project costs and time to flow into billing and job costing
+B. Avoidance of budgets
+C. Isolation of financial data
+D. Deletion of invoices
+
+Correct Answer: A
+
+Explanation: E.g. time tracking feeding invoices.
+
+Question 478. Job costing refers to:
+
+A. Valuing inventory only
+B. Costing employees' jobs only
+C. Accumulating costs for a specific job or project
+D. Calculating payroll tax
+
+Correct Answer: C
+
+Explanation: It supports project profitability analysis.
+
+Question 479. The timeline view in tools like Asana or Monday.com is similar to a:
+
+A. Bank statement
+B. Gantt chart
+C. Trial balance
+D. Pie chart
+
+Correct Answer: B
+
+Explanation: It shows tasks over time.
+
+Question 480. Subtasks in project tools are used to:
+
+A. Hide work
+B. Combine projects
+C. Break down a task into smaller actionable steps
+D. Delete tasks
+
+Correct Answer: C
+
+Explanation: They improve clarity.
+
+Question 481. Task priority settings help teams to:
+
+A. Delay all tasks
+B. Remove deadlines
+C. Focus on the most important tasks first
+D. Ignore urgent work
+
+Correct Answer: C
+
+Explanation: E.g. High, Medium, Low.
+
+Question 482. Due dates on tasks are used to:
+
+A. Indicate when tasks must be completed
+B. Indicate employee birthdays
+C. Set salaries
+D. Calculate VAT
+
+Correct Answer: A
+
+Explanation: They drive scheduling.
+
+Question 483. Mobile apps for project tools allow:
+
+A. No access outside the office
+B. Only desktop work
+C. Deleting all data
+D. Team members to update tasks on the go
+
+Correct Answer: D
+
+Explanation: Mobility supports remote teams.
+
+Question 484. Cloud-based project management tools are beneficial for remote teams because they:
+
+A. Prevent collaboration
+B. Work only offline
+C. Provide access from anywhere with internet
+D. Require everyone to be in one office
+
+Correct Answer: C
+
+Explanation: Distributed teams share one system.
+
+Question 485. Microsoft Planner is:
+
+A. A tax calculator
+B. An audit software
+C. A simple task management tool within Microsoft 365
+D. A full ERP system
+
+Correct Answer: C
+
+Explanation: It uses Kanban-style boards.
+
+Question 486. A project sponsor is:
+
+A. A competitor
+B. A team member doing daily tasks
+C. The person or group that provides resources and support for the project
+D. An external auditor
+
+Correct Answer: C
+
+Explanation: The sponsor champions the project.
+
+Question 487. A project manager is responsible for:
+
+A. Leading the team to achieve project objectives within constraints
+B. Only marketing
+C. Only writing code
+D. Only paying staff
+
+Correct Answer: A
+
+Explanation: The PM coordinates all aspects.
+
+Question 488. Fast tracking a project schedule involves:
+
+A. Delaying tasks
+B. Adding more resources to tasks
+C. Removing scope
+D. Performing tasks in parallel that were planned in sequence
+
+Correct Answer: D
+
+Explanation: It increases risk of rework.
+
+Question 489. Crashing a project schedule involves:
+
+A. Performing tasks in parallel only
+B. Cancelling the project
+C. Adding resources to shorten task durations, usually at extra cost
+D. Reducing quality deliberately
+
+Correct Answer: C
+
+Explanation: Focus on critical path tasks.
+
+Question 490. Quality management in projects ensures that:
+
+A. Deliverables meet required standards and stakeholder expectations
+B. Schedules are ignored
+C. Stakeholders are excluded
+D. Costs are ignored
+
+Correct Answer: A
+
+Explanation: It includes quality planning, assurance and control.
+
+Question 491. Communication management plan defines:
+
+A. Only the budget
+B. What information is shared, with whom, when and how
+C. Only risks
+D. Only staff salaries
+
+Correct Answer: B
+
+Explanation: Effective communication prevents misunderstandings.
+
+Question 492. SMART project objectives are:
+
+A. Simple, Modest, Average, Random and Timeless
+B. Specific, Measurable, Achievable, Relevant and Time-bound
+C. Small, Medium, Average, Regular and Tidy
+D. Strategic, Monetary, Aggressive, Rapid and Total
+
+Correct Answer: B
+
+Explanation: They provide clear targets.
+
+Question 493. Feasibility studies before starting a project assess:
+
+A. Technical, economic and operational viability
+B. Staff hobbies
+C. Office colours
+D. Font choices
+
+Correct Answer: A
+
+Explanation: They support go/no-go decisions.
+
+Question 494. The main purpose of laboratory practice with project management tools is to:
+
+A. Memorise brand names only
+B. Develop practical skills in planning and tracking work with software
+C. Replace accounting entirely
+D. Avoid planning
+
+Correct Answer: B
+
+Explanation: Hands-on experience builds competence.
+
+Question 495. A project life cycle refers to:
+
+A. A bicycle used for projects
+B. A product's sales cycle
+C. The series of phases a project passes through from start to completion
+D. The tax year
+
+Correct Answer: C
+
+Explanation: Phases include initiation, planning, execution and closure.
+
+Question 496. The Agile Manifesto values:
+
+A. Contracts over collaboration
+B. Documentation over working software
+C. Individuals and interactions over processes and tools
+D. Processes over people
+
+Correct Answer: C
+
+Explanation: It also values responding to change.
+
+Question 497. A Kanban card typically represents:
+
+A. A single work item or task
+B. A team member's salary
+C. A risk register
+D. The whole project budget
+
+Correct Answer: A
+
+Explanation: Cards move across the board.
+
+Question 498. A contingency reserve in a project budget is:
+
+A. The sponsor's salary
+B. Profit for the contractor
+C. Funds set aside to cover identified risks
+D. Tax payable
+
+Correct Answer: C
+
+Explanation: It addresses known unknowns.
+
+
+========================================================================
+CHAPTER 6: DATABASE MANAGEMENT SOFTWARE
+Questions 499-600
+========================================================================
+
+Question 499. A database is:
+
+A. An organised collection of related data stored electronically
+B. A word document
+C. A single spreadsheet cell
+D. A slide presentation
+
+Correct Answer: A
+
+Explanation: Databases allow efficient storage and retrieval.
+
+Question 500. A Database Management System (DBMS) is:
+
+A. A hardware device
+B. Software used to create, manage and access databases
+C. A type of printer
+D. A presentation tool
+
+Correct Answer: B
+
+Explanation: It controls data storage and retrieval.
+
+Question 501. Which of these is an example of a DBMS?
+
+A. Microsoft PowerPoint
+B. Windows Paint
+C. Adobe Reader
+D. Microsoft Access
+
+Correct Answer: D
+
+Explanation: Others include MySQL, Oracle and SQL Server.
+
+Question 502. Microsoft Access is:
+
+A. A desktop relational database management system
+B. An email client
+C. A spreadsheet
+D. A web browser
+
+Correct Answer: A
+
+Explanation: It is part of some Microsoft Office editions.
+
+Question 503. The default file extension for Microsoft Access databases (2007 and later) is:
+
+A. .accdb
+B. .mdbx
+C. .docx
+D. .xlsx
+
+Correct Answer: A
+
+Explanation: .mdb was the older format.
+
+Question 504. A Relational Database Management System (RDBMS) stores data in:
+
+A. Tables with relationships between them
+B. Slides
+C. Paragraphs
+D. Images only
+
+Correct Answer: A
+
+Explanation: E.F. Codd proposed the relational model.
+
+Question 505. The relational model of databases was proposed by:
+
+A. Steve Jobs
+B. Henry Gantt
+C. E. F. Codd
+D. Bill Gates
+
+Correct Answer: C
+
+Explanation: He worked at IBM in 1970.
+
+Question 506. In a relational database, a table is also called a:
+
+A. Query
+B. Record
+C. Relation
+D. Field
+
+Correct Answer: C
+
+Explanation: Tables consist of rows and columns.
+
+Question 507. A row in a database table is called a:
+
+A. Attribute
+B. Field
+C. Record (tuple)
+D. Domain
+
+Correct Answer: C
+
+Explanation: Each record represents one entity instance.
+
+Question 508. A column in a database table is called a:
+
+A. Report
+B. Record
+C. Field (attribute)
+D. Tuple
+
+Correct Answer: C
+
+Explanation: Each field stores one type of data.
+
+Question 509. A primary key is:
+
+A. A report title
+B. A field or combination of fields that uniquely identifies each record
+C. A field that can contain duplicates
+D. A password
+
+Correct Answer: B
+
+Explanation: E.g. Customer ID.
+
+Question 510. A primary key field cannot contain:
+
+A. Null or duplicate values
+B. Numbers
+C. Text
+D. Dates
+
+Correct Answer: A
+
+Explanation: Uniqueness and non-null are required.
+
+Question 511. A foreign key is:
+
+A. A deleted record
+B. A field in one table that refers to the primary key of another table
+C. A password field
+D. A unique key in the same table
+
+Correct Answer: B
+
+Explanation: It creates relationships between tables.
+
+Question 512. A composite key is:
+
+A. A password
+B. A key with only one field
+C. A foreign key only
+D. A primary key made up of two or more fields
+
+Correct Answer: D
+
+Explanation: Used when one field alone is not unique.
+
+Question 513. A candidate key is:
+
+A. A report
+B. A field or set of fields that could serve as the primary key
+C. A deleted key
+D. A key that is always foreign
+
+Correct Answer: B
+
+Explanation: One candidate key is chosen as primary.
+
+Question 514. Referential integrity ensures that:
+
+A. Data is deleted randomly
+B. Foreign key values match existing primary key values
+C. Duplicates are encouraged
+D. Tables are unrelated
+
+Correct Answer: B
+
+Explanation: It prevents orphan records.
+
+Question 515. A one-to-many relationship means:
+
+A. One record in a table can relate to many records in another table
+B. Many records relate to many records directly
+C. One relates to only one
+D. No relationship exists
+
+Correct Answer: A
+
+Explanation: E.g. one customer has many invoices.
+
+Question 516. A one-to-one relationship means:
+
+A. No relationship
+B. Each record in one table relates to only one record in another table
+C. Many relate to many
+D. One record relates to many
+
+Correct Answer: B
+
+Explanation: E.g. employee and employee passport details.
+
+Question 517. A many-to-many relationship is usually implemented using:
+
+A. A report
+B. A single table only
+C. A junction (linking) table
+D. A form only
+
+Correct Answer: C
+
+Explanation: E.g. students and courses via an enrolment table.
+
+Question 518. An Entity-Relationship (ER) diagram is used to:
+
+A. Model entities, attributes and relationships in a database design
+B. Prepare financial statements
+C. Design slides
+D. Draw organisational charts only
+
+Correct Answer: A
+
+Explanation: It is a database design tool.
+
+Question 519. An entity in database design is:
+
+A. A query result only
+B. An object or concept about which data is stored, e.g. Customer
+C. A printer
+D. A field value
+
+Correct Answer: B
+
+Explanation: Entities become tables.
+
+Question 520. An attribute in database design is:
+
+A. A database file
+B. A table
+C. A relationship
+D. A property or characteristic of an entity
+
+Correct Answer: D
+
+Explanation: Attributes become fields.
+
+Question 521. Data redundancy refers to:
+
+A. Unnecessary duplication of data
+B. Encrypted data
+C. Backup of data
+D. Lack of data
+
+Correct Answer: A
+
+Explanation: Normalisation reduces redundancy.
+
+Question 522. Normalisation is the process of:
+
+A. Deleting tables
+B. Duplicating data
+C. Encrypting data
+D. Organising data to reduce redundancy and improve integrity
+
+Correct Answer: D
+
+Explanation: It involves normal forms.
+
+Question 523. First Normal Form (1NF) requires that:
+
+A. Data be duplicated
+B. Every field be a key
+C. Each field contains atomic (indivisible) values and there are no repeating groups
+D. All tables be deleted
+
+Correct Answer: C
+
+Explanation: It is the first step of normalisation.
+
+Question 524. Second Normal Form (2NF) requires that the table is in 1NF and:
+
+A. There is no primary key
+B. Transitive dependencies exist
+C. All non-key attributes depend on the whole primary key
+D. There are repeating groups
+
+Correct Answer: C
+
+Explanation: It removes partial dependencies.
+
+Question 525. Third Normal Form (3NF) requires that the table is in 2NF and:
+
+A. There are partial dependencies
+B. There are no transitive dependencies on the primary key
+C. Repeating groups exist
+D. There are no keys
+
+Correct Answer: B
+
+Explanation: Non-key fields depend only on the key.
+
+Question 526. Denormalisation is:
+
+A. Removing all data
+B. Normalising further
+C. Deliberately introducing redundancy to improve query performance
+D. Encrypting tables
+
+Correct Answer: C
+
+Explanation: Common in data warehouses.
+
+Question 527. A data type defines:
+
+A. The kind of data a field can store, e.g. text, number or date
+B. The user's password
+C. The table name
+D. The colour of a field
+
+Correct Answer: A
+
+Explanation: Correct data types improve integrity.
+
+Question 528. In Microsoft Access, the data type used for money values is:
+
+A. Hyperlink
+B. Currency
+C. Yes/No
+D. Short Text
+
+Correct Answer: B
+
+Explanation: It avoids rounding errors in calculations.
+
+Question 529. In Microsoft Access, the AutoNumber data type:
+
+A. Automatically generates a unique number for each new record
+B. Stores dates only
+C. Stores text
+D. Stores images
+
+Correct Answer: A
+
+Explanation: Often used for primary keys.
+
+Question 530. The Yes/No data type in Access stores:
+
+A. Boolean values such as True/False
+B. Currency
+C. Images
+D. Long text
+
+Correct Answer: A
+
+Explanation: It is used for checkboxes.
+
+Question 531. A field size property controls:
+
+A. The page size
+B. The table colour
+C. The font size
+D. The maximum length or size of data in a field
+
+Correct Answer: D
+
+Explanation: E.g. Short Text up to 255 characters.
+
+Question 532. An input mask in Access is used to:
+
+A. Hide the table
+B. Encrypt the database
+C. Delete records
+D. Control the format in which data is entered, e.g. phone numbers
+
+Correct Answer: D
+
+Explanation: It guides consistent data entry.
+
+Question 533. A validation rule in Access:
+
+A. Sorts records
+B. Deletes invalid tables
+C. Prints reports
+D. Restricts data entered into a field to meet specified criteria
+
+Correct Answer: D
+
+Explanation: E.g. >0 for amounts.
+
+Question 534. Validation text in Access is:
+
+A. A field name
+B. The message shown when data violates a validation rule
+C. A query
+D. A table title
+
+Correct Answer: B
+
+Explanation: It guides the user to correct entry.
+
+Question 535. A default value in a database field is:
+
+A. A required password
+B. A deleted value
+C. A primary key always
+D. A value automatically entered when a new record is created
+
+Correct Answer: D
+
+Explanation: E.g. today's date for a transaction date.
+
+Question 536. A required field property means:
+
+A. The field is optional
+B. The field is hidden
+C. The field is deleted
+D. The field must contain a value before the record can be saved
+
+Correct Answer: D
+
+Explanation: It prevents missing critical data.
+
+Question 537. Indexing a field in a database:
+
+A. Deletes duplicates automatically always
+B. Slows down all searches
+C. Encrypts the field
+D. Speeds up searching and sorting on that field
+
+Correct Answer: D
+
+Explanation: Indexes add some overhead to updates.
+
+Question 538. The four main objects in Microsoft Access are tables, queries, forms and:
+
+A. Charts only
+B. Macros only
+C. Reports
+D. Slides
+
+Correct Answer: C
+
+Explanation: Macros and modules also exist.
+
+Question 539. A query in a database is used to:
+
+A. Create a new database only
+B. Print slides
+C. Send emails
+D. Retrieve, filter or manipulate data based on criteria
+
+Correct Answer: D
+
+Explanation: Queries answer questions about data.
+
+Question 540. A select query:
+
+A. Deletes records
+B. Updates records
+C. Retrieves data from one or more tables without changing it
+D. Creates tables
+
+Correct Answer: C
+
+Explanation: It is the most common query type.
+
+Question 541. An action query in Access:
+
+A. Only creates forms
+B. Only displays data
+C. Changes data, e.g. update, delete, append or make-table queries
+D. Only prints reports
+
+Correct Answer: C
+
+Explanation: Action queries modify data.
+
+Question 542. An update query is used to:
+
+A. Add new tables
+B. Display data only
+C. Delete records
+D. Change values in existing records
+
+Correct Answer: D
+
+Explanation: E.g. increasing all prices by 10%.
+
+Question 543. A delete query is used to:
+
+A. Remove records that meet certain criteria
+B. Change field names
+C. Add records
+D. Create forms
+
+Correct Answer: A
+
+Explanation: It should be used carefully.
+
+Question 544. An append query is used to:
+
+A. Create reports
+B. Add records from one table to another
+C. Rename tables
+D. Delete records
+
+Correct Answer: B
+
+Explanation: It copies data into an existing table.
+
+Question 545. A make-table query:
+
+A. Only displays data
+B. Prints labels
+C. Creates a new table from the results of a query
+D. Deletes tables
+
+Correct Answer: C
+
+Explanation: Useful for archiving data.
+
+Question 546. A crosstab query in Access:
+
+A. Deletes records
+B. Updates prices
+C. Summarises data in a grid format with row and column headings
+D. Creates forms
+
+Correct Answer: C
+
+Explanation: It resembles a pivot table.
+
+Question 547. A parameter query:
+
+A. Runs without any input
+B. Creates reports only
+C. Prompts the user to enter criteria when the query runs
+D. Deletes data automatically
+
+Correct Answer: C
+
+Explanation: E.g. "Enter start date".
+
+Question 548. A totals (aggregate) query uses functions such as:
+
+A. Print, Save and Close
+B. Bold, Italic and Underline
+C. Sum, Avg, Count, Min and Max
+D. Copy, Paste and Cut
+
+Correct Answer: C
+
+Explanation: It groups and summarises data.
+
+Question 549. A calculated field in a query:
+
+A. Is a form
+B. Stores typed data only
+C. Is a primary key
+D. Derives a value from other fields using an expression
+
+Correct Answer: D
+
+Explanation: E.g. Amount: [Qty]*[UnitPrice].
+
+Question 550. In Access query criteria, the wildcard * represents:
+
+A. Exactly one character
+B. Any number of characters
+C. A date only
+D. A number only
+
+Correct Answer: B
+
+Explanation: E.g. Like "A*" finds names starting with A.
+
+Question 551. In Access, the wildcard ? represents:
+
+A. A single character
+B. Any number of characters
+C. A null value
+D. A number range
+
+Correct Answer: A
+
+Explanation: E.g. Like "B?ll".
+
+Question 552. The criterion Between 1000 And 5000 in a query returns records where the value is:
+
+A. Exactly 1000 or 5000 only
+B. Less than 1000
+C. From 1000 to 5000 inclusive
+D. Greater than 5000
+
+Correct Answer: C
+
+Explanation: Between is inclusive.
+
+Question 553. Is Null as a query criterion returns records where the field:
+
+A. Is empty
+B. Contains zero
+C. Is a key
+D. Contains text "Null"
+
+Correct Answer: A
+
+Explanation: Is Not Null returns non-empty fields.
+
+Question 554. A form in a database is used mainly to:
+
+A. Print summary reports only
+B. Define relationships
+C. Store data permanently
+D. Provide a user-friendly interface for entering and viewing data
+
+Correct Answer: D
+
+Explanation: Forms improve data entry accuracy.
+
+Question 555. A subform is:
+
+A. A form embedded within another form, typically showing related records
+B. A query type
+C. A report header
+D. A deleted form
+
+Correct Answer: A
+
+Explanation: E.g. an invoice form with line items subform.
+
+Question 556. A report in a database is used to:
+
+A. Define keys
+B. Enter data
+C. Present data in a formatted, printable layout
+D. Store data
+
+Correct Answer: C
+
+Explanation: E.g. a sales summary report.
+
+Question 557. Grouping in an Access report allows:
+
+A. Organising records into categories with subtotals
+B. Deleting records
+C. Entering data
+D. Encrypting reports
+
+Correct Answer: A
+
+Explanation: E.g. sales grouped by region.
+
+Question 558. A macro in Access is used to:
+
+A. Automate tasks such as opening forms or running queries
+B. Draw tables manually
+C. Design slides
+D. Delete the database
+
+Correct Answer: A
+
+Explanation: Macros simplify repetitive operations.
+
+Question 559. SQL stands for:
+
+A. Standard Quantity List
+B. Simple Question Language
+C. Sequential Query Logic
+D. Structured Query Language
+
+Correct Answer: D
+
+Explanation: It is the standard language for relational databases.
+
+Question 560. The SQL statement used to retrieve data is:
+
+A. FETCH ONLY
+B. RETRIEVE
+C. SELECT
+D. GET
+
+Correct Answer: C
+
+Explanation: E.g. SELECT * FROM Customers.
+
+Question 561. In SQL, SELECT * FROM Invoices returns:
+
+A. Only column names
+B. Only the first row
+C. All columns and rows from the Invoices table
+D. Nothing
+
+Correct Answer: C
+
+Explanation: * means all columns.
+
+Question 562. The SQL clause used to filter rows is:
+
+A. ORDER BY
+B. GROUP BY
+C. WHERE
+D. FROM
+
+Correct Answer: C
+
+Explanation: E.g. WHERE Amount > 10000.
+
+Question 563. The SQL clause used to sort results is:
+
+A. ARRANGE
+B. ORDER BY
+C. SORT
+D. GROUP BY
+
+Correct Answer: B
+
+Explanation: ASC or DESC sets the order.
+
+Question 564. The SQL clause used to group rows for aggregation is:
+
+A. ORDER BY
+B. WHERE
+C. JOIN
+D. GROUP BY
+
+Correct Answer: D
+
+Explanation: Used with SUM, COUNT etc.
+
+Question 565. The SQL clause used to filter grouped results is:
+
+A. HAVING
+B. ORDER BY
+C. LIMIT
+D. WHERE
+
+Correct Answer: A
+
+Explanation: HAVING applies after GROUP BY.
+
+Question 566. The SQL statement used to add new records is:
+
+A. ADD RECORD
+B. CREATE ROW
+C. UPDATE
+D. INSERT INTO
+
+Correct Answer: D
+
+Explanation: E.g. INSERT INTO Customers VALUES (...).
+
+Question 567. The SQL statement used to modify existing records is:
+
+A. ALTER ROW
+B. UPDATE
+C. CHANGE
+D. MODIFY
+
+Correct Answer: B
+
+Explanation: UPDATE ... SET ... WHERE ...
+
+Question 568. The SQL statement used to remove records is:
+
+A. ERASE
+B. DELETE
+C. REMOVE
+D. DROP ROW
+
+Correct Answer: B
+
+Explanation: Omitting WHERE deletes all rows.
+
+Question 569. The SQL statement used to create a new table is:
+
+A. MAKE TABLE
+B. CREATE TABLE
+C. NEW TABLE
+D. ADD TABLE
+
+Correct Answer: B
+
+Explanation: It defines columns and data types.
+
+Question 570. DROP TABLE in SQL:
+
+A. Creates a table
+B. Deletes a table and its data permanently
+C. Deletes only some rows
+D. Renames a table
+
+Correct Answer: B
+
+Explanation: Use with extreme caution.
+
+Question 571. An INNER JOIN returns:
+
+A. All rows from the left table only
+B. All rows from both tables
+C. Only rows with matching values in both tables
+D. No rows
+
+Correct Answer: C
+
+Explanation: It is the most common join.
+
+Question 572. A LEFT JOIN returns:
+
+A. All rows from the left table and matching rows from the right table
+B. Only matching rows
+C. No rows
+D. All rows from the right table only
+
+Correct Answer: A
+
+Explanation: Non-matches show NULL.
+
+Question 573. SQL commands such as CREATE, ALTER and DROP belong to:
+
+A. Data Manipulation Language (DML)
+B. Transaction Control Language only
+C. Data Definition Language (DDL)
+D. Data Control Language (DCL)
+
+Correct Answer: C
+
+Explanation: DDL defines structures.
+
+Question 574. SQL commands such as SELECT, INSERT, UPDATE and DELETE belong to:
+
+A. Hardware language
+B. Data Definition Language
+C. Data Control Language
+D. Data Manipulation Language (DML)
+
+Correct Answer: D
+
+Explanation: DML manipulates data.
+
+Question 575. SQL commands GRANT and REVOKE belong to:
+
+A. DML
+B. Query by Example
+C. DDL
+D. Data Control Language (DCL)
+
+Correct Answer: D
+
+Explanation: They manage permissions.
+
+Question 576. The SQL function COUNT(*) returns:
+
+A. The average
+B. The number of rows
+C. The sum of values
+D. The largest value
+
+Correct Answer: B
+
+Explanation: E.g. counting invoices.
+
+Question 577. The SQL function SUM(Amount) returns:
+
+A. The average amount
+B. The first amount
+C. The number of rows
+D. The total of the Amount column
+
+Correct Answer: D
+
+Explanation: Used for totals.
+
+Question 578. A transaction in a DBMS is:
+
+A. A printed report
+B. A form
+C. A sales receipt only
+D. A logical unit of work that must be completed entirely or not at all
+
+Correct Answer: D
+
+Explanation: E.g. transferring funds between accounts.
+
+Question 579. ACID properties of database transactions stand for:
+
+A. Atomicity, Consistency, Isolation and Durability
+B. Accuracy, Control, Integrity and Data
+C. Access, Confidentiality, Integrity and Detection
+D. Audit, Check, Inspect and Document
+
+Correct Answer: A
+
+Explanation: They ensure reliable processing.
+
+Question 580. Atomicity in ACID means:
+
+A. All operations in a transaction succeed or none do
+B. Transactions run forever
+C. Data is encrypted
+D. Data is split into atoms
+
+Correct Answer: A
+
+Explanation: Partial transactions are rolled back.
+
+Question 581. COMMIT in SQL:
+
+A. Deletes a table
+B. Creates a user
+C. Undoes changes
+D. Permanently saves the changes made by a transaction
+
+Correct Answer: D
+
+Explanation: ROLLBACK undoes uncommitted changes.
+
+Question 582. ROLLBACK in SQL:
+
+A. Undoes changes made in the current transaction
+B. Saves changes permanently
+C. Creates a backup
+D. Deletes the database
+
+Correct Answer: A
+
+Explanation: It restores the previous state.
+
+Question 583. MySQL is:
+
+A. A spreadsheet
+B. An accounting package
+C. A presentation tool
+D. A popular open-source relational database management system
+
+Correct Answer: D
+
+Explanation: Widely used in web applications.
+
+Question 584. Oracle Database is:
+
+A. A cloud storage app only
+B. An enterprise relational database management system
+C. A video editor
+D. A word processor
+
+Correct Answer: B
+
+Explanation: Used by large organisations.
+
+Question 585. Microsoft SQL Server is:
+
+A. Microsoft's enterprise relational database management system
+B. A game console
+C. A spreadsheet
+D. An email client
+
+Correct Answer: A
+
+Explanation: It supports large business applications.
+
+Question 586. PostgreSQL is:
+
+A. A presentation app
+B. A powerful open-source object-relational database system
+C. An antivirus
+D. A payroll package
+
+Correct Answer: B
+
+Explanation: Known for standards compliance.
+
+Question 587. NoSQL databases differ from relational databases because they:
+
+A. Always use strict tables
+B. Only store images
+C. Cannot store data
+D. Use flexible, non-tabular data models such as documents or key-value pairs
+
+Correct Answer: D
+
+Explanation: MongoDB is an example.
+
+Question 588. MongoDB is an example of:
+
+A. An accounting package
+B. A spreadsheet
+C. A relational database
+D. A document-oriented NoSQL database
+
+Correct Answer: D
+
+Explanation: It stores JSON-like documents.
+
+Question 589. A data dictionary contains:
+
+A. Bank statements
+B. Customer complaints
+C. A list of English words
+D. Metadata describing database tables, fields, types and relationships
+
+Correct Answer: D
+
+Explanation: It documents the database structure.
+
+Question 590. Metadata means:
+
+A. Deleted data
+B. Encrypted data
+C. Large data
+D. Data about data
+
+Correct Answer: D
+
+Explanation: E.g. field names and data types.
+
+Question 591. A database administrator (DBA) is responsible for:
+
+A. Designing slides
+B. Managing database performance, security, backup and recovery
+C. Only entering sales data
+D. Auditing financial statements
+
+Correct Answer: B
+
+Explanation: DBAs maintain database systems.
+
+Question 592. Database backup is important because it:
+
+A. Slows recovery
+B. Allows recovery of data after loss or corruption
+C. Increases data loss
+D. Is unnecessary
+
+Correct Answer: B
+
+Explanation: Regular backups are a key control.
+
+Question 593. User access control in a DBMS ensures that:
+
+A. Passwords are shared
+B. Data is public
+C. All users can do anything
+D. Users can only view or modify data they are authorised to
+
+Correct Answer: D
+
+Explanation: Permissions protect sensitive data.
+
+Question 594. A data warehouse is:
+
+A. An operational transaction database only
+B. A central repository of integrated historical data for analysis and reporting
+C. A physical storage room for paper files
+D. A spreadsheet
+
+Correct Answer: B
+
+Explanation: It supports business intelligence.
+
+Question 595. OLTP systems are designed for:
+
+A. Handling day-to-day transaction processing
+B. Long-term historical analysis only
+C. Presentation
+D. Graphic design
+
+Correct Answer: A
+
+Explanation: OLAP systems support analysis.
+
+Question 596. Data mining refers to:
+
+A. Digging for minerals
+B. Deleting old data
+C. Typing data manually
+D. Discovering patterns and relationships in large data sets
+
+Correct Answer: D
+
+Explanation: It supports decision making and fraud detection.
+
+Question 597. Importing data from Excel into Access is useful because it:
+
+A. Allows structured storage, relationships and queries on the data
+B. Prevents analysis
+C. Increases redundancy always
+D. Destroys the spreadsheet
+
+Correct Answer: A
+
+Explanation: Access handles larger relational data better.
+
+Question 598. A key advantage of databases over spreadsheets for accounting records is:
+
+A. Better data integrity, multi-user access and handling of large related data sets
+B. They have no structure
+C. They cannot calculate
+D. They are always free
+
+Correct Answer: A
+
+Explanation: Databases enforce relationships and validation.
+
+Question 599. Accounting software such as Sage or QuickBooks stores its data in:
+
+A. A slide show
+B. An underlying database
+C. A word document only
+D. Paper files only
+
+Correct Answer: B
+
+Explanation: Databases power accounting systems.
+
+Question 600. The main purpose of laboratory practice with database management software is to:
+
+A. Replace accounting principles
+B. Develop practical skills in designing, querying and reporting from databases
+C. Avoid using computers
+D. Memorise vendor names only
+
+Correct Answer: B
+
+Explanation: Hands-on practice builds competence.
+
+
+========================================================================
+ANSWER INDEX (Questions 001-600)
+========================================================================
+
+001-D  002-C  003-C  004-B  005-C  006-A  007-A  008-D  009-D  010-B
+011-A  012-C  013-B  014-D  015-A  016-C  017-D  018-D  019-C  020-B
+021-D  022-D  023-A  024-A  025-C  026-A  027-D  028-A  029-C  030-C
+031-C  032-C  033-B  034-A  035-C  036-C  037-D  038-B  039-D  040-D
+041-D  042-D  043-C  044-B  045-A  046-D  047-B  048-C  049-B  050-C
+051-B  052-A  053-D  054-D  055-B  056-A  057-D  058-B  059-B  060-B
+061-C  062-B  063-C  064-B  065-A  066-D  067-C  068-D  069-A  070-A
+071-A  072-C  073-A  074-D  075-A  076-D  077-C  078-D  079-B  080-B
+081-A  082-D  083-B  084-A  085-A  086-C  087-C  088-C  089-C  090-A
+091-B  092-A  093-C  094-D  095-D  096-C  097-A  098-D  099-C  100-B
+101-B  102-C  103-C  104-C  105-D  106-B  107-B  108-C  109-A  110-A
+111-B  112-B  113-A  114-D  115-B  116-D  117-D  118-A  119-A  120-B
+121-D  122-A  123-C  124-D  125-B  126-A  127-A  128-C  129-C  130-D
+131-D  132-C  133-B  134-A  135-A  136-D  137-D  138-C  139-D  140-D
+141-A  142-B  143-D  144-C  145-A  146-C  147-C  148-A  149-D  150-B
+151-B  152-A  153-B  154-B  155-D  156-C  157-B  158-D  159-A  160-B
+161-D  162-C  163-B  164-B  165-A  166-C  167-C  168-A  169-B  170-C
+171-C  172-B  173-C  174-B  175-C  176-D  177-A  178-A  179-B  180-C
+181-D  182-D  183-A  184-A  185-C  186-A  187-D  188-A  189-C  190-D
+191-D  192-D  193-C  194-C  195-A  196-A  197-B  198-B  199-D  200-D
+201-B  202-B  203-B  204-B  205-D  206-A  207-B  208-D  209-A  210-A
+211-A  212-D  213-D  214-B  215-D  216-A  217-D  218-A  219-C  220-D
+221-D  222-B  223-B  224-C  225-D  226-D  227-A  228-B  229-B  230-A
+231-A  232-D  233-B  234-C  235-B  236-D  237-B  238-A  239-C  240-D
+241-C  242-A  243-B  244-D  245-A  246-D  247-C  248-B  249-B  250-A
+251-B  252-A  253-B  254-C  255-A  256-A  257-C  258-D  259-D  260-D
+261-C  262-A  263-B  264-A  265-D  266-D  267-A  268-C  269-A  270-A
+271-B  272-C  273-D  274-A  275-D  276-A  277-D  278-A  279-D  280-C
+281-C  282-B  283-D  284-D  285-C  286-C  287-A  288-A  289-A  290-A
+291-B  292-C  293-A  294-D  295-B  296-B  297-A  298-C  299-C  300-A
+301-B  302-C  303-A  304-A  305-C  306-A  307-B  308-A  309-D  310-A
+311-A  312-C  313-A  314-B  315-B  316-A  317-D  318-A  319-A  320-D
+321-A  322-A  323-A  324-B  325-B  326-C  327-A  328-B  329-B  330-C
+331-D  332-D  333-D  334-A  335-B  336-D  337-B  338-A  339-B  340-D
+341-D  342-C  343-A  344-C  345-D  346-A  347-B  348-B  349-A  350-D
+351-A  352-C  353-A  354-C  355-B  356-C  357-B  358-D  359-C  360-A
+361-A  362-A  363-B  364-B  365-C  366-B  367-A  368-A  369-B  370-A
+371-A  372-B  373-C  374-D  375-A  376-A  377-B  378-D  379-B  380-B
+381-C  382-D  383-A  384-A  385-D  386-A  387-A  388-C  389-C  390-B
+391-B  392-A  393-B  394-C  395-B  396-D  397-A  398-B  399-C  400-C
+401-B  402-D  403-B  404-C  405-C  406-A  407-D  408-A  409-A  410-B
+411-D  412-D  413-D  414-B  415-A  416-B  417-C  418-A  419-D  420-D
+421-D  422-C  423-C  424-C  425-D  426-C  427-D  428-B  429-B  430-A
+431-C  432-C  433-C  434-A  435-C  436-A  437-C  438-A  439-D  440-D
+441-C  442-A  443-C  444-C  445-C  446-A  447-A  448-D  449-D  450-C
+451-B  452-D  453-D  454-C  455-A  456-A  457-A  458-B  459-C  460-B
+461-A  462-A  463-D  464-B  465-D  466-D  467-C  468-A  469-A  470-B
+471-B  472-C  473-A  474-C  475-D  476-A  477-A  478-C  479-B  480-C
+481-C  482-A  483-D  484-C  485-C  486-C  487-A  488-D  489-C  490-A
+491-B  492-B  493-A  494-B  495-C  496-C  497-A  498-C  499-A  500-B
+501-D  502-A  503-A  504-A  505-C  506-C  507-C  508-C  509-B  510-A
+511-B  512-D  513-B  514-B  515-A  516-B  517-C  518-A  519-B  520-D
+521-A  522-D  523-C  524-C  525-B  526-C  527-A  528-B  529-A  530-A
+531-D  532-D  533-D  534-B  535-D  536-D  537-D  538-C  539-D  540-C
+541-C  542-D  543-A  544-B  545-C  546-C  547-C  548-C  549-D  550-B
+551-A  552-C  553-A  554-D  555-A  556-C  557-A  558-A  559-D  560-C
+561-C  562-C  563-B  564-D  565-A  566-D  567-B  568-B  569-B  570-B
+571-C  572-A  573-C  574-D  575-D  576-B  577-D  578-D  579-A  580-A
+581-D  582-A  583-D  584-B  585-A  586-B  587-D  588-D  589-D  590-D
+591-B  592-B  593-D  594-B  595-A  596-D  597-A  598-A  599-B  600-B
