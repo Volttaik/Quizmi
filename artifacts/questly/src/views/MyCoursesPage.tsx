@@ -34,7 +34,8 @@ function CourseRow({ course }: { course: CourseSummary }) {
               src={course.coverImageUrl}
               alt=""
               onError={() => setCoverOk(false)}
-              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+              style={{ backgroundImage: "linear-gradient(135deg, #4c1d95, #7c3aed)" }}
+              className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.04]"
             />
           ) : (
             <div aria-hidden className="brand-gradient flex h-full min-h-40 w-full items-center justify-center">

@@ -46,7 +46,8 @@ export default function CourseCard({ course }: { course: CourseSummary }) {
               alt={`${course.title} banner`}
               loading="lazy"
               onError={() => setCoverOk(false)}
-              className="block aspect-[16/9] w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+              style={{ backgroundImage: fallbackFor(course) }}
+              className="block aspect-[16/9] w-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.03]"
             />
           ) : (
             <div
