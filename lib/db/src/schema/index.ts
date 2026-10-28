@@ -30,6 +30,77 @@ export type User = typeof usersTable.$inferSelect;
 export type InsertUser = typeof usersTable.$inferInsert;
 
 /* ────────────────────────────────────────────────────────────────────────────
+ * WhatsApp account links
+ *
+ * Ties a WhatsApp number to an existing QuizMe user. Created only after the
+ * student signs in with Clerk on the website and confirms a single-use link
+ * sent to the number. See migration 0006.
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+export const whatsappLinksTable = sqliteTable(
+  "whatsapp_links",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => usersTable.id, { onDelete: "cascade" }),
+    waJid: text("wa_jid").notNull(),
+    linkedAt: text("linked_at").notNull().default(createdAt),
+    unlinkedAt: text("unlinked_at"),
+  },
+  (t) => [
+    uniqueIndex("whatsapp_links_active_jid").on(t.waJid).where(sql`${t.unlinkedAt} IS NULL`),
+    uniqueIndex("whatsapp_links_active_user").on(t.userId).where(sql`${t.unlinkedAt} IS NULL`),
+  ]
+);
+
+export type WhatsappLink = typeof whatsappLinksTable.$inferSelect;
+
+export const whatsappLinkCodesTable = sqliteTable(
+  "whatsapp_link_codes",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    waJid: text("wa_jid").notNull(),
+    codeHash: text("code_hash").notNull(),
+    createdAt: text("created_at").notNull().default(createdAt),
+    expiresAt: text("expires_at").notNull(),
+    consumedAt: text("consumed_at"),
+    consumedByUserId: integer("consumed_by_user_id").references(() => usersTable.id, {
+      onDelete: "set null",
+    }),
+  },
+  (t) => [index("whatsapp_link_codes_jid_idx").on(t.waJid, t.createdAt)]
+);
+
+export type WhatsappLinkCode = typeof whatsappLinkCodesTable.$inferSelect;
+
+export const whatsappLinkConfirmFailuresTable = sqliteTable(
+  "whatsapp_link_confirm_failures",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => usersTable.id, { onDelete: "cascade" }),
+    failedAt: text("failed_at").notNull().default(createdAt),
+  },
+  (t) => [index("whatsapp_link_confirm_failures_user_idx").on(t.userId, t.failedAt)]
+);
+
+/** Outgoing course-card messages, so quoted replies resolve to a course. See migration 0007. */
+export const whatsappCardMessagesTable = sqliteTable(
+  "whatsapp_card_messages",
+  {
+    messageId: text("message_id").primaryKey(),
+    waJid: text("wa_jid").notNull(),
+    courseId: integer("course_id")
+      .notNull()
+      .references(() => coursesTable.id, { onDelete: "cascade" }),
+    createdAt: text("created_at").notNull().default(createdAt),
+  },
+  (t) => [index("whatsapp_card_messages_jid_idx").on(t.waJid, t.createdAt)]
+);
+
+/* ────────────────────────────────────────────────────────────────────────────
  * Courses
  *
  * Courses are the product. Content is written directly to these tables by the

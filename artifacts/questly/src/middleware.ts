@@ -16,6 +16,8 @@ const isPublicRoute = createRouteMatcher([
   "/api/courses(.*)",
   "/api/payments/callback(.*)",
   "/api/payments/webhook(.*)",
+  // Bot API: authenticated by its own bearer key in each route, not by a Clerk session.
+  "/whatsapp/api(.*)",
 ]);
 
 export default clerkMiddleware(async (auth, req) => {

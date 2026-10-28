@@ -1,0 +1,6 @@
+node_modules
+.whatsapp-session
+.env
+
+# Real bot secrets
+bot.txt
